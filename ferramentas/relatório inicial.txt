@@ -1,0 +1,480 @@
+Relatório de Arquitetura – Plataforma Prazu Tools
+
+Versão: 1.0
+Objetivo: Definir a arquitetura base da plataforma antes do desenvolvimento das ferramentas.
+
+1. Objetivo do Projeto
+
+O Prazu Tools será uma plataforma de ferramentas voltadas para profissionais da contabilidade.
+
+A ideia é ser uma referência no mercado, semelhante ao iLovePDF, porém especializada exclusivamente em soluções para contadores, escritórios contábeis, departamentos fiscais, RH e empresas.
+
+O objetivo principal é oferecer ferramentas que realmente resolvam problemas do dia a dia.
+
+A filosofia da plataforma será:
+
+As ferramentas gratuitas precisam resolver o problema de verdade.
+
+As funcionalidades pagas existirão para oferecer recursos avançados, produtividade e automações, nunca para limitar artificialmente a versão gratuita.
+
+2. Filosofia da Plataforma
+
+A plataforma deve transmitir:
+
+profissionalismo;
+velocidade;
+simplicidade;
+organização;
+confiança;
+facilidade de uso.
+
+O usuário deve entrar na plataforma e encontrar rapidamente a ferramenta que precisa.
+
+A navegação deve ser extremamente intuitiva.
+
+3. Referência Visual
+
+A imagem utilizada como referência define a direção da interface.
+
+Ela será utilizada como inspiração para:
+
+estrutura geral;
+hierarquia visual;
+organização dos elementos;
+espaçamentos;
+alinhamentos;
+proporções;
+tipografia;
+identidade visual;
+experiência do usuário.
+
+Não será uma cópia.
+
+A plataforma terá identidade própria, porém seguirá essa experiência de navegação.
+
+4. Objetivo da Arquitetura
+
+O projeto será desenvolvido pensando no longo prazo.
+
+A arquitetura deve continuar organizada caso a plataforma possua:
+
+50 ferramentas;
+100 ferramentas;
+250 ferramentas;
+ou até mais.
+
+A pergunta que deverá ser feita durante todo o desenvolvimento será:
+
+"Se amanhã existirem 250 ferramentas, essa decisão ainda fará sentido?"
+
+Se a resposta for "não", a solução deverá ser revista.
+
+5. Estrutura Geral
+
+A plataforma será dividida em duas partes:
+
+Núcleo (Core)
+
+Responsável pelos recursos compartilhados.
+
+Exemplos:
+
+layout;
+autenticação;
+SEO;
+analytics;
+busca;
+categorias;
+planos;
+favoritos;
+componentes compartilhados;
+serviços reutilizáveis.
+
+O núcleo representa a plataforma.
+
+Ferramentas
+
+Cada ferramenta será um módulo independente.
+
+Cada uma possuirá sua própria lógica.
+
+Nenhuma ferramenta deverá conhecer a implementação interna de outra.
+
+6. Isolamento das Ferramentas
+
+Essa é uma das principais regras do projeto.
+
+Cada ferramenta deverá possuir sua própria estrutura.
+
+Exemplo:
+
+Calculadora de Impostos
+
+Controller
+Request
+Service
+Views
+Javascript
+Testes
+Rotas
+
+Outra ferramenta:
+
+Validador de CNPJ
+
+Controller
+Request
+Service
+Views
+Javascript
+Testes
+Rotas
+
+As ferramentas não deverão compartilhar lógica entre si.
+
+Caso alguma funcionalidade possa ser reutilizada, ela deverá sair da ferramenta e passar a fazer parte do Core.
+
+7. Comunicação entre Ferramentas
+
+Uma ferramenta nunca deverá depender diretamente da outra.
+
+Exemplo incorreto:
+
+Calculadora de Impostos
+↓
+
+Validador de CNPJ
+↓
+
+Gerador de Contrato
+
+Isso cria dependências perigosas.
+
+O correto será:
+
+Ferramenta
+↓
+
+Core
+↓
+
+Ferramenta
+
+Todas utilizam apenas recursos compartilhados.
+
+Nunca umas às outras.
+
+8. CSS
+
+Toda a plataforma utilizará apenas:
+
+style.css
+
+Não existirão:
+
+calculadora.css
+
+cnpj.css
+
+contrato.css
+
+O CSS será único.
+
+Organização do CSS
+
+O arquivo será dividido em blocos.
+
+Exemplo:
+
+Variables
+
+Theme
+
+Typography
+
+Layout
+
+Navbar
+
+Sidebar
+
+Cards
+
+Forms
+
+Buttons
+
+Tables
+
+Alerts
+
+Components
+
+Tool Layout
+
+Responsive
+
+Tudo organizado.
+
+Sem mistura.
+
+9. Bootstrap
+
+A plataforma utilizará Bootstrap como base.
+
+A prioridade será sempre:
+
+Bootstrap
+Utilitários Bootstrap
+Componentes Bootstrap
+CSS próprio
+
+O objetivo é escrever o mínimo possível de CSS desnecessário.
+
+10. Bootstrap Icons
+
+Todos os ícones da plataforma utilizarão Bootstrap Icons.
+
+Carregados via CDN.
+
+Não haverá bibliotecas de ícones diferentes.
+
+11. Javascript
+
+Cada ferramenta possuirá seu próprio javascript.
+
+Exemplo:
+
+calculadora-impostos.js
+
+validador-cnpj.js
+
+gerador-contrato.js
+
+Nunca haverá um único javascript contendo lógica de todas as ferramentas.
+
+Isso evita conflitos.
+
+12. Layout Compartilhado
+
+A plataforma possuirá apenas um layout principal.
+
+Exemplo:
+
+Navbar
+
+Sidebar esquerda
+
+Conteúdo
+
+Sidebar direita
+
+Footer
+
+Todas as ferramentas utilizarão esse layout.
+
+Apenas o conteúdo central será alterado.
+
+13. Componentes Compartilhados
+
+Serão criados componentes reutilizáveis.
+
+Exemplo:
+
+Cards
+
+Botões
+
+Inputs
+
+Alertas
+
+Breadcrumb
+
+Header
+
+Footer
+
+Cards de Ferramentas
+
+Categorias
+
+Paginação
+
+Modal
+
+Dropdown
+
+Pesquisa
+
+Nenhuma ferramenta deverá recriar componentes iguais.
+
+14. Views
+
+Cada ferramenta possuirá suas próprias páginas.
+
+Exemplo:
+
+Ferramenta
+
+Index
+
+Resultado
+
+Parciais
+
+Sem misturar arquivos de ferramentas diferentes.
+
+15. Controllers
+
+Cada ferramenta possuirá seus próprios controllers.
+
+Nunca existirá um controller gigantesco contendo centenas de métodos.
+
+Errado:
+
+ToolsController
+
+validarCnpj()
+
+calcularImposto()
+
+gerarContrato()
+
+converterXml()
+
+Correto:
+
+CnpjValidatorController
+
+TaxCalculatorController
+
+ContractGeneratorController
+
+XmlConverterController
+16. Services
+
+Toda regra de negócio ficará em Services.
+
+O Controller será apenas responsável por:
+
+receber a requisição;
+validar;
+chamar o serviço;
+retornar a resposta.
+17. Banco de Dados
+
+Existirão dois tipos de tabelas.
+
+Compartilhadas
+
+Relacionadas à plataforma.
+
+Exemplo:
+
+users
+
+plans
+
+subscriptions
+
+tool_categories
+
+tools
+
+favorites
+
+analytics
+Exclusivas
+
+Quando uma ferramenta precisar persistir informações.
+
+Exemplo:
+
+tax_calculator_simulations
+
+contract_generator_documents
+
+document_converter_jobs
+
+Cada ferramenta será responsável apenas pelos seus próprios dados.
+
+18. Cadastro das Ferramentas
+
+Cada ferramenta possuirá seus próprios metadados.
+
+Exemplo:
+
+nome;
+descrição;
+slug;
+categoria;
+ícone;
+gratuita;
+premium;
+destaque;
+palavras-chave.
+
+Esses dados alimentarão automaticamente:
+
+home;
+pesquisa;
+categorias;
+ferramentas relacionadas;
+páginas de listagem.
+19. Escalabilidade
+
+Adicionar uma nova ferramenta deverá exigir apenas:
+
+criar seu módulo;
+criar sua interface;
+criar sua lógica;
+registrar a ferramenta;
+criar seus testes.
+
+Sem modificar dezenas de arquivos do sistema.
+
+20. Organização
+
+O projeto deverá ser simples.
+
+Evitar arquitetura excessiva.
+
+Não criar estruturas gigantes para ferramentas pequenas.
+
+Cada módulo deve crescer conforme sua necessidade.
+
+21. Manutenção
+
+Alterar uma ferramenta não deverá:
+
+quebrar outra;
+alterar outra;
+modificar estilos inesperadamente;
+gerar conflitos de javascript;
+alterar regras de negócio de outro módulo.
+
+Essa independência é um dos pilares da arquitetura.
+
+22. Objetivo Final
+
+Ao término do desenvolvimento da estrutura, a plataforma deverá permitir a criação de centenas de ferramentas mantendo:
+
+organização;
+reutilização de código;
+isolamento entre módulos;
+facilidade de manutenção;
+alta escalabilidade;
+consistência visual;
+experiência de uso uniforme.
+Princípios da Arquitetura
+Escalabilidade antes da velocidade.
+Uma ferramenta nunca depende de outra.
+Tudo reutilizável pertence ao Core.
+Cada ferramenta é um módulo independente.
+Um único style.css para toda a plataforma.
+Máximo aproveitamento do Bootstrap e Bootstrap Icons via CDN.
+Controllers enxutos; regra de negócio em Services.
+Componentes compartilhados para evitar duplicação.
+Arquitetura preparada para centenas de ferramentas.
+Toda decisão de desenvolvimento deve responder positivamente à pergunta: "Isso continuará fazendo sentido quando a plataforma tiver 250 ferramentas?"

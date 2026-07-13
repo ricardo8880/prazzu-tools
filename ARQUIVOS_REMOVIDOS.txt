@@ -1,0 +1,6 @@
+Remover do projeto ao aplicar este lote:
+
+- resources/css/app.css
+- resources/js/bootstrap.js
+
+Motivo: a plataforma terá somente public/assets/css/style.css e não utilizará Tailwind. O JavaScript global permanece em resources/js/app.js.
