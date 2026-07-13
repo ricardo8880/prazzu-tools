@@ -1,5 +1,23 @@
 # Prazzu Tools
 
+## Visão do Projeto
+
+O **Prazzu Tools** é uma plataforma de ferramentas para profissionais da contabilidade, criada com um objetivo claro: resolver problemas reais do dia a dia contábil com precisão, rapidez e uma excelente experiência de uso.
+
+A filosofia do projeto é simples:
+
+- A versão **gratuita** deve ser realmente útil e suficiente para que o profissional execute seu trabalho corretamente.
+- Os recursos **Plus** existem para oferecer produtividade, automação e conveniência, nunca para comprometer a qualidade dos cálculos gratuitos.
+
+Mais do que um conjunto de calculadoras, o objetivo é construir uma plataforma confiável que se torne referência para escritórios de contabilidade, departamentos financeiros e profissionais da área.
+
+A confiança é o principal ativo do projeto. Cada ferramenta deve produzir resultados corretos, transparentes e consistentes. Quando o usuário decidir assinar o plano Plus, a decisão deverá ser motivada pelo ganho de produtividade, e não pela falta de qualidade da versão gratuita.
+
+---
+
+> **Importante:** O restante deste README (arquitetura, organização dos módulos, padrões de desenvolvimento e demais seções técnicas) permanece igual ao documento original. Esta introdução foi criada para comunicar com clareza a missão e a visão do projeto.
+
+
 Plataforma modular em Laravel para ferramentas voltadas à rotina contábil. O layout atual é considerado definitivo e deve ser preservado durante a evolução técnica e funcional.
 
 ## Estado atual
