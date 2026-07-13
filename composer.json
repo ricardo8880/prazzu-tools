@@ -38,9 +38,10 @@
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --force",
-            "npm install",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan key:generate --ansi",
+            "@php artisan migrate --force --ansi",
+            "npm ci",
             "npm run build"
         ],
         "dev": [
@@ -83,6 +84,17 @@
             "@format:check",
             "@architecture",
             "@test"
+        ],
+        "format": [
+            "@php vendor/bin/pint"
+        ],
+        "verify": [
+            "@quality",
+            "@php artisan config:cache --ansi",
+            "@php artisan route:cache --ansi",
+            "@php artisan view:cache --ansi",
+            "npm run build",
+            "@php artisan optimize:clear --ansi"
         ]
     },
     "extra": {

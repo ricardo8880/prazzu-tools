@@ -1,12 +1,42 @@
-# Calculadora de Margem e Markup
+# Módulos de ferramentas
 
-Ferramenta-piloto do Lote 8. Valida o padrão modular com domínio puro, action de aplicação, request, controller, rotas, view isolada, regra versionada, histórico controlado, métricas, autorização, exportação CSV e testes.
+Cada ferramenta vive em `app/Tools/<NomeDaFerramenta>` e implementa
+`App\Core\Tools\Contracts\ToolModule`.
 
-## Fórmulas
+O contrato mínimo expõe um `ToolManifest`. Recursos opcionais são declarados por
+capacidades específicas:
 
-- custo total = custo base + custos adicionais
-- preço de venda = custo total / (1 - margem)
-- lucro = preço de venda - custo total
-- markup = lucro / custo total
+- `HasWebRoutes`;
+- `HasApiRoutes`;
+- `HasViews`;
+- `HasMigrations`.
 
-A versão da regra é `1.0.0`. O cálculo não depende de legislação e deve ser apresentado como estimativa gerencial.
+## Criando um módulo
+
+```bash
+php artisan make:tool CalculadoraRescisao \
+    --slug=calculadora-rescisao \
+    --category=trabalhista
+```
+
+O gerador cria apenas a estrutura inicial. Camadas como `Domain`, `Application`
+e `Infrastructure` devem ser adicionadas quando houver responsabilidade real
+para elas.
+
+## Regras obrigatórias
+
+1. O slug é imutável e único.
+2. Rotas usam o prefixo `tools.<slug>.`.
+3. Views usam o namespace `tools-<slug>`.
+4. A ferramenta depende do Core, nunca da implementação interna de outra.
+5. Métricas de uso não pertencem ao manifesto.
+6. O manifesto declara versão semântica, acesso e ciclo de vida.
+7. Uma capacidade só é implementada quando o módulo realmente a utiliza.
+8. Rotas, views e migrations declaradas permanecem dentro do próprio módulo.
+9. Testes ficam em `Tests/Unit` e `Tests/Feature` dentro do módulo.
+10. Toda ferramenta inicia como `draft` até concluir sua validação.
+11. Dinheiro, percentuais, datas, vigência, CPF e CNPJ usam os value objects do Core.
+12. Regras de domínio recebem a data de referência; não consultam `now()` internamente.
+
+Consulte `docs/LOT-3-MODULE-STANDARD.md` para a convenção do módulo e
+`docs/LOT-4-ACCOUNTING-FOUNDATIONS.md` para os fundamentos contábeis.

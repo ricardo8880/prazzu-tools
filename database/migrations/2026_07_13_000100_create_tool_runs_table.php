@@ -20,9 +20,9 @@ return new class extends Migration
             $table->text('result_payload')->nullable();
             $table->text('normative_references')->nullable();
             $table->string('error_code', 100)->nullable();
-            $table->timestamp('started_at');
-            $table->timestamp('finished_at')->nullable();
-            $table->timestamp('expires_at')->index();
+            $table->dateTime('started_at');
+            $table->dateTime('finished_at')->nullable();
+            $table->dateTime('expires_at');
             $table->timestamps();
 
             $table->index(['tool_slug', 'tool_version', 'rule_version'], 'tool_runs_version_lookup');

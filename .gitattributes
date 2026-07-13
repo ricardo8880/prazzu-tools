@@ -6,6 +6,18 @@
 *.md diff=markdown
 *.php diff=php
 
+/.env export-ignore
 /.github export-ignore
+/.idea export-ignore
+/.vscode export-ignore
+/node_modules export-ignore
+/vendor export-ignore
+/public/build export-ignore
+/storage/logs export-ignore
+/database/database.sqlite export-ignore
+/.phpunit.cache export-ignore
+/.phpunit.result.cache export-ignore
+/ARQUIVOS_REMOVIDOS.txt export-ignore
+/ferramentas export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore

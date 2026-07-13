@@ -1,13 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tools\MarginMarkupCalculator\Presentation\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 final class CalculateMarginMarkupRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
+    /** @return array<string, array<int, string>> */
     public function rules(): array
     {
         return [
@@ -18,6 +24,7 @@ final class CalculateMarginMarkupRequest extends FormRequest
         ];
     }
 
+    /** @return array<string, string> */
     public function messages(): array
     {
         return [

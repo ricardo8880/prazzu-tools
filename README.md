@@ -1,93 +1,147 @@
 # Prazzu Tools
 
-Plataforma modular em Laravel para reunir ferramentas voltadas à rotina contábil. O catálogo e o layout já estão estruturados; as ferramentas exibidas atualmente são provisórias e serão substituídas gradualmente por módulos reais.
+Plataforma modular em Laravel para ferramentas voltadas à rotina contábil. O layout atual é considerado definitivo e deve ser preservado durante a evolução técnica e funcional.
+
+## Estado atual
+
+A fundação arquitetural está preparada para receber ferramentas isoladas e versionadas. Existe uma ferramenta-piloto de margem e markup usada para validar o padrão técnico; as demais ferramentas exibidas no catálogo continuam provisórias.
+
+A plataforma já possui:
+
+- catálogo e registro central de ferramentas;
+- módulos isolados;
+- manifestos tipados;
+- dinheiro, percentuais, datas e identificadores compartilhados;
+- versionamento de regras;
+- histórico, auditoria e métricas separados;
+- autorização, limites e feature flags;
+- testes arquiteturais;
+- pipeline de qualidade;
+- ferramenta-piloto completa.
 
 ## Requisitos
 
-- PHP 8.2 ou superior
-- Composer 2
-- Node.js 20 ou superior
-- Extensões PHP exigidas pelo Laravel e pelos testes: `ctype`, `dom`, `fileinfo`, `filter`, `hash`, `mbstring`, `openssl`, `pcre`, `pdo`, `session`, `tokenizer` e `xmlwriter`
+- PHP 8.2 ou superior;
+- Composer 2;
+- Node.js 20 ou superior;
+- extensões PHP exigidas pelo Laravel;
+- `dom`, `mbstring`, `pdo_sqlite`, `xml` e `xmlwriter` para executar toda a suíte local.
 
 ## Instalação
 
 ```bash
-composer install
-npm ci
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-npm run build
+composer setup
 ```
 
-Para desenvolvimento local:
+O comando prepara `.env`, SQLite, migrations, dependências PHP e Node e o build do Vite.
+
+Instruções detalhadas para Windows e instalação manual estão em [`docs/INSTALLATION.md`](docs/INSTALLATION.md).
+
+## Desenvolvimento
 
 ```bash
-composer run dev
+composer dev
 ```
 
 Ou execute os serviços separadamente:
 
 ```bash
 php artisan serve
+php artisan queue:listen
 npm run dev
 ```
 
-## Testes e verificações
+## Qualidade
+
+Corrigir a formatação:
 
 ```bash
-php artisan test
-php artisan route:cache
-php artisan config:cache
-npm run build
+composer format
 ```
 
-Depois das verificações de cache, limpe os arquivos gerados no ambiente de desenvolvimento quando necessário:
+Executar sintaxe, Pint, arquitetura e testes:
 
 ```bash
-php artisan optimize:clear
+composer quality
 ```
+
+Executar a verificação completa, incluindo caches e build:
+
+```bash
+composer verify
+```
+
+Diagnósticos individuais:
+
+```bash
+php artisan tools:check-architecture
+php artisan route:list
+php artisan migrate:status
+```
+
+## Criar uma ferramenta
+
+```bash
+php artisan make:tool NomeDaFerramenta \
+    --slug=nome-da-ferramenta \
+    --category=calculadoras \
+    --access=free \
+    --status=draft
+```
+
+Leia a convenção completa em [`app/Tools/README.md`](app/Tools/README.md).
 
 ## Assets
 
-Os assets próprios da plataforma têm uma única fonte oficial:
+As fontes oficiais são:
 
 ```text
 resources/css/app.css
 resources/js/app.js
 ```
 
-Eles são compilados pelo Vite. Bootstrap e Bootstrap Icons permanecem carregados por CDN para preservar exatamente o layout atual.
-
-Código específico de uma ferramenta deverá ficar sob `resources/js/tools/<slug>` e, quando necessário, em uma estrutura equivalente de CSS. O padrão definitivo dos módulos será estabelecido nos lotes arquiteturais seguintes.
+Os assets são compilados pelo Vite. Bootstrap e Bootstrap Icons continuam carregados por CDN para preservar o layout aprovado.
 
 ## Estrutura principal
 
 ```text
-app/Core/Tools       contratos, manifestos, registro e catálogo
-app/Tools            módulos de ferramentas
-config/tools/         módulos, categorias, placeholders e métricas
+app/Core             fundamentos e serviços transversais
+app/Tools            módulos isolados das ferramentas
+config/tools         catálogo, categorias, módulos e métricas demonstrativas
 resources/views      layout e páginas da plataforma
-routes/tools.php     carregamento de rotas dos módulos
- tests                testes unitários e funcionais
+routes/tools.php     carregamento das rotas dos módulos
+tests                testes unitários, funcionais e arquiteturais
 ```
 
-## Estado atual
+## Limpeza e distribuição
 
-- O layout existente é considerado definitivo e não deve ser redesenhado durante a preparação arquitetural.
-- As ferramentas atuais são placeholders de catálogo.
-- Newsletter, sugestão, login, cadastro, planos e conteúdos institucionais ainda são demonstrativos.
-- Nenhuma ferramenta contábil real foi implementada.
+Limpar resíduos locais conhecidos:
 
-## Arquitetura
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\cleanup-project.ps1
+```
 
-Leia também:
+Criar um ZIP sem `.env`, Git, dependências, banco local ou logs:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\package-distribution.ps1
+```
+
+Detalhes em [`docs/LOTE-10-LIMPEZA-E-DISTRIBUICAO.md`](docs/LOTE-10-LIMPEZA-E-DISTRIBUICAO.md).
+
+## Documentação
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
-- [`docs/LOT-1-FOUNDATION.md`](docs/LOT-1-FOUNDATION.md)
-- [`docs/LOT-2-TOOL-CORE.md`](docs/LOT-2-TOOL-CORE.md)
-- [`app/Tools/README.md`](app/Tools/README.md)
+- [`docs/LOT-3-MODULE-STANDARD.md`](docs/LOT-3-MODULE-STANDARD.md)
+- [`docs/LOT-4-ACCOUNTING-FOUNDATIONS.md`](docs/LOT-4-ACCOUNTING-FOUNDATIONS.md)
+- [`docs/LOTE-5-VERSIONAMENTO-AUDITORIA-HISTORICO.md`](docs/LOTE-5-VERSIONAMENTO-AUDITORIA-HISTORICO.md)
+- [`docs/LOTE-6-INFRAESTRUTURA-TRANSVERSAL.md`](docs/LOTE-6-INFRAESTRUTURA-TRANSVERSAL.md)
+- [`docs/LOTE-7-QUALIDADE-E-TESTES.md`](docs/LOTE-7-QUALIDADE-E-TESTES.md)
+- [`docs/LOTE-8-FERRAMENTA-PILOTO.md`](docs/LOTE-8-FERRAMENTA-PILOTO.md)
+- [`docs/LOTE_9_ESTABILIZACAO.md`](docs/LOTE_9_ESTABILIZACAO.md)
+- [`docs/LOTE-10-LIMPEZA-E-DISTRIBUICAO.md`](docs/LOTE-10-LIMPEZA-E-DISTRIBUICAO.md)
+- [`docs/RELEASE-CHECKLIST.md`](docs/RELEASE-CHECKLIST.md)
 
-## Versionamento, auditoria e histórico
+## Segurança
 
-As regras de persistência de execuções, versões e retenção estão documentadas em [`docs/LOTE-5-VERSIONAMENTO-AUDITORIA-HISTORICO.md`](docs/LOTE-5-VERSIONAMENTO-AUDITORIA-HISTORICO.md).
+O arquivo `.env` contém segredos locais e não deve ser enviado. Distribua somente `.env.example`.

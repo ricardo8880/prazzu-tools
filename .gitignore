@@ -22,3 +22,8 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Resíduos e pacotes locais
+/ARQUIVOS_REMOVIDOS.txt
+/ferramentas
+/*-distribuicao.zip

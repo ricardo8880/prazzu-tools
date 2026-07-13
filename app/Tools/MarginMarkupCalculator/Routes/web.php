@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Tools\MarginMarkupCalculator\Presentation\Controllers\MarginMarkupController;
 use Illuminate\Support\Facades\Route;
 
