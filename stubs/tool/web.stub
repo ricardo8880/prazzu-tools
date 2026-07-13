@@ -1,0 +1,7 @@
+<?php
+
+use App\Tools\{{ class }}\Presentation\Controllers\ToolController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/ferramentas/{{ slug }}', [ToolController::class, 'index'])
+    ->name('{{ route_prefix }}.index');

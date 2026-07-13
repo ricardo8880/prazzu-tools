@@ -1,13 +1,20 @@
 <?php
 
+use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\ToolRegistry;
 
 $registry = app(ToolRegistry::class);
 
 foreach ($registry->modules() as $module) {
-    $routeFile = $module->routeFile();
-
-    if ($routeFile !== null && is_file($routeFile)) {
-        require $routeFile;
+    if (! $module instanceof HasWebRoutes) {
+        continue;
     }
+
+    $routeFile = $module->webRoutesPath();
+
+    if (! is_file($routeFile)) {
+        throw new RuntimeException("Arquivo de rotas da ferramenta não encontrado: {$routeFile}");
+    }
+
+    require $routeFile;
 }

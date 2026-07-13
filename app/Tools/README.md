@@ -1,18 +1,12 @@
-# Módulos de ferramentas
+# Calculadora de Margem e Markup
 
-Cada ferramenta vive em uma pasta própria dentro de `app/Tools` e implementa
-`App\Core\Tools\Contracts\ToolModule`.
+Ferramenta-piloto do Lote 8. Valida o padrão modular com domínio puro, action de aplicação, request, controller, rotas, view isolada, regra versionada, histórico controlado, métricas, autorização, exportação CSV e testes.
 
-Estrutura mínima recomendada:
+## Fórmulas
 
-```text
-app/Tools/NomeDaFerramenta/
-├── NomeDaFerramentaTool.php
-├── Http/
-├── Services/
-└── routes.php
-```
+- custo total = custo base + custos adicionais
+- preço de venda = custo total / (1 - margem)
+- lucro = preço de venda - custo total
+- markup = lucro / custo total
 
-Crie apenas as pastas necessárias. Uma ferramenta não pode depender da
-implementação interna de outra. Código realmente compartilhável deve ser movido
-para `app/Core`.
+A versão da regra é `1.0.0`. O cálculo não depende de legislação e deve ser apresentado como estimativa gerencial.

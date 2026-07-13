@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Tools\{{ class }}\Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+
+final class ToolTest extends TestCase
+{
+    public function test_placeholder_for_domain_rules(): void
+    {
+        $this->markTestIncomplete('Adicione os casos de referência do domínio antes de ativar a ferramenta.');
+    }
+}

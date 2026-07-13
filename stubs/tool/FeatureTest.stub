@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Tools\{{ class }}\Tests\Feature;
+
+use Tests\TestCase;
+
+final class ToolPageTest extends TestCase
+{
+    public function test_tool_page_is_available(): void
+    {
+        $this->get(route('{{ route_prefix }}.index'))->assertOk();
+    }
+}

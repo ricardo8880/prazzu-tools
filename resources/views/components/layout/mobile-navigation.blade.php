@@ -9,19 +9,22 @@
     <div class="offcanvas-body d-flex flex-column">
         <nav class="nav nav-pills flex-column gap-1" aria-label="Navegação móvel">
             <a class="nav-link prazzu-sidebar-link" href="{{ route('home') }}"><i class="bi bi-house"></i>Início</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/ferramentas') }}"><i class="bi bi-grid"></i>Todas as ferramentas</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/ferramentas/geradores') }}"><i class="bi bi-magic"></i>Geradores</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/ferramentas/calculadoras') }}"><i class="bi bi-calculator"></i>Calculadoras</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/ferramentas/conversores') }}"><i class="bi bi-arrow-left-right"></i>Conversores</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/ferramentas/validadores') }}"><i class="bi bi-shield-check"></i>Validadores</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/blog') }}"><i class="bi bi-journal-text"></i>Blog</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/planos') }}"><i class="bi bi-gem"></i>Planos</a>
-            <a class="nav-link prazzu-sidebar-link" href="{{ url('/sobre') }}"><i class="bi bi-info-circle"></i>Sobre</a>
+            <a class="nav-link prazzu-sidebar-link" href="{{ route('tools.index') }}"><i class="bi bi-grid"></i>Todas as ferramentas</a>
+
+            @foreach ($toolCategories as $category)
+                <a class="nav-link prazzu-sidebar-link" href="{{ $category['url'] }}">
+                    <i class="bi {{ $category['icon'] }}"></i>{{ $category['name'] }}
+                </a>
+            @endforeach
+
+            <a class="nav-link prazzu-sidebar-link" href="{{ route('blog.index') }}"><i class="bi bi-journal-text"></i>Blog</a>
+            <a class="nav-link prazzu-sidebar-link" href="{{ route('plans') }}"><i class="bi bi-gem"></i>Planos</a>
+            <a class="nav-link prazzu-sidebar-link" href="{{ route('about') }}"><i class="bi bi-info-circle"></i>Sobre</a>
         </nav>
 
         <div class="d-grid gap-2 mt-auto pt-4">
-            <a class="btn prazzu-btn-outline" href="{{ url('/entrar') }}">Entrar</a>
-            <a class="btn btn-primary prazzu-btn-primary" href="{{ url('/criar-conta') }}">Criar conta grátis</a>
+            <a class="btn prazzu-btn-outline" href="{{ route('login.placeholder') }}">Entrar</a>
+            <a class="btn btn-primary prazzu-btn-primary" href="{{ route('register.placeholder') }}">Criar conta grátis</a>
         </div>
     </div>
 </div>

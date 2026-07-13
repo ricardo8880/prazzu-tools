@@ -1,0 +1,10 @@
+@extends('layouts.app')
+
+@section('title', '{{ name }}')
+
+@section('content')
+    <section>
+        <h1>{{ name }}</h1>
+        <p>Módulo criado. Implemente aqui a interface específica da ferramenta.</p>
+    </section>
+@endsection

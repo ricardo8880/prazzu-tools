@@ -1,0 +1,52 @@
+name: Qualidade
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Preparar PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: dom, mbstring, pdo_sqlite, xml, xmlwriter
+          coverage: none
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependências PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Instalar dependências web
+        run: npm ci
+
+      - name: Preparar ambiente
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+
+      - name: Validar qualidade PHP
+        run: composer quality
+
+      - name: Compilar assets
+        run: npm run build
+
+      - name: Validar caches de produção
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache

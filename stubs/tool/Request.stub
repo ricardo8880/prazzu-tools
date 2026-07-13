@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Tools\{{ class }}\Presentation\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+final class ExecuteToolRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /** @return array<string, array<int, string>> */
+    public function rules(): array
+    {
+        return [];
+    }
+}

@@ -1,0 +1,20 @@
+# {{ name }}
+
+- Slug: `{{ slug }}`
+- Rota principal: `{{ route_prefix }}.index`
+- Namespace de views: `{{ view_namespace }}`
+
+## Limites do módulo
+
+Este módulo pode depender do Core e da Platform, mas não pode importar a
+implementação interna de outra ferramenta.
+
+## Antes de ativar
+
+1. Defina entradas e saídas do domínio.
+2. Adicione casos de referência e fontes normativas quando aplicável.
+3. Use os value objects do Core para dinheiro, percentuais, datas, CPF e CNPJ.
+4. Faça regras temporais receberem a data de referência e declararem vigência.
+5. Implemente validação, regras e apresentação.
+6. Substitua testes incompletos por testes reais.
+7. Revise acesso, persistência, dados sensíveis e histórico.

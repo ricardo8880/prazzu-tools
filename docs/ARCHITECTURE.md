@@ -1,59 +1,134 @@
 # Arquitetura da Prazzu Tools
 
-## Regra central
+## Direção arquitetural
 
-A plataforma possui um núcleo compartilhado e ferramentas isoladas por módulo.
-Uma ferramenta pode depender do núcleo, mas nunca da implementação interna de
-outra ferramenta.
+A plataforma é um monólito modular em Laravel. O núcleo compartilhado conhece os
+contratos das ferramentas, mas não conhece suas regras internas. Uma ferramenta
+pode depender do Core e nunca da implementação de outra ferramenta.
 
-## Fonte única do catálogo
+## Contrato mínimo
 
-`App\Core\Tools\ToolCatalog` é a única fonte usada pela home, catálogo, busca,
-filtros, contadores, páginas individuais, ferramentas relacionadas e painéis
-laterais.
+Todo módulo implementa `ToolModule` e fornece um `ToolManifest` imutável. O
+manifesto contém apenas metadados estáticos e tipados:
 
-As ferramentas ainda não implementadas ficam provisoriamente em
-`config/tools.php`. Quando um módulo real registra o mesmo `slug`, a definição do
-módulo substitui a provisória automaticamente. Isso permite implementar uma
-ferramenta sem alterar as páginas globais.
+- slug, nome e descrição;
+- categoria;
+- ícone e rota principal;
+- versão semântica;
+- acesso;
+- status do ciclo de vida;
+- posição, destaque e palavras-chave.
 
-## Front-end
+Categorias, acessos e estados são enums. Isso impede valores divergentes quando o
+catálogo crescer.
 
-- Bootstrap e Bootstrap Icons são carregados por CDN.
-- Existe apenas uma folha global: `public/assets/css/style.css`.
-- O Bootstrap resolve primeiro grid, espaçamento, responsividade e componentes.
-- O JavaScript global é servido diretamente por `public/assets/js/app.js`, sem
-  depender do manifesto do Vite.
-- JavaScript específico deve ficar em `public/assets/js/tools/<slug>.js`, ser
-  carregado apenas pela ferramenta e atuar somente dentro de `[data-tool]`.
+## Capacidades opcionais
 
-## Registro de módulos
+O módulo declara somente o que utiliza:
 
-Cada ferramenta implementa `ToolModule` e é registrada explicitamente em
-`config/tools.php`, na chave `modules`. O `ToolRegistry` valida slugs duplicados e
-disponibiliza os metadados ao `ToolCatalog`.
+- `HasWebRoutes` para rotas web;
+- `HasApiRoutes` para API;
+- `HasViews` para namespace próprio de views;
+- `HasMigrations` para persistência exclusiva.
+
+Novas capacidades devem representar comportamento transversal real. Elas não
+devem ser criadas apenas para antecipar possibilidades.
+
+## Registro
+
+As classes são registradas explicitamente em `config/tools/modules.php`, divididas
+em grupos para reduzir conflitos de edição. Os grupos servem apenas para
+organização do registro; a categoria oficial continua no manifesto.
+
+`ToolRegistry`:
+
+- instancia módulos pelo container;
+- exige implementação de `ToolModule`;
+- indexa módulos por slug;
+- rejeita duplicidades;
+- expõe módulos e manifestos separadamente.
+
+Não há varredura de diretórios durante requisições.
+
+## Catálogo e placeholders
+
+`ToolCatalog` continua sendo a fonte única para home, busca, filtros, páginas e
+barras laterais.
+
+A configuração foi separada:
+
+```text
+config/tools/catalog.php      metadados estáticos dos placeholders
+config/tools/metrics.php      números e destaques demonstrativos
+config/tools/categories.php   apresentação das categorias
+config/tools/modules.php      classes dos módulos reais
+```
+
+Quando um módulo real registra um slug já usado por um placeholder, seu manifesto
+substitui os metadados provisórios. As métricas permanecem uma responsabilidade
+separada e futuramente poderão vir de banco, cache ou observabilidade.
 
 ## Rotas
 
-Cada módulo informa seu próprio arquivo de rotas. `routes/tools.php` é carregado
-antes da rota provisória `tools.show`, permitindo que a rota real de uma
-ferramenta tenha prioridade sobre o placeholder da plataforma.
+Módulos com rotas web implementam `HasWebRoutes`. O carregador falha de forma
+explícita quando o arquivo declarado não existe, evitando módulos parcialmente
+registrados.
 
-## Checklist de uma nova ferramenta
+Convenção:
 
-1. Criar `app/Tools/<NomeDaFerramenta>`.
-2. Implementar `ToolModule`.
-3. Criar controller, request e serviço somente quando necessários.
-4. Criar views em `resources/views/tools/<slug>`.
-5. Criar JavaScript isolado apenas quando houver comportamento específico.
-6. Criar o arquivo de rotas do módulo.
-7. Registrar a classe em `config/tools.php`.
-8. Criar testes unitários e de funcionalidade.
-9. Remover a entrada provisória do catálogo, opcionalmente; o módulo já a
-   substitui pelo mesmo slug.
+```text
+tools.<slug>.index
+tools.<slug>.calculate
+tools.<slug>.export
+tools.<slug>.history
+```
 
-## Crescimento
+As rotas específicas continuam sendo carregadas antes da rota genérica do
+placeholder.
 
-Não criar pastas vazias ou abstrações sem uso. Cada módulo começa pequeno e cresce
-conforme a necessidade. Recursos compartilhados só entram no Core depois de serem
-claramente reutilizáveis.
+## Ciclo de vida e acesso
+
+Estados suportados:
+
+```text
+draft, internal, beta, active, maintenance, deprecated, retired
+```
+
+Acessos suportados:
+
+```text
+free, premium, authenticated, internal
+```
+
+Esses valores são declarações arquiteturais. A autorização e o controle de uso
+serão implementados no lote de infraestrutura transversal.
+
+## Compatibilidade
+
+`ToolDefinition` foi mantido apenas como alias temporário de `ToolManifest`. Código
+novo deve utilizar exclusivamente `ToolManifest`.
+
+## Fundamentos compartilhados
+
+O Core disponibiliza value objects para dinheiro, percentuais, arredondamento,
+datas de referência, competências, períodos, vigência, CPF, CNPJ e referências
+normativas. Esses componentes não contêm fórmulas específicas de ferramentas.
+
+Regras obrigatórias:
+
+- valores monetários não usam `float`;
+- cálculos recebem uma data de referência explícita;
+- regras temporais declaram vigência;
+- CPF e CNPJ são tratados como identificadores, não números;
+- fontes normativas ficam ligadas às regras que justificam.
+
+Consulte `docs/LOT-4-ACCOUNTING-FOUNDATIONS.md`.
+
+## Limites atuais
+
+Ainda não fazem parte do Core:
+
+- versionamento formal das regras de cálculo;
+- histórico, snapshots, auditoria e persistência;
+- autenticação, premium e limites de uso;
+- integrações externas e processamento assíncrono.

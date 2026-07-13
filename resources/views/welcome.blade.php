@@ -41,11 +41,11 @@
                     </ul>
                 </div>
 
-                <div class="col-lg-5 d-none d-lg-block">
-                    <div class="prazzu-hero-art" aria-hidden="true">
-                        <img src="{{ asset('assets/images/accounting-tools-hero.png') }}" alt="">
-                    </div>
-                </div>
+{{--                <div class="col-lg-5 d-none d-lg-block">--}}
+{{--                    <div class="prazzu-hero-art" aria-hidden="true">--}}
+{{--                        <img src="{{ asset('assets/images/accounting-tools-hero.png') }}" alt="">--}}
+{{--                    </div>--}}
+{{--                </div>--}}
             </div>
         </section>
 

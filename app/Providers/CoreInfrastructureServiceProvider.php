@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Providers;
+
+use App\Core\Access\Contracts\ToolAccessGate;
+use App\Core\Access\Services\DefaultToolAccessGate;
+use App\Core\FeatureFlags\Contracts\FeatureFlagRepository;
+use App\Core\FeatureFlags\Services\ConfigFeatureFlagRepository;
+use App\Core\Integrations\Contracts\ExternalServiceClient;
+use App\Core\Integrations\Services\LaravelHttpServiceClient;
+use App\Core\Usage\Contracts\UsageLimiter;
+use App\Core\Usage\Contracts\UsageMetrics;
+use App\Core\Usage\Services\CacheUsageLimiter;
+use App\Core\Usage\Services\DatabaseUsageMetrics;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Support\ServiceProvider;
+
+final class CoreInfrastructureServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->singleton(FeatureFlagRepository::class, ConfigFeatureFlagRepository::class);
+        $this->app->singleton(ToolAccessGate::class, DefaultToolAccessGate::class);
+
+        $this->app->singleton(UsageLimiter::class, function ($app): UsageLimiter {
+            return new CacheUsageLimiter($app->make('cache.store'));
+        });
+
+        $this->app->singleton(UsageMetrics::class, DatabaseUsageMetrics::class);
+        $this->app->bind(ExternalServiceClient::class, LaravelHttpServiceClient::class);
+        $this->app->alias('cache.store', CacheRepository::class);
+    }
+}

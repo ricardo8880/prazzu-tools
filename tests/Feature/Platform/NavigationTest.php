@@ -13,6 +13,17 @@ final class NavigationTest extends TestCase
         }
     }
 
+    public function test_mobile_navigation_uses_all_catalog_categories(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertOk();
+
+        foreach (config('tools.categories', []) as $category) {
+            $response->assertSee($category['name']);
+        }
+    }
+
     public function test_catalog_can_be_searched_and_filtered(): void
     {
         $this->get('/ferramentas?q=CNPJ')

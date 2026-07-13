@@ -3,8 +3,9 @@
 namespace App\Core\Tools;
 
 use App\Core\Tools\Contracts\ToolModule;
-use App\Core\Tools\Data\ToolDefinition;
+use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Exceptions\DuplicateToolException;
+use App\Core\Tools\Support\ToolModuleValidator;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
 
@@ -13,12 +14,17 @@ final class ToolRegistry
     /** @var array<string, ToolModule> */
     private array $modules = [];
 
-    /**
-     * @param array<int, class-string<ToolModule>> $moduleClasses
-     */
-    public function __construct(Container $container, array $moduleClasses = [])
-    {
+    /** @param array<int, class-string<ToolModule>> $moduleClasses */
+    public function __construct(
+        Container $container,
+        array $moduleClasses = [],
+        private readonly ToolModuleValidator $validator = new ToolModuleValidator(),
+    ) {
         foreach ($moduleClasses as $moduleClass) {
+            if (! is_string($moduleClass) || ! class_exists($moduleClass)) {
+                throw new InvalidArgumentException('Todos os módulos configurados devem apontar para classes existentes.');
+            }
+
             $module = $container->make($moduleClass);
 
             if (! $module instanceof ToolModule) {
@@ -35,7 +41,9 @@ final class ToolRegistry
 
     public function register(ToolModule $module): void
     {
-        $slug = $module->definition()->slug;
+        $this->validator->validate($module);
+
+        $slug = $module->manifest()->slug;
 
         if (isset($this->modules[$slug])) {
             throw new DuplicateToolException("Já existe uma ferramenta registrada com o slug [{$slug}].");
@@ -50,28 +58,41 @@ final class ToolRegistry
         return $this->modules;
     }
 
-    /** @return array<int, ToolDefinition> */
-    public function definitions(bool $onlyActive = true): array
+    /** @return array<int, ToolManifest> */
+    public function manifests(bool $onlyCatalogVisible = true): array
     {
-        $definitions = array_map(
-            static fn (ToolModule $module): ToolDefinition => $module->definition(),
+        $manifests = array_map(
+            static fn (ToolModule $module): ToolManifest => $module->manifest(),
             array_values($this->modules),
         );
 
-        if ($onlyActive) {
-            $definitions = array_values(array_filter(
-                $definitions,
-                static fn (ToolDefinition $tool): bool => $tool->isActive,
+        if ($onlyCatalogVisible) {
+            $manifests = array_values(array_filter(
+                $manifests,
+                static fn (ToolManifest $tool): bool => $tool->status->isVisibleInCatalog(),
             ));
         }
 
-        return $definitions;
+        return $manifests;
     }
 
-    public function find(string $slug): ?ToolDefinition
+    public function findModule(string $slug): ?ToolModule
     {
-        $module = $this->modules[$slug] ?? null;
+        return $this->modules[$slug] ?? null;
+    }
 
-        return $module?->definition();
+    public function findManifest(string $slug): ?ToolManifest
+    {
+        return $this->findModule($slug)?->manifest();
+    }
+
+    public function has(string $slug): bool
+    {
+        return isset($this->modules[$slug]);
+    }
+
+    public function count(): int
+    {
+        return count($this->modules);
     }
 }

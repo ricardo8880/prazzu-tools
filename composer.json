@@ -3,7 +3,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -65,6 +68,21 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "lint": [
+            "@php -r \"$it=new RecursiveIteratorIterator(new RecursiveDirectoryIterator('app')); foreach($it as $f){if($f->isFile()&&$f->getExtension()==='php'){passthru('php -l '.escapeshellarg($f->getPathname()),$c); if($c!==0) exit($c);}}\""
+        ],
+        "format:check": [
+            "@php vendor/bin/pint --test"
+        ],
+        "architecture": [
+            "@php artisan tools:check-architecture"
+        ],
+        "quality": [
+            "@lint",
+            "@format:check",
+            "@architecture",
+            "@test"
         ]
     },
     "extra": {

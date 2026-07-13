@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Core\Tools\Contracts\HasMigrations;
+use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\ToolCatalog;
 use App\Core\Tools\ToolRegistry;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,7 +16,7 @@ final class ToolServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ToolRegistry::class, function ($app): ToolRegistry {
             /** @var array<int, class-string<\App\Core\Tools\Contracts\ToolModule>> $modules */
-            $modules = config('tools.modules', []);
+            $modules = array_values(Arr::flatten(config('tools.modules', [])));
 
             return new ToolRegistry($app, $modules);
         });
@@ -23,9 +26,19 @@ final class ToolServiceProvider extends ServiceProvider
         ));
     }
 
-    public function boot(ToolCatalog $catalog): void
+    public function boot(ToolRegistry $registry, ToolCatalog $catalog): void
     {
-        View::composer('components.layout.left-sidebar', function ($view) use ($catalog): void {
+        foreach ($registry->modules() as $module) {
+            if ($module instanceof HasViews) {
+                $this->loadViewsFrom($module->viewsPath(), $module->viewsNamespace());
+            }
+
+            if ($module instanceof HasMigrations) {
+                $this->loadMigrationsFrom($module->migrationsPath());
+            }
+        }
+
+        View::composer(['components.layout.left-sidebar', 'components.layout.mobile-navigation'], function ($view) use ($catalog): void {
             $view->with('toolCategories', $catalog->categories(false));
         });
 

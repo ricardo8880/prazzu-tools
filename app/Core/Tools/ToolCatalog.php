@@ -2,7 +2,8 @@
 
 namespace App\Core\Tools;
 
-use App\Core\Tools\Data\ToolDefinition;
+use App\Core\Tools\Data\ToolManifest;
+use App\Core\Tools\Enums\ToolAccess;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -13,25 +14,30 @@ final class ToolCatalog
     }
 
     /** @return Collection<int, array<string, mixed>> */
-    public function all(bool $onlyActive = true): Collection
+    public function all(bool $onlyCatalogVisible = true): Collection
     {
-        $configured = collect(config('tools.catalog', []))
-            ->keyBy('slug');
+        $manifests = collect(config('tools.catalog', []))
+            ->map(static fn (array $tool): ToolManifest => ToolManifest::fromArray($tool))
+            ->keyBy(static fn (ToolManifest $tool): string => $tool->slug);
 
-        $catalog = $configured;
-
-        foreach ($this->registry->definitions($onlyActive) as $definition) {
-            $catalog->put(
-                $definition->slug,
-                array_replace(
-                    $configured->get($definition->slug, []),
-                    $this->fromDefinition($definition),
-                ),
-            );
+        foreach ($this->registry->manifests($onlyCatalogVisible) as $manifest) {
+            $manifests->put($manifest->slug, $manifest);
         }
 
-        return $catalog
-            ->filter(fn (array $tool): bool => ! $onlyActive || ($tool['is_active'] ?? true))
+        $metrics = config('tools.metrics', []);
+
+        return $manifests
+            ->when(
+                $onlyCatalogVisible,
+                fn (Collection $items): Collection => $items->filter(
+                    static fn (ToolManifest $tool): bool => $tool->status->isVisibleInCatalog(),
+                ),
+            )
+            ->map(fn (ToolManifest $tool): array => $this->present(
+                $tool,
+                is_array($metrics[$tool->slug] ?? null) ? $metrics[$tool->slug] : [],
+            ))
+            ->sortBy('position')
             ->values();
     }
 
@@ -39,8 +45,7 @@ final class ToolCatalog
     public function featured(): Collection
     {
         return $this->all()
-            ->filter(fn (array $tool): bool => (bool) ($tool['is_featured'] ?? false))
-            ->sortBy(fn (array $tool): int => (int) ($tool['position'] ?? PHP_INT_MAX))
+            ->filter(static fn (array $tool): bool => (bool) $tool['is_featured'])
             ->values();
     }
 
@@ -48,8 +53,8 @@ final class ToolCatalog
     public function popular(int $limit = 5): Collection
     {
         return $this->all()
-            ->filter(fn (array $tool): bool => (bool) ($tool['is_popular'] ?? false))
-            ->sortByDesc(fn (array $tool): int => (int) ($tool['uses_count'] ?? 0))
+            ->filter(static fn (array $tool): bool => (bool) $tool['is_popular'])
+            ->sortByDesc(static fn (array $tool): int => (int) $tool['uses_count'])
             ->take($limit)
             ->values();
     }
@@ -82,7 +87,7 @@ final class ToolCatalog
                 $tool['name'],
                 $tool['description'],
                 $tool['category'],
-                implode(' ', $tool['keywords'] ?? []),
+                implode(' ', $tool['keywords']),
             ])));
 
             return str_contains($haystack, $needle);
@@ -98,10 +103,9 @@ final class ToolCatalog
             return collect();
         }
 
-        $tools = $this->all()->reject(fn (array $tool): bool => $tool['slug'] === $slug);
-
-        return $tools
-            ->sortByDesc(fn (array $tool): int => $tool['category'] === $current['category'] ? 1 : 0)
+        return $this->all()
+            ->reject(static fn (array $tool): bool => $tool['slug'] === $slug)
+            ->sortByDesc(static fn (array $tool): int => $tool['category'] === $current['category'] ? 1 : 0)
             ->take($limit)
             ->values();
     }
@@ -112,15 +116,13 @@ final class ToolCatalog
         $counts = $this->all()->countBy('category');
 
         $categories = collect(config('tools.categories', []))
-            ->map(function (array $category, string $slug) use ($counts): array {
-                return [
-                    'slug' => $slug,
-                    'name' => $category['name'],
-                    'icon' => $category['icon'],
-                    'count' => (int) $counts->get($slug, 0),
-                    'url' => route('tools.category', ['category' => $slug]),
-                ];
-            })
+            ->map(static fn (array $category, string $slug): array => [
+                'slug' => $slug,
+                'name' => $category['name'],
+                'icon' => $category['icon'],
+                'count' => (int) $counts->get($slug, 0),
+                'url' => route('tools.category', ['category' => $slug]),
+            ])
             ->values();
 
         if (! $includeAll) {
@@ -136,28 +138,21 @@ final class ToolCatalog
         ])->values();
     }
 
-    /** @return array<string, mixed> */
-    private function fromDefinition(ToolDefinition $definition): array
+    /** @param array<string, mixed> $metrics @return array<string, mixed> */
+    private function present(ToolManifest $manifest, array $metrics): array
     {
-        return [
-            'slug' => $definition->slug,
-            'name' => $definition->name,
-            'description' => $definition->description,
-            'category' => $definition->category,
-            'icon' => $definition->icon,
-            'route_name' => $definition->routeName,
-            'is_free' => $definition->isFree,
-            'is_premium' => $definition->isPremium,
-            'is_featured' => $definition->isFeatured,
-            'is_active' => $definition->isActive,
-            'keywords' => $definition->keywords,
-            'tone' => 'purple',
-            'badge' => $definition->isPremium ? 'Premium' : 'Grátis',
-            'badge_tone' => $definition->isPremium ? 'yellow' : 'green',
-            'is_popular' => false,
-            'uses_count' => 0,
-            'uses_label' => null,
-            'position' => PHP_INT_MAX,
-        ];
+        $isPremium = $manifest->access === ToolAccess::Premium;
+
+        return array_merge($manifest->toArray(), [
+            'is_free' => $manifest->access === ToolAccess::Free,
+            'is_premium' => $isPremium,
+            'is_active' => $manifest->status->acceptsNewExecutions(),
+            'tone' => (string) ($metrics['tone'] ?? 'purple'),
+            'badge' => (string) ($metrics['badge'] ?? ($isPremium ? 'Premium' : 'Grátis')),
+            'badge_tone' => (string) ($metrics['badge_tone'] ?? ($isPremium ? 'yellow' : 'green')),
+            'is_popular' => (bool) ($metrics['is_popular'] ?? false),
+            'uses_count' => (int) ($metrics['uses_count'] ?? 0),
+            'uses_label' => $metrics['uses_label'] ?? null,
+        ]);
     }
 }

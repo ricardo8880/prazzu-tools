@@ -1,0 +1,68 @@
+<?php
+
+return [
+    'gerador-de-contrato' => [
+        'tone' => 'pink',
+        'badge' => 'Popular',
+        'badge_tone' => 'purple',
+        'is_popular' => true,
+        'uses_count' => 12500,
+        'uses_label' => '12.5k usos',
+    ],
+    'calculadora-de-impostos' => [
+        'tone' => 'purple',
+        'badge' => 'Popular',
+        'badge_tone' => 'purple',
+        'is_popular' => true,
+        'uses_count' => 8700,
+        'uses_label' => '8.7k usos',
+    ],
+    'validador-de-cnpj' => [
+        'tone' => 'green',
+        'badge' => 'Popular',
+        'badge_tone' => 'purple',
+        'is_popular' => true,
+        'uses_count' => 6300,
+        'uses_label' => '6.3k usos',
+    ],
+    'conversor-de-arquivos' => [
+        'tone' => 'purple',
+        'badge' => 'Popular',
+        'badge_tone' => 'purple',
+        'is_popular' => false,
+        'uses_count' => 0,
+        'uses_label' => null,
+    ],
+    'gerador-de-procuracao' => [
+        'tone' => 'blue',
+        'badge' => 'Novo',
+        'badge_tone' => 'green',
+        'is_popular' => true,
+        'uses_count' => 4200,
+        'uses_label' => '4.2k usos',
+    ],
+    'calculadora-de-rescisao' => [
+        'tone' => 'pink',
+        'badge' => 'Novo',
+        'badge_tone' => 'green',
+        'is_popular' => true,
+        'uses_count' => 3800,
+        'uses_label' => '3.8k usos',
+    ],
+    'organizador-de-documentos' => [
+        'tone' => 'purple',
+        'badge' => 'Novo',
+        'badge_tone' => 'green',
+        'is_popular' => false,
+        'uses_count' => 0,
+        'uses_label' => null,
+    ],
+    'gerador-de-relatorios' => [
+        'tone' => 'purple',
+        'badge' => 'Novo',
+        'badge_tone' => 'green',
+        'is_popular' => false,
+        'uses_count' => 0,
+        'uses_label' => null,
+    ],
+];
