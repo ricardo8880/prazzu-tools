@@ -412,3 +412,677 @@ Se a resposta for "isso resolve um problema específico desta ferramenta", entã
 
 Essa regra é a principal responsável por manter o Prazzu Tools organizado, escalável e preparado para evoluir continuamente.
 
+
+
+
+
+
+# Padrão Oficial de Desenvolvimento de Ferramentas
+
+**Versão:** 1.0
+**Projeto:** Prazzu Tools
+
+---
+
+# 1. Objetivo
+
+Este documento define o padrão oficial para o desenvolvimento de todas as ferramentas do Prazzu Tools.
+
+Seu objetivo é garantir que todas as ferramentas possuam a mesma arquitetura, os mesmos padrões de qualidade, a mesma experiência para o usuário e a mesma facilidade de manutenção.
+
+Este documento é a autoridade máxima para o desenvolvimento de qualquer ferramenta do projeto.
+
+Caso exista qualquer divergência entre implementações, este documento prevalece.
+
+---
+
+# 2. Filosofia do Projeto
+
+O projeto deve crescer continuamente sem se transformar em um sistema desorganizado.
+
+Toda decisão de arquitetura deve priorizar:
+
+* reutilização de código;
+* baixo acoplamento;
+* alta coesão;
+* facilidade de manutenção;
+* consistência entre ferramentas;
+* evolução contínua do Core.
+
+Nenhuma ferramenta pode ser desenvolvida pensando apenas nela.
+
+Toda implementação deve considerar o crescimento futuro do projeto.
+
+---
+
+# 3. Antes de iniciar qualquer ferramenta
+
+Antes de escrever qualquer linha de código é obrigatório:
+
+1. Analisar o projeto inteiro.
+2. Analisar todas as ferramentas existentes.
+3. Analisar todos os lotes anteriores da ferramenta.
+4. Analisar toda a estrutura do Core.
+5. Procurar implementações semelhantes.
+6. Verificar possibilidade de reutilização.
+7. Somente depois iniciar o desenvolvimento.
+
+É proibido iniciar uma implementação sem essa análise.
+
+---
+
+# 4. Regra de Ouro
+
+Antes de implementar qualquer funcionalidade, obrigatoriamente deverá ser respondida a seguinte pergunta:
+
+> Outra ferramenta poderá utilizar essa funcionalidade?
+
+Se a resposta for **SIM**, a implementação deverá ser criada no Core.
+
+Se a resposta for **NÃO**, ela poderá permanecer dentro da ferramenta.
+
+Essa é a regra mais importante deste projeto.
+
+---
+
+# 5. Estrutura Obrigatória
+
+Toda ferramenta deverá possuir obrigatoriamente:
+
+```text
+Application/
+Domain/
+Infrastructure/
+Presentation/
+Resources/
+Routes/
+Tests/
+README.md
+Tool.php
+```
+
+Nenhuma ferramenta poderá possuir estrutura diferente sem justificativa arquitetural.
+
+---
+
+# 6. Organização das Pastas
+
+A ferramenta deverá existir exclusivamente em:
+
+```text
+app/Tools/NomeDaFerramenta
+```
+
+É proibido espalhar arquivos da ferramenta pelo projeto.
+
+---
+
+# 7. Responsabilidade das Camadas
+
+## Controller
+
+O Controller apenas:
+
+* recebe Request;
+* chama Actions;
+* retorna Response.
+
+É proibido:
+
+* calcular;
+* consultar banco diretamente;
+* gerar PDF;
+* gerar CSV;
+* montar planilhas;
+* conter regras de negócio.
+
+---
+
+## Application
+
+Responsável por:
+
+* orquestrar casos de uso;
+* chamar domínio;
+* coordenar serviços;
+* montar respostas.
+
+Não possui regras de negócio.
+
+---
+
+## Domain
+
+Responsável por:
+
+* todas as regras de negócio;
+* cálculos;
+* validações de domínio;
+* objetos de valor;
+* serviços de domínio.
+
+O domínio nunca poderá depender do Laravel.
+
+---
+
+## Infrastructure
+
+Responsável por:
+
+* banco;
+* APIs;
+* integrações;
+* armazenamento;
+* repositórios.
+
+---
+
+## Presentation
+
+Responsável por:
+
+* controllers;
+* requests;
+* resources;
+* views.
+
+---
+
+# 8. Regras de Reutilização
+
+É proibido duplicar código entre ferramentas.
+
+Caso duas ferramentas precisem da mesma funcionalidade, ela deverá ser movida para o Core.
+
+Nunca deverão existir duas implementações diferentes para resolver exatamente o mesmo problema.
+
+---
+
+# 9. Funcionalidades que obrigatoriamente pertencem ao Core
+
+Sempre deverão ser implementadas no Core:
+
+* Exportação PDF
+* Exportação CSV
+* Exportação XLSX
+* Impressão
+* Histórico
+* Compartilhamento
+* Favoritos
+* Auditoria
+* Métricas
+* Limites de uso
+* Helpers
+* Máscaras
+* Componentes Blade
+* Objetos Money
+* Objetos Percentage
+* Objetos Date
+* Serviços reutilizáveis
+* Traits reutilizáveis
+* Policies reutilizáveis
+
+É proibido implementar essas funcionalidades diretamente dentro de uma ferramenta.
+
+---
+
+# 10. Componentes Visuais
+
+As ferramentas deverão utilizar componentes visuais reutilizáveis.
+
+É proibido copiar HTML entre ferramentas.
+
+Sempre que possível deverão ser utilizados componentes Blade.
+
+Exemplos:
+
+* FormPanel
+* ResultPanel
+* ExportButton
+* HistoryPanel
+* AlertPanel
+* ValidationSummary
+* FormActions
+* Header
+* Layout
+
+---
+
+# 11. Bootstrap
+
+Bootstrap sempre terá prioridade.
+
+Somente será permitido criar CSS próprio quando Bootstrap e os componentes existentes não forem suficientes.
+
+Nunca criar CSS apenas por preferência pessoal.
+
+---
+
+# 12. Classes CSS
+
+É proibido utilizar classes CSS sem conhecer sua finalidade.
+
+Exemplo:
+
+```text
+prazzu-tool-card
+```
+
+Essa classe pertence exclusivamente aos cards do catálogo.
+
+Ela nunca poderá ser utilizada em:
+
+* formulários;
+* resultados;
+* histórico;
+* relatórios;
+* tabelas;
+* páginas internas.
+
+---
+
+# 13. Controllers
+
+Controllers devem ser extremamente pequenos.
+
+Idealmente:
+
+```text
+Request
+
+↓
+
+Action
+
+↓
+
+Response
+```
+
+Nunca:
+
+```text
+Request
+
+↓
+
+Controller
+
+↓
+
+Cálculo
+
+↓
+
+Banco
+
+↓
+
+Exportação
+
+↓
+
+View
+```
+
+---
+
+# 14. Exportações
+
+Toda exportação deverá utilizar o sistema central de Export.
+
+É proibido criar exportadores próprios dentro de uma ferramenta.
+
+Toda ferramenta apenas fornecerá:
+
+* conteúdo;
+* dados;
+* nome do arquivo;
+* título.
+
+O restante deverá ser responsabilidade do Core.
+
+---
+
+# 15. Histórico
+
+Toda ferramenta que possuir histórico deverá utilizar o sistema central.
+
+Não deverá existir histórico duplicado.
+
+Caso exista necessidade específica, ela deverá ser documentada antes da implementação.
+
+---
+
+# 16. Banco de Dados
+
+Controllers nunca consultarão banco diretamente.
+
+Toda persistência deverá ocorrer através da camada apropriada.
+
+---
+
+# 17. Objetos Financeiros
+
+É proibido utilizar float para dinheiro.
+
+Sempre utilizar:
+
+* Money
+* Percentage
+* Objetos específicos do Core
+
+---
+
+# 18. Rotas
+
+Cada ferramenta possuirá suas próprias rotas.
+
+Nunca utilizar closures.
+
+Todas deverão utilizar Controllers.
+
+---
+
+# 19. Views
+
+Cada ferramenta possuirá namespace próprio.
+
+É proibido utilizar views de outra ferramenta.
+
+---
+
+# 20. README
+
+Toda ferramenta deverá possuir README atualizado contendo:
+
+* descrição;
+* funcionalidades;
+* regras;
+* dependências;
+* histórico de versões.
+
+---
+
+# 21. Testes
+
+Toda ferramenta deverá possuir testes.
+
+Obrigatoriamente:
+
+* Unit
+* Feature
+
+Quando possuir interface complexa:
+
+* Browser Test
+
+---
+
+# 22. Testes Obrigatórios
+
+Antes de finalizar qualquer lote deverão ser executados:
+
+```bash
+php artisan optimize:clear
+
+php artisan route:list
+
+php artisan test
+
+vendor/bin/pint --test
+
+php artisan view:cache
+
+php artisan view:clear
+```
+
+---
+
+# 23. Testes Funcionais Obrigatórios
+
+Toda ferramenta deverá ser validada manualmente.
+
+Checklist mínimo:
+
+* consegue digitar em todos os inputs;
+* selects funcionam;
+* máscaras funcionam;
+* botão limpar funciona;
+* botão calcular funciona;
+* mensagens aparecem;
+* erros aparecem;
+* resultado correto;
+* exportação correta;
+* histórico correto;
+* impressão correta;
+* mobile correto;
+* desktop correto;
+* sem erro JavaScript;
+* sem erro Laravel.
+
+---
+
+# 24. Autenticação
+
+O comportamento deverá seguir o padrão:
+
+Visitante:
+
+* calcular;
+* visualizar resultado;
+* imprimir;
+* exportar cálculo atual.
+
+Usuário autenticado:
+
+* histórico;
+* repetir;
+* excluir;
+* favoritos;
+* PDFs históricos.
+
+---
+
+# 25. Capabilities
+
+Toda ferramenta deverá declarar claramente suas capacidades.
+
+Exemplos:
+
+* Calculation
+* History
+* BrowserPrint
+* PDF
+* CSV
+* XLSX
+* Metrics
+* Audit
+* Favorites
+* Authentication
+* Premium
+
+---
+
+# 26. Performance
+
+Nenhuma ferramenta poderá executar consultas desnecessárias.
+
+Toda consulta deverá possuir justificativa.
+
+Evitar N+1.
+
+---
+
+# 27. Segurança
+
+Toda ferramenta deverá:
+
+* validar entradas;
+* proteger dados sensíveis;
+* utilizar CSRF;
+* respeitar autenticação;
+* respeitar autorização.
+
+---
+
+# 28. Evolução do Core
+
+Sempre que surgir uma nova funcionalidade reutilizável ela deverá ser adicionada ao Core.
+
+Nunca deverá ser criada diretamente dentro da ferramenta.
+
+Exemplo:
+
+Hoje existe:
+
+```text
+BrowserPrintExporter
+```
+
+Amanhã surge XLSX.
+
+Não criar:
+
+```text
+FerramentaXlsxExporter
+```
+
+Criar:
+
+```text
+Core/Export/XlsxExporter
+```
+
+Todas as ferramentas utilizarão esse serviço.
+
+---
+
+# 29. Alterações Globais
+
+Nenhuma ferramenta poderá modificar comportamento global do sistema sem justificativa.
+
+Qualquer alteração global deverá beneficiar todas as ferramentas.
+
+---
+
+# 30. Fluxo Oficial de Desenvolvimento
+
+Toda ferramenta seguirá obrigatoriamente este fluxo:
+
+```text
+Nova Ferramenta
+
+↓
+
+Analisar Projeto
+
+↓
+
+Analisar Core
+
+↓
+
+Analisar Ferramentas Existentes
+
+↓
+
+Existe implementação semelhante?
+
+↓
+
+SIM
+
+↓
+
+Reutilizar
+
+↓
+
+NÃO
+
+↓
+
+Outra ferramenta poderá utilizar?
+
+↓
+
+SIM
+
+↓
+
+Criar no Core
+
+↓
+
+NÃO
+
+↓
+
+Criar dentro da ferramenta
+
+↓
+
+Criar testes
+
+↓
+
+Executar checklist
+
+↓
+
+Concluir lote
+```
+
+---
+
+# 31. Erros Proibidos
+
+Nunca poderá acontecer:
+
+* código duplicado;
+* exportadores diferentes;
+* históricos diferentes;
+* CSS duplicado;
+* helpers duplicados;
+* componentes Blade duplicados;
+* cálculos em Controllers;
+* consultas ao banco em Controllers;
+* regras de negócio fora do Domain;
+* utilização de classes CSS sem conhecer sua finalidade;
+* criação de funcionalidades reutilizáveis dentro da ferramenta.
+
+---
+
+# 32. Definição de Ferramenta Pronta
+
+Uma ferramenta somente poderá ser considerada concluída quando atender todos os itens abaixo:
+
+* arquitetura correta;
+* padrão deste documento respeitado;
+* testes passando;
+* Pint aprovado;
+* views compiladas;
+* rotas compiladas;
+* sem erros JavaScript;
+* sem erros Laravel;
+* responsiva;
+* acessível;
+* exportação funcionando;
+* histórico funcionando;
+* componentes reutilizados corretamente;
+* nenhuma duplicação de código.
+
+Somente após cumprir todos esses requisitos a ferramenta poderá mudar de **Draft** para **Active**.
+
+---
+
+# 33. Compromisso Arquitetural
+
+A partir deste documento, todas as ferramentas do Prazzu Tools deverão seguir rigorosamente estas regras.
+
+Nenhuma exceção poderá ser criada sem justificativa arquitetural formal.
+
+O objetivo deste padrão é garantir que o projeto continue crescendo de forma organizada, escalável e sustentável, evitando código duplicado, implementações conflitantes e manutenção excessiva.
+
+Este documento deverá ser revisado sempre que a arquitetura do projeto evoluir, tornando-se a referência oficial para todo o desenvolvimento futuro do Prazzu Tools.

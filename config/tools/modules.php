@@ -10,6 +10,7 @@ return [
         // <tools:fiscal>
     ],
     'labor' => [
+        App\Tools\LaborTerminationCalculator\Tool::class,
         // <tools:labor>
     ],
     'corporate' => [
