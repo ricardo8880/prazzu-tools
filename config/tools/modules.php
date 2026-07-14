@@ -3,6 +3,7 @@
 return [
     'general' => [
         App\Tools\MarginMarkupCalculator\Tool::class,
+        App\Tools\BusinessDocumentValidator\Tool::class,
         // <tools:general>
     ],
     'fiscal' => [
