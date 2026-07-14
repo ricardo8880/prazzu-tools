@@ -10,7 +10,7 @@ return [
         ],
         'planos' => [
             'title' => 'Planos para quem precisa ir além',
-            'eyebrow' => 'Prazzu Premium',
+            'eyebrow' => 'Prazzu Plus',
             'description' => 'As ferramentas gratuitas continuarão úteis de verdade. Os planos pagos acrescentarão automações, volume, histórico e recursos avançados.',
             'icon' => 'bi-gem',
         ],

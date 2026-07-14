@@ -20,7 +20,7 @@ final class ContentPageController extends Controller
 
     public function plans(): View
     {
-        return $this->render('planos');
+        return view('pages.plans');
     }
 
     public function resources(): View
@@ -35,7 +35,7 @@ final class ContentPageController extends Controller
 
     public function about(): View
     {
-        return $this->render('sobre');
+        return view('pages.about');
     }
 
     public function login(): View

@@ -6,6 +6,7 @@ return [
         // <tools:general>
     ],
     'fiscal' => [
+        App\Tools\SimplesNacionalCalculator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [

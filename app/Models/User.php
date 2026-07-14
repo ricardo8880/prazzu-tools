@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Blog\Models\BlogPost;
 use App\Core\Access\Enums\AccountRole;
 use App\Core\Access\Enums\SubscriptionPlan;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -27,6 +29,11 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function blogPosts(): HasMany
+    {
+        return $this->hasMany(BlogPost::class, 'author_id');
+    }
 
     public function organizations(): BelongsToMany
     {
