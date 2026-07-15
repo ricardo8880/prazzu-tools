@@ -23,6 +23,11 @@
             <h1>Calculadora de Rescisão Trabalhista</h1>
             <p>Informe os dados do vínculo para estimar as principais verbas de uma rescisão de contrato de trabalho.</p>
         </div>
+        @auth
+            <a class="btn btn-outline-primary align-self-start" href="{{ route('tools.calculadora-de-rescisao.history.index') }}">
+                <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Histórico
+            </a>
+        @endauth
     </header>
 
     @if (session('history_message'))

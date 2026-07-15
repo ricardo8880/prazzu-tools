@@ -23,7 +23,10 @@
     </header>
 
     <section class="prazzu-tool-workspace text-start" aria-labelledby="calculation-data-title">
-        <h2 id="calculation-data-title">Dados do cálculo</h2>
+        <div class="mb-4">
+            <h2 id="calculation-data-title" class="mb-1">Dados do cálculo</h2>
+            <p class="text-body-secondary mb-0">Informe os valores da empresa para estimar o anexo, a alíquota efetiva e o DAS mensal.</p>
+        </div>
 
         <form method="post" action="{{ route('tools.calculadora-simples-nacional.calculate') }}" class="row g-3">
             @csrf
@@ -80,9 +83,9 @@
                 </div>
             @endif
 
-            <div class="col-12 d-flex flex-wrap gap-2">
-                <button class="btn btn-primary prazzu-btn-primary" type="submit"><i class="bi bi-calculator me-1"></i> Calcular DAS</button>
-                <button class="btn btn-outline-secondary" type="reset"><i class="bi bi-arrow-counterclockwise me-1"></i> Limpar</button>
+            <div class="col-12 d-flex flex-wrap gap-2 pt-2">
+                <button class="btn btn-primary prazzu-btn-primary" type="submit"><i class="bi bi-calculator me-1" aria-hidden="true"></i> Calcular DAS</button>
+                <button class="btn btn-outline-secondary" type="reset"><i class="bi bi-eraser me-1" aria-hidden="true"></i> Limpar formulário</button>
             </div>
         </form>
     </section>

@@ -14,13 +14,16 @@
         </ol>
     </nav>
 
-    <div class="d-flex align-items-center justify-content-between gap-3 mb-4">
-        <div>
-            <h1 class="h2 mb-1">{{ $editing ? 'Editar cadastro' : 'Novo cliente ou prospect' }}</h1>
-            <p class="text-body-secondary mb-0">Registre dados comerciais e acompanhe o avanço da negociação.</p>
+    <header class="prazzu-tool-intro">
+        <span class="prazzu-icon-tile prazzu-icon-tile--purple"><i class="bi {{ $editing ? 'bi-person-gear' : 'bi-person-plus' }}"></i></span>
+        <div class="flex-grow-1">
+            <h1>{{ $editing ? 'Editar cadastro' : 'Novo cliente ou prospect' }}</h1>
+            <p>Registre dados comerciais e acompanhe o avanço da negociação.</p>
         </div>
-        <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.crm.index') }}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
-    </div>
+        <a class="btn btn-outline-secondary align-self-start" href="{{ route('tools.calculadora-de-honorarios-contabeis.crm.index') }}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
+    </header>
+
+    @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
     <form method="post" action="{{ $editing ? route('tools.calculadora-de-honorarios-contabeis.crm.update', $client) : route('tools.calculadora-de-honorarios-contabeis.crm.store') }}">
         @csrf

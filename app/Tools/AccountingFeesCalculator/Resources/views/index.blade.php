@@ -20,18 +20,9 @@
             <h1>Calculadora de Honorários Contábeis</h1>
             <p>Estruture uma precificação coerente considerando o perfil e a complexidade de cada cliente.</p>
         </div>
-        <div class="d-flex flex-wrap gap-2 align-self-start">
-            <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.history.index') }}">
-                <i class="bi bi-clock-history me-1"></i>Histórico
-            </a>
-            <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.index') }}">
-                <i class="bi bi-arrow-up-right-circle me-1"></i>Reajustes
-            </a>
-            <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.crm.index') }}">
-                <i class="bi bi-people me-1"></i>Abrir CRM
-            </a>
-        </div>
     </header>
+
+    @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
     @if (session('success'))
         <div class="alert alert-success" role="alert">{{ session('success') }}</div>
@@ -127,10 +118,13 @@
                 </div>
             @endif
 
-            <div class="col-12">
+            <div class="col-12 d-flex flex-wrap gap-2 pt-2">
                 <button class="btn btn-primary prazzu-btn-primary" type="submit">
-                    <i class="bi bi-calculator me-1"></i> Calcular honorários
+                    <i class="bi bi-calculator me-1" aria-hidden="true"></i> Calcular honorários
                 </button>
+                <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">
+                    <i class="bi bi-eraser me-1" aria-hidden="true"></i> Limpar formulário
+                </a>
             </div>
         </form>
     </section>

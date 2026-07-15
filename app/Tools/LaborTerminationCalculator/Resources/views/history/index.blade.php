@@ -19,8 +19,15 @@
             <h1>Histórico de cálculos</h1>
             <p>Consulte, repita ou exclua os cálculos salvos na sua conta.</p>
         </div>
-        <a class="btn btn-primary" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a>
+        <a class="btn btn-primary align-self-start" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a>
     </header>
+
+    <nav class="mb-4" aria-label="Navegação da Calculadora de Rescisão Trabalhista">
+        <div class="nav nav-pills flex-column flex-sm-row gap-2">
+            <a class="nav-link" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-calculator me-1"></i>Calculadora</a>
+            <a class="nav-link active" href="{{ route('tools.calculadora-de-rescisao.history.index') }}" aria-current="page"><i class="bi bi-clock-history me-1"></i>Histórico</a>
+        </div>
+    </nav>
 
     @if (session('history_message'))
         <div class="alert alert-success" role="status">{{ session('history_message') }}</div>
@@ -47,7 +54,14 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-center text-body-secondary py-5">Nenhum cálculo salvo no histórico.</td></tr>
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-clock-history display-5 text-body-tertiary"></i>
+                            <h2 class="h5 mt-3">Nenhum cálculo salvo</h2>
+                            <p class="text-body-secondary mb-3">Faça uma rescisão para iniciar o histórico.</p>
+                            <a class="btn btn-primary" href="{{ route('tools.calculadora-de-rescisao.index') }}">Calcular rescisão</a>
+                        </td>
+                    </tr>
                 @endforelse
                 </tbody>
             </table>

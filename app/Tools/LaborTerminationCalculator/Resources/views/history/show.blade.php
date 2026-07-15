@@ -9,9 +9,23 @@
 
     <header class="prazzu-tool-intro">
         <span class="prazzu-icon-tile prazzu-icon-tile--pink"><i class="bi bi-file-earmark-text"></i></span>
-        <div class="flex-grow-1"><span class="badge text-bg-success mb-2">Cálculo salvo</span><h1>Detalhes da rescisão</h1><p>{{ $result['termination_type_label'] ?? 'Rescisão trabalhista' }} — realizado em {{ $run->finished_at?->format('d/m/Y H:i') }}.</p></div>
-        <div class="text-lg-end"><small class="text-body-secondary d-block">Valor líquido estimado</small><strong class="fs-3 text-success">{{ $result['net_total'] ?? '—' }}</strong></div>
+        <div class="flex-grow-1">
+            <span class="badge text-bg-success mb-2">Cálculo salvo</span>
+            <h1>Detalhes da rescisão</h1>
+            <p>{{ $result['termination_type_label'] ?? 'Rescisão trabalhista' }} — realizado em {{ $run->finished_at?->format('d/m/Y H:i') }}.</p>
+        </div>
+        <div class="text-lg-end align-self-start">
+            <small class="text-body-secondary d-block">Valor líquido estimado</small>
+            <strong class="fs-3 text-success">{{ $result['net_total'] ?? '—' }}</strong>
+        </div>
     </header>
+
+    <nav class="mb-4" aria-label="Navegação da Calculadora de Rescisão Trabalhista">
+        <div class="nav nav-pills flex-column flex-sm-row gap-2">
+            <a class="nav-link" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-calculator me-1"></i>Calculadora</a>
+            <a class="nav-link active" href="{{ route('tools.calculadora-de-rescisao.history.index') }}" aria-current="page"><i class="bi bi-clock-history me-1"></i>Histórico</a>
+        </div>
+    </nav>
 
     <div class="d-flex flex-wrap gap-2 mb-4">
         <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.repeat', $run) }}">@csrf<button class="btn btn-primary" type="submit"><i class="bi bi-arrow-repeat me-1"></i>Repetir cálculo</button></form>

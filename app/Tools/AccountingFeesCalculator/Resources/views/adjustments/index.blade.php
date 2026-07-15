@@ -13,16 +13,19 @@
         </ol>
     </nav>
 
-    <header class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
-        <div>
+    <header class="prazzu-tool-intro">
+        <span class="prazzu-icon-tile prazzu-icon-tile--purple"><i class="bi bi-arrow-up-right-circle"></i></span>
+        <div class="flex-grow-1">
             <span class="badge text-bg-primary mb-2">Lote 7</span>
-            <h1 class="h2 mb-1">Reajuste de honorários</h1>
-            <p class="text-body-secondary mb-0">Aplique o índice do período, visualize a diferença e mantenha um histórico auditável.</p>
+            <h1>Reajuste de honorários</h1>
+            <p>Aplique o índice do período, visualize a diferença e mantenha um histórico auditável.</p>
         </div>
-        <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.crm.index') }}">
+        <a class="btn btn-outline-primary align-self-start" href="{{ route('tools.calculadora-de-honorarios-contabeis.crm.index') }}">
             <i class="bi bi-people me-1"></i>Abrir CRM
         </a>
     </header>
+
+    @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

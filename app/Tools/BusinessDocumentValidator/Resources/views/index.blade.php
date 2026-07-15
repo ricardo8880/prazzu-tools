@@ -22,6 +22,11 @@
             <h1>Validador Inteligente de CNPJ, CPF e IE</h1>
             <p>Valide CPF e CNPJ localmente, sem depender de consulta externa, e entenda com clareza o resultado.</p>
         </div>
+        @auth
+            <a class="btn btn-outline-primary align-self-start" href="{{ route('tools.validador-de-cnpj.history.index') }}">
+                <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Histórico
+            </a>
+        @endauth
     </header>
 
     <div class="row g-4">
