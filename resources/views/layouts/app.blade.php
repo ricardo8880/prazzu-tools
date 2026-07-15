@@ -155,12 +155,12 @@
 
     document.querySelectorAll('form').forEach((form) => {
         if ((form.method || 'get').toLowerCase() !== 'get') {
-            form.addEventListener('submit', () => send('tool.calculation_started'), {once: true});
+            form.addEventListener('submit', () => send('tool.calculation.started'), {once: true});
         }
     });
     window.addEventListener('pagehide', () => {
         const seconds = Math.min(86400, Math.max(0, Math.round((Date.now() - startedAt) / 1000)));
-        if (seconds >= 3) send('tool.time_spent', {seconds});
+        if (seconds >= 3) send('tool.time.spent', {seconds});
     }, {once: true});
 })();
 </script>

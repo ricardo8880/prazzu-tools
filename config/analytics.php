@@ -1,5 +1,8 @@
 <?php
 
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+
+
 return [
     'enabled' => env('ANALYTICS_ENABLED', true),
     'async' => env('ANALYTICS_ASYNC', false),
@@ -28,16 +31,16 @@ return [
     ],
 
     'dashboard' => [
-        'page_view_events' => ['page.viewed', 'blog_post_view'],
+        'page_view_events' => [AnalyticsEventName::PageViewed->value, AnalyticsEventName::BlogPostViewed->value],
         'conversion_events' => [
-            'account.created',
-            'subscription.started',
-            'tool.calculation_completed',
-            'business_document_validator.batch_processed',
+            AnalyticsEventName::AccountCreated->value,
+            AnalyticsEventName::SubscriptionStarted->value,
+            AnalyticsEventName::ToolCalculationCompleted->value,
+            AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value,
         ],
-        'registration_events' => ['account.created', 'user.registered'],
-        'subscription_events' => ['subscription.started', 'subscription.created', 'plus.subscribed'],
-        'export_events' => ['result.exported', 'tool.exported', 'business_document_validator.batch_exported'],
+        'registration_events' => [AnalyticsEventName::AccountCreated->value],
+        'subscription_events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value],
+        'export_events' => [AnalyticsEventName::ToolResultExported->value, AnalyticsEventName::BusinessDocumentValidatorBatchExported->value],
         'revenue_metadata_keys' => ['revenue_cents', 'amount_cents', 'value_cents'],
     ],
 
@@ -73,12 +76,12 @@ return [
             'telegram' => ['medium' => 'social', 'hosts' => ['telegram.org', 't.me']],
         ],
         'funnel_steps' => [
-            'landing' => ['label' => 'Acessou', 'events' => ['page.viewed', 'blog_post_view']],
-            'content' => ['label' => 'Abriu conteúdo', 'events' => ['blog_post_view', 'blog.reading.started']],
-            'tool' => ['label' => 'Abriu ferramenta', 'events' => ['tool.opened', 'blog_tool_click']],
-            'result' => ['label' => 'Concluiu resultado', 'events' => ['tool.calculation_completed', 'business_document_validator.batch_processed']],
-            'registration' => ['label' => 'Criou conta', 'events' => ['account.created', 'user.registered']],
-            'subscription' => ['label' => 'Assinou Plus', 'events' => ['subscription.started', 'subscription.created', 'plus.subscribed']],
+            'landing' => ['label' => 'Acessou', 'events' => [AnalyticsEventName::PageViewed->value, AnalyticsEventName::BlogPostViewed->value]],
+            'content' => ['label' => 'Abriu conteúdo', 'events' => [AnalyticsEventName::BlogPostViewed->value, AnalyticsEventName::BlogReadingStarted->value]],
+            'tool' => ['label' => 'Abriu ferramenta', 'events' => [AnalyticsEventName::ToolOpened->value, AnalyticsEventName::BlogToolClicked->value]],
+            'result' => ['label' => 'Concluiu resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+            'registration' => ['label' => 'Criou conta', 'events' => [AnalyticsEventName::AccountCreated->value]],
+            'subscription' => ['label' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
         ],
     ],
 
@@ -90,12 +93,12 @@ return [
                 'description' => 'Da primeira página acessada até a assinatura do Prazzu Plus.',
                 'identity_type' => 'visitor',
                 'steps' => [
-                    ['name' => 'Visitou a plataforma', 'events' => ['page.viewed', 'blog_post_view']],
-                    ['name' => 'Consumiu conteúdo', 'events' => ['blog.reading.started', 'blog.reading.completed', 'blog_post_view']],
-                    ['name' => 'Abriu ferramenta', 'events' => ['tool.opened', 'blog_tool_click']],
-                    ['name' => 'Concluiu resultado', 'events' => ['tool.calculation_completed', 'business_document_validator.batch_processed']],
-                    ['name' => 'Criou conta', 'events' => ['account.created', 'user.registered']],
-                    ['name' => 'Assinou Plus', 'events' => ['subscription.started', 'subscription.created', 'plus.subscribed']],
+                    ['name' => 'Visitou a plataforma', 'events' => [AnalyticsEventName::PageViewed->value, AnalyticsEventName::BlogPostViewed->value]],
+                    ['name' => 'Consumiu conteúdo', 'events' => [AnalyticsEventName::BlogReadingStarted->value, AnalyticsEventName::BlogReadingCompleted->value, AnalyticsEventName::BlogPostViewed->value]],
+                    ['name' => 'Abriu ferramenta', 'events' => [AnalyticsEventName::ToolOpened->value, AnalyticsEventName::BlogToolClicked->value]],
+                    ['name' => 'Concluiu resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+                    ['name' => 'Criou conta', 'events' => [AnalyticsEventName::AccountCreated->value]],
+                    ['name' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
                 ],
             ],
             'tool_conversion' => [
@@ -103,11 +106,11 @@ return [
                 'description' => 'Da abertura de uma ferramenta até a assinatura.',
                 'identity_type' => 'visitor',
                 'steps' => [
-                    ['name' => 'Abriu ferramenta', 'events' => ['tool.opened', 'blog_tool_click']],
-                    ['name' => 'Iniciou cálculo', 'events' => ['tool.calculation_started']],
-                    ['name' => 'Concluiu cálculo', 'events' => ['tool.calculation_completed', 'business_document_validator.batch_processed']],
-                    ['name' => 'Exportou resultado', 'events' => ['result.exported', 'tool.exported', 'business_document_validator.batch_exported']],
-                    ['name' => 'Assinou Plus', 'events' => ['subscription.started', 'subscription.created', 'plus.subscribed']],
+                    ['name' => 'Abriu ferramenta', 'events' => [AnalyticsEventName::ToolOpened->value, AnalyticsEventName::BlogToolClicked->value]],
+                    ['name' => 'Iniciou cálculo', 'events' => [AnalyticsEventName::ToolCalculationStarted->value]],
+                    ['name' => 'Concluiu cálculo', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+                    ['name' => 'Exportou resultado', 'events' => [AnalyticsEventName::ToolResultExported->value, AnalyticsEventName::BusinessDocumentValidatorBatchExported->value]],
+                    ['name' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
                 ],
             ],
             'blog_to_tool' => [
@@ -115,10 +118,10 @@ return [
                 'description' => 'Capacidade do conteúdo de conduzir o visitante até uma ferramenta e um resultado.',
                 'identity_type' => 'visitor',
                 'steps' => [
-                    ['name' => 'Abriu artigo', 'events' => ['blog_post_view']],
-                    ['name' => 'Iniciou leitura', 'events' => ['blog.reading.started']],
-                    ['name' => 'Clicou em ferramenta', 'events' => ['blog_tool_click']],
-                    ['name' => 'Concluiu resultado', 'events' => ['tool.calculation_completed', 'business_document_validator.batch_processed']],
+                    ['name' => 'Abriu artigo', 'events' => [AnalyticsEventName::BlogPostViewed->value]],
+                    ['name' => 'Iniciou leitura', 'events' => [AnalyticsEventName::BlogReadingStarted->value]],
+                    ['name' => 'Clicou em ferramenta', 'events' => [AnalyticsEventName::BlogToolClicked->value]],
+                    ['name' => 'Concluiu resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
                 ],
             ],
         ],

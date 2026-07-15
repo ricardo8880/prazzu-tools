@@ -2,6 +2,7 @@
 
 namespace App\Core\Analytics\Application\Queries;
 
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
@@ -11,6 +12,7 @@ use Illuminate\Support\Collection;
 
 final class AcquisitionAnalyticsQuery
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     /** @return array<string, mixed> */
     public function execute(AnalyticsPeriod $period): array
     {
@@ -141,7 +143,7 @@ final class AcquisitionAnalyticsQuery
             $result = [];
 
             foreach ($steps as $key => $definition) {
-                $events = array_values(array_filter((array) ($definition['events'] ?? []), 'is_string'));
+                $events = $this->eventNames->expand(array_values(array_filter((array) ($definition['events'] ?? []), 'is_string')));
                 $count = $events === [] ? 0 : PlatformAnalyticsEvent::query()
                     ->whereBetween('occurred_at', [$period->start, $period->end])
                     ->whereIn('visitor_id', $sessionVisitorIds)
@@ -186,6 +188,6 @@ final class AcquisitionAnalyticsQuery
     /** @return list<string> */
     private function events(string $key): array
     {
-        return array_values(array_filter((array) config("analytics.dashboard.$key", []), 'is_string'));
+        return $this->eventNames->expand(array_values(array_filter((array) config("analytics.dashboard.$key", []), 'is_string')));
     }
 }

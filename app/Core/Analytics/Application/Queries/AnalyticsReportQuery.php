@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Analytics\Application\Queries;
 
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 final class AnalyticsReportQuery
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     /** @param array<string, mixed> $filters */
     public function execute(AnalyticsPeriod $period, array $filters, int $limit = 100): array
     {
@@ -56,7 +58,7 @@ final class AnalyticsReportQuery
         }
 
         if (! empty($filters['event_name'])) {
-            $query->where('platform_analytics_events.event_name', $filters['event_name']);
+            $query->whereIn('platform_analytics_events.event_name', $this->eventNames->acceptedNamesFor($filters['event_name']));
         }
 
         if (! empty($filters['category']) || ! empty($filters['author_id'])) {
@@ -86,7 +88,7 @@ final class AnalyticsReportQuery
             'visitors' => (clone $query)->whereNotNull('platform_analytics_events.visitor_id')->distinct()->count('platform_analytics_events.visitor_id'),
             'sessions' => (clone $query)->whereNotNull('platform_analytics_events.analytics_session_id')->distinct()->count('platform_analytics_events.analytics_session_id'),
             'users' => (clone $query)->whereNotNull('platform_analytics_events.user_id')->distinct()->count('platform_analytics_events.user_id'),
-            'conversions' => (clone $query)->whereIn('platform_analytics_events.event_name', config('analytics.dashboard.conversion_events', []))->count(),
+            'conversions' => (clone $query)->whereIn('platform_analytics_events.event_name', $this->eventNames->expand(config('analytics.dashboard.conversion_events', [])))->count(),
         ];
     }
 

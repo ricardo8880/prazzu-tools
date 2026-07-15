@@ -4,16 +4,18 @@ namespace App\Core\Analytics\Infrastructure\Persistence;
 
 use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsContext;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 
 final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     public function store(AnalyticsEvent $event, AnalyticsContext $context): void
     {
         PlatformAnalyticsEvent::query()->create([
             'event_id' => $event->identifier(),
-            'event_name' => $event->name,
+            'event_name' => $this->eventNames->canonical($event->name),
             'schema_version' => 1,
             'channel' => $event->channel,
             'subject_type' => $event->subjectType,

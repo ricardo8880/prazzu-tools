@@ -2,6 +2,8 @@
 
 namespace App\Core\Analytics\Application\Queries;
 
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use App\Core\Tools\ToolCatalog;
@@ -10,7 +12,10 @@ use Illuminate\Support\Collection;
 
 final readonly class ToolAnalyticsQuery
 {
-    public function __construct(private ToolCatalog $catalog) {}
+    public function __construct(
+        private ToolCatalog $catalog,
+        private AnalyticsEventNameResolver $eventNames,
+    ) {}
 
     /** @return array<string, mixed> */
     public function overview(AnalyticsPeriod $period): array
@@ -78,25 +83,25 @@ final readonly class ToolAnalyticsQuery
     private function metrics(AnalyticsPeriod $period, ?string $slug = null): Collection
     {
         return $this->base($period, $slug)->whereNotNull('subject_slug')->selectRaw('subject_slug as tool_slug')
-            ->selectRaw("SUM(CASE WHEN event_name IN ('tool.opened','tool.viewed') THEN 1 ELSE 0 END) as opens")
-            ->selectRaw("SUM(CASE WHEN event_name = 'tool.calculation_started' THEN 1 ELSE 0 END) as starts")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('tool.calculation_completed','business_document_validator.batch_processed') THEN 1 ELSE 0 END) as completions")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('tool.exported','business_document_validator.batch_exported') THEN 1 ELSE 0 END) as exports")
-            ->selectRaw("SUM(CASE WHEN event_name = 'tool.shared' THEN 1 ELSE 0 END) as shares")
-            ->selectRaw("SUM(CASE WHEN event_name = 'tool.history_viewed' THEN 1 ELSE 0 END) as history")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('account.created','user.registered') THEN 1 ELSE 0 END) as registrations")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('tool.plus_used','subscription.started','subscription.created','plus.subscribed') THEN 1 ELSE 0 END) as plus")
-            ->selectRaw("COUNT(DISTINCT visitor_id) as unique_visitors")
-            ->selectRaw("AVG(CASE WHEN event_name = 'tool.time_spent' THEN ".$this->jsonNumber('seconds')." END) as average_time_seconds")
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]).' as exports', $this->names([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolResultShared]).' as shares', $this->names([AnalyticsEventName::ToolResultShared]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolHistoryViewed]).' as history', $this->names([AnalyticsEventName::ToolHistoryViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]).' as plus', $this->names([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]))
+            ->selectRaw('COUNT(DISTINCT visitor_id) as unique_visitors')
+            ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::ToolTimeSpent])).') THEN '.$this->jsonNumber('seconds').' END) as average_time_seconds', $this->names([AnalyticsEventName::ToolTimeSpent]))
             ->groupBy('subject_slug')->get();
     }
 
     private function daily(AnalyticsPeriod $period, ?string $slug = null): Collection
     {
         return $this->base($period, $slug)->selectRaw($this->dateExpression().' as day')
-            ->selectRaw("SUM(CASE WHEN event_name IN ('tool.opened','tool.viewed') THEN 1 ELSE 0 END) as opens")
-            ->selectRaw("SUM(CASE WHEN event_name = 'tool.calculation_started' THEN 1 ELSE 0 END) as starts")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('tool.calculation_completed','business_document_validator.batch_processed') THEN 1 ELSE 0 END) as completions")
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
             ->groupBy('day')->orderBy('day')->get();
     }
 
@@ -104,6 +109,25 @@ final readonly class ToolAnalyticsQuery
     {
         return PlatformAnalyticsEvent::query()->where('channel', 'tool')->whereBetween('occurred_at', [$period->start, $period->end])
             ->when($slug, fn (Builder $q) => $q->where('subject_slug', $slug));
+    }
+
+
+    /** @param list<AnalyticsEventName> $events @return list<string> */
+    private function names(array $events): array
+    {
+        return $this->eventNames->expand($events);
+    }
+
+    /** @param list<AnalyticsEventName> $events */
+    private function sumCase(array $events): string
+    {
+        return 'SUM(CASE WHEN event_name IN ('.$this->placeholders($this->names($events)).') THEN 1 ELSE 0 END)';
+    }
+
+    /** @param list<string> $values */
+    private function placeholders(array $values): string
+    {
+        return implode(',', array_fill(0, max(1, count($values)), '?'));
     }
 
     private function dateExpression(): string { return match (PlatformAnalyticsEvent::query()->getConnection()->getDriverName()) { 'pgsql' => 'DATE(occurred_at)', default => 'DATE(occurred_at)' }; }

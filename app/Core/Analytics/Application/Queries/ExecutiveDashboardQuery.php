@@ -2,6 +2,7 @@
 
 namespace App\Core\Analytics\Application\Queries;
 
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 final class ExecutiveDashboardQuery
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     /** @return array<string, mixed> */
     public function execute(AnalyticsPeriod $period): array
     {
@@ -247,7 +249,7 @@ final class ExecutiveDashboardQuery
     /** @return list<string> */
     private function eventNames(string $key): array
     {
-        return array_values(array_filter(config("analytics.dashboard.$key", []), 'is_string'));
+        return $this->eventNames->expand(array_values(array_filter(config("analytics.dashboard.$key", []), 'is_string')));
     }
 
     /** @param list<string> $values */

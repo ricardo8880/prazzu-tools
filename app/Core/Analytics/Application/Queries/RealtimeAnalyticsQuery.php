@@ -2,6 +2,8 @@
 
 namespace App\Core\Analytics\Application\Queries;
 
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Carbon\CarbonImmutable;
@@ -10,6 +12,7 @@ use Illuminate\Support\Collection;
 
 final class RealtimeAnalyticsQuery
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     private const ONLINE_WINDOW_MINUTES = 5;
 
     /** @return array<string, mixed> */
@@ -29,12 +32,12 @@ final class RealtimeAnalyticsQuery
             'online_visitors' => (clone $onlineSessions)->whereNotNull('visitor_id')->distinct()->count('visitor_id'),
             'identified_users' => (clone $onlineSessions)->whereNotNull('user_id')->distinct()->count('user_id'),
             'open_pages' => (clone $onlineSessions)->whereNotNull('landing_path')->distinct()->count('landing_path'),
-            'open_tools' => (clone $recentEvents)->where('channel', 'tool')->whereIn('event_name', ['tool.opened', 'tool.viewed'])
+            'open_tools' => (clone $recentEvents)->where('channel', 'tool')->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
                 ->whereBetween('occurred_at', [$onlineSince, $now])->distinct()->count('subject_slug'),
             'events_30m' => (clone $recentEvents)->count(),
             'conversions_30m' => $this->conversions(clone $recentEvents)->count(),
-            'registrations_30m' => (clone $recentEvents)->whereIn('event_name', ['account.created', 'user.registered'])->count(),
-            'exports_30m' => (clone $recentEvents)->whereIn('event_name', ['tool.exported', 'business_document_validator.batch_exported', 'file.downloaded'])->count(),
+            'registrations_30m' => (clone $recentEvents)->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::AccountCreated]))->count(),
+            'exports_30m' => (clone $recentEvents)->whereIn('event_name', [...$this->eventNames->expand([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]), 'file.downloaded'])->count(),
         ];
 
         return [
@@ -55,9 +58,14 @@ final class RealtimeAnalyticsQuery
     private function conversions(Builder $events): Builder
     {
         return $events->whereIn('event_name', [
-            'conversion.completed', 'account.created', 'user.registered',
-            'subscription.started', 'subscription.created', 'plus.subscribed',
-            'tool.calculation_completed', 'business_document_validator.batch_processed',
+            'conversion.completed',
+            ...$this->eventNames->expand([
+                AnalyticsEventName::AccountCreated,
+                AnalyticsEventName::SubscriptionStarted,
+                AnalyticsEventName::SubscriptionCreated,
+                AnalyticsEventName::ToolCalculationCompleted,
+                AnalyticsEventName::BusinessDocumentValidatorBatchProcessed,
+            ]),
         ]);
     }
 

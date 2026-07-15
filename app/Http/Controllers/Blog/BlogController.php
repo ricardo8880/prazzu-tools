@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Blog;
 
 use App\Blog\Models\BlogPost;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Tools\ToolCatalog;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,7 +61,7 @@ final class BlogController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $analytics->record('blog_post_view', 'blog', $request, [
+        $analytics->record(AnalyticsEventName::BlogPostViewed->value, 'blog', $request, [
             'subject_type' => 'blog_post',
             'subject_id' => $post->getKey(),
             'subject_slug' => $post->slug,

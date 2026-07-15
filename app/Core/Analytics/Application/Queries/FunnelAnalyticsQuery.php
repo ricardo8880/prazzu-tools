@@ -2,6 +2,7 @@
 
 namespace App\Core\Analytics\Application\Queries;
 
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsFunnel;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
@@ -9,6 +10,7 @@ use Illuminate\Support\Collection;
 
 final class FunnelAnalyticsQuery
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     /** @param array<string,string|null> $filters */
     public function execute(AnalyticsPeriod $period, array $filters = []): array
     {
@@ -50,6 +52,7 @@ final class FunnelAnalyticsQuery
     private function calculate(object $funnel, AnalyticsPeriod $period, array $filters): array
     {
         $steps = collect($funnel->steps)->values();
+        $steps = $steps->map(fn (array $step): array => [...$step, 'events' => $this->eventNames->expand($step['events'])]);
         $eventNames = $steps->flatMap(fn ($step) => $step['events'])->unique()->values();
         $identityColumn = match ($funnel->identity_type) { 'session' => 'analytics_session_id', 'user' => 'user_id', default => 'visitor_id' };
 

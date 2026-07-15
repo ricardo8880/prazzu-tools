@@ -135,7 +135,7 @@
         body: JSON.stringify({...base, ...properties, event}),
     }).catch(() => {});
 
-    window.setTimeout(() => track('blog_reading_started'), 3000);
+    window.setTimeout(() => track('blog.reading.started'), 3000);
 
     const readingPercentage = () => {
         if (!article) return 0;
@@ -149,12 +149,12 @@
         [25, 50, 75, 100].forEach((milestone) => {
             if (percentage >= milestone && !sentScroll.has(milestone)) {
                 sentScroll.add(milestone);
-                track('blog_scroll', {percentage: milestone});
+                track('blog.scroll.measured', {percentage: milestone});
             }
         });
         if (percentage >= 90 && !completed) {
             completed = true;
-            track('blog_reading_completed');
+            track('blog.reading.completed');
         }
     };
 
@@ -165,23 +165,23 @@
     }, {passive: true});
 
     document.querySelectorAll('.js-blog-tool-link').forEach((link) => link.addEventListener('click', () =>
-        track('blog_tool_click', {tool_slug: link.dataset.toolSlug})
+        track('blog.tool.clicked', {tool_slug: link.dataset.toolSlug})
     ));
 
     document.querySelectorAll('a[download], a[href$=".pdf"], a[href$=".xlsx"], a[href$=".csv"]').forEach((link) => link.addEventListener('click', () =>
-        track('blog_download', {file: link.getAttribute('href')?.slice(0, 255)})
+        track('blog.downloaded', {file: link.getAttribute('href')?.slice(0, 255)})
     ));
 
     document.querySelectorAll('[data-share], a[href*="whatsapp.com"], a[href*="linkedin.com/sharing"], a[href*="twitter.com/intent"]').forEach((link) => link.addEventListener('click', () =>
-        track('blog_share', {method: link.dataset.share || 'link'})
+        track('blog.shared', {method: link.dataset.share || 'link'})
     ));
 
     const finalize = () => {
         if (finalized) return;
         finalized = true;
         const seconds = Math.min(86400, Math.max(0, Math.round((Date.now() - startedAt) / 1000)));
-        track('blog_time_spent', {seconds});
-        if (!completed) track('blog_abandoned');
+        track('blog.time.spent', {seconds});
+        if (!completed) track('blog.reading.abandoned');
     };
 
     window.addEventListener('pagehide', finalize);

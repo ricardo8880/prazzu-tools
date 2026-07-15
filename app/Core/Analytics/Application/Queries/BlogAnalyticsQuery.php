@@ -3,6 +3,8 @@
 namespace App\Core\Analytics\Application\Queries;
 
 use App\Blog\Models\BlogPost;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 final class BlogAnalyticsQuery
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     /** @return array<string, mixed> */
     public function overview(AnalyticsPeriod $period): array
     {
@@ -64,21 +67,21 @@ final class BlogAnalyticsQuery
         $query = $this->events($period, $postId)
             ->whereNotNull('subject_id')
             ->selectRaw('CAST(subject_id AS INTEGER) as post_id')
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_post_view' THEN 1 ELSE 0 END) as views")
-            ->selectRaw("COUNT(DISTINCT CASE WHEN event_name = 'blog_post_view' THEN visitor_id END) as unique_visitors")
-            ->selectRaw("COUNT(DISTINCT CASE WHEN event_name = 'blog_post_view' THEN analytics_session_id END) as sessions")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_reading_started' THEN 1 ELSE 0 END) as reading_starts")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_reading_completed' THEN 1 ELSE 0 END) as reading_completions")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_abandoned' THEN 1 ELSE 0 END) as abandonments")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_share' THEN 1 ELSE 0 END) as shares")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_download' THEN 1 ELSE 0 END) as downloads")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_comment' THEN 1 ELSE 0 END) as comments")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_tool_click' THEN 1 ELSE 0 END) as tool_clicks")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('account.created','user.registered') THEN 1 ELSE 0 END) as registrations")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('subscription.started','subscription.created','plus.subscribed') THEN 1 ELSE 0 END) as subscriptions")
-            ->selectRaw("AVG(CASE WHEN event_name = 'blog_time_spent' THEN $seconds END) as average_time_seconds")
-            ->selectRaw("MAX(CASE WHEN event_name = 'blog_time_spent' THEN $seconds END) as maximum_time_seconds")
-            ->selectRaw("AVG(CASE WHEN event_name = 'blog_scroll' THEN $percentage END) as average_scroll")
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'visitor_id').' as unique_visitors', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'analytics_session_id').' as sessions', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogReadingStarted]).' as reading_starts', $this->names([AnalyticsEventName::BlogReadingStarted]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogReadingCompleted]).' as reading_completions', $this->names([AnalyticsEventName::BlogReadingCompleted]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogReadingAbandoned]).' as abandonments', $this->names([AnalyticsEventName::BlogReadingAbandoned]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogShared]).' as shares', $this->names([AnalyticsEventName::BlogShared]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogDownloaded]).' as downloads', $this->names([AnalyticsEventName::BlogDownloaded]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogCommented]).' as comments', $this->names([AnalyticsEventName::BlogCommented]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogToolClicked]).' as tool_clicks', $this->names([AnalyticsEventName::BlogToolClicked]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]).' as subscriptions', $this->names([AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]))
+            ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogTimeSpent])).') THEN '.$seconds.' END) as average_time_seconds', $this->names([AnalyticsEventName::BlogTimeSpent]))
+            ->selectRaw('MAX(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogTimeSpent])).') THEN '.$seconds.' END) as maximum_time_seconds', $this->names([AnalyticsEventName::BlogTimeSpent]))
+            ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogScrollMeasured])).') THEN '.$percentage.' END) as average_scroll', $this->names([AnalyticsEventName::BlogScrollMeasured]))
             ->groupBy('subject_id');
 
         return $query->get();
@@ -176,9 +179,9 @@ final class BlogAnalyticsQuery
     {
         $rows = $this->events($period, $postId)
             ->selectRaw('DATE(occurred_at) as metric_date')
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_post_view' THEN 1 ELSE 0 END) as views")
-            ->selectRaw("COUNT(DISTINCT CASE WHEN event_name = 'blog_post_view' THEN visitor_id END) as visitors")
-            ->selectRaw("SUM(CASE WHEN event_name = 'blog_tool_click' THEN 1 ELSE 0 END) as tool_clicks")
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'visitor_id').' as visitors', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogToolClicked]).' as tool_clicks', $this->names([AnalyticsEventName::BlogToolClicked]))
             ->groupBy('metric_date')->get()->keyBy('metric_date');
 
         return collect(range(0, $period->days() - 1))->map(function (int $offset) use ($period, $rows): object {
@@ -198,7 +201,7 @@ final class BlogAnalyticsQuery
             default => "JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.tool_slug'))",
         };
 
-        return $this->events($period, $postId)->where('event_name', 'blog_tool_click')
+        return $this->events($period, $postId)->whereIn('event_name', $this->names([AnalyticsEventName::BlogToolClicked]))
             ->selectRaw("$tool as tool_slug, COUNT(*) as clicks")
             ->groupByRaw($tool)->orderByDesc('clicks')->get();
     }
@@ -208,6 +211,31 @@ final class BlogAnalyticsQuery
         return PlatformAnalyticsEvent::query()->where('channel', 'blog')
             ->whereBetween('occurred_at', [$period->start, $period->end])
             ->when($postId !== null, fn (Builder $query) => $query->where('subject_id', (string) $postId));
+    }
+
+
+    /** @param list<AnalyticsEventName> $events @return list<string> */
+    private function names(array $events): array
+    {
+        return $this->eventNames->expand($events);
+    }
+
+    /** @param list<AnalyticsEventName> $events */
+    private function sumCase(array $events): string
+    {
+        return 'SUM(CASE WHEN event_name IN ('.$this->placeholders($this->names($events)).') THEN 1 ELSE 0 END)';
+    }
+
+    /** @param list<AnalyticsEventName> $events */
+    private function countDistinctCase(array $events, string $column): string
+    {
+        return 'COUNT(DISTINCT CASE WHEN event_name IN ('.$this->placeholders($this->names($events)).') THEN '.$column.' END)';
+    }
+
+    /** @param list<string> $values */
+    private function placeholders(array $values): string
+    {
+        return implode(',', array_fill(0, max(1, count($values)), '?'));
     }
 
     private function jsonNumber(string $key): string

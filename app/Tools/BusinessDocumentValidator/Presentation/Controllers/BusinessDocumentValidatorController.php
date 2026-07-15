@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tools\BusinessDocumentValidator\Presentation\Controllers;
 
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Data\PrintableDocument;
 use App\Core\Export\Services\BrowserPrintExporter;
@@ -96,7 +97,7 @@ final class BusinessDocumentValidatorController extends Controller
         }
 
         $request->session()->put('batch_validation_result', $payload);
-        $analytics->record('business_document_validator.batch_processed', 'tool', $request, $payload['summary'] ?? []);
+        $analytics->record(AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value, 'tool', $request, $payload['summary'] ?? []);
 
         return back()->with('history_saved', $run !== null);
     }
@@ -109,7 +110,7 @@ final class BusinessDocumentValidatorController extends Controller
         $rows = $builder->execute($result, $onlyIssues);
         $suffix = $onlyIssues ? '-inconsistencias' : '-completo';
 
-        $analytics->record('business_document_validator.batch_exported', 'tool', $request, ['format' => $format, 'only_issues' => $onlyIssues, 'rows' => count($rows)]);
+        $analytics->record(AnalyticsEventName::BusinessDocumentValidatorBatchExported->value, 'tool', $request, ['format' => $format, 'only_issues' => $onlyIssues, 'rows' => count($rows)]);
 
         return $format === 'excel'
             ? $exporter->excel('validacao-documentos'.$suffix.'.xls', $builder->headers(), $rows, 'Validações')

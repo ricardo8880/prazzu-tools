@@ -77,7 +77,8 @@
             "@php vendor/bin/pint --test"
         ],
         "architecture": [
-            "@php artisan tools:check-architecture"
+            "@php artisan tools:check-architecture",
+            "@php artisan analytics:check"
         ],
         "quality": [
             "@lint",

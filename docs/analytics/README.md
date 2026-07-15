@@ -15,13 +15,15 @@ Ferramentas não devem importar models, repositórios ou classes de infraestrutu
 
 ```php
 $analytics->track(AnalyticsEvent::make(
-    name: 'tool.calculation.completed',
+    name: AnalyticsEventName::ToolCalculationCompleted->value,
     channel: 'tool',
     properties: ['tool' => 'slug-da-ferramenta'],
 ));
 ```
 
 O método legado `record()` permanece apenas para compatibilidade. Código novo deve preferir `track()`.
+
+O nome deve vir de `AnalyticsEventName`; strings literais de eventos não devem ser adicionadas ao código de produção.
 
 ## Convenção de nomes
 
@@ -77,10 +79,12 @@ Comandos disponíveis:
 - `analytics:generate-insights`
 - `analytics:run-scheduled-reports`
 - `analytics:prune`
+- `analytics:check`
 
 Antes de publicar, execute:
 
 ```bash
+php artisan analytics:check
 php artisan route:list
 php artisan test
 php artisan migrate --pretend

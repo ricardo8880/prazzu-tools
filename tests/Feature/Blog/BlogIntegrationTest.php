@@ -23,7 +23,7 @@ final class BlogIntegrationTest extends TestCase
         $this->get(route('blog.show', $post->slug))->assertOk();
 
         $this->assertDatabaseHas('platform_analytics_events', [
-            'event_name' => 'blog_post_view', 'channel' => 'blog', 'subject_id' => $post->getKey(),
+            'event_name' => 'blog.post.viewed', 'channel' => 'blog', 'subject_id' => $post->getKey(),
         ]);
     }
 

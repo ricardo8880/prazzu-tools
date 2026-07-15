@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Blog;
 
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,15 +15,21 @@ final class BlogAnalyticsController extends Controller
     {
         $data = $request->validate([
             'event' => ['required', Rule::in([
-                'blog_tool_click', 'blog_reading_started', 'blog_reading_completed',
-                'blog_scroll', 'blog_time_spent', 'blog_abandoned', 'blog_share',
-                'blog_download', 'blog_comment',
+                AnalyticsEventName::BlogToolClicked->value,
+                AnalyticsEventName::BlogReadingStarted->value,
+                AnalyticsEventName::BlogReadingCompleted->value,
+                AnalyticsEventName::BlogScrollMeasured->value,
+                AnalyticsEventName::BlogTimeSpent->value,
+                AnalyticsEventName::BlogReadingAbandoned->value,
+                AnalyticsEventName::BlogShared->value,
+                AnalyticsEventName::BlogDownloaded->value,
+                AnalyticsEventName::BlogCommented->value,
             ])],
             'post_id' => ['required', 'integer', 'exists:blog_posts,id'],
             'post_slug' => ['required', 'string', 'max:255'],
-            'tool_slug' => ['nullable', 'required_if:event,blog_tool_click', 'string', 'max:255'],
-            'percentage' => ['nullable', 'required_if:event,blog_scroll', 'integer', 'min:0', 'max:100'],
-            'seconds' => ['nullable', 'required_if:event,blog_time_spent', 'integer', 'min:0', 'max:86400'],
+            'tool_slug' => ['nullable', 'required_if:event,'.AnalyticsEventName::BlogToolClicked->value, 'string', 'max:255'],
+            'percentage' => ['nullable', 'required_if:event,'.AnalyticsEventName::BlogScrollMeasured->value, 'integer', 'min:0', 'max:100'],
+            'seconds' => ['nullable', 'required_if:event,'.AnalyticsEventName::BlogTimeSpent->value, 'integer', 'min:0', 'max:86400'],
             'method' => ['nullable', 'string', 'max:50'],
             'file' => ['nullable', 'string', 'max:255'],
         ]);

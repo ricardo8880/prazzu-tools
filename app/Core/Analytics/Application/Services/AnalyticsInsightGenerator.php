@@ -2,6 +2,8 @@
 
 namespace App\Core\Analytics\Application\Services;
 
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsInsight;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
@@ -11,6 +13,7 @@ use Illuminate\Support\Str;
 
 final class AnalyticsInsightGenerator
 {
+    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
     public function generate(AnalyticsPeriod $period): int
     {
         $previous = $period->previous();
@@ -38,7 +41,7 @@ final class AnalyticsInsightGenerator
 
     private function traffic(AnalyticsPeriod $current, AnalyticsPeriod $previous): Collection
     {
-        $events = config('analytics.dashboard.page_view_events', ['page.viewed']);
+        $events = $this->eventNames->expand(config('analytics.dashboard.page_view_events', [AnalyticsEventName::PageViewed->value]));
         $now = $this->base($current)->whereIn('event_name', $events)->count();
         $before = $this->base($previous)->whereIn('event_name', $events)->count();
         if ($before < (int) config('analytics.insights.minimum_baseline', 10)) return collect();
@@ -92,9 +95,9 @@ final class AnalyticsInsightGenerator
 
     private function content(AnalyticsPeriod $period): Collection
     {
-        $views = $this->base($period)->whereIn('event_name', ['blog_post_view','page.viewed'])->where('channel','blog')->whereNotNull('subject_slug')
+        $views = $this->base($period)->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::BlogPostViewed, AnalyticsEventName::PageViewed]))->where('channel','blog')->whereNotNull('subject_slug')
             ->selectRaw('subject_slug as slug, COUNT(*) as views')->groupBy('subject_slug')->get()->keyBy('slug');
-        $clicks = $this->base($period)->where('event_name','blog_tool_click')->whereNotNull('subject_slug')
+        $clicks = $this->base($period)->whereIn('event_name', $this->eventNames->acceptedNamesFor(AnalyticsEventName::BlogToolClicked))->whereNotNull('subject_slug')
             ->selectRaw('subject_slug as slug, COUNT(*) as clicks')->groupBy('subject_slug')->pluck('clicks','slug');
         return $views->filter(fn(object $r) => $r->views >= 20 && ((int)($clicks[$r->slug] ?? 0) / max(1,$r->views) * 100) < 2)
             ->take(10)->map(fn(object $r) => [
@@ -107,10 +110,22 @@ final class AnalyticsInsightGenerator
 
     private function toolRows(AnalyticsPeriod $period): Collection
     {
+        $starts = $this->eventNames->acceptedNamesFor(AnalyticsEventName::ToolCalculationStarted);
+        $completions = $this->eventNames->expand([
+            AnalyticsEventName::ToolCalculationCompleted,
+            AnalyticsEventName::BusinessDocumentValidatorBatchProcessed,
+        ]);
+
         return $this->base($period)->where('channel','tool')->whereNotNull('subject_slug')->selectRaw('subject_slug as slug')
-            ->selectRaw("SUM(CASE WHEN event_name = 'tool.calculation_started' THEN 1 ELSE 0 END) as starts")
-            ->selectRaw("SUM(CASE WHEN event_name IN ('tool.calculation_completed','business_document_validator.batch_processed') THEN 1 ELSE 0 END) as completions")
+            ->selectRaw('SUM(CASE WHEN event_name IN ('.$this->placeholders($starts).') THEN 1 ELSE 0 END) as starts', $starts)
+            ->selectRaw('SUM(CASE WHEN event_name IN ('.$this->placeholders($completions).') THEN 1 ELSE 0 END) as completions', $completions)
             ->groupBy('subject_slug')->get();
+    }
+
+    /** @param list<string> $values */
+    private function placeholders(array $values): string
+    {
+        return implode(',', array_fill(0, max(1, count($values)), '?'));
     }
 
     private function base(AnalyticsPeriod $period): Builder { return PlatformAnalyticsEvent::query()->whereBetween('occurred_at', [$period->start,$period->end]); }
