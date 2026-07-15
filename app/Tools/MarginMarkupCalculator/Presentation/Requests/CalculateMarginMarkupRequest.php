@@ -16,11 +16,21 @@ final class CalculateMarginMarkupRequest extends FormRequest
     /** @return array<string, array<int, string>> */
     public function rules(): array
     {
+        $money = ['nullable', 'regex:/^\s*(?:R\$\s*)?\d{1,8}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'];
+        $percentage = ['nullable', 'numeric', 'min:0', 'lt:100'];
+
         return [
             'reference_date' => ['required', 'date_format:Y-m-d'],
-            'base_cost' => ['required', 'regex:/^\s*(?:R\$\s*)?\d{1,12}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'],
-            'additional_costs' => ['nullable', 'regex:/^\s*(?:R\$\s*)?\d{1,12}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'],
+            'base_cost' => ['required', 'regex:/^\s*(?:R\$\s*)?\d{1,8}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'],
+            'additional_costs' => $money,
+            'freight_cost' => $money,
+            'packaging_cost' => $money,
+            'fixed_expenses' => $money,
             'desired_margin' => ['required', 'numeric', 'min:0', 'lt:100'],
+            'taxes_percentage' => $percentage,
+            'commission_percentage' => $percentage,
+            'card_fees_percentage' => $percentage,
+            'marketplace_fees_percentage' => $percentage,
         ];
     }
 
@@ -29,8 +39,9 @@ final class CalculateMarginMarkupRequest extends FormRequest
     {
         return [
             'base_cost.regex' => 'Informe o custo base no formato 1.234,56.',
-            'additional_costs.regex' => 'Informe os custos adicionais no formato 1.234,56.',
-            'desired_margin.lt' => 'A margem precisa ser menor que 100%.',
+            '*.regex' => 'Informe os valores monetários no formato 1.234,56.',
+            '*.min' => 'Os valores percentuais não podem ser negativos.',
+            '*.lt' => 'Cada percentual precisa ser menor que 100%.',
         ];
     }
 }

@@ -13,13 +13,25 @@ final readonly class CalculateMarginMarkup
 {
     public function __construct(private MarginMarkupCalculator $calculator) {}
 
-    /** @param array<string, string> $input */
+    /** @param array<string, string|null> $input */
     public function execute(array $input): MarginMarkupResult
     {
         return $this->calculator->calculate(
-            Money::fromDecimal($input['base_cost']),
-            Money::fromDecimal($input['additional_costs'] ?? '0'),
-            Percentage::fromString($input['desired_margin']),
+            baseCost: Money::fromDecimal($input['base_cost']),
+            additionalCosts: Money::fromDecimal($this->valueOrZero($input['additional_costs'] ?? null)),
+            freightCost: Money::fromDecimal($this->valueOrZero($input['freight_cost'] ?? null)),
+            packagingCost: Money::fromDecimal($this->valueOrZero($input['packaging_cost'] ?? null)),
+            fixedExpenses: Money::fromDecimal($this->valueOrZero($input['fixed_expenses'] ?? null)),
+            desiredMargin: Percentage::fromString($input['desired_margin']),
+            taxes: Percentage::fromString($this->valueOrZero($input['taxes_percentage'] ?? null)),
+            commission: Percentage::fromString($this->valueOrZero($input['commission_percentage'] ?? null)),
+            cardFees: Percentage::fromString($this->valueOrZero($input['card_fees_percentage'] ?? null)),
+            marketplaceFees: Percentage::fromString($this->valueOrZero($input['marketplace_fees_percentage'] ?? null)),
         );
+    }
+
+    private function valueOrZero(?string $value): string
+    {
+        return $value === null || trim($value) === '' ? '0' : $value;
     }
 }

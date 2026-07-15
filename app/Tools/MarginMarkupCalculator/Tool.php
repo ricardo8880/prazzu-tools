@@ -56,8 +56,17 @@ final class Tool implements ToolModule, HasWebRoutes, HasViews, HasHistoryPolicy
         return new ToolHistoryPolicy(
             enabled: true,
             retentionDays: 90,
-            inputFields: ['reference_date', 'base_cost', 'additional_costs', 'desired_margin'],
-            resultFields: ['total_cost', 'sale_price', 'profit', 'margin', 'markup'],
+            inputFields: [
+                'calculation_type', 'reference_date', 'product_name', 'base_cost', 'additional_costs',
+                'freight_cost', 'packaging_cost', 'fixed_expenses', 'desired_margin',
+                'taxes_percentage', 'commission_percentage', 'card_fees_percentage',
+                'marketplace_fees_percentage', 'products', 'scenarios',
+            ],
+            resultFields: [
+                'calculation_type', 'total_cost', 'sale_price', 'gross_profit', 'net_profit',
+                'taxes_amount', 'commission_amount', 'card_fees_amount', 'marketplace_fees_amount',
+                'margin', 'markup', 'markup_multiplier', 'rule_version', 'results',
+            ],
         );
     }
 }
