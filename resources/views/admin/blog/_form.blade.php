@@ -1,3 +1,14 @@
+<div class="alert alert-info d-none align-items-center justify-content-between gap-3" role="status" data-blog-draft-recovery>
+    <div>
+        <strong>Rascunho local encontrado.</strong>
+        <span class="d-block small" data-blog-draft-time></span>
+    </div>
+    <div class="d-flex gap-2 flex-shrink-0">
+        <button class="btn btn-sm btn-primary" type="button" data-blog-draft-restore>Restaurar</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button" data-blog-draft-discard>Descartar</button>
+    </div>
+</div>
+
 @if ($errors->any())
     <div class="alert alert-danger" role="alert">
         <h2 class="h6">Revise os campos abaixo:</h2>
@@ -21,22 +32,39 @@
                         <label class="form-label" for="slug">Slug</label>
                         <div class="input-group">
                             <span class="input-group-text">/blog/</span>
-                            <input class="form-control" id="slug" name="slug" value="{{ old('slug', $post->slug) }}" placeholder="gerado-automaticamente">
+                            <input class="form-control" id="slug" name="slug" value="{{ old('slug', $post->slug) }}" placeholder="gerado-automaticamente" data-blog-slug>
                         </div>
+                        <div class="form-text">Gerado a partir do título até você editar este campo.</div>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" for="category">Categoria</label>
-                        <input class="form-control" id="category" name="category" required maxlength="100" value="{{ old('category', $post->category) }}">
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <label class="form-label" for="category_id">Categoria</label>
+                            <a class="small text-decoration-none" href="{{ route('admin.blog.categories.create') }}" target="_blank">Nova categoria</a>
+                        </div>
+                        <select class="form-select" id="category_id" name="category_id" required>
+                            <option value="">Selecione</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->getKey() }}" @selected((string) old('category_id', $post->category_id) === (string) $category->getKey())>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                        @if ($categories->isEmpty())
+                            <div class="form-text text-danger">Cadastre uma categoria antes de salvar a postagem.</div>
+                        @endif
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="excerpt">Resumo</label>
                     <textarea class="form-control" id="excerpt" name="excerpt" rows="3" required maxlength="1000">{{ old('excerpt', $post->excerpt) }}</textarea>
+                    <div class="form-text"><span data-blog-excerpt-count>0</span>/1000 caracteres.</div>
                 </div>
                 <div>
                     <label class="form-label" for="content">Conteúdo do artigo</label>
-                    <textarea class="form-control font-monospace" id="content" name="content" rows="22" required>{{ old('content', $post->content) }}</textarea>
-                    <div class="form-text">Aceita HTML para títulos, parágrafos, listas, tabelas e links.</div>
+                    <textarea class="form-control" id="content" name="content" rows="22" required data-blog-content-editor>{{ old('content', $post->content) }}</textarea>
+                    <div class="d-flex flex-wrap gap-2 mt-2 small text-body-secondary" aria-live="polite">
+                        <span class="badge text-bg-light border"><span data-blog-word-count>0</span> palavras</span>
+                        <span class="badge text-bg-light border"><span data-blog-reading-time>0</span> min de leitura</span>
+                        <span>Use a barra de ferramentas para formatar o artigo.</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,7 +76,9 @@
                     <div class="col-md-6">
                         <label class="form-label" for="cover_image">Imagem de capa</label>
                         <input class="form-control" id="cover_image" name="cover_image" type="file" accept="image/*">
-                        @if ($post->cover_image_path)<div class="form-text">Imagem atual: {{ $post->cover_image_path }}</div>@endif
+                        <div class="mt-3 @if (! $post->cover_image_path) d-none @endif" data-blog-image-preview-wrapper="cover_image">
+                            <img class="img-fluid rounded border" data-blog-image-preview="cover_image" @if ($post->cover_image_path) src="{{ asset('storage/'.$post->cover_image_path) }}" @endif alt="Prévia da imagem de capa">
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="cover_image_alt">Texto alternativo</label>
@@ -57,7 +87,9 @@
                     <div class="col-md-6">
                         <label class="form-label" for="social_image">Imagem social</label>
                         <input class="form-control" id="social_image" name="social_image" type="file" accept="image/*">
-                        @if ($post->social_image_path)<div class="form-text">Imagem atual: {{ $post->social_image_path }}</div>@endif
+                        <div class="mt-3 @if (! $post->social_image_path) d-none @endif" data-blog-image-preview-wrapper="social_image">
+                            <img class="img-fluid rounded border" data-blog-image-preview="social_image" @if ($post->social_image_path) src="{{ asset('storage/'.$post->social_image_path) }}" @endif alt="Prévia da imagem social">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -79,12 +111,12 @@
                     <div class="col-12">
                         <label class="form-label" for="meta_title">Título SEO</label>
                         <input class="form-control" id="meta_title" name="meta_title" maxlength="255" value="{{ old('meta_title', $post->meta_title) }}">
-                        <div class="form-text"><span id="meta-title-count">0</span>/60 caracteres recomendados.</div>
+                        <div class="form-text"><span id="meta-title-count">0</span>/60 caracteres recomendados. <span class="badge ms-1" data-blog-meta-title-status></span></div>
                     </div>
                     <div class="col-12">
                         <label class="form-label" for="meta_description">Meta description</label>
                         <textarea class="form-control" id="meta_description" name="meta_description" rows="3" maxlength="320">{{ old('meta_description', $post->meta_description) }}</textarea>
-                        <div class="form-text"><span id="meta-description-count">0</span>/160 caracteres recomendados.</div>
+                        <div class="form-text"><span id="meta-description-count">0</span>/160 caracteres recomendados. <span class="badge ms-1" data-blog-meta-description-status></span></div>
                     </div>
                     <div class="col-12">
                         <label class="form-label" for="canonical_url">URL canônica</label>
@@ -104,7 +136,7 @@
     </div>
 
     <div class="col-xl-4">
-        <div class="card border-0 shadow-sm mb-4 sticky-xl-top" style="top: 1rem;">
+        <div class="card border-0 shadow-sm mb-4">
             <div class="card-body p-4">
                 <h2 class="h5 mb-3">Publicação</h2>
                 <div class="mb-3">
@@ -118,6 +150,7 @@
                 <div class="mb-3">
                     <label class="form-label" for="published_at">Data e hora de publicação</label>
                     <input class="form-control" id="published_at" name="published_at" type="datetime-local" value="{{ old('published_at', $post->published_at?->format('Y-m-d\TH:i')) }}">
+                    <div class="form-text" data-blog-publication-help></div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="content_updated_at">Última revisão do conteúdo</label>
@@ -135,6 +168,7 @@
                 </div>
                 <div class="d-grid gap-2">
                     <button class="btn btn-primary" type="submit"><i class="bi bi-check-lg me-1"></i> Salvar postagem</button>
+                    <div class="small text-body-secondary text-center" aria-live="polite" data-blog-autosave-status>Alterações locais ainda não salvas.</div>
                     <a class="btn btn-outline-secondary" href="{{ route('admin.blog.posts.index') }}">Voltar</a>
                 </div>
             </div>
@@ -173,35 +207,5 @@
 
 
 @push('scripts')
-<script>
-(() => {
-    const title = document.getElementById('title');
-    const slug = document.getElementById('slug');
-    const excerpt = document.getElementById('excerpt');
-    const metaTitle = document.getElementById('meta_title');
-    const metaDescription = document.getElementById('meta_description');
-    const titleCount = document.getElementById('meta-title-count');
-    const descriptionCount = document.getElementById('meta-description-count');
-    const previewTitle = document.getElementById('seo-preview-title');
-    const previewUrl = document.getElementById('seo-preview-url');
-    const previewDescription = document.getElementById('seo-preview-description');
-    const baseUrl = @json(url('/blog'));
-
-    const slugify = value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const refresh = () => {
-        const resolvedTitle = metaTitle.value.trim() || title.value.trim() || 'Título da postagem';
-        const resolvedDescription = metaDescription.value.trim() || excerpt.value.trim() || 'A descrição da postagem aparecerá aqui.';
-        const resolvedSlug = slug.value.trim() || slugify(title.value) || 'slug-da-postagem';
-
-        titleCount.textContent = metaTitle.value.length;
-        descriptionCount.textContent = metaDescription.value.length;
-        previewTitle.textContent = resolvedTitle;
-        previewUrl.textContent = `${baseUrl}/${resolvedSlug}`;
-        previewDescription.textContent = resolvedDescription;
-    };
-
-    [title, slug, excerpt, metaTitle, metaDescription].forEach(element => element.addEventListener('input', refresh));
-    refresh();
-})();
-</script>
+@vite('resources/js/admin/blog-editor.js')
 @endpush

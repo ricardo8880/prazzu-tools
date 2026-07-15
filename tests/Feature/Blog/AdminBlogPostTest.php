@@ -3,6 +3,7 @@
 namespace Tests\Feature\Blog;
 
 use App\Blog\Enums\BlogPostStatus;
+use App\Blog\Models\BlogCategory;
 use App\Blog\Models\BlogPost;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -13,13 +14,27 @@ final class AdminBlogPostTest extends TestCase
 {
     use RefreshDatabase;
 
+
+    public function test_admin_post_form_exposes_editor_productivity_features(): void
+    {
+        $this->get(route('admin.blog.posts.create'))
+            ->assertOk()
+            ->assertSee('data-blog-post-form', false)
+            ->assertSee('data-blog-content-editor', false)
+            ->assertSee('data-blog-draft-recovery', false)
+            ->assertSee('data-blog-word-count', false)
+            ->assertSee('data-blog-reading-time', false)
+            ->assertSee('data-blog-image-preview="cover_image"', false)
+            ->assertSee('data-blog-image-preview="social_image"', false);
+    }
+
     public function test_admin_can_create_a_draft_post(): void
     {
         $response = $this->post(route('admin.blog.posts.store'), [
             'title' => 'Guia do Simples Nacional',
             'excerpt' => 'Resumo do guia.',
             'content' => '<h2>Conteúdo</h2><p>Texto completo.</p>',
-            'category' => 'Simples Nacional',
+            'category_id' => $this->category()->getKey(),
             'status' => BlogPostStatus::Draft->value,
             'should_index' => '1',
             'related_keywords' => 'das, anexo, fator r',
@@ -56,6 +71,14 @@ final class AdminBlogPostTest extends TestCase
         $this->assertSame(BlogPostStatus::Scheduled, $scheduled->fresh()->status);
     }
 
+    public function test_scheduled_post_requires_publication_date(): void
+    {
+        $this->post(route('admin.blog.posts.store'), $this->payload([
+            'status' => BlogPostStatus::Scheduled->value,
+            'published_at' => null,
+        ]))->assertSessionHasErrors('published_at');
+    }
+
     public function test_admin_can_upload_and_delete_post_images(): void
     {
         Storage::fake('public');
@@ -81,9 +104,18 @@ final class AdminBlogPostTest extends TestCase
             'slug' => $slug,
             'excerpt' => 'Resumo.',
             'content' => '<p>Conteúdo.</p>',
+            'category_id' => $this->category()->getKey(),
             'category' => 'Contabilidade',
             'status' => BlogPostStatus::Draft,
         ]);
+    }
+
+    private function category(): BlogCategory
+    {
+        return BlogCategory::query()->firstOrCreate(
+            ['slug' => 'contabilidade'],
+            ['name' => 'Contabilidade', 'is_active' => true],
+        );
     }
 
     /** @param array<string, mixed> $overrides */
@@ -93,7 +125,7 @@ final class AdminBlogPostTest extends TestCase
             'title' => 'Postagem de teste',
             'excerpt' => 'Resumo da postagem.',
             'content' => '<p>Conteúdo completo.</p>',
-            'category' => 'Contabilidade',
+            'category_id' => $this->category()->getKey(),
             'status' => BlogPostStatus::Draft->value,
             'should_index' => '1',
         ], $overrides);

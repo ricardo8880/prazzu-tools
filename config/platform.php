@@ -62,23 +62,5 @@ return [
             'description' => 'Esta página receberá a apresentação do sistema completo para contadores.',
             'icon' => 'bi-boxes',
         ],
-        'blog.melhor-regime-tributario' => [
-            'title' => 'Como escolher o melhor regime tributário para seu cliente',
-            'eyebrow' => 'Gestão · 5 min de leitura',
-            'description' => 'Estrutura de artigo preparada. O conteúdo editorial definitivo será publicado posteriormente.',
-            'icon' => 'bi-journal-check',
-        ],
-        'blog.organizar-documentos-contabeis' => [
-            'title' => '5 dicas para organizar documentos contábeis de forma eficiente',
-            'eyebrow' => 'Organização · 7 min de leitura',
-            'description' => 'Estrutura de artigo preparada. O conteúdo editorial definitivo será publicado posteriormente.',
-            'icon' => 'bi-folder-check',
-        ],
-        'blog.obrigacoes-acessorias-do-mes' => [
-            'title' => 'Principais obrigações acessórias do mês',
-            'eyebrow' => 'Fiscal · 4 min de leitura',
-            'description' => 'Estrutura de artigo preparada. O conteúdo editorial definitivo será publicado posteriormente.',
-            'icon' => 'bi-calendar-check',
-        ],
     ],
 ];

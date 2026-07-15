@@ -18,6 +18,7 @@ final class BlogPost extends Model
         'slug',
         'excerpt',
         'content',
+        'category_id',
         'category',
         'cover_image_path',
         'cover_image_alt',
@@ -37,6 +38,11 @@ final class BlogPost extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function blogCategory(): BelongsTo
+    {
+        return $this->belongsTo(BlogCategory::class, 'category_id');
     }
 
     public function scopePubliclyAvailable(Builder $query, ?\DateTimeInterface $now = null): Builder

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Blog;
 
 use App\Blog\Enums\BlogPostStatus;
+use App\Blog\Models\BlogCategory;
 use App\Blog\Models\BlogPost;
 use App\Blog\Seo\BlogSeoAnalyzer;
 use App\Core\Tools\ToolCatalog;
@@ -24,12 +25,12 @@ final class BlogPostController extends Controller
         $status = trim((string) $request->query('status', ''));
 
         $posts = BlogPost::query()
-            ->with('author')
+            ->with(['author', 'blogCategory'])
             ->when($search !== '', static function ($query) use ($search): void {
                 $query->where(static function ($query) use ($search): void {
                     $query->where('title', 'like', "%{$search}%")
                         ->orWhere('slug', 'like', "%{$search}%")
-                        ->orWhere('category', 'like', "%{$search}%");
+                        ->orWhereHas('blogCategory', static fn ($categoryQuery) => $categoryQuery->where('name', 'like', "%{$search}%"));
                 });
             })
             ->when($status !== '', static fn ($query) => $query->where('status', $status))
@@ -113,6 +114,13 @@ final class BlogPostController extends Controller
             'tools' => $registry->manifests(),
             'selectedTools' => $post->relatedToolSlugs()->all(),
             'seoIssues' => ($seoAnalyzer ?? app(BlogSeoAnalyzer::class))->analyze($post),
+            'categories' => BlogCategory::query()
+                ->where(static function ($query) use ($post): void {
+                    $query->where('is_active', true)
+                        ->when($post->category_id, static fn ($query) => $query->orWhereKey($post->category_id));
+                })
+                ->orderBy('name')
+                ->get(),
         ];
     }
 
@@ -123,6 +131,8 @@ final class BlogPostController extends Controller
         $data['author_id'] = $request->user()?->getKey() ?? $post->author_id;
         $data['is_featured'] = $request->boolean('is_featured');
         $data['should_index'] = $request->boolean('should_index');
+        $category = BlogCategory::query()->findOrFail($data['category_id']);
+        $data['category'] = $category->name;
         $data['related_keywords'] = collect(explode(',', (string) ($data['related_keywords'] ?? '')))
             ->map(static fn (string $keyword): string => trim($keyword))
             ->filter()

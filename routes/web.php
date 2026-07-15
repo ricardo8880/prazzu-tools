@@ -15,6 +15,7 @@ use App\Http\Controllers\Analytics\TrackToolEventController;
 use App\Http\Controllers\Analytics\CaptureAudienceContextController;
 use App\Http\Controllers\Admin\Blog\BlogAnalyticsController as AdminBlogAnalyticsController;
 use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
+use App\Http\Controllers\Admin\Blog\BlogCategoryController;
 use App\Http\Controllers\Admin\Blog\BlogPostController;
 use App\Http\Controllers\Blog\BlogAnalyticsController;
 use App\Http\Controllers\Blog\BlogController;
@@ -80,6 +81,9 @@ Route::prefix('admin/blog')
 
         Route::get('/posts/{post}/preview', [BlogPostController::class, 'preview'])
             ->name('posts.preview');
+
+        Route::resource('categories', BlogCategoryController::class)
+            ->except('show');
 
         Route::resource('posts', BlogPostController::class)
             ->except('show');

@@ -17,7 +17,7 @@
             @endif
         </div>
     </div>
-    <form method="post" action="{{ route('admin.blog.posts.update', $post) }}" enctype="multipart/form-data">
+    <form data-blog-post-form data-blog-draft-key="{{ $post->getKey() }}" data-blog-base-url="{{ url('/blog') }}" method="post" action="{{ route('admin.blog.posts.update', $post) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         @include('admin.blog._form')

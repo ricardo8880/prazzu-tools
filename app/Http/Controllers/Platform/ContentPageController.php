@@ -8,16 +8,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class ContentPageController extends Controller
 {
-    public function blog(): View
-    {
-        return $this->render('blog');
-    }
-
-    public function article(string $article): View
-    {
-        return $this->render("blog.{$article}");
-    }
-
     public function plans(): View
     {
         return view('pages.plans');

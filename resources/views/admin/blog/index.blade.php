@@ -10,7 +10,7 @@
             <h1 class="h2 mb-1">Postagens do blog</h1>
             <p class="text-body-secondary mb-0">Crie, organize, agende e publique conteúdos da plataforma.</p>
         </div>
-        <div class="d-flex gap-2"><a class="btn btn-outline-primary" href="{{ route('admin.blog.analytics') }}"><i class="bi bi-graph-up me-1"></i> Analytics</a><a class="btn btn-primary" href="{{ route('admin.blog.posts.create') }}">
+        <div class="d-flex flex-wrap gap-2"><a class="btn btn-outline-secondary" href="{{ route('admin.blog.categories.index') }}"><i class="bi bi-tags me-1"></i> Categorias</a><a class="btn btn-outline-primary" href="{{ route('admin.blog.analytics') }}"><i class="bi bi-graph-up me-1"></i> Analytics</a><a class="btn btn-primary" href="{{ route('admin.blog.posts.create') }}">
             <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Nova postagem
         </a></div>
     </div>
@@ -60,7 +60,7 @@
                                     <span class="badge text-bg-warning ms-2">Destaque</span>
                                 @endif
                             </td>
-                            <td>{{ $post->category }}</td>
+                            <td>{{ $post->blogCategory?->name ?? $post->category }}</td>
                             <td>
                                 <span class="badge {{ $post->status->value === 'published' ? 'text-bg-success' : ($post->status->value === 'scheduled' ? 'text-bg-info' : 'text-bg-secondary') }}">
                                     {{ $post->status->label() }}
@@ -91,7 +91,7 @@
                                 <i class="bi bi-journal-text display-5 text-body-secondary" aria-hidden="true"></i>
                                 <h2 class="h5 mt-3">Nenhuma postagem encontrada</h2>
                                 <p class="text-body-secondary">Comece criando o primeiro conteúdo do blog.</p>
-                                <div class="d-flex gap-2"><a class="btn btn-outline-primary" href="{{ route('admin.blog.analytics') }}"><i class="bi bi-graph-up me-1"></i> Analytics</a><a class="btn btn-primary" href="{{ route('admin.blog.posts.create') }}">Criar postagem</a>
+                                <div class="d-flex flex-wrap gap-2"><a class="btn btn-outline-secondary" href="{{ route('admin.blog.categories.index') }}"><i class="bi bi-tags me-1"></i> Categorias</a><a class="btn btn-outline-primary" href="{{ route('admin.blog.analytics') }}"><i class="bi bi-graph-up me-1"></i> Analytics</a><a class="btn btn-primary" href="{{ route('admin.blog.posts.create') }}">Criar postagem</a>
                             </td>
                         </tr>
                     @endforelse
