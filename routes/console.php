@@ -10,3 +10,11 @@ Artisan::command('inspire', function () {
 
 
 Schedule::command('tools:purge-history')->dailyAt('02:30')->withoutOverlapping();
+
+Schedule::command('analytics:run-scheduled-reports')->hourly()->withoutOverlapping();
+
+Schedule::command('analytics:generate-insights --days=7')->dailyAt('03:15')->withoutOverlapping();
+
+Schedule::command('analytics:prune --chunk='.(int) config('analytics.performance.prune_chunk_size', 1000))
+    ->dailyAt('04:00')
+    ->withoutOverlapping();

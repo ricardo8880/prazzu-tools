@@ -2,26 +2,30 @@
 
 namespace App\Core\Analytics\Services;
 
+use App\Core\Analytics\Contracts\AnalyticsContextResolver;
+use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
-use App\Core\Analytics\Models\PlatformAnalyticsEvent;
+use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use Illuminate\Http\Request;
 
-final class DatabasePlatformAnalytics implements PlatformAnalytics
+final readonly class DatabasePlatformAnalytics implements PlatformAnalytics
 {
+    public function __construct(
+        private AnalyticsContextResolver $contextResolver,
+        private AnalyticsEventRepository $events,
+    ) {}
+
+    public function track(AnalyticsEvent $event, ?Request $request = null): void
+    {
+        if (! config('analytics.enabled', true)) {
+            return;
+        }
+
+        $this->events->store($event, $this->contextResolver->resolve($request));
+    }
+
     public function record(string $eventName, string $channel, Request $request, array $metadata = []): void
     {
-        PlatformAnalyticsEvent::query()->create([
-            'event_name' => $eventName,
-            'channel' => $channel,
-            'subject_type' => $metadata['subject_type'] ?? null,
-            'subject_id' => $metadata['subject_id'] ?? null,
-            'subject_slug' => $metadata['subject_slug'] ?? null,
-            'user_id' => $request->user()?->getKey(),
-            'session_id' => $request->hasSession() ? $request->session()->getId() : null,
-            'path' => '/'.$request->path(),
-            'referrer' => $request->headers->get('referer'),
-            'metadata' => $metadata,
-            'occurred_at' => now(),
-        ]);
+        $this->track(AnalyticsEvent::make($eventName, $channel, $metadata), $request);
     }
 }

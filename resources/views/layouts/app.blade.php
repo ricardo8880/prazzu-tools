@@ -115,6 +115,56 @@
 
 @stack('scripts')
 
+<script>
+(() => {
+    if (sessionStorage.getItem('prazzu-audience-context') === '1') return;
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+    const screenResolution = `${window.screen.width}x${window.screen.height}`;
+    const language = navigator.language || null;
+    fetch(@json(route('analytics.audience.capture')), {
+        method: 'POST',
+        credentials: 'same-origin',
+        keepalive: true,
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json'},
+        body: JSON.stringify({timezone, screen_resolution: screenResolution, language})
+    }).then((response) => {
+        if (response.ok) sessionStorage.setItem('prazzu-audience-context', '1');
+    }).catch(() => {});
+})();
+</script>
+
+@php
+    $analyticsRouteName = request()->route()?->getName();
+    $analyticsToolSlug = is_string($analyticsRouteName) && str_starts_with($analyticsRouteName, 'tools.')
+        ? (explode('.', $analyticsRouteName)[1] ?? null)
+        : null;
+@endphp
+@if($analyticsToolSlug)
+<script>
+(() => {
+    const endpoint = @json(route('analytics.tools.track'));
+    const tool = @json($analyticsToolSlug);
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const startedAt = Date.now();
+    const send = (event, properties = {}) => fetch(endpoint, {
+        method: 'POST', credentials: 'same-origin', keepalive: true,
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json'},
+        body: JSON.stringify({tool, event, ...properties})
+    }).catch(() => {});
+
+    document.querySelectorAll('form').forEach((form) => {
+        if ((form.method || 'get').toLowerCase() !== 'get') {
+            form.addEventListener('submit', () => send('tool.calculation_started'), {once: true});
+        }
+    });
+    window.addEventListener('pagehide', () => {
+        const seconds = Math.min(86400, Math.max(0, Math.round((Date.now() - startedAt) / 1000)));
+        if (seconds >= 3) send('tool.time_spent', {seconds});
+    }, {once: true});
+})();
+</script>
+@endif
 
 </body>
 </html>

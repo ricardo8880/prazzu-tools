@@ -118,12 +118,75 @@
 @push('scripts')
 @if (empty($isPreview))
 <script>
-document.querySelectorAll('.js-blog-tool-link').forEach((link) => {
-    link.addEventListener('click', () => {
-        const payload = JSON.stringify({event: 'blog_tool_click', post_id: {{ $post->getKey() }}, post_slug: @json($post->slug), tool_slug: link.dataset.toolSlug});
-        fetch(@json(route('blog.analytics')), {method: 'POST', keepalive: true, headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content}, body: payload}).catch(() => {});
-    });
-});
+(() => {
+    const endpoint = @json(route('blog.analytics'));
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const article = document.querySelector('article');
+    const base = {post_id: {{ $post->getKey() }}, post_slug: @json($post->slug)};
+    const startedAt = Date.now();
+    const sentScroll = new Set();
+    let completed = false;
+    let finalized = false;
+
+    const track = (event, properties = {}) => fetch(endpoint, {
+        method: 'POST',
+        keepalive: true,
+        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf},
+        body: JSON.stringify({...base, ...properties, event}),
+    }).catch(() => {});
+
+    window.setTimeout(() => track('blog_reading_started'), 3000);
+
+    const readingPercentage = () => {
+        if (!article) return 0;
+        const start = article.offsetTop;
+        const height = Math.max(1, article.offsetHeight - window.innerHeight);
+        return Math.max(0, Math.min(100, Math.round(((window.scrollY - start + window.innerHeight) / height) * 100)));
+    };
+
+    const inspectReading = () => {
+        const percentage = readingPercentage();
+        [25, 50, 75, 100].forEach((milestone) => {
+            if (percentage >= milestone && !sentScroll.has(milestone)) {
+                sentScroll.add(milestone);
+                track('blog_scroll', {percentage: milestone});
+            }
+        });
+        if (percentage >= 90 && !completed) {
+            completed = true;
+            track('blog_reading_completed');
+        }
+    };
+
+    let scrollTimer;
+    window.addEventListener('scroll', () => {
+        window.clearTimeout(scrollTimer);
+        scrollTimer = window.setTimeout(inspectReading, 150);
+    }, {passive: true});
+
+    document.querySelectorAll('.js-blog-tool-link').forEach((link) => link.addEventListener('click', () =>
+        track('blog_tool_click', {tool_slug: link.dataset.toolSlug})
+    ));
+
+    document.querySelectorAll('a[download], a[href$=".pdf"], a[href$=".xlsx"], a[href$=".csv"]').forEach((link) => link.addEventListener('click', () =>
+        track('blog_download', {file: link.getAttribute('href')?.slice(0, 255)})
+    ));
+
+    document.querySelectorAll('[data-share], a[href*="whatsapp.com"], a[href*="linkedin.com/sharing"], a[href*="twitter.com/intent"]').forEach((link) => link.addEventListener('click', () =>
+        track('blog_share', {method: link.dataset.share || 'link'})
+    ));
+
+    const finalize = () => {
+        if (finalized) return;
+        finalized = true;
+        const seconds = Math.min(86400, Math.max(0, Math.round((Date.now() - startedAt) / 1000)));
+        track('blog_time_spent', {seconds});
+        if (!completed) track('blog_abandoned');
+    };
+
+    window.addEventListener('pagehide', finalize);
+    inspectReading();
+})();
 </script>
 @endif
 @endpush

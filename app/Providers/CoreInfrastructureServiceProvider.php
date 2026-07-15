@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use App\Core\Access\Contracts\ToolAccessGate;
+use App\Core\Analytics\Contracts\AnalyticsContextResolver;
+use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Analytics\Infrastructure\Http\RequestAnalyticsContextResolver;
+use App\Core\Analytics\Infrastructure\Persistence\EloquentAnalyticsEventRepository;
 use App\Core\Analytics\Services\DatabasePlatformAnalytics;
 use App\Core\Access\Services\DefaultToolAccessGate;
 use App\Core\FeatureFlags\Contracts\FeatureFlagRepository;
@@ -23,6 +27,8 @@ final class CoreInfrastructureServiceProvider extends ServiceProvider
     {
         $this->app->singleton(FeatureFlagRepository::class, ConfigFeatureFlagRepository::class);
         $this->app->singleton(ToolAccessGate::class, DefaultToolAccessGate::class);
+        $this->app->singleton(AnalyticsContextResolver::class, RequestAnalyticsContextResolver::class);
+        $this->app->singleton(AnalyticsEventRepository::class, EloquentAnalyticsEventRepository::class);
         $this->app->singleton(PlatformAnalytics::class, DatabasePlatformAnalytics::class);
 
         $this->app->singleton(UsageLimiter::class, function ($app): UsageLimiter {
