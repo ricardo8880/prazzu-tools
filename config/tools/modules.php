@@ -15,6 +15,7 @@ return [
         // <tools:labor>
     ],
     'corporate' => [
+        App\Tools\AccountingFeesCalculator\Tool::class,
         // <tools:corporate>
     ],
     'documents' => [
