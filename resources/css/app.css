@@ -11,7 +11,7 @@
     --prazzu-footer-height: 70px;
     --prazzu-left-sidebar-width: 250px;
     --prazzu-right-sidebar-width: 318px;
-    --prazzu-page-max-width: 1536px;
+    --prazzu-page-max-width: 1920px;
     --prazzu-color-primary: #7c3aed;
     --prazzu-color-primary-light: #9d6cff;
     --prazzu-color-primary-dark: #5b21b6;
@@ -94,7 +94,8 @@ body.prazzu-app .text-body-secondary {
 
 /* 03. Application shell */
 .prazzu-shell {
-    width: min(100%, var(--prazzu-page-max-width));
+    width: 100%;
+    max-width: var(--prazzu-page-max-width);
     min-height: 100vh;
     margin-inline: auto;
     border-inline: 1px solid var(--prazzu-border-color);
@@ -1289,7 +1290,6 @@ body.prazzu-app .text-body-secondary {
 /* 09. Páginas, catálogo e estados funcionais */
 .prazzu-page {
     width: 100%;
-    max-width: 1180px;
     margin: 0 auto;
     padding: 28px 24px 40px;
 }

@@ -22,7 +22,7 @@ Route::prefix('ferramentas/calculadora-margem-markup')
         Route::post('/simular-cenarios', [MarginMarkupController::class, 'simulateScenarios'])->name('scenarios.simulate');
         Route::post('/simular-cenarios/exportar', [MarginMarkupController::class, 'exportScenarios'])->name('scenarios.export');
 
-        Route::middleware('auth')->prefix('historico')->name('history.')->group(function (): void {
+        Route::middleware('persistence.auth')->prefix('historico')->name('history.')->group(function (): void {
             Route::get('/', [MarginMarkupController::class, 'history'])->name('index');
             Route::get('/{run}', [MarginMarkupController::class, 'showHistory'])->name('show');
             Route::get('/{run}/pdf', [MarginMarkupController::class, 'exportHistory'])->name('pdf');

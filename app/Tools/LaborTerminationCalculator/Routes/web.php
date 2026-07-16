@@ -12,7 +12,7 @@ Route::prefix('ferramentas/calculadora-de-rescisao')
         Route::post('/calcular', [LaborTerminationController::class, 'calculate'])->name('calculate');
         Route::post('/exportar-pdf', [LaborTerminationController::class, 'export'])->name('export');
 
-        Route::middleware('auth')->prefix('historico')->name('history.')->group(function (): void {
+        Route::middleware('persistence.auth')->prefix('historico')->name('history.')->group(function (): void {
             Route::get('/', [LaborTerminationController::class, 'history'])->name('index');
             Route::get('/{run}', [LaborTerminationController::class, 'showHistory'])->name('show');
             Route::get('/{run}/pdf', [LaborTerminationController::class, 'exportHistory'])->name('pdf');

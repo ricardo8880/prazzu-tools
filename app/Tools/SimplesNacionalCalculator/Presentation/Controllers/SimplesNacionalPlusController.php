@@ -17,7 +17,6 @@ use App\Tools\SimplesNacionalCalculator\Presentation\Requests\CompareScenariosRe
 use App\Tools\SimplesNacionalCalculator\Presentation\Requests\SaveCalculationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 final class SimplesNacionalPlusController extends Controller
@@ -76,8 +75,8 @@ final class SimplesNacionalPlusController extends Controller
         }
 
         SimplesNacionalCalculation::query()->create([
-            'user_id' => $request->user()?->getAuthIdentifier(),
-            'session_key' => $this->sessionKey($request),
+            'user_id' => $request->user()->getAuthIdentifier(),
+            'session_key' => null,
             'company_name' => $input['company_name'],
             'reference_month' => $input['reference_month'].'-01',
             'annex' => $input['annex'],
@@ -101,38 +100,22 @@ final class SimplesNacionalPlusController extends Controller
 
     public static function historyFor(Request $request)
     {
-        $query = SimplesNacionalCalculation::query()->latest('reference_month')->latest('id');
-
-        if ($request->user()) {
-            $query->where('user_id', $request->user()->getAuthIdentifier());
-        } else {
-            $query->where('session_key', self::resolveSessionKey($request));
+        if ($request->user() === null) {
+            return collect();
         }
 
-        return $query->limit(24)->get();
+        return SimplesNacionalCalculation::query()
+            ->where('user_id', $request->user()->getAuthIdentifier())
+            ->latest('reference_month')
+            ->latest('id')
+            ->limit(24)
+            ->get();
     }
 
     private function owns(Request $request, SimplesNacionalCalculation $calculation): bool
     {
-        if ($request->user()) {
-            return (int) $calculation->user_id === (int) $request->user()->getAuthIdentifier();
-        }
-
-        return hash_equals((string) $calculation->session_key, self::resolveSessionKey($request));
-    }
-
-    private function sessionKey(Request $request): string
-    {
-        return self::resolveSessionKey($request);
-    }
-
-    private static function resolveSessionKey(Request $request): string
-    {
-        if (! $request->session()->has('simples_nacional_history_key')) {
-            $request->session()->put('simples_nacional_history_key', (string) Str::uuid());
-        }
-
-        return (string) $request->session()->get('simples_nacional_history_key');
+        return $request->user() !== null
+            && (int) $calculation->user_id === (int) $request->user()->getAuthIdentifier();
     }
 
     private function moneyToCents(string $value): int

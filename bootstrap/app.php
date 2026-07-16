@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'internal.admin' => \App\Http\Middleware\EnsureInternalAdministrator::class,
+            'persistence.auth' => \App\Http\Middleware\EnsureAuthenticatedForPersistence::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

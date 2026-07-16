@@ -23,8 +23,16 @@
         </nav>
 
         <div class="d-grid gap-2 mt-auto pt-4">
-            <a class="btn prazzu-btn-outline" href="{{ route('login.placeholder') }}">Entrar</a>
-            <a class="btn btn-primary prazzu-btn-primary" href="{{ route('register.placeholder') }}">Criar conta grátis</a>
+            @auth
+                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('account.show') }}">Minha conta</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn prazzu-btn-outline w-100" type="submit">Sair</button>
+                </form>
+            @else
+                <a class="btn prazzu-btn-outline" href="{{ route('login') }}">Entrar</a>
+                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('register') }}">Criar conta grátis</a>
+            @endauth
         </div>
     </div>
 </div>

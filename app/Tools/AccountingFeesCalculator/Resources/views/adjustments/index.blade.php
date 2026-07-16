@@ -111,7 +111,7 @@
                             @error('notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-12 d-grid">
-                            <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-1"></i>Calcular e salvar</button>
+                            <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-1"></i>Calcular</button>
                         </div>
                     </form>
                 </div>
@@ -119,6 +119,13 @@
         </div>
 
         <div class="col-12 col-xl-7">
+            @guest
+                <div class="alert alert-info d-flex gap-2 align-items-start" role="note">
+                    <i class="bi bi-person-plus fs-5" aria-hidden="true"></i>
+                    <div><strong>O reajuste funciona sem login.</strong><br>Crie uma conta gratuita apenas para salvar e consultar seus resultados depois.</div>
+                </div>
+            @endguest
+            @auth
             <section class="card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
@@ -159,6 +166,7 @@
                     @endif
                 </div>
             </section>
+            @endauth
         </div>
     </div>
 </div>

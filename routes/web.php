@@ -12,6 +12,15 @@ use App\Http\Controllers\Admin\Analytics\SeoPostAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\ToolAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\ToolDetailAnalyticsController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
+use App\Http\Controllers\Auth\AccountController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Analytics\CaptureAudienceContextController;
 use App\Http\Controllers\Admin\Blog\BlogAnalyticsController as AdminBlogAnalyticsController;
 use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
@@ -123,11 +132,39 @@ Route::get('/recursos/{resource}', [ContentPageController::class, 'resource'])
 Route::get('/sobre', [ContentPageController::class, 'about'])
     ->name('about');
 
-Route::get('/entrar', [ContentPageController::class, 'login'])
-    ->name('login.placeholder');
+Route::middleware('guest')->group(function (): void {
+    Route::get('/entrar', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/entrar', [AuthenticatedSessionController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('login.store');
 
-Route::get('/criar-conta', [ContentPageController::class, 'register'])
-    ->name('register.placeholder');
+    Route::get('/criar-conta', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/criar-conta', [RegisteredUserController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('register.store');
+
+    Route::get('/esqueci-minha-senha', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/esqueci-minha-senha', [PasswordResetLinkController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('password.email');
+    Route::get('/redefinir-senha/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/redefinir-senha', [NewPasswordController::class, 'store'])->name('password.store');
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/minha-conta', AccountController::class)->name('account.show');
+    Route::get('/confirmar-email', EmailVerificationPromptController::class)->name('verification.notice');
+    Route::get('/confirmar-email/{id}/{hash}', VerifyEmailController::class)
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+    Route::post('/confirmar-email/reenviar', EmailVerificationNotificationController::class)
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+    Route::put('/minha-conta/senha', [PasswordController::class, 'update'])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
+    Route::post('/sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+});
 
 Route::get('/prazzu', [ContentPageController::class, 'prazzu'])
     ->name('prazzu');

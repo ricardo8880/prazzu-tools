@@ -2,6 +2,7 @@
 
 namespace App\Core\Access\Services;
 
+use App\Core\Access\Contracts\CommercialAccessPolicy;
 use App\Core\Access\Contracts\ToolAccessGate;
 use App\Core\Access\Data\AccessDecision;
 use App\Core\Access\Data\ToolAccessContext;
@@ -11,7 +12,10 @@ use App\Core\Tools\Enums\ToolAccess;
 
 final readonly class DefaultToolAccessGate implements ToolAccessGate
 {
-    public function __construct(private FeatureFlagRepository $flags) {}
+    public function __construct(
+        private FeatureFlagRepository $flags,
+        private CommercialAccessPolicy $commercialPolicy,
+    ) {}
 
     public function decide(ToolManifest $manifest, ToolAccessContext $context): AccessDecision
     {
@@ -21,6 +25,13 @@ final readonly class DefaultToolAccessGate implements ToolAccessGate
 
         if (! $this->flags->enabled("tools.{$manifest->slug}.enabled", true)) {
             return AccessDecision::deny('tool.feature_disabled');
+        }
+
+        if (
+            $manifest->access !== ToolAccess::Internal
+            && $this->commercialPolicy->grantsPublicCapabilitiesWithoutAuthentication()
+        ) {
+            return AccessDecision::allow('tool.launch_free_access');
         }
 
         return match ($manifest->access) {

@@ -18,7 +18,7 @@ Route::prefix('ferramentas/validador-de-cnpj')
         Route::post('/consultar-cnpj', [BusinessDocumentValidatorController::class, 'lookupCompany'])->name('lookup-company');
         Route::post('/validar-inscricao-estadual', [BusinessDocumentValidatorController::class, 'validateStateRegistration'])->name('validate-state-registration');
 
-        Route::middleware('auth')->prefix('historico')->name('history.')->group(function (): void {
+        Route::middleware('persistence.auth')->prefix('historico')->name('history.')->group(function (): void {
             Route::get('/', [BusinessDocumentValidatorController::class, 'history'])->name('index');
             Route::delete('/{run}', [BusinessDocumentValidatorController::class, 'destroyHistory'])->name('destroy');
         });

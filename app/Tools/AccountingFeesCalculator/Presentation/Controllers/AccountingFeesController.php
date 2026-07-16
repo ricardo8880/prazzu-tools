@@ -43,20 +43,25 @@ final class AccountingFeesController extends Controller
             ]);
         }
 
-        [$userId, $sessionKey] = $this->owner($request);
         $resultData = $result->toArray();
+        $saved = false;
 
-        AccountingFeeCalculation::query()->create([
-            'user_id' => $userId,
-            'session_key' => $userId === null ? $sessionKey : null,
-            'input' => $request->validated(),
-            'result' => $resultData,
-        ]);
+        if ($request->user() !== null) {
+            AccountingFeeCalculation::query()->create([
+                'user_id' => $request->user()->getAuthIdentifier(),
+                'session_key' => null,
+                'input' => $request->validated(),
+                'result' => $resultData,
+            ]);
+            $saved = true;
+        }
 
         return back()
             ->withInput()
             ->with('calculation_result', $resultData)
-            ->with('success', 'Cálculo concluído e salvo no histórico.');
+            ->with('success', $saved
+                ? 'Cálculo concluído e salvo no seu histórico.'
+                : 'Cálculo concluído. Crie uma conta gratuita para salvar e recuperar seus resultados.');
     }
 
     public function proposal(GenerateCommercialProposalRequest $request, BuildCommercialProposal $action): View
@@ -75,11 +80,11 @@ final class AccountingFeesController extends Controller
 
     public function history(Request $request): View
     {
-        [$userId, $sessionKey] = $this->owner($request);
+        $userId = (int) $request->user()->getAuthIdentifier();
         $favorite = $request->boolean('favorite');
 
         $calculations = AccountingFeeCalculation::query()
-            ->visibleTo($userId, $sessionKey)
+            ->visibleTo($userId, '')
             ->when($favorite, fn ($query) => $query->where('is_favorite', true))
             ->latest()
             ->paginate(12)
@@ -127,7 +132,7 @@ final class AccountingFeesController extends Controller
     public function exportHistory(Request $request): StreamedResponse
     {
         [$userId, $sessionKey] = $this->owner($request);
-        $calculations = AccountingFeeCalculation::query()->visibleTo($userId, $sessionKey)->latest()->get();
+        $calculations = AccountingFeeCalculation::query()->visibleTo($userId, '')->latest()->get();
 
         return response()->streamDownload(function () use ($calculations): void {
             $output = fopen('php://output', 'wb');
@@ -165,7 +170,7 @@ final class AccountingFeesController extends Controller
         [$userId, $sessionKey] = $this->owner($request);
 
         $adjustments = FeeAdjustment::query()
-            ->visibleTo($userId, $sessionKey)
+            ->visibleTo($userId, '')
             ->latest()
             ->paginate(12);
 
@@ -176,7 +181,6 @@ final class AccountingFeesController extends Controller
         CalculateFeeAdjustmentRequest $request,
         CalculateFeeAdjustment $action,
     ): RedirectResponse {
-        [$userId, $sessionKey] = $this->owner($request);
         $data = $request->validated();
 
         try {
@@ -188,9 +192,11 @@ final class AccountingFeesController extends Controller
             throw ValidationException::withMessages(['percentage' => $exception->getMessage()]);
         }
 
-        FeeAdjustment::query()->create([
-            'user_id' => $userId,
-            'session_key' => $userId === null ? $sessionKey : null,
+        $saved = false;
+        if ($request->user() !== null) {
+            FeeAdjustment::query()->create([
+            'user_id' => $request->user()->getAuthIdentifier(),
+            'session_key' => null,
             'client_name' => trim($data['client_name']),
             'index_type' => $data['index_type'],
             'reference_period' => $data['reference_period'],
@@ -199,10 +205,14 @@ final class AccountingFeesController extends Controller
             'difference_cents' => $result->differenceCents,
             'adjusted_value_cents' => $result->adjustedValueCents,
             'notes' => filled($data['notes'] ?? null) ? trim((string) $data['notes']) : null,
-        ]);
+            ]);
+            $saved = true;
+        }
 
         return redirect()->route('tools.calculadora-de-honorarios-contabeis.adjustments.index')
-            ->with('success', 'Reajuste calculado e salvo no histórico.')
+            ->with('success', $saved
+                ? 'Reajuste calculado e salvo no seu histórico.'
+                : 'Reajuste calculado. Crie uma conta gratuita para salvar este resultado.')
             ->with('adjustment_result', $result->toArray());
     }
 
@@ -228,7 +238,7 @@ final class AccountingFeesController extends Controller
         $status = (string) $request->query('status');
 
         $clients = AccountingClient::query()
-            ->visibleTo($userId, $sessionKey)
+            ->visibleTo($userId, '')
             ->when($search !== '', function ($query) use ($search): void {
                 $query->where(function ($nested) use ($search): void {
                     $nested->where('company_name', 'like', "%{$search}%")
@@ -243,7 +253,7 @@ final class AccountingFeesController extends Controller
             ->withQueryString();
 
         $summary = AccountingClient::query()
-            ->visibleTo($userId, $sessionKey)
+            ->visibleTo($userId, '')
             ->selectRaw('pipeline_status, COUNT(*) as total')
             ->groupBy('pipeline_status')
             ->pluck('total', 'pipeline_status');
@@ -260,7 +270,6 @@ final class AccountingFeesController extends Controller
 
     public function storeClient(StoreAccountingClientRequest $request): RedirectResponse
     {
-        [$userId, $sessionKey] = $this->owner($request);
         $data = $request->validated();
 
         AccountingClient::query()->create([

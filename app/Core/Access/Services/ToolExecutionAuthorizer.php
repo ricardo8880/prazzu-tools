@@ -2,6 +2,7 @@
 
 namespace App\Core\Access\Services;
 
+use App\Core\Access\Contracts\CommercialAccessPolicy;
 use App\Core\Access\Contracts\ToolAccessGate;
 use App\Core\Access\Data\AccessDecision;
 use App\Core\Access\Data\ToolAccessContext;
@@ -14,6 +15,7 @@ final readonly class ToolExecutionAuthorizer
     public function __construct(
         private ToolAccessGate $accessGate,
         private UsageLimiter $usageLimiter,
+        private CommercialAccessPolicy $commercialPolicy,
     ) {}
 
     public function authorize(
@@ -26,6 +28,10 @@ final readonly class ToolExecutionAuthorizer
 
         if (! $access->allowed) {
             return $access;
+        }
+
+        if (! $this->commercialPolicy->enforcesUsageLimits()) {
+            return AccessDecision::allow('tool.launch_free_execution_allowed');
         }
 
         $usage = $this->usageLimiter->consume($manifest->slug, $subjectKey, $limit);

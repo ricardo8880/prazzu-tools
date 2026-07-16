@@ -262,6 +262,10 @@
             <div class="accordion-item">
                 <h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#history-panel"><i class="bi bi-clock-history me-2"></i> Histórico mensal</button></h3>
                 <div id="history-panel" class="accordion-collapse collapse" data-bs-parent="#simples-plus-accordion"><div class="accordion-body">
+                    @guest
+                        <div class="alert alert-info mb-0" role="note"><i class="bi bi-person-plus me-1" aria-hidden="true"></i>Você pode usar todos os cálculos sem login. Crie uma conta gratuita apenas para salvar e consultar o histórico mensal.</div>
+                    @endguest
+                    @auth
                     <form method="post" action="{{ route('tools.calculadora-simples-nacional.plus.history.store') }}" class="row g-3">@csrf
                         <div class="col-md-4"><label class="form-label">Empresa</label><input class="form-control" name="company_name" value="{{ old('company_name') }}" required></div>
                         <div class="col-md-2"><label class="form-label">Competência</label><input class="form-control" type="month" name="reference_month" value="{{ old('reference_month', now()->format('Y-m')) }}" required></div>
@@ -271,6 +275,7 @@
                         <div class="col-12"><button class="btn btn-primary" type="submit" @disabled(! ($plusAccess['monthly_history'] ?? false))><i class="bi bi-save me-1"></i> Salvar cálculo</button></div>
                     </form>
                     <div class="table-responsive mt-4"><table class="table table-hover align-middle mb-0"><thead><tr><th>Competência</th><th>Empresa</th><th>Anexo</th><th>Receita</th><th>Alíquota</th><th>DAS</th><th></th></tr></thead><tbody>@forelse($history as $item)<tr><td>{{ $item->reference_month->format('m/Y') }}</td><td>{{ $item->company_name }}</td><td>Anexo {{ $item->annex }}</td><td>{{ $item->payload['monthly_revenue'] }}</td><td>{{ $item->payload['effective_rate'] }}</td><td>{{ $item->payload['estimated_das'] }}</td><td class="text-end"><form method="post" action="{{ route('tools.calculadora-simples-nacional.plus.history.destroy', $item) }}">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir" @disabled(! ($plusAccess['monthly_history'] ?? false))><i class="bi bi-trash"></i></button></form></td></tr>@empty<tr><td colspan="7" class="text-center text-secondary py-4">Nenhum cálculo salvo ainda.</td></tr>@endforelse</tbody></table></div>
+                    @endauth
                 </div></div>
             </div>
         </div>

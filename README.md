@@ -43,40 +43,45 @@ qualidade e os mesmos princípios.
 Toda ferramenta publicada no Prazzu Tools segue exatamente a mesma
 filosofia.
 
-Cada uma possui duas experiências:
+A plataforma distingue duas categorias de capacidade:
 
--   **Boa (Gratuita)**
--   **Excelente (Prazzu Plus)**
+-   **Essencial**
+-   **Prazzu Plus**
 
-A versão gratuita deve resolver completamente o problema que se propõe a
-resolver.
+Essa classificação existe para organizar o produto e preparar sua futura
+monetização. Ela não autoriza limitar artificialmente cálculos, esconder
+resultados ou degradar a experiência do visitante.
 
-Ela nunca deve apresentar resultados incompletos, esconder cálculos
-importantes ou criar limitações artificiais apenas para incentivar uma
-assinatura.
+Durante a fase inicial de lançamento, todas as ferramentas e todos os
+recursos Prazzu Plus estarão disponíveis gratuitamente, sem limite de uso
+e sem exigir autenticação.
 
-O profissional precisa conseguir realizar seu trabalho normalmente
-utilizando apenas a versão gratuita.
+A pessoa deve conseguir entrar na plataforma e utilizar imediatamente a
+capacidade máxima de cada ferramenta.
 
-O Prazzu Plus representa a evolução da mesma ferramenta.
-
-Os recursos Plus existem para entregar mais produtividade através de
-funcionalidades como:
+O login não existe para liberar cálculos ou recursos avançados. Ele existe
+para permitir persistência e continuidade, incluindo:
 
 -   histórico;
--   comparações;
--   projeções;
--   automações;
--   inteligência;
--   relatórios;
--   exportações;
--   acompanhamento contínuo;
--   recursos avançados.
+-   resultados salvos;
+-   favoritos;
+-   recuperação posterior;
+-   sincronização entre dispositivos;
+-   preferências pessoais;
+-   recursos vinculados à identidade do usuário.
+
+O visitante pode calcular, comparar, projetar, exportar e utilizar os
+recursos avançados, mas seus dados permanecem temporários e podem ser
+perdidos ao atualizar a página, fechar o navegador ou encerrar a sessão.
+
+No futuro, quando a cobrança for ativada, o Prazzu Plus continuará
+representando produtividade, automação e conveniência, nunca a correção
+do cálculo básico.
 
 Em outras palavras:
 
-> O usuário assina o Prazzu Plus para trabalhar melhor, nunca para
-> conseguir calcular corretamente.
+> Acesso às ferramentas não depende de conta. Persistência, sincronização
+> e histórico dependem de conta.
 
 Essa filosofia orienta todas as ferramentas da plataforma.
 
@@ -190,34 +195,32 @@ Elas nunca conhecem detalhes de implementação.
 
 ------------------------------------------------------------------------
 
-# Modelo de assinatura
+# Modelo de assinatura e fase gratuita de lançamento
 
-Existe apenas um plano da plataforma.
+Existe apenas um plano comercial da plataforma: o **Prazzu Plus**.
 
-Ao assinar o **Prazzu Plus**, o usuário desbloqueia os recursos Plus de
-todas as ferramentas.
+A assinatura nunca será realizada individualmente por ferramenta. Quando
+a monetização for ativada, uma única assinatura deverá liberar os
+recursos Plus de todas as ferramentas presentes e futuras.
 
-A assinatura nunca é realizada individualmente por ferramenta.
+Durante a fase inicial de lançamento:
 
-Isso significa que cada novo módulo lançado passa automaticamente a
-integrar o ecossistema Plus.
+-   nenhuma cobrança será realizada;
+-   visitantes e usuários autenticados terão acesso integral;
+-   recursos classificados como Plus funcionarão sem limites;
+-   nenhuma ferramenta poderá exigir login para calcular ou utilizar sua
+    capacidade máxima;
+-   a infraestrutura de planos, permissões, limites e cobrança deverá ser
+    preservada e mantida pronta para ativação futura;
+-   a gratuidade deverá ser controlada centralmente pela plataforma, nunca
+    por condicionais espalhadas dentro das ferramentas.
 
-------------------------------------------------------------------------
+A fase gratuita é uma política comercial temporária da plataforma, não
+uma remoção do modelo Plus.
 
-# Experiência Plus diária
-
-O Prazzu Tools acredita que o profissional deve conhecer os recursos
-avançados antes de decidir assinar.
-
-Por isso, usuários gratuitos podem experimentar diariamente a
-experiência Plus.
-
-Essa política existe para demonstrar, através do uso real, quanto os
-recursos avançados aumentam a produtividade.
-
-O objetivo nunca é limitar a versão gratuita.
-
-O objetivo é mostrar naturalmente o valor da experiência Plus.
+Quando a cobrança for ativada, a mudança deverá ocorrer por política
+central, configuração ou feature flag, sem reconstruir os módulos e sem
+alterar sua lógica de domínio.
 
 ------------------------------------------------------------------------
 
@@ -380,18 +383,21 @@ Quando precisar de um serviço compartilhado, deve utilizar o Core.
 
 ## 5. Monetização pertence à plataforma
 
-Nenhuma ferramenta implementa regras de cobrança.
+Nenhuma ferramenta implementa regras de cobrança, gratuidade promocional
+ou limites de uso.
 
-Cada módulo apenas informa quais recursos são:
+Cada módulo apenas declara suas capacidades e, quando aplicável, quais
+recursos pertencem à categoria Prazzu Plus.
 
--   gratuitos;
--   Prazzu Plus.
+Quem decide se determinado visitante ou usuário pode utilizar um recurso
+é a plataforma.
 
-Quem decide se determinado usuário pode utilizar um recurso é a
-plataforma.
+Na fase inicial, a política central deverá liberar gratuitamente todas as
+capacidades e ignorar limites comerciais, preservando a estrutura que
+permitirá ativá-los futuramente.
 
-Isso permite alterar planos, assinaturas ou políticas comerciais sem
-modificar nenhuma ferramenta.
+Isso permite alterar planos, assinaturas, limites ou políticas comerciais
+sem modificar nenhuma ferramenta.
 
 ------------------------------------------------------------------------
 
@@ -412,8 +418,11 @@ nunca corrigir limitações artificiais.
 
 Existe apenas um plano de assinatura.
 
-Ao assinar o Prazzu Plus, o usuário desbloqueia os recursos Plus de
-todas as ferramentas da plataforma.
+Durante a fase inicial, seu acesso será concedido gratuitamente a todos,
+inclusive visitantes, por uma política central da plataforma.
+
+Quando a cobrança for ativada, a assinatura Prazzu Plus desbloqueará os
+recursos Plus de todas as ferramentas da plataforma.
 
 Novas ferramentas passam automaticamente a integrar o ecossistema Plus.
 
@@ -845,6 +854,30 @@ imediatamente que continua dentro do ecossistema Prazzu Tools.
 A consistência da experiência do usuário é tão importante quanto a
 consistência da arquitetura do sistema.
 
+# 11.1 Largura global da plataforma
+
+O shell principal da plataforma deverá utilizar toda a largura disponível
+até o limite máximo de **1920 px**.
+
+O comportamento obrigatório é:
+
+-   abaixo de 1920 px: largura de 100%;
+-   em 1920 px: largura total disponível;
+-   acima de 1920 px: conteúdo centralizado com largura máxima de 1920 px;
+-   televisores e monitores ultrawide não poderão esticar indefinidamente o
+    conteúdo.
+
+A implementação deverá priorizar utilitários, grid e containers do
+Bootstrap. CSS próprio somente poderá ser utilizado quando o Bootstrap e
+o estilo compartilhado existente não forem suficientes.
+
+O limite de 1920 px pertence ao shell global. Áreas de leitura, formulários
+ou conteúdos específicos podem possuir limites internos menores quando
+isso melhorar legibilidade e usabilidade, desde que mantenham o padrão
+visual compartilhado.
+
+------------------------------------------------------------------------
+
 # 12. Classes CSS
 
 É proibido utilizar classes CSS sem conhecer sua finalidade.
@@ -1051,24 +1084,75 @@ Checklist mínimo:
 
 ------------------------------------------------------------------------
 
-# 24. Autenticação
+# 24. Autenticação, persistência e identidade Prazzu
+
+Autenticação nunca será requisito para utilizar uma ferramenta, visualizar
+um resultado completo ou acessar recursos Prazzu Plus enquanto a política
+gratuita de lançamento estiver ativa.
 
 O comportamento deverá seguir o padrão:
 
 Visitante:
 
--   calcular;
--   visualizar resultado;
+-   utilizar todas as ferramentas;
+-   utilizar recursos Essenciais e Prazzu Plus;
+-   calcular sem limite;
+-   visualizar o resultado completo;
+-   comparar e projetar quando a ferramenta oferecer essas capacidades;
 -   imprimir;
--   exportar cálculo atual.
+-   exportar o cálculo atual;
+-   manter apenas estado temporário, sem garantia de recuperação após
+    atualização, fechamento do navegador ou encerramento da sessão.
 
 Usuário autenticado:
 
--   histórico;
--   repetir;
--   excluir;
--   favoritos;
--   PDFs históricos.
+-   possuir todas as capacidades disponíveis ao visitante;
+-   salvar resultados;
+-   acessar histórico;
+-   repetir cálculos salvos;
+-   excluir registros próprios;
+-   utilizar favoritos;
+-   acessar PDFs e exportações históricas;
+-   recuperar dados posteriormente;
+-   sincronizar dados e preferências quando a plataforma oferecer essa
+    capacidade.
+
+É proibido utilizar login como barreira para liberar cálculo, resultado,
+comparação, projeção, exportação atual ou qualquer capacidade máxima da
+ferramenta durante a fase gratuita.
+
+Chamadas para cadastro devem comunicar corretamente seu benefício. O
+padrão é convidar a pessoa a criar uma conta gratuita para salvar e
+recuperar resultados, nunca para desbloquear o cálculo.
+
+## 24.1 Conta local e futura identidade única Prazzu
+
+Atualmente, o cadastro e a autenticação pertencem ao Prazzu Tools.
+
+No futuro, uma plataforma central de identidade permitirá que a pessoa
+utilize uma única conta em todos os projetos Prazzu, incluindo Prazzu
+Tools, Prazzu Cores e produtos futuros.
+
+O cadastro local deverá ser preparado para essa evolução sem depender de
+um serviço central que ainda não existe.
+
+A tabela de usuários deverá possuir um identificador externo dedicado à
+futura conta Prazzu, com as seguintes características:
+
+-   nullable durante a fase local;
+-   unique quando preenchido;
+-   indexado;
+-   independente do identificador local;
+-   independente do e-mail;
+-   capaz de receber UUID, ULID ou código opaco emitido pela identidade
+    central;
+-   imutável após a vinculação, salvo processo administrativo formal.
+
+O e-mail nunca deverá ser utilizado como chave definitiva de integração
+entre os projetos, pois pode ser alterado pelo usuário.
+
+A futura integração deverá ocorrer através de contratos do Core e não
+poderá acoplar ferramentas individuais ao serviço de identidade.
 
 ------------------------------------------------------------------------
 

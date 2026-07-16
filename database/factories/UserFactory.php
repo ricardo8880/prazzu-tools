@@ -33,6 +33,13 @@ class UserFactory extends Factory
         ];
     }
 
+    public function linkedToPrazzu(?string $accountId = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'prazzu_account_id' => $accountId ?? (string) Str::uuid(),
+        ]);
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      */

@@ -14,7 +14,7 @@ Route::prefix('ferramentas/calculadora-de-honorarios-contabeis')
         Route::post('/contrato', [AccountingFeesController::class, 'contract'])->name('contract');
         Route::get('/compartilhado/{token}', [AccountingFeesController::class, 'sharedCalculation'])->name('shared');
 
-        Route::prefix('historico')->name('history.')->group(function (): void {
+        Route::middleware('persistence.auth')->prefix('historico')->name('history.')->group(function (): void {
             Route::get('/', [AccountingFeesController::class, 'history'])->name('index');
             Route::get('/exportar', [AccountingFeesController::class, 'exportHistory'])->name('export');
             Route::post('/{calculation}/duplicar', [AccountingFeesController::class, 'duplicateCalculation'])->name('duplicate');
@@ -26,10 +26,10 @@ Route::prefix('ferramentas/calculadora-de-honorarios-contabeis')
         Route::prefix('reajustes')->name('adjustments.')->group(function (): void {
             Route::get('/', [AccountingFeesController::class, 'adjustments'])->name('index');
             Route::post('/', [AccountingFeesController::class, 'calculateAdjustment'])->name('calculate');
-            Route::delete('/{adjustment}', [AccountingFeesController::class, 'deleteAdjustment'])->name('delete');
+            Route::delete('/{adjustment}', [AccountingFeesController::class, 'deleteAdjustment'])->middleware('persistence.auth')->name('delete');
         });
 
-        Route::prefix('crm')->name('crm.')->group(function (): void {
+        Route::middleware('persistence.auth')->prefix('crm')->name('crm.')->group(function (): void {
             Route::get('/', [AccountingFeesController::class, 'crm'])->name('index');
             Route::get('/novo', [AccountingFeesController::class, 'createClient'])->name('create');
             Route::post('/', [AccountingFeesController::class, 'storeClient'])->name('store');

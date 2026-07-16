@@ -20,7 +20,7 @@ Route::prefix('ferramentas/calculadora-simples-nacional')
             ->post('/plus/comparar-anexos', [SimplesNacionalPlusController::class, 'compareAnnexes'])->name('plus.compare-annexes');
         Route::middleware(EnsureSimplesNacionalFeatureAccess::class.':annual_projection')
             ->post('/plus/projecao-anual', [SimplesNacionalPlusController::class, 'project'])->name('plus.project');
-        Route::middleware(EnsureSimplesNacionalFeatureAccess::class.':monthly_history')->group(function (): void {
+        Route::middleware([EnsureSimplesNacionalFeatureAccess::class.':monthly_history', 'persistence.auth'])->group(function (): void {
             Route::post('/plus/historico', [SimplesNacionalPlusController::class, 'save'])->name('plus.history.store');
             Route::delete('/plus/historico/{calculation}', [SimplesNacionalPlusController::class, 'destroy'])->name('plus.history.destroy');
         });

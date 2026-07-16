@@ -66,8 +66,14 @@
                     </button>
                 </div>
 
-                <a class="btn btn-primary prazzu-btn-primary d-none d-sm-inline-flex" href="{{ url('/entrar') }}">Entrar</a>
-                <a class="btn btn-primary prazzu-btn-primary d-none d-md-inline-flex" href="{{ url('/criar-conta') }}">Criar conta grátis</a>
+                @auth
+                    <a class="btn btn-primary prazzu-btn-primary d-none d-sm-inline-flex" href="{{ route('account.show') }}">
+                        <i class="bi bi-person-circle me-2" aria-hidden="true"></i>Minha conta
+                    </a>
+                @else
+                    <a class="btn prazzu-btn-outline d-none d-sm-inline-flex" href="{{ route('login') }}">Entrar</a>
+                    <a class="btn btn-primary prazzu-btn-primary d-none d-md-inline-flex" href="{{ route('register') }}">Criar conta grátis</a>
+                @endauth
             </div>
         </div>
     </div>
