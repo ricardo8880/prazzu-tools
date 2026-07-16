@@ -53,14 +53,14 @@ monetização. Ela não autoriza limitar artificialmente cálculos, esconder
 resultados ou degradar a experiência do visitante.
 
 Durante a fase inicial de lançamento, todas as ferramentas e todos os
-recursos Prazzu Plus estarão disponíveis gratuitamente, sem limite de uso
-e sem exigir autenticação.
+recursos Prazzu Plus estarão disponíveis gratuitamente, sem limite de
+uso e sem exigir autenticação.
 
 A pessoa deve conseguir entrar na plataforma e utilizar imediatamente a
 capacidade máxima de cada ferramenta.
 
-O login não existe para liberar cálculos ou recursos avançados. Ele existe
-para permitir persistência e continuidade, incluindo:
+O login não existe para liberar cálculos ou recursos avançados. Ele
+existe para permitir persistência e continuidade, incluindo:
 
 -   histórico;
 -   resultados salvos;
@@ -80,10 +80,30 @@ do cálculo básico.
 
 Em outras palavras:
 
-> Acesso às ferramentas não depende de conta. Persistência, sincronização
-> e histórico dependem de conta.
+> Acesso às ferramentas não depende de conta. Persistência,
+> sincronização e histórico dependem de conta.
 
 Essa filosofia orienta todas as ferramentas da plataforma.
+
+------------------------------------------------------------------------
+
+# Papel do Prazzu Tools no Ecossistema
+
+O Prazzu Tools faz parte do ecossistema Prazzu, porém possui uma missão
+específica: resolver rapidamente problemas através de ferramentas para
+profissionais da contabilidade.
+
+Cada produto do ecossistema possui responsabilidades próprias:
+
+-   Prazzu Tools: ferramentas;
+-   Prazzu Blog: conteúdo técnico;
+-   Prazzu Learn: educação;
+-   Prazzu Core: gestão empresarial;
+-   Prazzu Connect: conexão entre clientes e contadores;
+-   Conta Prazzu: identidade única dos usuários.
+
+Nenhum produto deverá assumir responsabilidades que pertencem a outro
+produto do ecossistema.
 
 ------------------------------------------------------------------------
 
@@ -119,6 +139,20 @@ Cada módulo implementa apenas aquilo que pertence ao seu domínio.
 Todo o restante é responsabilidade da infraestrutura compartilhada.
 
 ------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+# Limites do Produto
+
+O Prazzu Tools é uma plataforma de ferramentas.
+
+Ele não implementa funcionalidades de ERP, CRM, gestão de clientes,
+workflow empresarial, departamentos, processos internos ou colaboração
+entre usuários.
+
+Sempre que uma funcionalidade ultrapassar a missão de uma plataforma de
+ferramentas, ela deverá ser avaliada para outro produto do ecossistema,
+como o Prazzu Core, e não incorporada ao Prazzu Tools.
 
 # Arquitetura
 
@@ -210,10 +244,10 @@ Durante a fase inicial de lançamento:
 -   recursos classificados como Plus funcionarão sem limites;
 -   nenhuma ferramenta poderá exigir login para calcular ou utilizar sua
     capacidade máxima;
--   a infraestrutura de planos, permissões, limites e cobrança deverá ser
-    preservada e mantida pronta para ativação futura;
--   a gratuidade deverá ser controlada centralmente pela plataforma, nunca
-    por condicionais espalhadas dentro das ferramentas.
+-   a infraestrutura de planos, permissões, limites e cobrança deverá
+    ser preservada e mantida pronta para ativação futura;
+-   a gratuidade deverá ser controlada centralmente pela plataforma,
+    nunca por condicionais espalhadas dentro das ferramentas.
 
 A fase gratuita é uma política comercial temporária da plataforma, não
 uma remoção do modelo Plus.
@@ -392,12 +426,12 @@ recursos pertencem à categoria Prazzu Plus.
 Quem decide se determinado visitante ou usuário pode utilizar um recurso
 é a plataforma.
 
-Na fase inicial, a política central deverá liberar gratuitamente todas as
-capacidades e ignorar limites comerciais, preservando a estrutura que
+Na fase inicial, a política central deverá liberar gratuitamente todas
+as capacidades e ignorar limites comerciais, preservando a estrutura que
 permitirá ativá-los futuramente.
 
-Isso permite alterar planos, assinaturas, limites ou políticas comerciais
-sem modificar nenhuma ferramenta.
+Isso permite alterar planos, assinaturas, limites ou políticas
+comerciais sem modificar nenhuma ferramenta.
 
 ------------------------------------------------------------------------
 
@@ -478,6 +512,11 @@ Sempre que uma nova funcionalidade for desenvolvida, a primeira pergunta
 deve ser:
 
 > Esta responsabilidade pertence à ferramenta ou pertence à plataforma?
+
+> Depois, deverá ser respondida uma segunda pergunta:
+>
+> Esta responsabilidade pertence ao Prazzu Tools ou a outro produto do
+> ecossistema Prazzu?
 
 Se a resposta for "mais de uma ferramenta utilizará isso", então essa
 funcionalidade deve fazer parte do Core.
@@ -856,25 +895,26 @@ consistência da arquitetura do sistema.
 
 # 11.1 Largura global da plataforma
 
-O shell principal da plataforma deverá utilizar toda a largura disponível
-até o limite máximo de **1920 px**.
+O shell principal da plataforma deverá utilizar toda a largura
+disponível até o limite máximo de **1920 px**.
 
 O comportamento obrigatório é:
 
 -   abaixo de 1920 px: largura de 100%;
 -   em 1920 px: largura total disponível;
--   acima de 1920 px: conteúdo centralizado com largura máxima de 1920 px;
--   televisores e monitores ultrawide não poderão esticar indefinidamente o
-    conteúdo.
+-   acima de 1920 px: conteúdo centralizado com largura máxima de 1920
+    px;
+-   televisores e monitores ultrawide não poderão esticar
+    indefinidamente o conteúdo.
 
 A implementação deverá priorizar utilitários, grid e containers do
 Bootstrap. CSS próprio somente poderá ser utilizado quando o Bootstrap e
 o estilo compartilhado existente não forem suficientes.
 
-O limite de 1920 px pertence ao shell global. Áreas de leitura, formulários
-ou conteúdos específicos podem possuir limites internos menores quando
-isso melhorar legibilidade e usabilidade, desde que mantenham o padrão
-visual compartilhado.
+O limite de 1920 px pertence ao shell global. Áreas de leitura,
+formulários ou conteúdos específicos podem possuir limites internos
+menores quando isso melhorar legibilidade e usabilidade, desde que
+mantenham o padrão visual compartilhado.
 
 ------------------------------------------------------------------------
 
@@ -1086,9 +1126,9 @@ Checklist mínimo:
 
 # 24. Autenticação, persistência e identidade Prazzu
 
-Autenticação nunca será requisito para utilizar uma ferramenta, visualizar
-um resultado completo ou acessar recursos Prazzu Plus enquanto a política
-gratuita de lançamento estiver ativa.
+Autenticação nunca será requisito para utilizar uma ferramenta,
+visualizar um resultado completo ou acessar recursos Prazzu Plus
+enquanto a política gratuita de lançamento estiver ativa.
 
 O comportamento deverá seguir o padrão:
 
@@ -1124,6 +1164,23 @@ ferramenta durante a fase gratuita.
 Chamadas para cadastro devem comunicar corretamente seu benefício. O
 padrão é convidar a pessoa a criar uma conta gratuita para salvar e
 recuperar resultados, nunca para desbloquear o cálculo.
+
+## 24.0 Plano Empresarial
+
+O plano empresarial existe exclusivamente para permitir que uma empresa
+forneça acesso ao Prazzu Plus para seus colaboradores.
+
+Cada colaborador deverá possuir:
+
+-   login próprio;
+-   histórico próprio;
+-   resultados próprios;
+-   favoritos próprios;
+-   preferências próprias.
+
+O plano empresarial compartilha apenas o direito de utilização da
+assinatura contratada. O Prazzu Tools não implementa compartilhamento
+automático de históricos, cálculos ou dados entre colaboradores.
 
 ## 24.1 Conta local e futura identidade única Prazzu
 
