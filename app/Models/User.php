@@ -6,10 +6,10 @@ use App\Blog\Models\BlogPost;
 use App\Core\Access\Enums\AccountRole;
 use App\Core\Access\Enums\SubscriptionPlan;
 use App\Core\Identity\Notifications\PrazzuResetPassword;
+use App\Core\Organizations\Contracts\EnterpriseAccessResolver;
 use App\Core\Identity\Notifications\PrazzuVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -33,7 +33,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-
     public function sendEmailVerificationNotification(): void
     {
         $this->notify(new PrazzuVerifyEmail);
@@ -49,16 +48,30 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(BlogPost::class, 'author_id');
     }
 
-    public function organizations(): BelongsToMany
+    public function ownedOrganizations(): HasMany
     {
-        return $this->belongsToMany(Organization::class)
-            ->withPivot('role')
-            ->withTimestamps();
+        return $this->hasMany(Organization::class, 'owner_user_id');
+    }
+
+    public function organizationMemberships(): HasMany
+    {
+        return $this->hasMany(OrganizationMember::class);
+    }
+
+    public function organizationInvitationsSent(): HasMany
+    {
+        return $this->hasMany(OrganizationInvitation::class, 'invited_by_user_id');
     }
 
     public function hasPremiumAccess(): bool
     {
-        return $this->subscription_plan->grantsPremiumTools();
+        return $this->subscription_plan->grantsPremiumTools()
+            || app(EnterpriseAccessResolver::class)->grantsPlusAccessTo($this->getKey());
+    }
+
+    public function effectiveSubscriptionPlan(): SubscriptionPlan
+    {
+        return $this->hasPremiumAccess() ? SubscriptionPlan::Premium : SubscriptionPlan::Free;
     }
 
     public function isInternalAdministrator(): bool

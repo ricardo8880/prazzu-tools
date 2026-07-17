@@ -35,7 +35,7 @@ final class RegisteredUserController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
 
-        return redirect()->route('account.show')
+        return redirect()->intended(route('account.show'))
             ->with('status', 'Sua conta gratuita foi criada. Confirme seu e-mail para proteger os dados salvos.');
     }
 }

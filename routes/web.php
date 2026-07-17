@@ -34,6 +34,11 @@ use App\Http\Controllers\Platform\NewsletterController;
 use App\Http\Controllers\Platform\SuggestToolController;
 use App\Http\Controllers\Platform\ToolCatalogController;
 use App\Http\Controllers\Platform\ToolPageController;
+use App\Http\Controllers\Organizations\InvitationAcceptanceController;
+use App\Http\Controllers\Organizations\OrganizationController;
+use App\Http\Controllers\Organizations\OrganizationInvitationController;
+use App\Http\Controllers\Organizations\OrganizationMemberController;
+use App\Http\Controllers\Organizations\OrganizationSeatController;
 use App\Http\Controllers\Seo\BlogSitemapController;
 use Illuminate\Support\Facades\Route;
 
@@ -151,7 +156,30 @@ Route::middleware('guest')->group(function (): void {
     Route::post('/redefinir-senha', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
+Route::get('/convites/empresa/{token}', [InvitationAcceptanceController::class, 'show'])
+    ->name('organizations.invitations.show');
+
 Route::middleware('auth')->group(function (): void {
+    Route::get('/empresas/criar', [OrganizationController::class, 'create'])->name('organizations.create');
+    Route::post('/empresas', [OrganizationController::class, 'store'])->name('organizations.store');
+    Route::get('/empresas/{organization}', [OrganizationController::class, 'show'])->name('organizations.show');
+    Route::patch('/empresas/{organization}', [OrganizationController::class, 'update'])->name('organizations.update');
+    Route::patch('/empresas/{organization}/membros/{member}', [OrganizationMemberController::class, 'update'])
+        ->name('organizations.members.update');
+    Route::post('/empresas/{organization}/membros/{member}/vaga', [OrganizationSeatController::class, 'store'])
+        ->name('organizations.seats.store');
+    Route::delete('/empresas/{organization}/vagas/{seat}', [OrganizationSeatController::class, 'destroy'])
+        ->name('organizations.seats.destroy');
+    Route::post('/empresas/{organization}/convites', [OrganizationInvitationController::class, 'store'])
+        ->name('organizations.invitations.store');
+    Route::delete('/empresas/{organization}/convites/{invitation}', [OrganizationInvitationController::class, 'destroy'])
+        ->name('organizations.invitations.destroy');
+    Route::patch('/empresas/{organization}/convites/{invitation}/restaurar', [OrganizationInvitationController::class, 'restore'])
+        ->name('organizations.invitations.restore');
+    Route::delete('/empresas/{organization}/convites/{invitation}/apagar', [OrganizationInvitationController::class, 'purge'])
+        ->name('organizations.invitations.purge');
+    Route::post('/convites/empresa/{token}/aceitar', [InvitationAcceptanceController::class, 'accept'])
+        ->name('organizations.invitations.accept');
     Route::get('/minha-conta', AccountController::class)->name('account.show');
     Route::get('/confirmar-email', EmailVerificationPromptController::class)->name('verification.notice');
     Route::get('/confirmar-email/{id}/{hash}', VerifyEmailController::class)

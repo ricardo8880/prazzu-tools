@@ -15,7 +15,7 @@ final class SeoAnalyticsTest extends TestCase
 
     public function test_it_audits_blog_technical_seo(): void
     {
-        $post = $this->post();
+        $post = $this->createBlogPost();
         $audit = app(BlogTechnicalSeoAuditor::class)->audit($post);
 
         $this->assertSame('index,follow', $audit['robots']);
@@ -26,7 +26,7 @@ final class SeoAnalyticsTest extends TestCase
 
     public function test_it_displays_and_records_seo_metrics(): void
     {
-        $post = $this->post();
+        $post = $this->createBlogPost();
         SeoMetricSnapshot::query()->create([
             'blog_post_id' => $post->getKey(), 'metric_date' => now()->toDateString(),
             'source' => 'google_search_console', 'search_type' => 'web', 'device' => 'all',
@@ -53,7 +53,7 @@ final class SeoAnalyticsTest extends TestCase
         ]);
     }
 
-    private function post(): BlogPost
+    private function createBlogPost(): BlogPost
     {
         return BlogPost::query()->create([
             'title' => 'Artigo SEO completo para profissionais contábeis',

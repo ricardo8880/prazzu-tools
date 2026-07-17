@@ -67,6 +67,30 @@
                             </div>
                         </div>
 
+                        <div class="card border mb-4">
+                            <div class="card-body">
+                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                    <div>
+                                        <h2 class="h5 mb-1">Acessos empresariais</h2>
+                                        <p class="text-body-secondary mb-0">Cadastre uma empresa ou acesse empresas às quais sua conta pertence.</p>
+                                    </div>
+                                    <a class="btn btn-outline-primary" href="{{ route('organizations.create') }}">Cadastrar empresa</a>
+                                </div>
+
+                                @php($memberships = auth()->user()->organizationMemberships()->with('organization')->where('status', 'active')->get())
+                                @if($memberships->isNotEmpty())
+                                    <div class="list-group list-group-flush mt-3">
+                                        @foreach($memberships as $membership)
+                                            <a class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center" href="{{ route('organizations.show', $membership->organization) }}">
+                                                <span>{{ $membership->organization->name }}</span>
+                                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="alert alert-info mb-0" role="note">
                             <strong>Conta Prazzu unificada:</strong>
                             sua conta é local neste momento. A estrutura já está preparada para receber futuramente o identificador da conta única Prazzu sem usar seu e-mail como chave de integração.

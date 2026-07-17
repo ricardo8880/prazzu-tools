@@ -26,8 +26,8 @@ final class ExecutiveDashboardTest extends TestCase
 
         $visitorA = $this->visitor('2026-07-15 08:00:00');
         $visitorB = $this->visitor('2026-07-15 09:00:00');
-        $sessionA = $this->session($visitorA, '2026-07-15 08:00:00', '2026-07-15 08:05:00', 'google');
-        $sessionB = $this->session($visitorB, '2026-07-15 09:00:00', '2026-07-15 09:01:00', 'direct');
+        $sessionA = $this->analyticsSession($visitorA, '2026-07-15 08:00:00', '2026-07-15 08:05:00', 'google');
+        $sessionB = $this->analyticsSession($visitorB, '2026-07-15 09:00:00', '2026-07-15 09:01:00', 'direct');
 
         $this->event($visitorA, $sessionA, 'page.viewed', '2026-07-15 08:00:00', '/', 'google');
         $this->event($visitorA, $sessionA, 'page.viewed', '2026-07-15 08:02:00', '/sobre', 'google');
@@ -79,7 +79,7 @@ final class ExecutiveDashboardTest extends TestCase
         return $id;
     }
 
-    private function session(string $visitorId, string $startedAt, string $lastActivityAt, string $source): string
+    private function analyticsSession(string $visitorId, string $startedAt, string $lastActivityAt, string $source): string
     {
         $id = (string) Str::uuid();
 

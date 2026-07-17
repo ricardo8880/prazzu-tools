@@ -2,17 +2,38 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Organization extends Model
 {
-    protected $fillable = ['name', 'slug'];
+    use HasFactory;
 
-    public function users(): BelongsToMany
+    protected $fillable = [
+        'name',
+        'slug',
+        'owner_user_id',
+    ];
+
+    public function owner(): BelongsTo
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot('role')
-            ->withTimestamps();
+        return $this->belongsTo(User::class, 'owner_user_id');
+    }
+
+    public function members(): HasMany
+    {
+        return $this->hasMany(OrganizationMember::class);
+    }
+
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(OrganizationInvitation::class);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(OrganizationSubscription::class);
     }
 }

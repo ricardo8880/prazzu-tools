@@ -1424,3 +1424,119 @@ implementações conflitantes e manutenção excessiva.
 Este documento deverá ser revisado sempre que a arquitetura do projeto
 evoluir, tornando-se a referência oficial para todo o desenvolvimento
 futuro do Prazzu Tools.
+
+------------------------------------------------------------------------
+
+# Contas empresariais e licenças Plus
+
+Uma conta empresarial no Prazzu Tools não cria um ambiente compartilhado e não altera a natureza das contas pessoais.
+
+Cada pessoa continua possuindo:
+
+- login próprio;
+- histórico próprio;
+- favoritos próprios;
+- resultados e preferências próprios;
+- responsabilidade individual sobre seus dados.
+
+A empresa atua apenas como contratante e pagadora de uma quantidade de acessos Prazzu Plus. Esses acessos podem ser atribuídos a membros vinculados à organização, sem compartilhar automaticamente qualquer dado entre eles.
+
+O vínculo empresarial nunca transfere a propriedade da conta pessoal para a empresa. Quando uma pessoa deixa a organização, ela perde somente o benefício Plus concedido por aquele vínculo. Sua conta, seus dados e qualquer assinatura individual permanecem independentes.
+
+O Core da plataforma é responsável por decidir a origem do acesso Plus:
+
+- assinatura individual ativa; ou
+- licença empresarial ativa.
+
+As ferramentas não conhecem organizações, membros, convites, contratos, cobrança ou quantidade de vagas. Elas consultam apenas os contratos de acesso disponibilizados pelo Core.
+
+O Prazzu Tools não implementará colaboração, compartilhamento de cálculos, departamentos, workflow, gestão de clientes ou outras funções de ERP. Qualquer gestão empresarial avançada pertence ao Prazzu Core.
+
+## 24.2 Origem do acesso Prazzu Plus
+
+O acesso Prazzu Plus de uma pessoa pode possuir duas origens independentes:
+
+- assinatura individual ativa;
+- vaga empresarial ativa, vinculada a uma assinatura empresarial ativa.
+
+O Core deverá resolver a origem do acesso. Ferramentas não podem consultar empresas,
+membros, assinaturas empresariais ou vagas diretamente. Para uma ferramenta existe
+apenas o plano efetivo retornado pelo Core.
+
+A assinatura empresarial define uma quantidade contratada de vagas. Cada vaga ativa
+pode ser atribuída somente a um membro ativo da mesma empresa. Uma pessoa não perde
+sua conta, histórico, favoritos, resultados ou preferências quando uma vaga é liberada;
+ela perde somente o benefício Plus fornecido por aquela empresa.
+
+É proibido conceder acesso empresarial quando a assinatura estiver pendente,
+inadimplente, suspensa, cancelada, ainda não iniciada ou encerrada.
+
+## 24.3 Fluxo empresarial validado
+
+O fluxo empresarial do Prazzu Tools é composto exclusivamente por administração de
+licenças:
+
+1. uma pessoa autenticada cria a empresa e se torna responsável;
+2. a empresa recebe uma assinatura com uma quantidade contratada de vagas;
+3. o responsável ou um administrador gera um link individual de convite, com uso único e validade limitada;
+4. a pessoa que recebeu o link entra ou cria sua própria Conta Prazzu e confirma o vínculo;
+5. uma vaga disponível pode ser atribuída a um membro ativo;
+6. o Core passa a resolver o plano efetivo como individual ou empresarial;
+7. ao liberar a vaga ou desativar o vínculo, apenas o benefício empresarial é removido.
+
+A renovação ou substituição de uma assinatura empresarial deve liberar qualquer vaga
+antiga do membro antes de criar a vaga na assinatura vigente. Uma vaga pertencente a
+assinatura suspensa, cancelada, encerrada ou substituída não pode impedir a atribuição
+correta em uma assinatura ativa.
+
+## 24.4 Limites de autorização e privacidade
+
+O painel empresarial pode exibir somente informações necessárias para administrar:
+
+- perfil da empresa;
+- responsável;
+- membros e respectivos papéis empresariais;
+- convites;
+- quantidade de vagas contratadas, ocupadas e disponíveis;
+- situação da licença empresarial de cada membro.
+
+É proibido disponibilizar no painel empresarial histórico, favoritos, cálculos,
+resultados, preferências pessoais, senha, assinatura individual ou qualquer outro dado
+privado da conta do membro.
+
+Administradores empresariais não são administradores internos da plataforma. Papéis de
+empresa e papéis globais da aplicação permanecem separados.
+
+## 24.5 Regras de integridade
+
+A implementação deve manter as seguintes invariantes:
+
+- apenas membros ativos da mesma empresa podem receber vagas;
+- a quantidade de vagas ativas nunca pode ultrapassar o limite contratado;
+- uma vaga liberada não concede acesso Plus;
+- uma assinatura sem vigência ativa não concede acesso Plus;
+- desativar um membro libera suas vagas, sem excluir sua conta;
+- aceitar convite não altera a propriedade da empresa;
+- cada link de convite pode ser aceito uma única vez e deve expirar ou ser revogado conforme seu estado;
+- a assinatura individual do usuário nunca é alterada pela licença empresarial;
+- ferramentas não importam modelos, ações ou serviços do domínio empresarial;
+- toda decisão sobre a origem do Plus permanece no Core.
+
+## 24.6 Validação obrigatória
+
+Alterações no domínio empresarial devem ser acompanhadas por testes que cubram, no
+mínimo:
+
+- migrations e colunas essenciais;
+- criação da empresa e do responsável;
+- geração de links individuais, expiração, revogação, restauração, uso único e aceite autenticado;
+- autorização de responsáveis, administradores, membros e pessoas externas;
+- atribuição, limite, liberação e renovação de vagas;
+- assinatura ativa, suspensa, cancelada e fora da vigência;
+- coexistência entre plano individual e licença empresarial;
+- preservação da conta e dos dados pessoais ao sair da empresa;
+- independência arquitetural das ferramentas em relação ao domínio empresarial.
+
+A revisão arquitetural deve falhar caso qualquer arquivo dentro de `app/Tools` passe a
+depender diretamente de organizações, membros, assinaturas empresariais, vagas ou ações
+do domínio empresarial.

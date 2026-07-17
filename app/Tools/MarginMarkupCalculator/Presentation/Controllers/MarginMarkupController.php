@@ -445,7 +445,7 @@ final class MarginMarkupController extends Controller
         $context = new ToolAccessContext(
             userId: $user?->id,
             role: $user?->role ?? AccountRole::User,
-            plan: $user?->subscription_plan ?? SubscriptionPlan::Free,
+            plan: $user?->effectiveSubscriptionPlan() ?? SubscriptionPlan::Free,
         );
         $subject = $user !== null ? 'user:'.$user->id : 'ip:'.($request->ip() ?? 'unknown');
         $decision = $authorizer->authorize(
