@@ -231,11 +231,59 @@ Elas nunca conhecem detalhes de implementação.
 
 # Modelo de assinatura e fase gratuita de lançamento
 
-Existe apenas um plano comercial da plataforma: o **Prazzu Plus**.
+Existe apenas um produto comercial da plataforma: o **Prazzu Plus**.
+
+O Prazzu Plus pode ser concedido por duas modalidades independentes:
+
+-   **assinatura individual**, contratada pela própria pessoa;
+-   **plano empresarial**, contratado por uma empresa como um pacote de
+    acessos Plus para seus colaboradores.
 
 A assinatura nunca será realizada individualmente por ferramenta. Quando
-a monetização for ativada, uma única assinatura deverá liberar os
-recursos Plus de todas as ferramentas presentes e futuras.
+a monetização for ativada, um acesso Prazzu Plus deverá liberar os
+recursos Plus de todas as ferramentas presentes e futuras, independentemente
+se sua origem é individual ou empresarial.
+
+## Plano empresarial e distribuição de acessos
+
+O plano empresarial não cria um workspace compartilhado, não transforma o
+Prazzu Tools em ERP e não concede à empresa acesso aos dados pessoais de uso
+dos colaboradores.
+
+Seu objetivo é exclusivamente permitir que uma empresa:
+
+1. crie seu cadastro empresarial;
+2. contrate uma quantidade de acessos Prazzu Plus;
+3. convide colaboradores;
+4. atribua as vagas contratadas aos membros ativos;
+5. remova ou redistribua uma vaga quando necessário.
+
+Cada colaborador utiliza sua própria Conta Prazzu e mantém de forma
+independente:
+
+-   login;
+-   histórico;
+-   favoritos;
+-   resultados;
+-   preferências;
+-   eventual assinatura individual.
+
+A empresa administra somente vínculos e licenças. Históricos, cálculos,
+resultados e preferências não são compartilhados automaticamente.
+
+Quando um colaborador deixa a empresa ou perde sua vaga, somente o benefício
+Plus empresarial é removido. A conta pessoal e seus dados continuam existindo,
+e uma assinatura individual ativa continua válida.
+
+O Core é responsável por resolver a origem efetiva do acesso Plus:
+
+-   assinatura individual ativa; ou
+-   vaga vinculada a uma assinatura empresarial ativa.
+
+As ferramentas consultam apenas o plano efetivo fornecido pelo Core. Elas não
+devem conhecer organizações, membros, convites, cobrança, contratos ou vagas.
+Qualquer gestão empresarial avançada ou funcionalidade colaborativa pertence
+ao Prazzu Core, não ao Prazzu Tools.
 
 Durante a fase inicial de lançamento:
 

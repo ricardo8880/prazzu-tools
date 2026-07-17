@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Planos — Prazzu Tools')
-@section('meta_description', 'Compare o Prazzu Gratuito e o Prazzu Plus. Uma única assinatura libera os recursos avançados de todas as ferramentas da plataforma.')
+@section('meta_description', 'Compare o Prazzu Gratuito, o Prazzu Plus individual e o plano empresarial para distribuir acessos Plus aos colaboradores.')
 
 @section('content')
     <div class="prazzu-page">
@@ -146,6 +146,73 @@
             </div>
         </section>
 
+        <section class="mb-5" aria-labelledby="business-plan-heading">
+            <article class="card border-info-subtle shadow-sm overflow-hidden">
+                <div class="row g-0 align-items-stretch">
+                    <div class="col-12 col-lg-7">
+                        <div class="card-body p-4 p-lg-5 h-100">
+                            <span class="badge text-bg-info mb-3">
+                                <i class="bi bi-buildings me-1" aria-hidden="true"></i>Plano empresarial
+                            </span>
+                            <h2 id="business-plan-heading" class="h2 fw-bold mb-3">Prazzu Plus para sua equipe</h2>
+                            <p class="lead text-body-secondary mb-4">
+                                A empresa contrata uma quantidade de acessos Plus e distribui as vagas entre seus colaboradores.
+                                Cada pessoa entra com a própria conta e continua trabalhando de forma independente.
+                            </p>
+
+                            <ul class="list-unstyled d-grid gap-3 mb-4">
+                                <li class="d-flex gap-2">
+                                    <i class="bi bi-check-circle-fill text-success flex-shrink-0" aria-hidden="true"></i>
+                                    <span>Contratação por quantidade de acessos Prazzu Plus</span>
+                                </li>
+                                <li class="d-flex gap-2">
+                                    <i class="bi bi-check-circle-fill text-success flex-shrink-0" aria-hidden="true"></i>
+                                    <span>Convites individuais e administração das vagas contratadas</span>
+                                </li>
+                                <li class="d-flex gap-2">
+                                    <i class="bi bi-check-circle-fill text-success flex-shrink-0" aria-hidden="true"></i>
+                                    <span>Login, histórico, favoritos, resultados e preferências separados para cada colaborador</span>
+                                </li>
+                                <li class="d-flex gap-2">
+                                    <i class="bi bi-shield-lock-fill text-primary flex-shrink-0" aria-hidden="true"></i>
+                                    <span>A empresa administra licenças, sem acesso automático aos dados de uso dos membros</span>
+                                </li>
+                            </ul>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                @auth
+                                    <a class="btn btn-info btn-lg" href="{{ route('organizations.create') }}">
+                                        <i class="bi bi-building-add me-1" aria-hidden="true"></i>Criar conta empresarial
+                                    </a>
+                                @else
+                                    <a class="btn btn-info btn-lg" href="{{ route('login') }}">
+                                        <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Entrar para criar uma empresa
+                                    </a>
+                                @endauth
+                            </div>
+                            <p class="small text-body-secondary mt-3 mb-0">
+                                A definição de valores e o checkout empresarial serão disponibilizados em uma próxima etapa.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-5 bg-body-tertiary border-start-lg">
+                        <div class="p-4 p-lg-5 h-100 d-flex flex-column justify-content-center">
+                            <h3 class="h4 mb-3">O que o plano empresarial não faz</h3>
+                            <p class="text-body-secondary">
+                                O Prazzu Tools continua sendo uma plataforma de ferramentas, não um ambiente colaborativo ou ERP.
+                            </p>
+                            <ul class="list-unstyled d-grid gap-3 mb-0">
+                                <li class="d-flex gap-2"><i class="bi bi-x-circle text-body-secondary flex-shrink-0" aria-hidden="true"></i><span>Não compartilha históricos ou cálculos</span></li>
+                                <li class="d-flex gap-2"><i class="bi bi-x-circle text-body-secondary flex-shrink-0" aria-hidden="true"></i><span>Não transfere a propriedade da conta pessoal</span></li>
+                                <li class="d-flex gap-2"><i class="bi bi-x-circle text-body-secondary flex-shrink-0" aria-hidden="true"></i><span>Não cria departamentos, workflows ou gestão de clientes</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
         <section class="mb-5" aria-labelledby="comparison-heading">
             <div class="text-center mb-4">
                 <span class="prazzu-eyebrow">Compare as experiências</span>
@@ -212,6 +279,19 @@
                     </h3>
                     <div id="faq-daily" class="accordion-collapse collapse" data-bs-parent="#plans-faq">
                         <div class="accordion-body">Usuários sem assinatura poderão experimentar gratuitamente a experiência Plus uma vez por dia. A política definitiva será implementada junto ao sistema de contas e assinaturas.</div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-business" aria-expanded="false" aria-controls="faq-business">
+                            Como funciona o plano para empresas?
+                        </button>
+                    </h3>
+                    <div id="faq-business" class="accordion-collapse collapse" data-bs-parent="#plans-faq">
+                        <div class="accordion-body">
+                            A empresa contrata uma quantidade de acessos Plus e atribui cada vaga a um colaborador com conta própria. A empresa administra somente os vínculos e as licenças; históricos, cálculos, favoritos, resultados e preferências continuam individuais e privados.
+                        </div>
                     </div>
                 </div>
 
