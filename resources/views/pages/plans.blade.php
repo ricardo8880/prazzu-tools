@@ -179,6 +179,34 @@
                                 </li>
                             </ul>
 
+                            <div class="row g-3 mb-4" aria-label="Faixas de preço do plano empresarial">
+                                <div class="col-12 col-md-4">
+                                    <div class="border rounded-3 p-3 h-100 bg-body">
+                                        <div class="fw-semibold mb-1">Até 5 usuários</div>
+                                        <div class="h4 mb-1">R$ 29,90 <small class="fs-6 fw-normal text-body-secondary">/usuário/mês</small></div>
+                                        <div class="small text-body-secondary">Ideal para pequenas equipes.</div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="border rounded-3 p-3 h-100 bg-body">
+                                        <div class="fw-semibold mb-1">De 6 a 20 usuários</div>
+                                        <div class="h4 mb-1">R$ 24,90 <small class="fs-6 fw-normal text-body-secondary">/usuário/mês</small></div>
+                                        <div class="small text-body-secondary">Mais economia conforme a equipe cresce.</div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="border rounded-3 p-3 h-100 bg-body">
+                                        <div class="fw-semibold mb-1">21 ou mais usuários</div>
+                                        <div class="h4 mb-1">R$ 19,90 <small class="fs-6 fw-normal text-body-secondary">/usuário/mês</small></div>
+                                        <div class="small text-body-secondary">Melhor valor por licença para equipes maiores.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="small text-body-secondary mb-4">
+                                Os valores empresariais são cobrados por usuário licenciado. Como referência, o Prazzu Plus individual custa R$ 39,90 por mês.
+                            </p>
+
                             <div class="d-flex flex-wrap gap-2">
                                 @auth
                                     <a class="btn btn-info btn-lg" href="{{ route('organizations.create') }}">
@@ -190,9 +218,6 @@
                                     </a>
                                 @endauth
                             </div>
-                            <p class="small text-body-secondary mt-3 mb-0">
-                                A definição de valores e o checkout empresarial serão disponibilizados em uma próxima etapa.
-                            </p>
                         </div>
                     </div>
 
@@ -223,20 +248,20 @@
             <div class="table-responsive rounded-3 border shadow-sm">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="py-3">Recurso</th>
-                            <th scope="col" class="text-center py-3">Gratuito</th>
-                            <th scope="col" class="text-center py-3"><i class="bi bi-gem me-1 text-primary" aria-hidden="true"></i>Prazzu Plus</th>
-                        </tr>
+                    <tr>
+                        <th scope="col" class="py-3">Recurso</th>
+                        <th scope="col" class="text-center py-3">Gratuito</th>
+                        <th scope="col" class="text-center py-3"><i class="bi bi-gem me-1 text-primary" aria-hidden="true"></i>Prazzu Plus</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr><th scope="row">Cálculos e resultados completos</th><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
-                        <tr><th scope="row">Uso das ferramentas</th><td class="text-center">Ilimitado</td><td class="text-center">Ilimitado</td></tr>
-                        <tr><th scope="row">Experiência Plus</th><td class="text-center">1 vez por dia</td><td class="text-center">Ilimitada</td></tr>
-                        <tr><th scope="row">Histórico e salvamento</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
-                        <tr><th scope="row">Simulações e comparações</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
-                        <tr><th scope="row">Projeções, alertas e automações</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
-                        <tr><th scope="row">Ferramentas Plus atuais e futuras</th><td class="text-center">Experiência diária</td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
+                    <tr><th scope="row">Cálculos e resultados completos</th><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
+                    <tr><th scope="row">Uso das ferramentas</th><td class="text-center">Ilimitado</td><td class="text-center">Ilimitado</td></tr>
+                    <tr><th scope="row">Experiência Plus</th><td class="text-center">1 vez por dia</td><td class="text-center">Ilimitada</td></tr>
+                    <tr><th scope="row">Histórico e salvamento</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
+                    <tr><th scope="row">Simulações e comparações</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
+                    <tr><th scope="row">Projeções, alertas e automações</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
+                    <tr><th scope="row">Ferramentas Plus atuais e futuras</th><td class="text-center">Experiência diária</td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
                     </tbody>
                 </table>
             </div>
