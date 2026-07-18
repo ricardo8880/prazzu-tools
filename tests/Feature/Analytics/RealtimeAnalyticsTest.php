@@ -7,14 +7,16 @@ use App\Core\Analytics\Models\AnalyticsVisitor;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Tests\Feature\Analytics\Concerns\ActsAsInternalAdministrator;
 use Tests\TestCase;
 
 final class RealtimeAnalyticsTest extends TestCase
 {
-    use RefreshDatabase;
+    use ActsAsInternalAdministrator, RefreshDatabase;
 
     public function test_realtime_dashboard_and_json_endpoint_show_current_activity(): void
     {
+        $this->signInAsInternalAdministrator();
         $visitorId = (string) Str::uuid();
         $sessionId = (string) Str::uuid();
         AnalyticsVisitor::query()->create(['id' => $visitorId, 'first_seen_at' => now(), 'last_seen_at' => now()]);
@@ -30,10 +32,10 @@ final class RealtimeAnalyticsTest extends TestCase
             'source' => 'google', 'device_type' => 'mobile', 'occurred_at' => now(), 'metadata' => [],
         ]);
 
-        $this->withoutMiddleware()->get(route('admin.analytics.realtime'))
+        $this->get(route('admin.analytics.realtime'))
             ->assertOk()->assertSee('Tempo real')->assertSee('simples-nacional');
 
-        $this->withoutMiddleware()->getJson(route('admin.analytics.realtime.data'))
+        $this->getJson(route('admin.analytics.realtime.data'))
             ->assertOk()->assertHeader('Cache-Control', 'no-store, private')
             ->assertJsonPath('summary.online_users', 1)
             ->assertJsonPath('summary.open_tools', 1)
@@ -42,12 +44,19 @@ final class RealtimeAnalyticsTest extends TestCase
 
     public function test_inactive_sessions_are_not_counted_as_online(): void
     {
+        $this->signInAsInternalAdministrator();
+        $visitorId = (string) Str::uuid();
+        AnalyticsVisitor::query()->create([
+            'id' => $visitorId,
+            'first_seen_at' => now()->subHour(),
+            'last_seen_at' => now()->subMinutes(10),
+        ]);
         AnalyticsSession::query()->create([
-            'id' => (string) Str::uuid(), 'started_at' => now()->subHour(),
+            'id' => (string) Str::uuid(), 'visitor_id' => $visitorId, 'started_at' => now()->subHour(),
             'last_activity_at' => now()->subMinutes(10), 'landing_path' => '/',
         ]);
 
-        $this->withoutMiddleware()->getJson(route('admin.analytics.realtime.data'))
+        $this->getJson(route('admin.analytics.realtime.data'))
             ->assertOk()->assertJsonPath('summary.online_users', 0);
     }
 }

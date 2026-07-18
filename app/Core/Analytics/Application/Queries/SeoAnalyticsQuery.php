@@ -64,7 +64,8 @@ final readonly class SeoAnalyticsQuery
     {
         $audit = $this->auditor->audit($post);
         $base = SeoMetricSnapshot::query()->where('blog_post_id', $post->getKey())
-            ->whereBetween('metric_date', [$period->start->toDateString(), $period->end->toDateString()]);
+            ->whereDate('metric_date', '>=', $period->start->toDateString())
+            ->whereDate('metric_date', '<=', $period->end->toDateString());
         $totals = (clone $base)->selectRaw('SUM(clicks) clicks, SUM(impressions) impressions, SUM(discover_clicks) discover_clicks, SUM(discover_impressions) discover_impressions, SUM(news_clicks) news_clicks, SUM(news_impressions) news_impressions, SUM(rich_result_clicks) rich_result_clicks, SUM(rich_result_impressions) rich_result_impressions, SUM(average_position * impressions) weighted_position, SUM(CASE WHEN average_position IS NOT NULL THEN impressions ELSE 0 END) positioned_impressions')->first();
         $clicks = (int) ($totals->clicks ?? 0);
         $impressions = (int) ($totals->impressions ?? 0);
@@ -94,12 +95,15 @@ final readonly class SeoAnalyticsQuery
 
     private function metrics(AnalyticsPeriod $period): Collection
     {
-        return SeoMetricSnapshot::query()->whereBetween('metric_date', [$period->start->toDateString(), $period->end->toDateString()])
+        return SeoMetricSnapshot::query()
+            ->whereDate('metric_date', '>=', $period->start->toDateString())
+            ->whereDate('metric_date', '<=', $period->end->toDateString())
             ->selectRaw('blog_post_id, SUM(clicks) clicks, SUM(impressions) impressions, SUM(discover_clicks) discover_clicks, SUM(news_clicks) news_clicks, SUM(rich_result_clicks) rich_result_clicks, SUM(average_position * impressions) weighted_position, SUM(CASE WHEN average_position IS NOT NULL THEN impressions ELSE 0 END) positioned_impressions')
             ->groupBy('blog_post_id')->get()->mapWithKeys(function ($row): array {
                 $clicks = (int) $row->clicks;
                 $impressions = (int) $row->impressions;
                 $positioned = (int) $row->positioned_impressions;
+
                 return [$row->blog_post_id => (object) [
                     'clicks' => $clicks, 'impressions' => $impressions,
                     'ctr' => $this->rate($clicks, $impressions),
@@ -113,14 +117,19 @@ final readonly class SeoAnalyticsQuery
 
     private function emptyMetric(): object
     {
-        return (object) ['clicks'=>0,'impressions'=>0,'ctr'=>0.0,'average_position'=>null,'discover_clicks'=>0,'news_clicks'=>0,'rich_result_clicks'=>0];
+        return (object) ['clicks' => 0, 'impressions' => 0, 'ctr' => 0.0, 'average_position' => null, 'discover_clicks' => 0, 'news_clicks' => 0, 'rich_result_clicks' => 0];
     }
 
-    private function rate(int $part, int $total): float { return $total > 0 ? round($part / $total * 100, 2) : 0.0; }
+    private function rate(int $part, int $total): float
+    {
+        return $total > 0 ? round($part / $total * 100, 2) : 0.0;
+    }
+
     private function weightedPosition(Collection $rows): ?float
     {
-        $weighted = $rows->sum(fn($row) => ($row->average_position ?? 0) * $row->impressions);
+        $weighted = $rows->sum(fn ($row) => ($row->average_position ?? 0) * $row->impressions);
         $impressions = $rows->whereNotNull('average_position')->sum('impressions');
+
         return $impressions > 0 ? round($weighted / $impressions, 2) : null;
     }
 }

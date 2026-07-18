@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Analytics;
 
-use App\Core\Analytics\Infrastructure\Http\AcquisitionResolver;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Infrastructure\Http\AcquisitionResolver;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
@@ -11,8 +11,8 @@ use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Tests\TestCase;
 use Tests\Feature\Analytics\Concerns\ActsAsInternalAdministrator;
+use Tests\TestCase;
 
 final class AcquisitionAnalyticsTest extends TestCase
 {

@@ -6,7 +6,7 @@
     $canonical = $post->canonical_url ?: route('blog.show', $post->slug);
     $socialImage = $post->social_image_path ?: $post->cover_image_path;
     $articleImage = $socialImage ? asset('storage/'.$socialImage) : null;
-    $publishedAt = $post->published_at->toAtomString();
+    $publishedAt = $post->published_at?->toAtomString();
     $modifiedAt = ($post->content_updated_at ?: $post->updated_at)->toAtomString();
 @endphp
 
@@ -22,7 +22,7 @@
 @endif
 
 @push('head')
-    <meta property="article:published_time" content="{{ $publishedAt }}">
+    @if ($publishedAt)<meta property="article:published_time" content="{{ $publishedAt }}">@endif
     <meta property="article:modified_time" content="{{ $modifiedAt }}">
     <meta property="article:section" content="{{ $post->category }}">
     @if ($post->author)<meta property="article:author" content="{{ $post->author->name }}">@endif
@@ -71,7 +71,7 @@
             <p class="lead text-body-secondary">{{ $post->excerpt }}</p>
             <div class="d-flex flex-wrap gap-3 small text-body-secondary">
                 @if ($post->author)<span><i class="bi bi-person me-1"></i>{{ $post->author->name }}</span>@endif
-                <span><i class="bi bi-calendar3 me-1"></i>{{ $post->published_at->format('d/m/Y') }}</span>
+                <span><i class="bi bi-calendar3 me-1"></i>{{ $post->published_at?->format('d/m/Y') ?? 'Ainda não publicado' }}</span>
                 <span><i class="bi bi-clock me-1"></i>{{ $post->readingTimeMinutes() }} min de leitura</span>
                 @if ($post->content_updated_at)<span><i class="bi bi-arrow-repeat me-1"></i>Atualizado em {{ $post->content_updated_at->format('d/m/Y') }}</span>@endif
             </div>

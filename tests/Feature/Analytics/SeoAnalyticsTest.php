@@ -7,11 +7,12 @@ use App\Blog\Models\BlogPost;
 use App\Core\Analytics\Application\Services\BlogTechnicalSeoAuditor;
 use App\Core\Analytics\Models\SeoMetricSnapshot;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Feature\Analytics\Concerns\ActsAsInternalAdministrator;
 use Tests\TestCase;
 
 final class SeoAnalyticsTest extends TestCase
 {
-    use RefreshDatabase;
+    use ActsAsInternalAdministrator, RefreshDatabase;
 
     public function test_it_audits_blog_technical_seo(): void
     {
@@ -26,6 +27,7 @@ final class SeoAnalyticsTest extends TestCase
 
     public function test_it_displays_and_records_seo_metrics(): void
     {
+        $this->signInAsInternalAdministrator();
         $post = $this->createBlogPost();
         SeoMetricSnapshot::query()->create([
             'blog_post_id' => $post->getKey(), 'metric_date' => now()->toDateString(),

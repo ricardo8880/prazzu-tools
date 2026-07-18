@@ -5,10 +5,10 @@ namespace Tests\Feature\Analytics;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
-use App\Models\User;
 use Tests\Feature\Analytics\Concerns\ActsAsInternalAdministrator;
 use Tests\TestCase;
 

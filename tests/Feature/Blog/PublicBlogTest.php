@@ -32,7 +32,8 @@ final class PublicBlogTest extends TestCase
         $this->get(route('blog.index', ['q' => 'DAS', 'categoria' => 'Fiscal']))
             ->assertOk()
             ->assertSee('Como calcular o DAS')
-            ->assertDontSee('Organize documentos');
+            ->assertViewHas('posts', static fn ($posts): bool => $posts->count() === 1
+                && $posts->first()->title === 'Como calcular o DAS');
     }
 
     public function test_a_public_post_has_its_article_page_and_drafts_return_not_found(): void
