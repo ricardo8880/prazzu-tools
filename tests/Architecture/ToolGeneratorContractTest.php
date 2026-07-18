@@ -2,6 +2,8 @@
 
 namespace Tests\Architecture;
 
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -18,6 +20,7 @@ final class ToolGeneratorContractTest extends TestCase
     {
         return [
             'module' => ['Tool.stub'],
+            'application action' => ['Action.stub'],
             'controller' => ['Controller.stub'],
             'request' => ['Request.stub'],
             'routes' => ['web.stub'],
@@ -37,5 +40,32 @@ final class ToolGeneratorContractTest extends TestCase
         foreach (['general', 'fiscal', 'labor', 'corporate', 'documents'] as $group) {
             self::assertStringContainsString("// <tools:{$group}>", $contents);
         }
+    }
+
+    public function test_generated_documentation_contract_contains_every_required_section(): void
+    {
+        $contents = file_get_contents(base_path('stubs/tool/README.stub'));
+
+        self::assertIsString($contents);
+
+        foreach (['Descrição', 'Funcionalidades', 'Regras de domínio', 'Dependências', 'Histórico de versões'] as $section) {
+            self::assertStringContainsString("## {$section}", $contents);
+        }
+    }
+
+    public function test_generator_rejects_a_new_tool_outside_draft_status(): void
+    {
+        $modulePath = app_path('Tools/ArchitectureStatusProbe');
+
+        self::assertDirectoryDoesNotExist($modulePath);
+
+        $exitCode = Artisan::call('make:tool', [
+            'name' => 'ArchitectureStatusProbe',
+            '--status' => 'active',
+        ]);
+
+        self::assertSame(Command::FAILURE, $exitCode);
+        self::assertDirectoryDoesNotExist($modulePath);
+        self::assertStringContainsString('deve iniciar com o estado [draft]', Artisan::output());
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Admin\Analytics;
 
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
+use App\Http\Middleware\EnsureInternalAdministrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -20,19 +21,21 @@ final class AnalyticsReportsTest extends TestCase
             'path' => '/blog/teste', 'metadata' => [], 'occurred_at' => now(),
         ]);
 
-        $this->withoutMiddleware()->get(route('admin.analytics.reports', ['period' => '7', 'source' => 'google']))
+        $this->withoutMiddleware(EnsureInternalAdministrator::class)
+            ->get(route('admin.analytics.reports', ['period' => '7', 'source' => 'google']))
             ->assertOk()->assertSee('Relatórios do Analytics')->assertSee('page.viewed');
 
-        $this->withoutMiddleware()->get(route('admin.analytics.reports.export', ['period' => '7', 'source' => 'google', 'format' => 'csv']))
+        $this->withoutMiddleware(EnsureInternalAdministrator::class)
+            ->get(route('admin.analytics.reports.export', ['period' => '7', 'source' => 'google', 'format' => 'csv']))
             ->assertOk()->assertHeader('content-type', 'text/csv; charset=UTF-8');
     }
 
     public function test_an_analytics_report_can_be_scheduled(): void
     {
-        $this->withoutMiddleware()->post(route('admin.analytics.reports.schedules.store'), [
-            'name' => 'Resumo semanal', 'frequency' => 'weekly', 'format' => 'pdf', 'period' => '30', 'device_type' => 'mobile',
-        ])->assertRedirect();
+        $this->withoutMiddleware(EnsureInternalAdministrator::class)
+            ->post(route('admin.analytics.reports.schedules.store'), [
+                'name' => 'Resumo semanal', 'frequency' => 'weekly', 'format' => 'pdf', 'period' => '30', 'device_type' => 'mobile',
+            ])->assertRedirect();
 
         $this->assertDatabaseHas('analytics_report_schedules', ['name' => 'Resumo semanal', 'frequency' => 'weekly', 'is_active' => true]);
-    }
-}
+    

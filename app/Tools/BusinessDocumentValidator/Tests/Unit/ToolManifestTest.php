@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\BusinessDocumentValidator\Tests\Unit;
 
+use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolStatus;
+use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
 use App\Tools\BusinessDocumentValidator\Tool;
 use PHPUnit\Framework\TestCase;
 
@@ -23,5 +25,16 @@ final class ToolManifestTest extends TestCase
         self::assertSame('tools.validador-de-cnpj.index', $manifest->routeName);
         self::assertTrue($manifest->supportsHistory);
         self::assertTrue($manifest->storesSensitiveData);
+    }
+
+    public function test_module_declares_its_laravel_service_provider(): void
+    {
+        $tool = new Tool;
+
+        self::assertInstanceOf(HasServiceProviders::class, $tool);
+        self::assertSame(
+            [BusinessDocumentValidatorServiceProvider::class],
+            $tool->serviceProviders(),
+        );
     }
 }

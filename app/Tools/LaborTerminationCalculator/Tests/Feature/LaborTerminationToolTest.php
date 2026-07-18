@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator\Tests\Feature;
 
+use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -12,6 +13,7 @@ use Tests\TestCase;
 final class LaborTerminationToolTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_tool_page_is_available(): void
     {
         $this->get(route('tools.calculadora-de-rescisao.index'))
@@ -35,8 +37,7 @@ final class LaborTerminationToolTest extends TestCase
             'other_discounts' => '0,00',
             'dependents' => 0,
         ])->assertRedirect(route('tools.calculadora-de-rescisao.index'))
-            ->assertSessionHas('calculation_result', fn (array $result): bool =>
-                $result['notice_pay'] === 'R$ 3.600,00'
+            ->assertSessionHas('calculation_result', fn (array $result): bool => $result['notice_pay'] === 'R$ 3.600,00'
                 && $result['notice_days'] === 36
                 && $result['projected_termination_date'] === '19/08/2026'
                 && $result['termination_type_label'] === 'Dispensa sem justa causa'
@@ -55,9 +56,9 @@ final class LaborTerminationToolTest extends TestCase
                 'notice_type' => 'indemnified',
                 'days_worked_in_month' => 14,
                 'has_overdue_vacation' => 0,
-            'fgts_balance' => '0,00',
-            'other_discounts' => '0,00',
-            'dependents' => 0,
+                'fgts_balance' => '0,00',
+                'other_discounts' => '0,00',
+                'dependents' => 0,
             ])->assertRedirect(route('tools.calculadora-de-rescisao.index'))
             ->assertSessionHasErrors(['notice_type']);
     }
@@ -89,7 +90,7 @@ final class LaborTerminationToolTest extends TestCase
 
         $run = ToolRun::query()->sole();
         $this->assertSame($user->id, $run->user_id);
-        $this->assertSame('R$ 3.000,00', $run->input_payload['monthly_salary']);
+        $this->assertSame('3.000,00', $run->input_payload['monthly_salary']);
         $this->assertArrayHasKey('net_total', $run->result_payload);
 
         $this->actingAs($user)->get(route('tools.calculadora-de-rescisao.history.index'))
@@ -168,7 +169,7 @@ final class LaborTerminationToolTest extends TestCase
             'tool_version' => '1.0.0',
             'rule_version' => '1.4.0',
             'reference_date' => '2026-07-14',
-            'status' => \App\Core\Tools\History\Enums\ToolRunStatus::Succeeded,
+            'status' => ToolRunStatus::Succeeded,
             'input_payload' => ['admission_date' => '2024-01-10', 'termination_date' => '2026-07-14'],
             'result_payload' => ['termination_type_label' => 'Dispensa sem justa causa', 'net_total' => 'R$ 5.000,00'],
             'started_at' => now(),
@@ -182,5 +183,4 @@ final class LaborTerminationToolTest extends TestCase
             ->assertSee('Relatório de Rescisão Trabalhista')
             ->assertSee('R$ 5.000,00');
     }
-
 }

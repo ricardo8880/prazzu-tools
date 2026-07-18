@@ -124,11 +124,17 @@ Regras obrigatórias:
 
 Consulte `docs/LOT-4-ACCOUNTING-FOUNDATIONS.md`.
 
-## Limites atuais
+## Infraestrutura compartilhada atual
 
-Ainda não fazem parte do Core:
+O Core já oferece contratos e implementações centrais para acesso comercial,
+feature flags, histórico de execuções, auditoria, métricas de uso, importação,
+exportação para impressão, integrações externas, identidade e organizações.
+Ferramentas devem consumir esses pontos por contrato e não recriar mecanismos
+equivalentes dentro do módulo.
 
-- versionamento formal das regras de cálculo;
-- histórico, snapshots, auditoria e persistência;
-- autenticação, premium e limites de uso;
-- integrações externas e processamento assíncrono.
+Continuam sendo evoluções futuras, entre outras:
+
+- snapshots normativos completos e versionamento automatizado das regras;
+- novos formatos de exportação, como PDF e XLSX nativos;
+- processamento assíncrono especializado por capacidade;
+- integração com a identidade central do ecossistema Prazzu.

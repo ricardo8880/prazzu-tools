@@ -5,6 +5,7 @@ namespace App\Core\Analytics\Infrastructure\Http;
 use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Domain\ValueObjects\Acquisition;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsContext;
+use App\Core\Analytics\Infrastructure\Persistence\AnalyticsSchema;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
 use Illuminate\Http\Request;
@@ -16,13 +17,18 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
     public function __construct(
         private readonly UserAgentParser $userAgentParser,
         private readonly AcquisitionResolver $acquisitionResolver,
+        private readonly AnalyticsSchema $schema,
     ) {}
 
     public function resolve(?Request $request = null): AnalyticsContext
     {
         $request ??= request();
         if (! $request instanceof Request) {
-            return new AnalyticsContext();
+            return new AnalyticsContext;
+        }
+
+        if (! $this->schema->isReady()) {
+            return new AnalyticsContext;
         }
 
         $visitorId = $this->visitorId($request);

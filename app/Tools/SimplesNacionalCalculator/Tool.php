@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\SimplesNacionalCalculator;
 
+use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
@@ -12,7 +13,7 @@ use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolStatus;
 
-final class Tool implements ToolModule, HasWebRoutes, HasViews
+final class Tool implements HasMigrations, HasViews, HasWebRoutes, ToolModule
 {
     public function manifest(): ToolManifest
     {
@@ -47,5 +48,10 @@ final class Tool implements ToolModule, HasWebRoutes, HasViews
     public function viewsNamespace(): string
     {
         return 'tools-calculadora-simples-nacional';
+    }
+
+    public function migrationsPath(): string
+    {
+        return __DIR__.'/Infrastructure/Database/Migrations';
     }
 }

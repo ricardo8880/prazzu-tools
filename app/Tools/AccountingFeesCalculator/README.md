@@ -1,71 +1,94 @@
 # Calculadora de Honorários Contábeis
 
-Ferramenta para estimar honorários mensais a partir do faturamento, regime tributário, equipe, segmento, volume operacional e complexidade do cliente.
+## Descrição
 
-## Estado atual
+Ferramenta para estimar honorários mensais a partir do faturamento, regime
+tributário, equipe, segmento, volume operacional e complexidade do cliente.
+
+A estimativa é gerencial e apoia a precificação do serviço contábil. Ela não
+substitui a análise de custos, escopo, região e posicionamento de cada
+profissional ou escritório.
+
+## Funcionalidades
+
+### Precificação
 
 - formulário completo de precificação;
 - cálculo de honorário mínimo, recomendado e referência superior;
 - índice de complexidade de 0 a 100;
 - detalhamento percentual da composição do custo-base;
 - visualização dos fatores aplicados;
-- recomendações automáticas para apoiar a negociação;
-- gerador de proposta comercial com dados do cliente, serviços, implantação, vencimento e validade;
-- proposta em página própria pronta para impressão;
-- regra de cálculo versionada em `1.0.0`.
+- recomendações para apoiar a negociação;
+- regra de cálculo versionada.
 
-## Arquitetura
+### Documentos comerciais
 
-- `Domain`: regras, enums, resultados e dados da proposta;
-- `Application`: coordenação do cálculo e montagem da proposta;
-- `Presentation`: validação, controllers e interfaces Blade;
-- `Tests`: cobertura unitária e funcional.
+- proposta comercial com dados do cliente, serviços, implantação, vencimento e
+  validade;
+- contrato com partes, escopo, honorários, vencimento, vigência, reajuste,
+  multa, aviso de rescisão e cláusulas opcionais de LGPD e confidencialidade;
+- páginas próprias para revisão e impressão pelo navegador;
+- aviso para validação jurídica do contrato.
 
-A estimativa é gerencial e deve ser ajustada conforme custos internos, região, escopo contratado e posicionamento do escritório.
+### Reajustes
 
-## Lote 5 — Contrato de prestação de serviços
-
-O módulo também gera um modelo contratual com partes, escopo, honorários, vencimento, vigência, reajuste, multa, aviso de rescisão e cláusulas opcionais de LGPD e confidencialidade. O documento é apresentado em página própria para revisão e impressão e inclui aviso para validação jurídica.
-
-## Lote 6 — CRM
-
-O módulo passa a incluir um CRM simples e persistente para registrar prospects e clientes com:
-
-- empresa, CNPJ/CPF, responsável, telefone e e-mail;
-- honorário mensal negociado;
-- etapas de prospect, negociação, cliente e inativo;
-- situação da proposta e do contrato;
-- pesquisa, filtro, edição, exclusão e observações comerciais;
-- isolamento dos cadastros por usuário autenticado ou sessão anônima.
-
-Antes de usar o CRM, execute as migrations da aplicação.
-
-
-## Lote 7 — Reajustes
-
-O módulo passa a oferecer cálculo e histórico de reajustes com:
-
-- IPCA, INPC, IGP-M ou percentual informado manualmente;
+- cálculo por IPCA, INPC, IGP-M ou percentual manual;
 - competência de referência e identificação do cliente;
 - valor atual, diferença monetária e novo honorário;
-- suporte a percentuais negativos e arredondamento em centavos;
-- histórico persistente isolado por usuário autenticado ou sessão anônima;
-- exclusão de registros e observações sobre fonte e período do índice.
+- percentuais positivos ou negativos;
+- histórico e exclusão de reajustes implementados no ciclo anterior.
 
-Os índices não são consultados automaticamente. O usuário deve informar a taxa oficial aplicável ao contrato, mantendo a origem do percentual nas observações.
+### Histórico e produtividade
 
+- salvamento de precificações;
+- filtro e marcação de favoritos;
+- duplicação de cenários;
+- exportação CSV em UTF-8;
+- link público por token para compartilhamento;
+- impressão do resultado compartilhado;
+- exclusão de registros.
 
-## Lote 8 — Histórico e produtividade
+### Cadastro comercial legado
 
-A versão final deste ciclo inclui:
+O módulo recebeu em um ciclo anterior cadastro de prospects e clientes, etapas
+comerciais, proposta, contrato, pesquisa, filtros e observações. Essa informação
+é preservada para registrar o histórico da implementação, mas CRM, gestão de
+clientes e workflow não pertencem ao Prazzu Tools segundo o README raiz. Essa
+capacidade não deve ser expandida nem usada como referência para novas
+ferramentas; sua evolução exige extração para o produto apropriado do
+ecossistema.
 
-- salvamento automático de cada precificação;
-- histórico isolado por usuário autenticado ou sessão anônima;
-- filtro e marcação de cálculos favoritos;
-- duplicação de cenários para criar novas propostas e contratos sem redigitação;
-- exportação CSV em UTF-8, compatível com Excel;
-- link público por token aleatório para compartilhamento do resultado;
-- impressão do resultado compartilhado ou salvamento em PDF pelo navegador;
-- exclusão segura de registros do histórico.
+## Regras
 
-Antes de utilizar o histórico, execute as migrations da aplicação.
+- O resultado deve ser apresentado como estimativa gerencial transparente.
+- O cálculo considera porte, regime, equipe, segmento, volume e complexidade.
+- Índices de reajuste não são consultados automaticamente; o usuário informa a
+  taxa oficial aplicável e registra sua origem nas observações.
+- Dinheiro e percentuais devem utilizar os value objects do Core, nunca
+  `float`.
+- Visitantes podem calcular, gerar os documentos atuais, exportar e imprimir
+  sem autenticação durante a fase gratuita.
+- Persistência, histórico e favoritos pertencem ao Core e exigem autenticação.
+- Exportação, impressão e compartilhamento devem utilizar os contratos centrais
+  da plataforma; implementações próprias existentes são dívida arquitetural.
+- Propostas e contratos são modelos auxiliares e devem ser revisados por
+  profissional habilitado antes do uso.
+
+## Dependências
+
+- value objects `Money` e `Percentage` e regras de arredondamento do Core;
+- contratos centrais de histórico, favoritos, compartilhamento, exportação e
+  impressão;
+- Laravel para Presentation e adaptadores de Infrastructure;
+- banco de dados para recursos persistentes, após execução das migrations;
+- recurso nativo de impressão do navegador para os documentos atuais.
+
+O módulo não pode depender de outra ferramenta. Funcionalidades compartilháveis
+devem ser consumidas por contratos do Core.
+
+## Histórico de versões
+
+- `1.1.0`: consolidação dos ciclos de contrato, cadastro comercial legado,
+  reajustes, histórico, favoritos, duplicação, CSV e compartilhamento.
+- `1.0.0`: precificação inicial, detalhamento, recomendações e proposta
+  comercial.

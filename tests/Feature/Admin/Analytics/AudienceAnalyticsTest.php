@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin\Analytics;
 
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
+use App\Http\Middleware\EnsureInternalAdministrator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -57,7 +58,8 @@ final class AudienceAnalyticsTest extends TestCase
             'city' => 'São Paulo',
         ]);
 
-        $this->withoutMiddleware()->get(route('admin.analytics.audience', ['period' => '30']))
+        $this->withoutMiddleware(EnsureInternalAdministrator::class)
+            ->get(route('admin.analytics.audience', ['period' => '30']))
             ->assertOk()
             ->assertSee('Público')
             ->assertSee('Mobile')

@@ -19,9 +19,9 @@ final class ToolManifestTest extends TestCase
         self::assertSame('Calculadora de Honorários Contábeis', $manifest->name);
         self::assertSame(ToolCategory::Calculators, $manifest->category);
         self::assertSame(ToolStatus::Active, $manifest->status);
-        self::assertSame('1.0.0', $manifest->version);
+        self::assertSame('1.1.0', $manifest->version);
         self::assertSame('tools.calculadora-de-honorarios-contabeis.index', $manifest->routeName);
-        self::assertFalse($manifest->supportsHistory);
+        self::assertTrue($manifest->supportsHistory);
         self::assertFalse($manifest->storesSensitiveData);
     }
 }

@@ -6,12 +6,12 @@ use App\Blog\Models\BlogPost;
 use App\Core\Access\Enums\AccountRole;
 use App\Core\Access\Enums\SubscriptionPlan;
 use App\Core\Identity\Notifications\PrazzuResetPassword;
-use App\Core\Organizations\Contracts\EnterpriseAccessResolver;
 use App\Core\Identity\Notifications\PrazzuVerifyEmail;
+use App\Core\Organizations\Contracts\EnterpriseAccessResolver;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -19,6 +19,11 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $attributes = [
+        'role' => 'user',
+        'subscription_plan' => 'free',
+    ];
 
     protected $fillable = [
         'name',
@@ -65,7 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasPremiumAccess(): bool
     {
-        return $this->subscription_plan->grantsPremiumTools()
+        return ($this->subscription_plan ?? SubscriptionPlan::Free)->grantsPremiumTools()
             || app(EnterpriseAccessResolver::class)->grantsPlusAccessTo($this->getKey());
     }
 
@@ -76,7 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isInternalAdministrator(): bool
     {
-        return $this->role->isInternal();
+        return ($this->role ?? AccountRole::User)->isInternal();
     }
 
     protected function casts(): array

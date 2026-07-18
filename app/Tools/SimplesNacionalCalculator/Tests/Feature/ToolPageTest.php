@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\SimplesNacionalCalculator\Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class ToolPageTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_tool_page_is_available_with_free_calculation_form(): void
     {
         $this->get(route('tools.calculadora-simples-nacional.index'))
@@ -29,7 +32,7 @@ final class ToolPageTest extends TestCase
             ->assertSessionHas('calculation_result', static function (array $result): bool {
                 return $result['annex'] === 'I'
                     && $result['bracket'] === 1
-                    && $result['effective_rate'] === '4.000000%'
+                    && $result['effective_rate'] === '4%'
                     && $result['estimated_das'] === 'R$ 600,00';
             });
     }

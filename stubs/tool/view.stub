@@ -3,8 +3,16 @@
 @section('title', '{{ name }}')
 
 @section('content')
-    <section>
-        <h1>{{ name }}</h1>
-        <p>Módulo criado. Implemente aqui a interface específica da ferramenta.</p>
+    <section class="container-fluid py-4" data-tool="{{ slug }}">
+        <header class="mb-4">
+            <h1 class="h2">{{ $tool->name }}</h1>
+            <p class="text-body-secondary mb-0">{{ $tool->description }}</p>
+        </header>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <p class="mb-0">Módulo em rascunho. Implemente aqui a interface específica da ferramenta.</p>
+            </div>
+        </div>
     </section>
 @endsection

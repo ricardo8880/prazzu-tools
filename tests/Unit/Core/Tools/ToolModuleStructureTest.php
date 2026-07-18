@@ -6,6 +6,7 @@ use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\Support\ToolModuleStructure;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
 
@@ -43,6 +44,7 @@ final class ToolModuleStructureTest extends TestCase
     {
         foreach ([
             'Tool.stub',
+            'Action.stub',
             'Controller.stub',
             'Request.stub',
             'web.stub',
@@ -52,6 +54,23 @@ final class ToolModuleStructureTest extends TestCase
             'README.stub',
         ] as $stub) {
             $this->assertFileExists(base_path("stubs/tool/{$stub}"));
+        }
+    }
+
+    public function test_every_registered_module_has_the_structure_required_by_the_root_readme(): void
+    {
+        $classes = array_values(Arr::flatten(config('tools.modules', [])));
+
+        foreach ($classes as $class) {
+            $reflection = new \ReflectionClass($class);
+            $moduleFile = $reflection->getFileName();
+
+            self::assertIsString($moduleFile);
+            self::assertSame(
+                [],
+                ToolModuleStructure::missingPaths(dirname($moduleFile)),
+                "O módulo [{$class}] não possui toda a estrutura obrigatória.",
+            );
         }
     }
 }

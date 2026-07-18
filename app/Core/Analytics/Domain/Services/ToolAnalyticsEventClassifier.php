@@ -28,12 +28,12 @@ final class ToolAnalyticsEventClassifier
             return AnalyticsEventName::ToolOpened;
         }
 
-        if ($method === 'GET' && str_contains($action, 'history')) {
-            return AnalyticsEventName::ToolHistoryViewed;
-        }
-
         if (preg_match('/(^|\.)(export|pdf|print)(\.|$)/', $action) === 1) {
             return AnalyticsEventName::ToolResultExported;
+        }
+
+        if ($method === 'GET' && str_contains($action, 'history')) {
+            return AnalyticsEventName::ToolHistoryViewed;
         }
 
         if (str_contains($action, 'share') && ! str_contains($action, 'revoke')) {

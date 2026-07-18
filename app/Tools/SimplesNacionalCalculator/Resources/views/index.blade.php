@@ -163,10 +163,10 @@
             <div class="alert alert-warning" role="alert"><i class="bi bi-lock-fill me-1"></i>{{ session('access_warning') }}</div>
         @endif
 
-        @if (config('simples-nacional-access.unlock_plus', true))
+        @if (collect($plusAccess)->every(static fn (bool $allowed): bool => $allowed))
             <div class="alert alert-info d-flex gap-2" role="status">
                 <i class="bi bi-unlock-fill" aria-hidden="true"></i>
-                <div><strong>Recursos Plus liberados nesta fase.</strong> A estrutura de controle de acesso já está pronta para a assinatura mensal.</div>
+                <div><strong>Recursos Plus disponíveis.</strong> Sua conta pode utilizar todos os recursos avançados desta ferramenta.</div>
             </div>
         @endif
 

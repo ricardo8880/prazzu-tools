@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\BusinessDocumentValidator;
 
+use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
@@ -13,8 +14,9 @@ use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
 
-final class Tool implements ToolModule, HasWebRoutes, HasViews, HasHistoryPolicy
+final class Tool implements HasHistoryPolicy, HasServiceProviders, HasViews, HasWebRoutes, ToolModule
 {
     public function manifest(): ToolManifest
     {
@@ -56,6 +58,11 @@ final class Tool implements ToolModule, HasWebRoutes, HasViews, HasHistoryPolicy
             ],
             sensitiveFields: ['file_name'],
         );
+    }
+
+    public function serviceProviders(): array
+    {
+        return [BusinessDocumentValidatorServiceProvider::class];
     }
 
     public function webRoutesPath(): string

@@ -3,15 +3,18 @@
 namespace App\Providers;
 
 use App\Core\Access\Contracts\CommercialAccessPolicy;
+use App\Core\Access\Contracts\ToolAccessContextResolver;
 use App\Core\Access\Contracts\ToolAccessGate;
+use App\Core\Access\Services\ConfigCommercialAccessPolicy;
+use App\Core\Access\Services\DefaultToolAccessContextResolver;
+use App\Core\Access\Services\DefaultToolAccessGate;
 use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Infrastructure\Http\RequestAnalyticsContextResolver;
+use App\Core\Analytics\Infrastructure\Persistence\AnalyticsSchema;
 use App\Core\Analytics\Infrastructure\Persistence\EloquentAnalyticsEventRepository;
 use App\Core\Analytics\Services\DatabasePlatformAnalytics;
-use App\Core\Access\Services\ConfigCommercialAccessPolicy;
-use App\Core\Access\Services\DefaultToolAccessGate;
 use App\Core\FeatureFlags\Contracts\FeatureFlagRepository;
 use App\Core\FeatureFlags\Services\ConfigFeatureFlagRepository;
 use App\Core\Identity\Contracts\PrazzuIdentityLinker;
@@ -32,8 +35,10 @@ final class CoreInfrastructureServiceProvider extends ServiceProvider
         $this->app->singleton(FeatureFlagRepository::class, ConfigFeatureFlagRepository::class);
         $this->app->singleton(CommercialAccessPolicy::class, ConfigCommercialAccessPolicy::class);
         $this->app->singleton(ToolAccessGate::class, DefaultToolAccessGate::class);
+        $this->app->singleton(ToolAccessContextResolver::class, DefaultToolAccessContextResolver::class);
         $this->app->singleton(AnalyticsContextResolver::class, RequestAnalyticsContextResolver::class);
         $this->app->singleton(AnalyticsEventRepository::class, EloquentAnalyticsEventRepository::class);
+        $this->app->singleton(AnalyticsSchema::class);
         $this->app->singleton(PlatformAnalytics::class, DatabasePlatformAnalytics::class);
 
         $this->app->singleton(UsageLimiter::class, function ($app): UsageLimiter {

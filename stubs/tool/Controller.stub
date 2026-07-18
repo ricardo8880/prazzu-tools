@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tools\{{ class }}\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Tools\{{ class }}\Application\Actions\ShowToolPage;
 use Illuminate\Contracts\View\View;
 
 final class ToolController extends Controller
 {
-    public function index(): View
+    public function index(ShowToolPage $page): View
     {
-        return view('{{ view_namespace }}::index');
+        return view('{{ view_namespace }}::index', $page->execute());
     }
 }

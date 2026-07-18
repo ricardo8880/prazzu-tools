@@ -1,56 +1,76 @@
 # Validador Inteligente de CNPJ, CPF e IE
 
-Módulo independente para validação, consulta e análise de documentos brasileiros.
+## Descrição
 
-## Estado atual — Lote 6
+Módulo independente para validação matemática, consulta cadastral e análise de
+consistência de documentos brasileiros. A validade matemática local é separada
+da disponibilidade de provedores externos.
 
-Disponível:
+## Funcionalidades
+
+### Validação individual
 
 - validação matemática local de CPF e CNPJ;
 - detecção automática do tipo de documento;
 - diagnóstico de tamanho, repetição e dígitos verificadores;
 - consulta cadastral individual de CNPJ;
-- razão social, nome fantasia, situação, abertura, natureza jurídica e matriz/filial;
+- razão social, nome fantasia, situação, abertura, natureza jurídica e
+  matriz/filial;
 - endereço cadastral e atividades econômicas;
-- separação entre validade matemática e disponibilidade do provedor;
 - validação de Inscrição Estadual por estratégia estadual;
-- suporte inicial a CE, ES, MA, MG, PA, PB, PE, PR, RJ, RS, SC, SE e SP;
-- análise determinística de inconsistências cadastrais;
-- importação em lote de CSV e XLSX;
+- suporte a CE, ES, MA, MG, PA, PB, PE, PR, RJ, RS, SC, SE e SP;
+- análise determinística de inconsistências cadastrais.
+
+### Processamento em lote
+
+- importação de CSV, TXT delimitado e XLSX;
 - detecção de delimitador em CSV;
 - leitura da primeira aba de arquivos XLSX;
 - pré-visualização e mapeamento manual ou sugerido de colunas;
-- processamento de até 500 registros por arquivo;
 - identificação de documentos inválidos e duplicados;
-- consulta cadastral opcional de até 50 CNPJs por processamento;
-- cruzamento em lote de razão social, nome fantasia, UF, município e IE.
+- consulta cadastral opcional e cruzamento de razão social, nome fantasia, UF,
+  município e IE;
+- exportação do resultado completo ou apenas de inconsistências em CSV e
+  formato compatível com Excel;
+- relatório para impressão e salvamento como PDF pelo navegador.
 
-## Importação compartilhada
+### Histórico e plataforma
 
-A leitura tabular genérica pertence ao Core em `app/Core/Imports`. O módulo conhece apenas o significado das colunas e as regras aplicadas a cada registro.
+- histórico autenticado por 90 dias, contendo somente metadados e totais;
+- auditoria de execuções e exclusões por contratos do Core;
+- métricas de processamento e exportação pelo contrato `PlatformAnalytics`.
 
-Os dados completos importados são mantidos temporariamente no cache por 30 minutos e vinculados ao usuário autenticado ou à sessão atual. A interface recebe apenas uma prévia de até oito linhas e um token aleatório.
+## Regras
 
-Limites atuais:
+- Validade matemática não depende de consulta externa.
+- Indisponibilidade do provedor não é irregularidade da empresa e deve ser
+  apresentada como análise não concluída.
+- Cada inconsistência possui código estável, severidade, mensagem, recomendação
+  e valores informado/cadastral quando aplicáveis.
+- A primeira linha do arquivo é o cabeçalho e somente a primeira aba de XLSX é
+  processada.
+- O limite atual é 5 MB e 500 registros por arquivo.
+- São permitidas até 50 consultas cadastrais externas por processamento.
+- Dados completos importados ficam temporariamente no cache por 30 minutos; a
+  interface recebe uma prévia de até oito linhas e um token aleatório.
+- Documentos e dados cadastrais completos não são persistidos no histórico.
+- Visitantes acessam validação, consulta, lote e exportação atual durante a fase
+  gratuita. Login é requisito apenas para persistência e histórico.
 
-- formatos: CSV, TXT delimitado e XLSX;
-- tamanho máximo: 5 MB;
-- máximo de 500 linhas por arquivo;
-- primeira linha obrigatoriamente utilizada como cabeçalho;
-- primeira aba utilizada em arquivos XLSX;
-- até 50 consultas cadastrais externas por processamento.
+## Dependências
 
-A validação matemática de todos os documentos continua local e não depende do provedor externo.
+### Core
 
-## Motor de inconsistências
+- `app/Core/Imports` para leitura tabular e armazenamento temporário;
+- sistema central de exportação e impressão;
+- contratos de histórico, auditoria e analytics;
+- value objects compartilhados de CPF, CNPJ e datas.
 
-A análise é executada por `CompanyConsistencyAnalyzer`. Cada ocorrência possui código estável, severidade, mensagem, recomendação, valor informado e valor cadastral quando aplicável.
+### Provedor cadastral
 
-A indisponibilidade do provedor não é tratada como irregularidade da empresa. Ela gera apenas uma informação de que a análise não pôde ser concluída.
-
-## Provedor cadastral
-
-A implementação padrão utiliza a BrasilAPI por meio de `BrasilApiCompanyRegistryProvider`. A infraestrutura pode ser substituída sem alterar Application, Domain ou Presentation.
+A implementação padrão utiliza a BrasilAPI por meio de
+`BrasilApiCompanyRegistryProvider`. O contrato permite substituir o provedor
+sem alterar Application, Domain ou Presentation.
 
 ```env
 BRASIL_API_BASE_URL=https://brasilapi.com.br/api
@@ -58,23 +78,18 @@ BRASIL_API_CONNECT_TIMEOUT=3
 BRASIL_API_TIMEOUT=8
 ```
 
-## Requisitos para Excel
+### Servidor
 
-A leitura de XLSX utiliza `ZipArchive` e `SimpleXML`. Caso essas extensões não estejam disponíveis no servidor, a importação CSV continua funcionando e a interface apresenta uma mensagem clara para arquivos Excel.
+A leitura de XLSX utiliza `ZipArchive` e `SimpleXML`. Sem essas extensões, CSV
+continua disponível e a interface deve informar claramente a indisponibilidade
+de Excel.
 
-## Fora do escopo deste lote
+O módulo não depende de outra ferramenta.
 
-- exportação CSV e Excel dos resultados;
-- impressão dos relatórios;
-- filtros avançados e download apenas das inconsistências;
-- histórico persistente e métricas finais.
+## Histórico de versões
 
-## Lote 7 — exportação e acabamento
-
-- Exportação do processamento atual em CSV UTF-8 e Excel compatível (SpreadsheetML).
-- Exportação filtrada para registros inválidos, duplicados ou com alertas/erros.
-- Relatório para impressão e salvamento em PDF pelo navegador.
-- Histórico autenticado por 90 dias contendo apenas nome/formato do arquivo e totais; documentos e dados cadastrais não são persistidos.
-- Auditoria automática das execuções e exclusões por meio do Core.
-- Métricas de processamento e exportação por meio do contrato `PlatformAnalytics`.
-- Módulo promovido para a versão `1.0.0` e status ativo.
+- `1.0.0` — Lote 7: exportações, impressão, histórico por 90 dias, auditoria,
+  métricas e promoção para status ativo.
+- `0.x` — Lotes 1 a 6: validação de CPF/CNPJ/IE, consulta cadastral, motor de
+  inconsistências, importação compartilhada, pré-visualização e processamento
+  em lote.

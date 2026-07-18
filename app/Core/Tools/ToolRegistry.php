@@ -2,6 +2,7 @@
 
 namespace App\Core\Tools;
 
+use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Exceptions\DuplicateToolException;
@@ -14,11 +15,14 @@ final class ToolRegistry
     /** @var array<string, ToolModule> */
     private array $modules = [];
 
+    /** @var array<string, string> */
+    private array $migrationFiles = [];
+
     /** @param array<int, class-string<ToolModule>> $moduleClasses */
     public function __construct(
         Container $container,
         array $moduleClasses = [],
-        private readonly ToolModuleValidator $validator = new ToolModuleValidator(),
+        private readonly ToolModuleValidator $validator = new ToolModuleValidator,
     ) {
         foreach ($moduleClasses as $moduleClass) {
             if (! is_string($moduleClass) || ! class_exists($moduleClass)) {
@@ -49,6 +53,7 @@ final class ToolRegistry
             throw new DuplicateToolException("Já existe uma ferramenta registrada com o slug [{$slug}].");
         }
 
+        $this->registerMigrationNames($module, $slug);
         $this->modules[$slug] = $module;
     }
 
@@ -94,5 +99,32 @@ final class ToolRegistry
     public function count(): int
     {
         return count($this->modules);
+    }
+
+    private function registerMigrationNames(ToolModule $module, string $slug): void
+    {
+        if (! $module instanceof HasMigrations) {
+            return;
+        }
+
+        $pending = [];
+
+        foreach (glob(rtrim($module->migrationsPath(), '/\\').DIRECTORY_SEPARATOR.'*.php') ?: [] as $migration) {
+            $name = strtolower(basename($migration));
+
+            if (isset($this->migrationFiles[$name]) || isset($pending[$name])) {
+                $owner = $this->migrationFiles[$name] ?? $slug;
+
+                throw new InvalidArgumentException(
+                    "A migration [{$name}] de [{$slug}] colide com a migration declarada por [{$owner}].",
+                );
+            }
+
+            $pending[$name] = $slug;
+        }
+
+        foreach ($pending as $name => $owner) {
+            $this->migrationFiles[$name] = $owner;
+        }
     }
 }

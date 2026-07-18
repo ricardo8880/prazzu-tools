@@ -1,13 +1,40 @@
 # {{ name }}
 
+## Descrição
+
+Descreva o problema contábil resolvido pela ferramenta e o público atendido.
+
+## Funcionalidades
+
+- Estrutura inicial da página pública.
+- Manifesto registrado como `draft`.
+
+## Regras de domínio
+
+Documente fórmulas, arredondamentos, datas de referência, casos de fronteira e
+fontes normativas antes de implementar o cálculo.
+
+## Dependências
+
+- Contratos e value objects compartilhados do Core.
+- Bootstrap e componentes visuais da plataforma.
+
+Este módulo não pode importar a implementação interna de outra ferramenta.
+
+## Integração com a plataforma
+
 - Slug: `{{ slug }}`
 - Rota principal: `{{ route_prefix }}.index`
 - Namespace de views: `{{ view_namespace }}`
 
-## Limites do módulo
+Declare aqui as capacidades realmente utilizadas. Histórico, exportação,
+favoritos, analytics, acesso e persistência devem usar contratos do Core.
 
-Este módulo pode depender do Core e da Platform, mas não pode importar a
-implementação interna de outra ferramenta.
+## Histórico de versões
+
+| Versão | Estado | Alterações |
+| --- | --- | --- |
+| 0.1.0 | Draft | Estrutura inicial gerada. |
 
 ## Antes de ativar
 
@@ -16,5 +43,6 @@ implementação interna de outra ferramenta.
 3. Use os value objects do Core para dinheiro, percentuais, datas, CPF e CNPJ.
 4. Faça regras temporais receberem a data de referência e declararem vigência.
 5. Implemente validação, regras e apresentação.
-6. Substitua testes incompletos por testes reais.
+6. Adicione testes Unit e Feature para todos os casos implementados.
 7. Revise acesso, persistência, dados sensíveis e histórico.
+8. Execute o checklist obrigatório do README raiz.

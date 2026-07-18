@@ -6,24 +6,32 @@ namespace App\Tools\SimplesNacionalCalculator\Presentation\Controllers;
 
 use App\Core\Exceptions\InvalidValue;
 use App\Http\Controllers\Controller;
+use App\Tools\SimplesNacionalCalculator\Application\Access\SimplesNacionalFeatureGate;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\CalculateFactorR;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\CalculateSimplesNacional;
-use App\Tools\SimplesNacionalCalculator\Application\Access\SimplesNacionalFeatureGate;
+use App\Tools\SimplesNacionalCalculator\Application\Actions\ListSimplesNacionalCalculations;
 use App\Tools\SimplesNacionalCalculator\Application\Features\SimplesNacionalFeature;
 use App\Tools\SimplesNacionalCalculator\Domain\Enums\TaxAnnex;
 use App\Tools\SimplesNacionalCalculator\Presentation\Requests\CalculateSimplesNacionalRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 final class SimplesNacionalController extends Controller
 {
-    public function index(Request $request, SimplesNacionalFeatureGate $featureGate): View
-    {
+    public function index(
+        Request $request,
+        SimplesNacionalFeatureGate $featureGate,
+        ListSimplesNacionalCalculations $history,
+    ): View {
         return view('tools-calculadora-simples-nacional::index', [
             'annexes' => TaxAnnex::cases(),
-            'history' => SimplesNacionalPlusController::historyFor($request),
+            'history' => $history->recent(
+                $request->user() === null
+                    ? null
+                    : (int) $request->user()->getAuthIdentifier(),
+            ),
             'plusAccess' => collect([
                 SimplesNacionalFeature::CompareScenarios,
                 SimplesNacionalFeature::CompareAnnexes,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\MarginMarkupCalculator;
 
+use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
@@ -14,7 +15,7 @@ use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
 
-final class Tool implements ToolModule, HasWebRoutes, HasViews, HasHistoryPolicy
+final class Tool implements HasHistoryPolicy, HasMigrations, HasViews, HasWebRoutes, ToolModule
 {
     public function manifest(): ToolManifest
     {
@@ -68,5 +69,10 @@ final class Tool implements ToolModule, HasWebRoutes, HasViews, HasHistoryPolicy
                 'margin', 'markup', 'markup_multiplier', 'rule_version', 'results',
             ],
         );
+    }
+
+    public function migrationsPath(): string
+    {
+        return __DIR__.'/Infrastructure/Database/Migrations';
     }
 }

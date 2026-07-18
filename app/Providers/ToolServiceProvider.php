@@ -3,21 +3,45 @@
 namespace App\Providers;
 
 use App\Core\Tools\Contracts\HasMigrations;
+use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasViews;
+use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Support\ToolModuleValidator;
 use App\Core\Tools\ToolCatalog;
 use App\Core\Tools\ToolRegistry;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use InvalidArgumentException;
 
 final class ToolServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(ToolRegistry::class, function ($app): ToolRegistry {
-            /** @var array<int, class-string<\App\Core\Tools\Contracts\ToolModule>> $modules */
-            $modules = array_values(Arr::flatten(config('tools.modules', [])));
+        /** @var array<int, class-string<ToolModule>> $modules */
+        $modules = array_values(Arr::flatten(config('tools.modules', [])));
+        $validator = $this->app->make(ToolModuleValidator::class);
 
+        foreach ($modules as $moduleClass) {
+            if (! is_string($moduleClass) || ! is_a($moduleClass, HasServiceProviders::class, true)) {
+                continue;
+            }
+
+            /** @var HasServiceProviders&ToolModule $module */
+            $module = $this->app->make($moduleClass);
+
+            if (! $module instanceof ToolModule) {
+                throw new InvalidArgumentException("O módulo [{$moduleClass}] deve implementar ".ToolModule::class.'.');
+            }
+
+            $validator->validate($module);
+
+            foreach ($module->serviceProviders() as $providerClass) {
+                $this->app->register($providerClass);
+            }
+        }
+
+        $this->app->singleton(ToolRegistry::class, function ($app) use ($modules): ToolRegistry {
             return new ToolRegistry($app, $modules);
         });
 

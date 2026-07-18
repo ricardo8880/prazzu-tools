@@ -4,10 +4,12 @@ namespace App\Core\Tools\Support;
 
 use App\Core\Tools\Contracts\HasApiRoutes;
 use App\Core\Tools\Contracts\HasMigrations;
+use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use ReflectionClass;
 
@@ -32,6 +34,17 @@ final class ToolModuleValidator
         }
 
         $moduleRoot = dirname($moduleFile);
+        $missingPaths = str_starts_with($reflection->getName(), 'App\\Tools\\')
+            ? ToolModuleStructure::missingPaths($moduleRoot)
+            : [];
+
+        if ($missingPaths !== []) {
+            throw new InvalidArgumentException(sprintf(
+                'O módulo [%s] não possui a estrutura obrigatória: %s.',
+                $manifest->slug,
+                implode(', ', $missingPaths),
+            ));
+        }
 
         if ($manifest->supportsHistory !== ($module instanceof HasHistoryPolicy)) {
             throw new InvalidArgumentException(
@@ -54,15 +67,15 @@ final class ToolModuleValidator
         }
 
         if ($module instanceof HasWebRoutes) {
-            $this->validateFile($module->webRoutesPath(), $moduleRoot, 'rotas web', $manifest->slug);
+            $this->validateFile($module->webRoutesPath(), $moduleRoot.'/Routes', 'rotas web', $manifest->slug);
         }
 
         if ($module instanceof HasApiRoutes) {
-            $this->validateFile($module->apiRoutesPath(), $moduleRoot, 'rotas de API', $manifest->slug);
+            $this->validateFile($module->apiRoutesPath(), $moduleRoot.'/Routes', 'rotas de API', $manifest->slug);
         }
 
         if ($module instanceof HasViews) {
-            $this->validateDirectory($module->viewsPath(), $moduleRoot, 'views', $manifest->slug);
+            $this->validateDirectory($module->viewsPath(), $moduleRoot.'/Resources/views', 'views', $manifest->slug);
 
             if ($module->viewsNamespace() !== "tools-{$manifest->slug}") {
                 throw new InvalidArgumentException(
@@ -72,7 +85,25 @@ final class ToolModuleValidator
         }
 
         if ($module instanceof HasMigrations) {
-            $this->validateDirectory($module->migrationsPath(), $moduleRoot, 'migrations', $manifest->slug);
+            $this->validateDirectory($module->migrationsPath(), $moduleRoot.'/Infrastructure/Database/Migrations', 'migrations', $manifest->slug);
+        }
+
+        if ($module instanceof HasServiceProviders) {
+            foreach ($module->serviceProviders() as $providerClass) {
+                if (! is_a($providerClass, ServiceProvider::class, true)) {
+                    throw new InvalidArgumentException(
+                        "O provider [{$providerClass}] de [{$manifest->slug}] deve estender ".ServiceProvider::class.'.',
+                    );
+                }
+
+                $providerFile = (new ReflectionClass($providerClass))->getFileName();
+
+                if ($providerFile === false) {
+                    throw new InvalidArgumentException("Não foi possível localizar o provider [{$providerClass}].");
+                }
+
+                $this->validateFile($providerFile, $moduleRoot.'/Infrastructure/Providers', 'provider de serviço', $manifest->slug);
+            }
         }
     }
 
@@ -99,8 +130,8 @@ final class ToolModuleValidator
         $resolvedPath = realpath($path);
         $resolvedRoot = realpath($moduleRoot);
 
-        if ($resolvedPath === false || $resolvedRoot === false || ! str_starts_with($resolvedPath, $resolvedRoot.DIRECTORY_SEPARATOR)) {
-            throw new InvalidArgumentException("O recurso de {$type} de [{$slug}] deve permanecer dentro do próprio módulo.");
+        if ($resolvedPath === false || $resolvedRoot === false || ($resolvedPath !== $resolvedRoot && ! str_starts_with($resolvedPath, $resolvedRoot.DIRECTORY_SEPARATOR))) {
+            throw new InvalidArgumentException("O recurso de {$type} de [{$slug}] deve permanecer em sua camada obrigatória.");
         }
     }
 }

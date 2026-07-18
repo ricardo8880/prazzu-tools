@@ -1,8 +1,9 @@
 /**
  * JavaScript global mínimo da plataforma.
  *
- * Regras específicas devem ficar em resources/js/tools/<slug>.js e cada script
- * deve atuar apenas dentro do elemento [data-tool="<slug>"].
+ * Regras específicas permanecem em app/Tools/<Modulo>/Resources/js/index.js.
+ * O Vite descobre essas entradas e cada script deve atuar apenas dentro do
+ * elemento [data-tool="<slug>"].
  */
 document.documentElement.classList.add('js-enabled');
 

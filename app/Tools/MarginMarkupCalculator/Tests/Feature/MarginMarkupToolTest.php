@@ -16,7 +16,7 @@ final class MarginMarkupToolTest extends TestCase
     {
         $this->get(route('tools.calculadora-margem-markup.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Margem e Markup');
+            ->assertSee('Calculadora de Margem, Markup e Formação de Preço');
     }
 
     public function test_calculation_returns_expected_result(): void
@@ -90,6 +90,7 @@ final class MarginMarkupToolTest extends TestCase
             ->assertRedirect(route('tools.calculadora-margem-markup.index'))
             ->assertSessionHasErrors('base_cost');
     }
+
     public function test_batch_calculation_returns_results_for_multiple_products(): void
     {
         $response = $this->from(route('tools.calculadora-margem-markup.index'))
@@ -176,5 +177,4 @@ final class MarginMarkupToolTest extends TestCase
             ->assertOk()
             ->assertDownload('modelo-importacao-margem-markup.csv');
     }
-
 }

@@ -4,30 +4,35 @@ declare(strict_types=1);
 
 namespace App\Tools\MarginMarkupCalculator\Presentation\Controllers;
 
+use App\Core\Access\Contracts\ToolAccessContextResolver;
 use App\Core\Access\Data\AccessDecision;
-use App\Core\Audit\Contracts\AuditLogger;
-use App\Core\Access\Data\ToolAccessContext;
-use App\Core\Access\Enums\AccountRole;
-use App\Core\Access\Enums\SubscriptionPlan;
 use App\Core\Access\Services\ToolExecutionAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
 use App\Core\Export\Data\PrintableDocument;
 use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Core\Usage\Contracts\UsageMetrics;
 use App\Core\Usage\Data\UsageLimit;
 use App\Http\Controllers\Controller;
 use App\Tools\MarginMarkupCalculator\Application\Actions\CalculateMarginMarkup;
 use App\Tools\MarginMarkupCalculator\Application\Actions\CalculateMarginMarkupBatch;
+use App\Tools\MarginMarkupCalculator\Application\Actions\CreateMarginMarkupShare;
+use App\Tools\MarginMarkupCalculator\Application\Actions\DeleteMarginMarkupHistory;
+use App\Tools\MarginMarkupCalculator\Application\Actions\ListMarginMarkupHistory;
+use App\Tools\MarginMarkupCalculator\Application\Actions\PrepareMarginMarkupHistoryReport;
 use App\Tools\MarginMarkupCalculator\Application\Actions\PreviewProductImport;
 use App\Tools\MarginMarkupCalculator\Application\Actions\ProcessProductImport;
+use App\Tools\MarginMarkupCalculator\Application\Actions\RepeatMarginMarkupHistory;
+use App\Tools\MarginMarkupCalculator\Application\Actions\RevokeMarginMarkupShare;
+use App\Tools\MarginMarkupCalculator\Application\Actions\ShowMarginMarkupHistory;
+use App\Tools\MarginMarkupCalculator\Application\Actions\ShowSharedMarginMarkup;
 use App\Tools\MarginMarkupCalculator\Application\Actions\SimulatePricingScenarios;
+use App\Tools\MarginMarkupCalculator\Application\Actions\UnlockSharedMarginMarkup;
 use App\Tools\MarginMarkupCalculator\Domain\Calculators\MarginMarkupCalculator;
-use App\Tools\MarginMarkupCalculator\Infrastructure\Models\MarginMarkupShare;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\CalculateMarginMarkupBatchRequest;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\CalculateMarginMarkupRequest;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\CreateMarginMarkupShareRequest;
@@ -38,8 +43,6 @@ use App\Tools\MarginMarkupCalculator\Presentation\Requests\UnlockMarginMarkupSha
 use App\Tools\MarginMarkupCalculator\Tool;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -50,6 +53,8 @@ final class MarginMarkupController extends Controller
     private const USAGE_LIMIT = 20;
 
     private const USAGE_WINDOW_SECONDS = 3600;
+
+    public function __construct(private readonly ToolAccessContextResolver $accessContextResolver) {}
 
     public function index(): View
     {
@@ -190,6 +195,7 @@ final class MarginMarkupController extends Controller
         ToolExecutionAuthorizer $authorizer,
         UsageMetrics $metrics,
         Tool $module,
+        TabularExportService $exporter,
     ): StreamedResponse {
         $this->ensureExecutionIsAllowed($request, $authorizer, $module);
 
@@ -211,43 +217,32 @@ final class MarginMarkupController extends Controller
             durationMs: (int) ((hrtime(true) - $startedAt) / 1_000_000),
         );
 
-        return response()->streamDownload(function () use ($validated, $result): void {
-            $handle = fopen('php://output', 'wb');
-
-            if ($handle === false) {
-                return;
-            }
-
-            fputcsv($handle, ['Campo', 'Valor'], ';');
-
-            foreach ([
-                'Data de referência' => $validated['reference_date'],
-                'Custo total' => $result['total_cost'],
-                'Preço de venda' => $result['sale_price'],
-                'Lucro bruto' => $result['gross_profit'],
-                'Lucro líquido estimado' => $result['net_profit'],
-                'Impostos' => $result['taxes_amount'],
-                'Comissão' => $result['commission_amount'],
-                'Taxas de cartão' => $result['card_fees_amount'],
-                'Taxas de marketplace' => $result['marketplace_fees_amount'],
-                'Margem' => $result['margin'],
-                'Markup' => $result['markup'],
-                'Índice de markup' => $result['markup_multiplier'],
-                'Versão da regra' => $result['rule_version'],
-            ] as $label => $value) {
-                fputcsv($handle, [$label, $value], ';');
-            }
-
-            fclose($handle);
-        }, 'margem-markup.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+        return $exporter->csv('margem-markup.csv', ['Campo', 'Valor'], collect([
+            'Data de referência' => $validated['reference_date'],
+            'Custo total' => $result['total_cost'],
+            'Preço de venda' => $result['sale_price'],
+            'Lucro bruto' => $result['gross_profit'],
+            'Lucro líquido estimado' => $result['net_profit'],
+            'Impostos' => $result['taxes_amount'],
+            'Comissão' => $result['commission_amount'],
+            'Taxas de cartão' => $result['card_fees_amount'],
+            'Taxas de marketplace' => $result['marketplace_fees_amount'],
+            'Margem' => $result['margin'],
+            'Markup' => $result['markup'],
+            'Índice de markup' => $result['markup_multiplier'],
+            'Versão da regra' => $result['rule_version'],
+        ])->map(static fn (string $value, string $label): array => [$label, $value]));
     }
-
 
     public function exportPdf(
         CalculateMarginMarkupRequest $request,
         CalculateMarginMarkup $action,
         BrowserPrintExporter $exporter,
+        ToolExecutionAuthorizer $authorizer,
+        Tool $module,
     ): View {
+        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
+
         try {
             $input = $request->validated();
             $result = $action->execute($input)->toArray();
@@ -261,144 +256,153 @@ final class MarginMarkupController extends Controller
     public function exportBatch(
         CalculateMarginMarkupBatchRequest $request,
         CalculateMarginMarkupBatch $action,
+        ToolExecutionAuthorizer $authorizer,
+        Tool $module,
+        TabularExportService $exporter,
     ): StreamedResponse {
+        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
+
         $input = $request->validated();
         $results = $action->execute($input['products']);
 
-        return $this->tabularDownload('produtos-margem-markup.csv', [
+        return $exporter->csv(
+            'produtos-margem-markup.csv',
             ['Produto', 'Código', 'Categoria', 'Custo total', 'Preço sugerido', 'Lucro líquido', 'Margem', 'Markup', 'Índice'],
-            ...array_map(static fn (array $row): array => [
+            array_map(static fn (array $row): array => [
                 $row['name'], $row['code'], $row['category'], $row['total_cost'], $row['sale_price'],
                 $row['net_profit'], $row['margin'], $row['markup'], $row['markup_multiplier'],
             ], $results),
-        ]);
+        );
     }
 
     public function exportScenarios(
         SimulatePricingScenariosRequest $request,
         SimulatePricingScenarios $action,
+        ToolExecutionAuthorizer $authorizer,
+        Tool $module,
+        TabularExportService $exporter,
     ): StreamedResponse {
+        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
+
         $results = $action->execute($request->validated());
 
-        return $this->tabularDownload('cenarios-margem-markup.csv', [
+        return $exporter->csv(
+            'cenarios-margem-markup.csv',
             ['Cenário', 'Ajuste de custo', 'Margem alvo', 'Desconto', 'Custo total', 'Preço de tabela', 'Preço final', 'Lucro líquido', 'Margem efetiva', 'Índice'],
-            ...array_map(static fn (array $row): array => array_values($row), $results),
-        ]);
+            array_map(static fn (array $row): array => array_values($row), $results),
+        );
     }
 
-    public function history(Request $request): View
+    public function history(Request $request, ListMarginMarkupHistory $action): View
     {
-        $query = ToolRun::query()
-            ->where('user_id', $request->user()->id)
-            ->where('tool_slug', 'calculadora-margem-markup')
-            ->where('status', ToolRunStatus::Succeeded)
-            ->latest('finished_at');
-
-        if ($request->filled('from')) {
-            $query->whereDate('reference_date', '>=', $request->string('from')->toString());
-        }
-        if ($request->filled('to')) {
-            $query->whereDate('reference_date', '<=', $request->string('to')->toString());
-        }
-
         return view('tools-calculadora-margem-markup::history.index', [
-            'runs' => $query->paginate(10)->withQueryString(),
+            'runs' => $action->execute(
+                (int) $request->user()->getAuthIdentifier(),
+                $request->filled('from') ? $request->string('from')->toString() : null,
+                $request->filled('to') ? $request->string('to')->toString() : null,
+            ),
         ]);
     }
 
-    public function showHistory(Request $request, ToolRun $run): View
-    {
-        $run = $this->ownedRun($request, $run);
-        $activeShare = MarginMarkupShare::query()
-            ->where('tool_run_id', $run->id)
-            ->where('user_id', $request->user()->id)
-            ->whereNull('revoked_at')
-            ->where(static function ($query): void {
-                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
-            })
-            ->latest('id')
-            ->first();
-
-        return view('tools-calculadora-margem-markup::history.show', compact('run', 'activeShare'));
+    public function showHistory(
+        Request $request,
+        ToolRun $run,
+        ShowMarginMarkupHistory $action,
+    ): View {
+        return view(
+            'tools-calculadora-margem-markup::history.show',
+            $action->execute($run, (int) $request->user()->getAuthIdentifier()),
+        );
     }
 
-    public function repeatHistory(Request $request, ToolRun $run): RedirectResponse
-    {
-        $run = $this->ownedRun($request, $run);
-
+    public function repeatHistory(
+        Request $request,
+        ToolRun $run,
+        RepeatMarginMarkupHistory $action,
+    ): RedirectResponse {
         return redirect()->route('tools.calculadora-margem-markup.index')
-            ->withInput($run->input_payload ?? [])
+            ->withInput($action->execute($run, (int) $request->user()->getAuthIdentifier()))
             ->with('history_message', 'Os dados foram carregados. Revise-os antes de calcular novamente.');
     }
 
-    public function exportHistory(Request $request, ToolRun $run, BrowserPrintExporter $exporter): View
-    {
-        $run = $this->ownedRun($request, $run);
-        $result = $run->result_payload ?? [];
-        abort_unless(($result['calculation_type'] ?? 'single') === 'single', 422, 'O PDF está disponível para cálculos individuais.');
+    public function exportHistory(
+        Request $request,
+        ToolRun $run,
+        PrepareMarginMarkupHistoryReport $action,
+        BrowserPrintExporter $exporter,
+    ): View {
+        $report = $action->execute($run, (int) $request->user()->getAuthIdentifier());
 
-        return $this->pdfView($exporter, $result, $run->input_payload ?? [], $run->finished_at?->format('d/m/Y H:i') ?? now()->format('d/m/Y H:i'));
+        return $this->pdfView(
+            $exporter,
+            $report['result'],
+            $report['input'],
+            $report['generatedAt'],
+        );
     }
 
-    public function destroyHistory(Request $request, ToolRun $run, AuditLogger $audit): RedirectResponse
-    {
-        $run = $this->ownedRun($request, $run);
-        $audit->record('tool_run.deleted', ToolRun::class, $run->id, ['tool_slug' => $run->tool_slug], $request->user()->id);
-        $run->delete();
+    public function destroyHistory(
+        Request $request,
+        ToolRun $run,
+        DeleteMarginMarkupHistory $action,
+    ): RedirectResponse {
+        $action->execute($run, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.calculadora-margem-markup.history.index')
             ->with('history_message', 'Registro removido do histórico.');
     }
 
-
-    public function createShare(CreateMarginMarkupShareRequest $request, ToolRun $run): RedirectResponse
-    {
-        $run = $this->ownedRun($request, $run);
-        abort_unless(($run->result_payload['calculation_type'] ?? 'single') === 'single', 422, 'O compartilhamento está disponível para cálculos individuais.');
-
-        $share = MarginMarkupShare::query()->updateOrCreate(
-            ['tool_run_id' => $run->id, 'user_id' => $request->user()->id, 'revoked_at' => null],
-            [
-                'token' => (string) Str::uuid(),
-                'access_code_hash' => $request->filled('access_code') ? Hash::make((string) $request->input('access_code')) : null,
-                'expires_at' => now()->addDays((int) $request->integer('validity_days')),
-            ],
+    public function createShare(
+        CreateMarginMarkupShareRequest $request,
+        ToolRun $run,
+        CreateMarginMarkupShare $action,
+    ): RedirectResponse {
+        $share = $action->execute(
+            $run,
+            (int) $request->user()->getAuthIdentifier(),
+            (int) $request->validated('validity_days'),
+            $request->filled('access_code') ? (string) $request->validated('access_code') : null,
         );
 
-        return back()->with('share_url', route('tools.calculadora-margem-markup.shared.show', $share->token));
+        return back()->with(
+            'share_url',
+            route('tools.calculadora-margem-markup.shared.show', $share->token),
+        );
     }
 
-    public function revokeShare(Request $request, ToolRun $run): RedirectResponse
-    {
-        $run = $this->ownedRun($request, $run);
-        MarginMarkupShare::query()
-            ->where('tool_run_id', $run->id)
-            ->where('user_id', $request->user()->id)
-            ->whereNull('revoked_at')
-            ->update(['revoked_at' => now()]);
+    public function revokeShare(
+        Request $request,
+        ToolRun $run,
+        RevokeMarginMarkupShare $action,
+    ): RedirectResponse {
+        $action->execute($run, (int) $request->user()->getAuthIdentifier());
 
         return back()->with('history_message', 'Link de compartilhamento revogado.');
     }
 
-    public function shared(string $token, Request $request): View
-    {
-        $share = $this->availableShare($token);
-        $unlocked = ! $share->isProtected() || $request->session()->get($this->shareSessionKey($share)) === true;
-        $run = $unlocked ? ToolRun::query()->findOrFail($share->tool_run_id) : null;
-
-        return view('tools-calculadora-margem-markup::shared.show', compact('share', 'run', 'unlocked'));
+    public function shared(
+        string $token,
+        Request $request,
+        ShowSharedMarginMarkup $action,
+    ): View {
+        return view('tools-calculadora-margem-markup::shared.show', $action->execute(
+            $token,
+            $request->session()->get($this->shareSessionKey($token)) === true,
+        ));
     }
 
-    public function unlockShared(string $token, UnlockMarginMarkupShareRequest $request): RedirectResponse
-    {
-        $share = $this->availableShare($token);
+    public function unlockShared(
+        string $token,
+        UnlockMarginMarkupShareRequest $request,
+        UnlockSharedMarginMarkup $action,
+    ): RedirectResponse {
+        $share = $action->execute($token, (string) $request->validated('access_code'));
+        $request->session()->put($this->shareSessionKey($share->token), true);
 
-        if (! $share->isProtected() || Hash::check((string) $request->input('access_code'), (string) $share->access_code_hash)) {
-            $request->session()->put($this->shareSessionKey($share), true);
-            return redirect()->route('tools.calculadora-margem-markup.shared.show', $share->token);
-        }
-
-        throw ValidationException::withMessages(['access_code' => 'Código de acesso inválido.']);
+        return redirect()->route(
+            'tools.calculadora-margem-markup.shared.show',
+            $share->token,
+        );
     }
 
     public function previewImport(PreviewProductImportRequest $request, PreviewProductImport $action): RedirectResponse
@@ -425,15 +429,13 @@ final class MarginMarkupController extends Controller
             ->with('product_import_result', $result);
     }
 
-    public function importTemplate(): StreamedResponse
+    public function importTemplate(TabularExportService $exporter): StreamedResponse
     {
-        return response()->streamDownload(function (): void {
-            $handle = fopen('php://output', 'wb');
-            if ($handle === false) { return; }
-            fputcsv($handle, ['Produto','Código','Categoria','Custo base','Outros custos','Frete','Embalagem','Despesas rateadas','Margem %','Impostos %','Comissão %','Cartão %','Marketplace %'], ';');
-            fputcsv($handle, ['Produto exemplo','SKU-001','Geral','100,00','0,00','10,00','2,00','5,00','30','6','2','3','0'], ';');
-            fclose($handle);
-        }, 'modelo-importacao-margem-markup.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+        return $exporter->csv(
+            'modelo-importacao-margem-markup.csv',
+            ['Produto', 'Código', 'Categoria', 'Custo base', 'Outros custos', 'Frete', 'Embalagem', 'Despesas rateadas', 'Margem %', 'Impostos %', 'Comissão %', 'Cartão %', 'Marketplace %'],
+            [['Produto exemplo', 'SKU-001', 'Geral', '100,00', '0,00', '10,00', '2,00', '5,00', '30', '6', '2', '3', '0']],
+        );
     }
 
     private function ensureExecutionIsAllowed(
@@ -442,11 +444,7 @@ final class MarginMarkupController extends Controller
         Tool $module,
     ): void {
         $user = $request->user();
-        $context = new ToolAccessContext(
-            userId: $user?->id,
-            role: $user?->role ?? AccountRole::User,
-            plan: $user?->effectiveSubscriptionPlan() ?? SubscriptionPlan::Free,
-        );
+        $context = $this->accessContextResolver->resolve($user);
         $subject = $user !== null ? 'user:'.$user->id : 'ip:'.($request->ip() ?? 'unknown');
         $decision = $authorizer->authorize(
             manifest: $module->manifest(),
@@ -495,30 +493,6 @@ final class MarginMarkupController extends Controller
         );
     }
 
-    private function ownedRun(Request $request, ToolRun $run): ToolRun
-    {
-        abort_unless(
-            $run->user_id === $request->user()->id
-            && $run->tool_slug === 'calculadora-margem-markup'
-            && $run->status === ToolRunStatus::Succeeded,
-            404,
-        );
-
-        return $run;
-    }
-
-    /** @param array<int, array<int, string>> $rows */
-    private function tabularDownload(string $filename, array $rows): StreamedResponse
-    {
-        return response()->streamDownload(static function () use ($rows): void {
-            $handle = fopen('php://output', 'wb');
-            if ($handle === false) { return; }
-            fwrite($handle, "\xEF\xBB\xBF");
-            foreach ($rows as $row) { fputcsv($handle, $row, ';'); }
-            fclose($handle);
-        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
-    }
-
     /** @param array<string, mixed> $result @param array<string, mixed> $input */
     private function pdfView(BrowserPrintExporter $exporter, array $result, array $input, string $generatedAt): View
     {
@@ -533,18 +507,9 @@ final class MarginMarkupController extends Controller
         ));
     }
 
-
-    private function availableShare(string $token): MarginMarkupShare
+    private function shareSessionKey(string $token): string
     {
-        $share = MarginMarkupShare::query()->where('token', $token)->firstOrFail();
-        abort_unless($share->isAvailable(), 410, 'Este link expirou ou foi revogado.');
-
-        return $share;
-    }
-
-    private function shareSessionKey(MarginMarkupShare $share): string
-    {
-        return 'margin_markup_share_unlocked_'.$share->token;
+        return 'margin_markup_share_unlocked_'.$token;
     }
 
     private function recordFailure(ToolRunRecorder $recorder, ?ToolRun $run, string $errorCode): void

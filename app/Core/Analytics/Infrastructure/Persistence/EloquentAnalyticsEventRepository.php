@@ -10,9 +10,17 @@ use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 
 final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
 {
-    public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
+    public function __construct(
+        private readonly AnalyticsEventNameResolver $eventNames,
+        private readonly AnalyticsSchema $schema,
+    ) {}
+
     public function store(AnalyticsEvent $event, AnalyticsContext $context): void
     {
+        if (! $this->schema->isReady()) {
+            return;
+        }
+
         PlatformAnalyticsEvent::query()->create([
             'event_id' => $event->identifier(),
             'event_name' => $this->eventNames->canonical($event->name),

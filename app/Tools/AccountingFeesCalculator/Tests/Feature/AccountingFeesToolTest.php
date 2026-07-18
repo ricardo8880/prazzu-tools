@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\AccountingFeesCalculator\Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class AccountingFeesToolTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_tool_page_is_available(): void
     {
         $this->get(route('tools.calculadora-de-honorarios-contabeis.index'))
@@ -30,8 +33,7 @@ final class AccountingFeesToolTest extends TestCase
                 'complexity' => 'medium',
             ])
             ->assertRedirect(route('tools.calculadora-de-honorarios-contabeis.index'))
-            ->assertSessionHas('calculation_result', static fn (array $result): bool =>
-                $result['minimum_fee'] === 'R$ 1.678,43'
+            ->assertSessionHas('calculation_result', static fn (array $result): bool => $result['minimum_fee'] === 'R$ 1.678,43'
                 && $result['recommended_fee'] === 'R$ 1.930,19'
                 && $result['rule_version'] === '1.0.0'
                 && count($result['recommendations']) > 0

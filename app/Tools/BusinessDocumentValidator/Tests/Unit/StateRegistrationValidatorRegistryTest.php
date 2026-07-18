@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Tools\BusinessDocumentValidator\Tests\Unit;
 
 use App\Tools\BusinessDocumentValidator\Domain\Validators\StateRegistrationValidatorRegistry;
-use App\Tools\BusinessDocumentValidator\Providers\BusinessDocumentValidatorServiceProvider;
+use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
 use Tests\TestCase;
 
 final class StateRegistrationValidatorRegistryTest extends TestCase
 {
-    protected function setUp(): void
+    public function test_module_service_provider_is_registered_without_a_global_bootstrap_entry(): void
     {
-        parent::setUp();
-        $this->app->register(BusinessDocumentValidatorServiceProvider::class);
+        /** @var array<int, class-string> $globalProviders */
+        $globalProviders = require base_path('bootstrap/providers.php');
+
+        self::assertNotContains(BusinessDocumentValidatorServiceProvider::class, $globalProviders);
+        self::assertTrue($this->app->providerIsLoaded(BusinessDocumentValidatorServiceProvider::class));
+        self::assertTrue($this->app->bound(StateRegistrationValidatorRegistry::class));
     }
 
     public function test_validates_known_state_registrations(): void

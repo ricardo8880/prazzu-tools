@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\Support\ToolModuleStructure;
+use App\Core\Tools\ToolRegistry;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use RuntimeException;
@@ -21,8 +23,10 @@ final class MakeToolCommand extends Command
 
     protected $description = 'Cria a estrutura padrão de um módulo de ferramenta';
 
-    public function __construct(private readonly Filesystem $files)
-    {
+    public function __construct(
+        private readonly Filesystem $files,
+        private readonly ToolRegistry $registry,
+    ) {
         parent::__construct();
     }
 
@@ -41,7 +45,7 @@ final class MakeToolCommand extends Command
 
         $this->output->writeln("<info>Módulo [{$context['class']}] criado com sucesso.</info>");
         $this->line("Diretório: app/Tools/{$context['class']}");
-        $this->line('Próximos passos: implemente o domínio, ajuste o manifesto e escreva os casos de referência.');
+        $this->line('Próximos passos: implemente o domínio, documente as regras e escreva os casos de referência.');
 
         return self::SUCCESS;
     }
@@ -92,36 +96,92 @@ final class MakeToolCommand extends Command
             throw new RuntimeException('O slug deve conter apenas letras minúsculas, números e hífens.');
         }
 
+        if ($context['status'] !== ToolStatus::Draft->value) {
+            throw new RuntimeException('Toda nova ferramenta deve iniciar com o estado [draft].');
+        }
+
+        $registeredModule = $this->registry->findModule($context['slug']);
+
+        if ($registeredModule !== null
+            && (! $this->option('force') || $registeredModule::class !== $context['module_class'])) {
+            throw new RuntimeException("Já existe uma ferramenta registrada com o slug [{$context['slug']}].");
+        }
+
         $target = app_path("Tools/{$context['class']}");
 
         if ($this->files->isDirectory($target) && ! $this->option('force')) {
             throw new RuntimeException("O módulo [{$context['class']}] já existe. Use --force para sobrescrever.");
         }
+
+        foreach ($this->fileMap($context) as $stub => $destination) {
+            $stubPath = base_path("stubs/tool/{$stub}");
+
+            if (! $this->files->isFile($stubPath)) {
+                throw new RuntimeException("O stub obrigatório [{$stub}] não existe.");
+            }
+
+            if ($this->files->exists(base_path($destination)) && ! $this->option('force')) {
+                throw new RuntimeException("O arquivo [{$destination}] já existe.");
+            }
+        }
+
+        $this->validateRegistrationTarget($context);
     }
 
     /** @param array<string, string> $context */
     private function generateFiles(array $context): void
     {
-        $files = [
+        $moduleRoot = app_path("Tools/{$context['class']}");
+
+        foreach (ToolModuleStructure::requiredDirectories() as $directory) {
+            $this->files->ensureDirectoryExists($moduleRoot.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $directory));
+        }
+
+        foreach ($this->fileMap($context) as $stub => $destination) {
+            $destinationPath = base_path($destination);
+
+            $this->files->ensureDirectoryExists(dirname($destinationPath));
+            $this->files->put($destinationPath, $this->renderStub($stub, $context));
+        }
+
+        foreach (['Domain', 'Infrastructure'] as $emptyLayer) {
+            $placeholder = $moduleRoot.DIRECTORY_SEPARATOR.$emptyLayer.DIRECTORY_SEPARATOR.'.gitkeep';
+
+            if (! $this->files->exists($placeholder)) {
+                $this->files->put($placeholder, '');
+            }
+        }
+    }
+
+    /**
+     * @param  array<string, string>  $context
+     * @return array<string, string>
+     */
+    private function fileMap(array $context): array
+    {
+        return [
             'Tool.stub' => "app/Tools/{$context['class']}/Tool.php",
+            'Action.stub' => "app/Tools/{$context['class']}/Application/Actions/ShowToolPage.php",
             'Controller.stub' => "app/Tools/{$context['class']}/Presentation/Controllers/ToolController.php",
             'Request.stub' => "app/Tools/{$context['class']}/Presentation/Requests/ExecuteToolRequest.php",
             'web.stub' => "app/Tools/{$context['class']}/Routes/web.php",
             'view.stub' => "app/Tools/{$context['class']}/Resources/views/index.blade.php",
-            'UnitTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolTest.php",
+            'UnitTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolManifestTest.php",
             'FeatureTest.stub' => "app/Tools/{$context['class']}/Tests/Feature/ToolPageTest.php",
             'README.stub' => "app/Tools/{$context['class']}/README.md",
         ];
+    }
 
-        foreach ($files as $stub => $destination) {
-            $destinationPath = base_path($destination);
+    /** @param array<string, string> $context */
+    private function validateRegistrationTarget(array $context): void
+    {
+        $path = config_path('tools/modules.php');
+        $contents = $this->files->get($path);
+        $marker = "        // <tools:{$context['config_group']}>";
+        $registration = "        \\{$context['module_class']}::class,";
 
-            if ($this->files->exists($destinationPath) && ! $this->option('force')) {
-                throw new RuntimeException("O arquivo [{$destination}] já existe.");
-            }
-
-            $this->files->ensureDirectoryExists(dirname($destinationPath));
-            $this->files->put($destinationPath, $this->renderStub($stub, $context));
+        if (! str_contains($contents, $registration) && ! str_contains($contents, $marker)) {
+            throw new RuntimeException("Marcador de registro [{$marker}] não encontrado em config/tools/modules.php.");
         }
     }
 

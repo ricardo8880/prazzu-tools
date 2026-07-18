@@ -9,7 +9,11 @@ use Illuminate\Validation\Rule;
 
 final class AnalyzeAlertsRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return [

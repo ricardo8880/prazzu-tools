@@ -2,36 +2,64 @@
 
 ## Objetivo
 
-Garantir que novas ferramentas sejam criadas com a mesma organização, limites e
-pontos de extensão, sem implementar regras contábeis e sem alterar o layout.
+Garantir que novas ferramentas sejam criadas com a mesma arquitetura, os mesmos
+limites e os mesmos pontos de extensão. O `README.md` da raiz é a autoridade
+máxima deste padrão.
 
-## Estrutura oficial
+## Estrutura oficial obrigatória
 
 ```text
 app/Tools/NomeDaFerramenta/
-├── Application/                 # casos de uso, actions e DTOs quando necessários
+├── Application/                 # Actions, casos de uso e DTOs de aplicação
 ├── Domain/                      # regras, cálculos, value objects e resultados
-├── Infrastructure/             # banco, arquivos e serviços externos
+├── Infrastructure/             # banco, arquivos, repositórios e APIs
 ├── Presentation/
 │   ├── Controllers/
 │   └── Requests/
 ├── Resources/
 │   ├── views/
-│   ├── js/                      # somente quando houver comportamento próprio
-│   └── css/                     # somente quando houver estilo próprio
+│   ├── js/                      # quando houver comportamento específico
+│   └── css/                     # quando Bootstrap/Core não forem suficientes
 ├── Routes/
 │   ├── web.php
-│   └── api.php                  # opcional
+│   └── api.php                  # quando a ferramenta expuser API
 ├── Tests/
 │   ├── Unit/
-│   └── Feature/
+│   ├── Feature/
+│   └── Browser/                 # obrigatório para interfaces complexas
 ├── Tool.php
 └── README.md
 ```
 
-As pastas `Application`, `Domain` e `Infrastructure` são criadas quando o módulo
-realmente precisar delas. Pastas vazias não devem ser adicionadas apenas para
-cumprir desenho arquitetural.
+`Application`, `Domain`, `Infrastructure`, `Presentation`, `Resources`,
+`Routes`, `Tests`, `README.md` e `Tool.php` são obrigatórios desde a criação do
+módulo. Não é permitido omitir uma camada nem deslocar sua responsabilidade por
+ela ainda não possuir uma implementação concreta.
+
+## Limites das camadas
+
+### Presentation
+
+Controllers recebem Request, chamam Actions e retornam Response. Eles não
+calculam, consultam banco ou APIs, geram arquivos, registram histórico ou
+implementam regras comerciais.
+
+### Application
+
+Actions orquestram casos de uso, chamam o Domain e coordenam contratos do Core
+ou da Infrastructure. Não contêm regras de negócio.
+
+### Domain
+
+O Domain contém todas as regras, cálculos e validações de negócio. Ele é
+determinístico, não depende do Laravel, não consulta configuração ou tempo
+global e não usa `float` para dinheiro ou percentuais.
+
+### Infrastructure
+
+Implementa persistência, repositórios, armazenamento, APIs e integrações
+específicas da ferramenta. Migrations exclusivas do módulo permanecem nesta
+camada e são declaradas ao carregador por `HasMigrations`.
 
 ## Gerador
 
@@ -43,18 +71,20 @@ php artisan make:tool CalculadoraRescisao \
     --status=draft
 ```
 
-O comando cria:
+O comando deve criar:
 
+- as sete pastas obrigatórias;
 - manifesto e capacidades web/views;
-- controller e Form Request;
+- Action inicial, controller e Form Request;
 - arquivo próprio de rotas;
 - view inicial;
-- testes unitário e funcional;
-- README do módulo;
+- testes Unit e Feature;
+- README com as seções obrigatórias;
 - registro no grupo correspondente em `config/tools/modules.php`.
 
-O estado padrão é `draft`. Uma ferramenta não deve ser ativada enquanto possuir
-testes incompletos ou metadados provisórios.
+O estado padrão é `draft`. Uma ferramenta não pode ser ativada enquanto possuir
+testes incompletos, metadados provisórios ou qualquer item pendente na definição
+de ferramenta pronta do README raiz.
 
 ## Grupos de registro
 
@@ -67,29 +97,69 @@ configuração:
 - `corporate`;
 - `documents`.
 
-Eles não definem o namespace nem obrigam a ferramenta a ficar fisicamente dentro
-de uma pasta de categoria.
+Eles não definem namespace nem alteram a estrutura física do módulo.
 
-## Regras obrigatórias
+## Regras de reutilização
 
-1. Cada módulo fica em `app/Tools/<Nome>/`.
-2. A classe de entrada chama-se `Tool`.
-3. A rota principal começa com `tools.<slug>.`.
+Antes de implementar uma funcionalidade, deve ser respondido: outra ferramenta
+poderá utilizá-la? Se sim, ela pertence ao Core. Não é necessário aguardar uma
+segunda cópia surgir para então centralizá-la.
+
+Pertencem ao Core, entre outros:
+
+- exportação, impressão, PDF, CSV e XLSX;
+- histórico, favoritos e compartilhamento;
+- autenticação, autorização, planos e limites;
+- analytics, auditoria e notificações;
+- componentes Blade, máscaras, helpers e traits reutilizáveis;
+- objetos de dinheiro, percentuais, datas, CPF e CNPJ.
+
+Uma ferramenta nunca importa a implementação interna de outra ferramenta. Ela
+conhece somente o próprio domínio e os contratos disponibilizados pelo Core.
+
+## Assets
+
+Views, JavaScript e CSS específicos ficam dentro de `Resources` do módulo. É
+proibido espalhar scripts da ferramenta por `resources/js/tools` ou estilos
+específicos pelo CSS global.
+
+Todo script deve limitar sua atuação ao elemento
+`[data-tool="<slug-da-ferramenta>"]`. Bootstrap e componentes compartilhados
+têm prioridade; CSS próprio só é criado quando eles não resolvem a necessidade.
+O pipeline Vite compartilhado pode registrar as entradas, mas o código-fonte
+continua dentro do módulo.
+
+## Rotas e views
+
+1. A rota principal começa com `tools.<slug>.`.
+2. Endpoints apontam para controllers; handlers em closures são proibidos.
+3. Cada ferramenta possui seu arquivo de rotas.
 4. Views usam o namespace `tools-<slug>`.
-5. Rotas, views e migrations declaradas permanecem dentro do módulo.
-6. Uma ferramenta não importa implementações internas de outra ferramenta.
-7. Código só vai para o Core após reutilização real e contrato estável.
-8. Métricas de uso não ficam no manifesto.
-9. Regras contábeis, dinheiro, vigência e auditoria serão definidos nos Lotes 4 e 5.
-10. O módulo inicia em `draft` e só muda de estado após revisão.
-
-## Rotas de API
+5. Uma ferramenta não utiliza views de outra ferramenta.
 
 O arquivo `routes/tools-api.php` carrega somente módulos que implementam
-`HasApiRoutes`. O Laravel aplica o prefixo e middleware de API configurados pelo
-framework. Uma ferramenta sem API não implementa essa capacidade.
+`HasApiRoutes`. Uma ferramenta sem API não implementa essa capacidade, mas
+mantém a pasta obrigatória `Routes`.
+
+## Acesso e persistência
+
+Ferramentas declaram capacidades Essenciais e Plus, mas não decidem cobrança,
+plano, gratuidade ou limites. Durante a fase gratuita de lançamento, visitantes
+utilizam a capacidade máxima sem autenticação. Login é exigido somente para
+persistência e continuidade, como salvar, consultar histórico e favoritos.
+
+## README do módulo
+
+O README de cada ferramenta deve conter explicitamente:
+
+- Descrição;
+- Funcionalidades;
+- Regras;
+- Dependências;
+- Histórico de versões.
 
 ## Testes
 
 O `phpunit.xml` inclui `app/Tools/**/Tests`, permitindo que os testes permaneçam
-junto de cada módulo sem ficarem fora da suíte principal.
+junto de cada módulo. Toda ferramenta possui Unit e Feature; interfaces
+complexas também possuem Browser Tests.

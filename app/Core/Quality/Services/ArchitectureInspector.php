@@ -6,11 +6,12 @@ use App\Core\Quality\Data\ArchitectureViolation;
 use App\Core\Tools\Contracts\HasApiRoutes;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Support\ToolModuleStructure;
 use App\Core\Tools\ToolRegistry;
 use Illuminate\Filesystem\Filesystem;
-use ReflectionClass;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionClass;
 use RegexIterator;
 
 final class ArchitectureInspector
@@ -25,11 +26,155 @@ final class ArchitectureInspector
     {
         return array_values(array_merge(
             $this->inspectRegisteredModules(),
+            $this->inspectModuleStructure(),
+            $this->inspectMigrationNames(),
+            $this->inspectNamespaces(),
+            $this->inspectModuleDocumentation(),
             $this->inspectModuleDependencies(),
             $this->inspectDomainPurity(),
             $this->inspectControllers(),
             $this->inspectRouteFiles(),
         ));
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectModuleStructure(): array
+    {
+        $violations = [];
+
+        foreach ($this->moduleDirectories() as $moduleRoot) {
+            foreach (ToolModuleStructure::missingPaths($moduleRoot) as $missingPath) {
+                $violations[] = new ArchitectureViolation(
+                    'tools.required-structure',
+                    $this->relative($moduleRoot),
+                    1,
+                    "O módulo deve conter [{$missingPath}] conforme o README raiz.",
+                );
+            }
+        }
+
+        return $violations;
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectNamespaces(): array
+    {
+        $violations = [];
+        $classes = [];
+
+        foreach ($this->phpFiles(app_path('Tools')) as $file) {
+            if (! $this->isAutoloadedPhpFile($file)) {
+                continue;
+            }
+
+            $contents = $this->files->get($file);
+
+            if (preg_match('/^namespace\s+([^;]+);/m', $contents, $namespaceMatch) !== 1) {
+                $violations[] = new ArchitectureViolation(
+                    'tools.namespace-required',
+                    $this->relative($file),
+                    1,
+                    'Todo arquivo PHP de ferramenta deve declarar seu namespace PSR-4.',
+                );
+
+                continue;
+            }
+
+            $expectedNamespace = $this->expectedNamespace($file);
+            $namespace = trim($namespaceMatch[1]);
+
+            if ($namespace !== $expectedNamespace) {
+                $violations[] = new ArchitectureViolation(
+                    'tools.namespace-path',
+                    $this->relative($file),
+                    $this->lineNumberAtOffset($contents, (int) strpos($contents, $namespaceMatch[0])),
+                    "O namespace [{$namespace}] deve acompanhar o caminho PSR-4 [{$expectedNamespace}].",
+                );
+            }
+
+            if (preg_match('/\b(?:final\s+|abstract\s+|readonly\s+)*(?:class|interface|trait|enum)\s+([A-Za-z_][A-Za-z0-9_]*)/', $contents, $classMatch) !== 1) {
+                continue;
+            }
+
+            $fqcn = $namespace.'\\'.$classMatch[1];
+            $classKey = strtolower($fqcn);
+
+            if (isset($classes[$classKey])) {
+                $violations[] = new ArchitectureViolation(
+                    'tools.unique-class',
+                    $this->relative($file),
+                    1,
+                    "A classe [{$fqcn}] também foi declarada em [{$classes[$classKey]}].",
+                );
+            }
+
+            $classes[$classKey] = $this->relative($file);
+        }
+
+        return $violations;
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectMigrationNames(): array
+    {
+        $violations = [];
+        $filesByName = [];
+        $roots = [database_path('migrations')];
+
+        foreach ($this->moduleDirectories() as $moduleRoot) {
+            $roots[] = $moduleRoot.DIRECTORY_SEPARATOR.'Infrastructure'.DIRECTORY_SEPARATOR.'Database'.DIRECTORY_SEPARATOR.'Migrations';
+        }
+
+        foreach ($roots as $root) {
+            foreach (glob($root.DIRECTORY_SEPARATOR.'*.php') ?: [] as $file) {
+                $name = strtolower(basename($file));
+
+                if (isset($filesByName[$name])) {
+                    $violations[] = new ArchitectureViolation(
+                        'migrations.unique-name',
+                        $this->relative($file),
+                        1,
+                        "A migration [{$name}] também existe em [{$filesByName[$name]}].",
+                    );
+                }
+
+                $filesByName[$name] = $this->relative($file);
+            }
+        }
+
+        return $violations;
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectModuleDocumentation(): array
+    {
+        $violations = [];
+        $requiredSections = ['Descrição', 'Funcionalidades', 'Regras', 'Dependências', 'Histórico de versões'];
+
+        foreach ($this->moduleDirectories() as $moduleRoot) {
+            $readme = $moduleRoot.DIRECTORY_SEPARATOR.'README.md';
+
+            if (! is_file($readme)) {
+                continue;
+            }
+
+            $contents = $this->files->get($readme);
+
+            foreach ($requiredSections as $section) {
+                if (preg_match('/^#{2,3}\s+'.preg_quote($section, '/').'/miu', $contents) === 1) {
+                    continue;
+                }
+
+                $violations[] = new ArchitectureViolation(
+                    'tools.readme-required-section',
+                    $this->relative($readme),
+                    1,
+                    "O README da ferramenta deve documentar a seção [{$section}].",
+                );
+            }
+        }
+
+        return $violations;
     }
 
     /** @return list<ArchitectureViolation> */
@@ -175,7 +320,8 @@ final class ArchitectureInspector
 
             $patterns = [
                 'controllers.no-direct-http-client' => '/Http::|new\s+Client\s*\(/',
-                'controllers.no-database-query' => '/DB::|->query\s*\(|::where\s*\(|::create\s*\(/',
+                'controllers.no-database-query' => '/\bDB::|[A-Za-z_][A-Za-z0-9_]*::(?:query|where|create|find|findOrFail|updateOrCreate)\s*\(/',
+                'controllers.no-export-implementation' => '/streamDownload\s*\(|\bfputcsv\s*\(|php:\/\/output/',
             ];
 
             foreach ($this->lines($file) as $lineNumber => $line) {
@@ -209,15 +355,19 @@ final class ArchitectureInspector
                 continue;
             }
 
-            foreach ($this->lines($file) as $lineNumber => $line) {
-                if (preg_match('/Route::(?:get|post|put|patch|delete|any|match)\s*\([^;]*function\s*\(/', $line) !== 1) {
-                    continue;
-                }
+            $contents = $this->files->get($file);
+            preg_match_all(
+                '/Route::(?:get|post|put|patch|delete|any|match)\s*\([^;]*?(?:static\s+)?(?:function\s*\(|fn\s*\()/s',
+                $contents,
+                $matches,
+                PREG_OFFSET_CAPTURE,
+            );
 
+            foreach ($matches[0] ?? [] as [$match, $offset]) {
                 $violations[] = new ArchitectureViolation(
                     'routes.no-closures',
                     $this->relative($file),
-                    $lineNumber,
+                    $this->lineNumberAtOffset($contents, (int) $offset),
                     'Rotas de ferramentas devem apontar para controllers para serem compatíveis com route:cache.',
                 );
             }
@@ -246,6 +396,50 @@ final class ArchitectureInspector
         sort($paths);
 
         return $paths;
+    }
+
+    /** @return list<string> */
+    private function moduleDirectories(): array
+    {
+        $root = app_path('Tools');
+
+        if (! is_dir($root)) {
+            return [];
+        }
+
+        $directories = array_values(array_filter(
+            glob($root.DIRECTORY_SEPARATOR.'*') ?: [],
+            static fn (string $path): bool => is_dir($path),
+        ));
+
+        sort($directories);
+
+        return $directories;
+    }
+
+    private function expectedNamespace(string $file): string
+    {
+        $appRoot = str_replace('\\', '/', app_path()).'/';
+        $directory = str_replace('\\', '/', dirname($file));
+        $relativeDirectory = str_starts_with($directory.'/', $appRoot)
+            ? substr($directory, strlen($appRoot))
+            : $directory;
+
+        return 'App\\'.str_replace('/', '\\', trim($relativeDirectory, '/'));
+    }
+
+    private function isAutoloadedPhpFile(string $file): bool
+    {
+        $normalized = str_replace('\\', '/', $file);
+
+        return ! str_ends_with($normalized, '.blade.php')
+            && ! str_contains($normalized, '/Routes/')
+            && ! str_contains($normalized, '/Infrastructure/Database/Migrations/');
+    }
+
+    private function lineNumberAtOffset(string $contents, int $offset): int
+    {
+        return substr_count(substr($contents, 0, max(0, $offset)), "\n") + 1;
     }
 
     /** @return array<int, string> */

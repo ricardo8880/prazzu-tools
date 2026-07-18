@@ -1,13 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tools\{{ class }}\Tests\Unit;
 
+use App\Core\Tools\Enums\ToolStatus;
+use App\Tools\{{ class }}\Tool;
 use PHPUnit\Framework\TestCase;
 
-final class ToolTest extends TestCase
+final class ToolManifestTest extends TestCase
 {
-    public function test_placeholder_for_domain_rules(): void
+    public function test_manifest_starts_as_a_draft_with_the_expected_identity(): void
     {
-        $this->markTestIncomplete('Adicione os casos de referência do domínio antes de ativar a ferramenta.');
+        $manifest = (new Tool())->manifest();
+
+        self::assertSame('{{ slug }}', $manifest->slug);
+        self::assertSame('{{ route_prefix }}.index', $manifest->routeName);
+        self::assertSame(ToolStatus::Draft, $manifest->status);
     }
 }

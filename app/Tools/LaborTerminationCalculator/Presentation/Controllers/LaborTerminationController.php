@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator\Presentation\Controllers;
 
-use App\Core\Audit\Contracts\AuditLogger;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
 use App\Core\Export\Data\PrintableDocument;
 use App\Core\Export\Services\BrowserPrintExporter;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Http\Controllers\Controller;
 use App\Tools\LaborTerminationCalculator\Application\Actions\CalculateLaborTermination;
+use App\Tools\LaborTerminationCalculator\Application\Actions\ManageLaborTerminationHistory;
 use App\Tools\LaborTerminationCalculator\Domain\Calculators\LaborTerminationCalculator;
 use App\Tools\LaborTerminationCalculator\Domain\Enums\NoticeType;
 use App\Tools\LaborTerminationCalculator\Domain\Enums\TerminationType;
@@ -22,17 +21,17 @@ use App\Tools\LaborTerminationCalculator\Presentation\Requests\CalculateLaborTer
 use App\Tools\LaborTerminationCalculator\Tool;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 use Throwable;
 
 final class LaborTerminationController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, ManageLaborTerminationHistory $history): View
     {
         $recentHistory = $request->user() === null
             ? collect()
-            : $this->historyQuery($request)->limit(3)->get();
+            : $history->recent((int) $request->user()->getAuthIdentifier());
 
         return view('tools-calculadora-de-rescisao::index', [
             'terminationTypes' => $this->enumOptions(TerminationType::cases()),
@@ -87,7 +86,6 @@ final class LaborTerminationController extends Controller
             ->with('history_saved', $run !== null);
     }
 
-
     public function export(
         CalculateLaborTerminationRequest $request,
         CalculateLaborTermination $action,
@@ -104,9 +102,13 @@ final class LaborTerminationController extends Controller
         return $this->pdfView($exporter, $result, $input, now()->format('d/m/Y H:i'));
     }
 
-    public function exportHistory(Request $request, ToolRun $run, BrowserPrintExporter $exporter): View
-    {
-        $run = $this->ownedRun($request, $run);
+    public function exportHistory(
+        Request $request,
+        ToolRun $run,
+        BrowserPrintExporter $exporter,
+        ManageLaborTerminationHistory $history,
+    ): View {
+        $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
         return $this->pdfView(
             $exporter,
@@ -116,67 +118,35 @@ final class LaborTerminationController extends Controller
         );
     }
 
-    public function history(Request $request): View
+    public function history(Request $request, ManageLaborTerminationHistory $history): View
     {
         return view('tools-calculadora-de-rescisao::history.index', [
-            'runs' => $this->historyQuery($request)->paginate(10),
+            'runs' => $history->paginate((int) $request->user()->getAuthIdentifier()),
         ]);
     }
 
-    public function showHistory(Request $request, ToolRun $run): View
+    public function showHistory(Request $request, ToolRun $run, ManageLaborTerminationHistory $history): View
     {
-        $run = $this->ownedRun($request, $run);
+        $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
         return view('tools-calculadora-de-rescisao::history.show', ['run' => $run]);
     }
 
-    public function repeatHistory(Request $request, ToolRun $run): RedirectResponse
+    public function repeatHistory(Request $request, ToolRun $run, ManageLaborTerminationHistory $history): RedirectResponse
     {
-        $run = $this->ownedRun($request, $run);
+        $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.calculadora-de-rescisao.index')
             ->withInput($run->input_payload ?? [])
             ->with('history_message', 'Os dados do cálculo foram carregados. Revise-os antes de calcular novamente.');
     }
 
-    public function destroyHistory(Request $request, ToolRun $run, AuditLogger $audit): RedirectResponse
+    public function destroyHistory(Request $request, ToolRun $run, ManageLaborTerminationHistory $history): RedirectResponse
     {
-        $run = $this->ownedRun($request, $run);
-        $runId = $run->id;
-
-        $audit->record(
-            action: 'tool_run.deleted',
-            auditableType: ToolRun::class,
-            auditableId: $runId,
-            metadata: ['tool_slug' => $run->tool_slug],
-            actorId: $request->user()->id,
-        );
-
-        $run->delete();
+        $history->delete($run, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.calculadora-de-rescisao.history.index')
             ->with('history_message', 'Cálculo removido do histórico.');
-    }
-
-    private function historyQuery(Request $request)
-    {
-        return ToolRun::query()
-            ->where('user_id', $request->user()->id)
-            ->where('tool_slug', 'calculadora-de-rescisao')
-            ->where('status', ToolRunStatus::Succeeded)
-            ->latest('finished_at');
-    }
-
-    private function ownedRun(Request $request, ToolRun $run): ToolRun
-    {
-        abort_unless(
-            $run->user_id === $request->user()->id
-            && $run->tool_slug === 'calculadora-de-rescisao'
-            && $run->status === ToolRunStatus::Succeeded,
-            404,
-        );
-
-        return $run;
     }
 
     /** @param array<int, TerminationType|NoticeType> $cases
@@ -191,7 +161,6 @@ final class LaborTerminationController extends Controller
 
         return $options;
     }
-
 
     /**
      * @param array<string, mixed> $result

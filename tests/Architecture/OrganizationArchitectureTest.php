@@ -25,8 +25,10 @@ final class OrganizationArchitectureTest extends TestCase
 
     public function test_enterprise_domain_remains_inside_core_and_shared_application_layers(): void
     {
-        self::assertDirectoryExists(base_path('app/Core/Organizations'));
-        self::assertDirectoryDoesNotExist(base_path('app/Tools/Organizations'));
+        $projectRoot = dirname(__DIR__, 2);
+
+        self::assertDirectoryExists($projectRoot.'/app/Core/Organizations');
+        self::assertDirectoryDoesNotExist($projectRoot.'/app/Tools/Organizations');
     }
 
     public static function toolPhpFiles(): iterable
