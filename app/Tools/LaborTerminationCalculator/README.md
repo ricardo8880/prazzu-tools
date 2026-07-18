@@ -32,6 +32,9 @@ ao histórico criptografado e aos contratos compartilhados do Prazzu Tools.
 - Regras de cálculo e tabelas tributárias possuem versões independentes.
 - A data de referência é recebida pelo caso de uso; o Domain não consulta o
   relógio global.
+- A tabela progressiva do INSS usa os limites vigentes desde janeiro de 2026,
+  publicados na Portaria Interministerial MPS/MF nº 13/2026, e trunca o
+  resultado de cada faixa em centavos conforme a orientação do eSocial.
 - Valores monetários utilizam `Money`, sem `float`.
 - Visitantes calculam e exportam o resultado atual sem autenticação durante a
   fase gratuita.

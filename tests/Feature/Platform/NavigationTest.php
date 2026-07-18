@@ -2,10 +2,14 @@
 
 namespace Tests\Feature\Platform;
 
+use App\Core\Tools\ToolCatalog;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class NavigationTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_public_navigation_pages_are_available(): void
     {
         foreach (['/', '/ferramentas', '/blog', '/planos', '/recursos', '/sobre', '/entrar', '/criar-conta', '/sugerir-ferramenta'] as $uri) {
@@ -26,22 +30,36 @@ final class NavigationTest extends TestCase
 
     public function test_catalog_can_be_searched_and_filtered(): void
     {
-        $this->get('/ferramentas?q=CNPJ')
-            ->assertOk()
-            ->assertSee('Validador de CNPJ')
-            ->assertDontSee('Gerador de Contrato');
+        $catalog = $this->app->make(ToolCatalog::class);
 
-        $this->get('/ferramentas/calculadoras')
-            ->assertOk()
-            ->assertSee('Calculadora de Impostos')
-            ->assertDontSee('Validador de CNPJ');
+        $searchResponse = $this->get('/ferramentas?q=CNPJ')->assertOk();
+        $expectedSearchSlugs = $catalog->search('CNPJ')->pluck('slug')->all();
+
+        $this->assertNotEmpty($expectedSearchSlugs);
+        $this->assertSame(
+            $expectedSearchSlugs,
+            $searchResponse->viewData('tools')->pluck('slug')->all(),
+        );
+
+        $categoryResponse = $this->get('/ferramentas/calculadoras')->assertOk();
+        $expectedCategorySlugs = $catalog->search(category: 'calculadoras')->pluck('slug')->all();
+
+        $this->assertNotEmpty($expectedCategorySlugs);
+        $this->assertSame(
+            $expectedCategorySlugs,
+            $categoryResponse->viewData('tools')->pluck('slug')->all(),
+        );
     }
 
-    public function test_tool_placeholder_page_is_available(): void
+    public function test_catalog_tool_page_is_available(): void
     {
-        $this->get('/ferramentas/validador-de-cnpj')
+        $tool = $this->app->make(ToolCatalog::class)->all()->first();
+
+        $this->assertIsArray($tool);
+
+        $this->get('/ferramentas/'.$tool['slug'])
             ->assertOk()
-            ->assertSee('Módulo preparado');
+            ->assertSee($tool['name']);
     }
 
     public function test_newsletter_validates_and_accepts_email(): void

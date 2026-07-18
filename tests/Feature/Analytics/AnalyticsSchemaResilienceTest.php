@@ -8,6 +8,8 @@ use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
+use App\Core\Analytics\Infrastructure\Persistence\AnalyticsSchema;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -43,5 +45,16 @@ final class AnalyticsSchemaResilienceTest extends TestCase
         );
 
         self::assertFalse(Schema::hasTable('platform_analytics_events'));
+    }
+
+    public function test_partially_migrated_analytics_tables_are_not_considered_ready(): void
+    {
+        foreach (['analytics_visitors', 'analytics_sessions', 'platform_analytics_events'] as $table) {
+            Schema::create($table, static function (Blueprint $blueprint): void {
+                $blueprint->id();
+            });
+        }
+
+        self::assertFalse($this->app->make(AnalyticsSchema::class)->isReady());
     }
 }

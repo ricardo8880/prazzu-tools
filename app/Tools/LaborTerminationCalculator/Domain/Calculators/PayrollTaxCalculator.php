@@ -17,9 +17,12 @@ final class PayrollTaxCalculator
         $previousLimit = 0;
 
         foreach ([[162100, 750], [290284, 900], [435427, 1200], [847555, 1400]] as [$limit, $rate]) {
-            if ($amount <= $previousLimit) break;
+            if ($amount <= $previousLimit) {
+                break;
+            }
             $taxable = min($amount, $limit) - $previousLimit;
-            $tax += intdiv(($taxable * $rate) + 5000, 10000);
+            // O eSocial determina truncamento em centavos para cada faixa progressiva.
+            $tax += intdiv($taxable * $rate, 10000);
             $previousLimit = $limit;
         }
 

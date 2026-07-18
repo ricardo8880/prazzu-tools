@@ -108,6 +108,9 @@ O manifesto declara slug imutável, versão semântica, categoria, acesso e cicl
 de vida. A ferramenta deve começar como `draft` e só pode se tornar `active`
 após cumprir todo o checklist de qualidade do README raiz.
 
+As divergências ainda presentes em módulos antigos estão registradas em
+`docs/TOOL-ARCHITECTURE-DEBT.md`; elas não constituem exemplos válidos.
+
 ## Criando um módulo
 
 ```bash

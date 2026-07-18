@@ -8,11 +8,13 @@ use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use App\Models\User;
+use Tests\Feature\Analytics\Concerns\ActsAsInternalAdministrator;
 use Tests\TestCase;
 
 final class ExecutiveDashboardTest extends TestCase
 {
-    use RefreshDatabase;
+    use ActsAsInternalAdministrator, RefreshDatabase;
 
     protected function tearDown(): void
     {
@@ -22,6 +24,7 @@ final class ExecutiveDashboardTest extends TestCase
 
     public function test_dashboard_displays_executive_metrics_and_comparison(): void
     {
+        $this->signInAsInternalAdministrator();
         CarbonImmutable::setTestNow('2026-07-15 12:00:00');
 
         $visitorA = $this->visitor('2026-07-15 08:00:00');
@@ -48,6 +51,7 @@ final class ExecutiveDashboardTest extends TestCase
 
     public function test_dashboard_accepts_a_custom_period(): void
     {
+        $this->signInAsInternalAdministrator();
         CarbonImmutable::setTestNow('2026-07-15 12:00:00');
 
         $this->get(route('admin.analytics.index', [
@@ -59,11 +63,20 @@ final class ExecutiveDashboardTest extends TestCase
 
     public function test_dashboard_rejects_an_invalid_custom_period(): void
     {
+        $this->signInAsInternalAdministrator();
+
         $this->get(route('admin.analytics.index', [
             'period' => 'custom',
             'start' => '2026-07-15',
             'end' => '2026-07-01',
         ]))->assertSessionHasErrors('end');
+    }
+
+    public function test_dashboard_rejects_a_regular_user(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('admin.analytics.index'))
+            ->assertForbidden();
     }
 
     private function visitor(string $seenAt): string

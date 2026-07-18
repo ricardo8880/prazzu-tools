@@ -4,14 +4,15 @@ namespace Tests\Feature\Analytics;
 
 use App\Blog\Enums\BlogPostStatus;
 use App\Blog\Models\BlogPost;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Feature\Analytics\Concerns\ActsAsInternalAdministrator;
 use Tests\TestCase;
 
 final class BlogAnalyticsTest extends TestCase
 {
-    use RefreshDatabase;
+    use ActsAsInternalAdministrator, RefreshDatabase;
 
     public function test_it_records_blog_engagement_events(): void
     {
@@ -23,12 +24,12 @@ final class BlogAnalyticsTest extends TestCase
         ]);
 
         $this->postJson(route('blog.analytics'), [
-            'event' => 'blog_scroll', 'post_id' => $post->getKey(),
+            'event' => AnalyticsEventName::BlogScrollMeasured->value, 'post_id' => $post->getKey(),
             'post_slug' => $post->slug, 'percentage' => 75,
         ])->assertOk();
 
         $this->assertDatabaseHas('platform_analytics_events', [
-            'event_name' => 'blog_scroll', 'channel' => 'blog',
+            'event_name' => AnalyticsEventName::BlogScrollMeasured->value, 'channel' => 'blog',
             'subject_id' => (string) $post->getKey(),
         ]);
     }
@@ -43,13 +44,12 @@ final class BlogAnalyticsTest extends TestCase
         ]);
 
         PlatformAnalyticsEvent::query()->create([
-            'event_name' => 'blog_post_view', 'channel' => 'blog',
+            'event_name' => AnalyticsEventName::BlogPostViewed->value, 'channel' => 'blog',
             'subject_type' => 'blog_post', 'subject_id' => (string) $post->getKey(),
             'subject_slug' => $post->slug, 'metadata' => [], 'occurred_at' => now(),
         ]);
 
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        $this->signInAsInternalAdministrator();
 
         $this->get(route('admin.blog.analytics'))->assertOk()->assertSee('Artigo analisado');
         $this->get(route('admin.blog.analytics.posts.show', $post))->assertOk()->assertSee('Artigo analisado');

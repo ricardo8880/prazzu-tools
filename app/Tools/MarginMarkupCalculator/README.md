@@ -36,8 +36,8 @@ piloto do padrão modular no Lote 8.
   gratuita;
 - autenticação é exigida somente para histórico e persistência;
 - limites, planos e acesso Plus são resolvidos pela política central do Core;
-- CSV, PDF, impressão, histórico e compartilhamento devem utilizar os serviços
-  compartilhados, sem exportadores ou armazenamentos paralelos no módulo.
+- CSV, PDF, impressão e histórico devem utilizar os serviços compartilhados,
+  sem exportadores ou armazenamentos paralelos no módulo.
 
 ## Dependências
 
@@ -50,6 +50,18 @@ piloto do padrão modular no Lote 8.
   módulo e limitado por `[data-tool="calculadora-margem-markup"]`.
 
 O módulo não depende de outra ferramenta.
+
+## Dívida arquitetural formal
+
+O compartilhamento por link foi implementado em um ciclo anterior com tabela e
+repositório próprios. O README raiz proíbe compartilhamento de cálculos no
+Prazzu Tools; portanto, essa capacidade não pode ser expandida nem copiada. Sua
+remoção envolve rotas e dados existentes e depende de uma decisão explícita de
+produto e de uma migration segura.
+
+A leitura e exclusão do histórico ainda conhecem o model Eloquent do Core por
+meio de adaptadores locais. O próximo passo é completar no Core o contrato de
+consulta e gestão de histórico e retirar essa dependência concreta.
 
 ## Histórico de versões
 

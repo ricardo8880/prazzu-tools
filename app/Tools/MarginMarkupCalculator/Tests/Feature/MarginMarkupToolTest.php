@@ -177,4 +177,34 @@ final class MarginMarkupToolTest extends TestCase
             ->assertOk()
             ->assertDownload('modelo-importacao-margem-markup.csv');
     }
+
+    public function test_alternative_exports_cannot_bypass_the_central_access_gate(): void
+    {
+        config()->set('features.tools.calculadora-margem-markup.enabled', false);
+
+        $this->post(route('tools.calculadora-margem-markup.export.pdf'), [
+            'reference_date' => '2026-07-15',
+            'base_cost' => '100,00',
+            'desired_margin' => '25',
+        ])->assertServiceUnavailable();
+
+        $this->post(route('tools.calculadora-margem-markup.batch.export'), [
+            'reference_date' => '2026-07-15',
+            'products' => [[
+                'name' => 'Produto A',
+                'base_cost' => '100,00',
+                'desired_margin' => '25',
+            ]],
+        ])->assertServiceUnavailable();
+
+        $this->post(route('tools.calculadora-margem-markup.scenarios.export'), [
+            'reference_date' => '2026-07-15',
+            'product_name' => 'Produto A',
+            'base_cost' => '100,00',
+            'scenarios' => [
+                ['name' => 'Base', 'desired_margin' => '20'],
+                ['name' => 'Meta', 'desired_margin' => '25'],
+            ],
+        ])->assertServiceUnavailable();
+    }
 }

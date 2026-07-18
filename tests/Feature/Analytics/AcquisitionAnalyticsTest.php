@@ -3,6 +3,7 @@
 namespace Tests\Feature\Analytics;
 
 use App\Core\Analytics\Infrastructure\Http\AcquisitionResolver;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
@@ -11,10 +12,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Tests\TestCase;
+use Tests\Feature\Analytics\Concerns\ActsAsInternalAdministrator;
 
 final class AcquisitionAnalyticsTest extends TestCase
 {
-    use RefreshDatabase;
+    use ActsAsInternalAdministrator, RefreshDatabase;
 
     protected function tearDown(): void
     {
@@ -40,6 +42,7 @@ final class AcquisitionAnalyticsTest extends TestCase
 
     public function test_dashboard_displays_sources_campaigns_attribution_and_funnels(): void
     {
+        $this->signInAsInternalAdministrator();
         CarbonImmutable::setTestNow('2026-07-15 12:00:00');
         $visitor = (string) Str::uuid();
         $session = (string) Str::uuid();
@@ -54,9 +57,17 @@ final class AcquisitionAnalyticsTest extends TestCase
             'source' => 'newsletter', 'medium' => 'email', 'campaign' => 'julho',
         ]);
 
-        foreach (['page.viewed', 'blog_post_view', 'blog_tool_click', 'tool.calculation.completed', 'account.created', 'subscription.started', 'result.exported'] as $name) {
+        foreach ([
+            AnalyticsEventName::PageViewed,
+            AnalyticsEventName::BlogPostViewed,
+            AnalyticsEventName::BlogToolClicked,
+            AnalyticsEventName::ToolCalculationCompleted,
+            AnalyticsEventName::AccountCreated,
+            AnalyticsEventName::SubscriptionStarted,
+            AnalyticsEventName::ToolResultExported,
+        ] as $event) {
             PlatformAnalyticsEvent::query()->create([
-                'event_id' => (string) Str::uuid(), 'event_name' => $name, 'schema_version' => 1,
+                'event_id' => (string) Str::uuid(), 'event_name' => $event->value, 'schema_version' => 1,
                 'channel' => 'platform', 'visitor_id' => $visitor, 'analytics_session_id' => $session,
                 'source' => 'newsletter', 'medium' => 'email', 'campaign' => 'julho', 'occurred_at' => now(),
             ]);

@@ -38,4 +38,5 @@ final class AnalyticsReportsTest extends TestCase
             ])->assertRedirect();
 
         $this->assertDatabaseHas('analytics_report_schedules', ['name' => 'Resumo semanal', 'frequency' => 'weekly', 'is_active' => true]);
-    
+    }
+}

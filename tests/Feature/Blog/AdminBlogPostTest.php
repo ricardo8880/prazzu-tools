@@ -5,6 +5,8 @@ namespace Tests\Feature\Blog;
 use App\Blog\Enums\BlogPostStatus;
 use App\Blog\Models\BlogCategory;
 use App\Blog\Models\BlogPost;
+use App\Core\Access\Enums\AccountRole;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +16,14 @@ final class AdminBlogPostTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(User::factory()->create([
+            'role' => AccountRole::Administrator,
+        ]));
+    }
 
     public function test_admin_post_form_exposes_editor_productivity_features(): void
     {

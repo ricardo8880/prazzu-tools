@@ -5,12 +5,23 @@ namespace Tests\Feature\Blog;
 use App\Blog\Enums\BlogPostStatus;
 use App\Blog\Models\BlogCategory;
 use App\Blog\Models\BlogPost;
+use App\Core\Access\Enums\AccountRole;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class AdminBlogCategoryTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->actingAs(User::factory()->create([
+            'role' => AccountRole::Administrator,
+        ]));
+    }
 
     public function test_admin_can_create_and_update_a_blog_category(): void
     {

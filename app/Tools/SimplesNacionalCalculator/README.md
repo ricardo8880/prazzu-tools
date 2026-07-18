@@ -27,10 +27,11 @@ ser apresentados como estimativas tributárias transparentes.
   últimos 12 meses.
 - Fator R igual ou superior a 28% seleciona o Anexo III nos casos aplicáveis;
   abaixo desse limite, seleciona o Anexo V.
-- Valores monetários e percentuais utilizam `Money` e `Percentage`, nunca
-  `float`.
-- Projeções, comparações e alertas são regras de domínio; Actions apenas
-  orquestram os casos de uso.
+- O cálculo principal utiliza `Money` e `Percentage`; projeções e alertas ainda
+  possuem conversões legadas para `float` e não servem como referência para
+  novas ferramentas até essa dívida ser removida.
+- Comparações já delegam ao domínio. Projeções e alertas ainda concentram parte
+  da regra em Actions e devem ser extraídos para serviços de domínio.
 - Visitantes acessam capacidades Essenciais e Plus sem autenticação durante a
   política gratuita de lançamento.
 - Login é exigido somente para salvar e recuperar histórico.
@@ -42,7 +43,8 @@ ser apresentados como estimativas tributárias transparentes.
 
 - `Money`, `Percentage`, arredondamento e exceções compartilhadas do Core;
 - contratos centrais de acesso e política comercial;
-- sistema central de histórico para persistência autenticada;
+- contratos centrais de histórico, que substituirão a persistência local
+  legada antes da promoção do módulo;
 - Laravel somente em Presentation e Infrastructure;
 - Bootstrap e componentes visuais compartilhados da plataforma;
 - JavaScript específico, quando necessário, dentro de `Resources/js` deste
@@ -50,6 +52,15 @@ ser apresentados como estimativas tributárias transparentes.
 
 O módulo não depende de outra ferramenta nem conhece organizações, assinaturas,
 vagas empresariais ou detalhes de cobrança.
+
+## Dívida arquitetural formal
+
+O histórico mensal atual é uma implementação legada local. Ele grava inclusive
+o nome da empresa, enquanto o manifesto ainda declara `supportsHistory: false`
+e `storesSensitiveData: false`. O módulo permanece em `beta` e não pode ser
+promovido para `active` até que esse histórico seja migrado para o Core, os
+dados existentes sejam tratados com segurança e o manifesto passe a refletir a
+capacidade real. Essa persistência não deve ser copiada para novos módulos.
 
 ## Histórico de versões
 

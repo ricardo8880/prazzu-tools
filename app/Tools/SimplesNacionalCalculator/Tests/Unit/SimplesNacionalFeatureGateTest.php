@@ -19,7 +19,7 @@ final class SimplesNacionalFeatureGateTest extends TestCase
 {
     public function test_free_features_remain_available_when_plus_is_locked(): void
     {
-        $gate = $this->gate(new ToolAccessContext());
+        $gate = $this->gate(new ToolAccessContext);
 
         self::assertTrue($gate->decide(SimplesNacionalFeature::Calculate)->allowed);
         self::assertFalse($gate->decide(SimplesNacionalFeature::Alerts)->allowed);
@@ -27,7 +27,7 @@ final class SimplesNacionalFeatureGateTest extends TestCase
 
     public function test_plus_features_follow_the_central_launch_policy(): void
     {
-        $gate = $this->gate(new ToolAccessContext(), launchFree: true);
+        $gate = $this->gate(new ToolAccessContext, launchFree: true);
 
         self::assertTrue($gate->decide(SimplesNacionalFeature::Alerts)->allowed);
         self::assertTrue($gate->decide(SimplesNacionalFeature::MonthlyHistory)->allowed);
@@ -43,9 +43,9 @@ final class SimplesNacionalFeatureGateTest extends TestCase
 
     private function gate(ToolAccessContext $context, bool $launchFree = false): SimplesNacionalFeatureGate
     {
-        $resolver = new readonly class($context) implements ToolAccessContextResolver
+        $resolver = new class($context) implements ToolAccessContextResolver
         {
-            public function __construct(private ToolAccessContext $context) {}
+            public function __construct(private readonly ToolAccessContext $context) {}
 
             public function resolve(?Authenticatable $user): ToolAccessContext
             {
@@ -53,9 +53,9 @@ final class SimplesNacionalFeatureGateTest extends TestCase
             }
         };
 
-        $commercialPolicy = new readonly class($launchFree) implements CommercialAccessPolicy
+        $commercialPolicy = new class($launchFree) implements CommercialAccessPolicy
         {
-            public function __construct(private bool $launchFree) {}
+            public function __construct(private readonly bool $launchFree) {}
 
             public function grantsPublicCapabilitiesWithoutAuthentication(): bool
             {
@@ -76,6 +76,6 @@ final class SimplesNacionalFeatureGateTest extends TestCase
             }
         };
 
-        return new SimplesNacionalFeatureGate(new FeatureCatalog(), $resolver, $commercialPolicy, $featureFlags);
+        return new SimplesNacionalFeatureGate(new FeatureCatalog, $resolver, $commercialPolicy, $featureFlags);
     }
 }

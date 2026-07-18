@@ -126,9 +126,9 @@ final class CheckAnalyticsArchitectureCommand extends Command
     private function productionFiles(): iterable
     {
         $roots = [app_path(), config_path(), resource_path('js'), resource_path('views'), base_path('routes')];
-        $excluded = [
+        $excluded = array_map($this->normalizePath(...), [
             app_path('Core/Analytics/Domain/Services/AnalyticsEventNameResolver.php'),
-        ];
+        ]);
 
         foreach ($roots as $root) {
             if (! is_dir($root)) {
@@ -138,7 +138,7 @@ final class CheckAnalyticsArchitectureCommand extends Command
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root));
 
             foreach ($iterator as $file) {
-                if (! $file->isFile() || in_array($file->getPathname(), $excluded, true)) {
+                if (! $file->isFile() || in_array($this->normalizePath($file->getPathname()), $excluded, true)) {
                     continue;
                 }
 
@@ -149,5 +149,10 @@ final class CheckAnalyticsArchitectureCommand extends Command
                 yield $file;
             }
         }
+    }
+
+    private function normalizePath(string $path): string
+    {
+        return str_replace('\\', '/', $path);
     }
 }

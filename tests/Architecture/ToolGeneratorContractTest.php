@@ -2,7 +2,11 @@
 
 namespace Tests\Architecture;
 
+use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\Support\ToolModuleValidator;
+use App\Tools\ArchitectureGeneratorProbe\Tool;
 use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -67,5 +71,38 @@ final class ToolGeneratorContractTest extends TestCase
         self::assertSame(Command::FAILURE, $exitCode);
         self::assertDirectoryDoesNotExist($modulePath);
         self::assertStringContainsString('deve iniciar com o estado [draft]', Artisan::output());
+    }
+
+    public function test_generator_creates_a_loadable_and_valid_draft_module(): void
+    {
+        $files = new Filesystem;
+        $modulePath = app_path('Tools/ArchitectureGeneratorProbe');
+        $configurationPath = config_path('tools/modules.php');
+        $originalConfiguration = $files->get($configurationPath);
+
+        self::assertDirectoryDoesNotExist($modulePath);
+
+        try {
+            $exitCode = Artisan::call('make:tool', [
+                'name' => 'ArchitectureGeneratorProbe',
+                '--slug' => 'architecture-generator-probe',
+                '--category' => 'fiscal',
+            ]);
+
+            self::assertSame(Command::SUCCESS, $exitCode, Artisan::output());
+            self::assertFileExists($modulePath.'/Application/Actions/ShowToolPage.php');
+            self::assertFileExists($modulePath.'/Tests/Unit/ToolManifestTest.php');
+            self::assertStringContainsString(
+                '\\App\\Tools\\ArchitectureGeneratorProbe\\Tool::class,',
+                $files->get($configurationPath),
+            );
+
+            $module = new Tool;
+            self::assertSame(ToolStatus::Draft, $module->manifest()->status);
+            (new ToolModuleValidator)->validate($module);
+        } finally {
+            $files->replace($configurationPath, $originalConfiguration);
+            $files->deleteDirectory($modulePath);
+        }
     }
 }

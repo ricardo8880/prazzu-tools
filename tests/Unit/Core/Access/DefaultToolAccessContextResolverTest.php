@@ -42,7 +42,7 @@ final class DefaultToolAccessContextResolverTest extends TestCase
 
     private function user(AccountRole $role, SubscriptionPlan $plan): User
     {
-        $user = new User();
+        $user = new User;
         $user->setRawAttributes([
             'id' => 10,
             'role' => $role->value,
@@ -54,9 +54,9 @@ final class DefaultToolAccessContextResolverTest extends TestCase
 
     private function resolver(bool $enterpriseAccess): DefaultToolAccessContextResolver
     {
-        $enterprise = new readonly class($enterpriseAccess) implements EnterpriseAccessResolver
+        $enterprise = new class($enterpriseAccess) implements EnterpriseAccessResolver
         {
-            public function __construct(private bool $allowed) {}
+            public function __construct(private readonly bool $allowed) {}
 
             public function grantsPlusAccessTo(int $userId): bool
             {
