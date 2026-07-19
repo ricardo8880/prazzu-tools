@@ -9,6 +9,7 @@ use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
+use App\Core\Tools\History\Data\ToolRunHandle;
 use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Exceptions\HistoryDisabled;
 use App\Core\Tools\History\Exceptions\InvalidToolRunTransition;
@@ -29,7 +30,7 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
         ReferenceDate $referenceDate,
         array $input,
         ?int $userId = null,
-    ): ToolRun {
+    ): ToolRunHandle {
         if (! $module instanceof HasHistoryPolicy || ! $module->historyPolicy()->enabled) {
             throw new HistoryDisabled('A ferramenta não habilitou persistência de histórico.');
         }
@@ -37,7 +38,7 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
         $manifest = $module->manifest();
         $policy = $module->historyPolicy();
 
-        return DB::transaction(function () use ($userId, $manifest, $ruleVersion, $referenceDate, $input, $policy): ToolRun {
+        return DB::transaction(function () use ($userId, $manifest, $ruleVersion, $referenceDate, $input, $policy): ToolRunHandle {
             $run = ToolRun::query()->create([
                 'user_id' => $userId,
                 'tool_slug' => $manifest->slug,
@@ -62,12 +63,13 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
                 actorId: $userId,
             );
 
-            return $run;
+            return new ToolRunHandle((string) $run->id);
         });
     }
 
-    public function succeed(ToolRun $run, array $result, array $references = []): ToolRun
+    public function succeed(ToolRunHandle $handle, array $result, array $references = []): ToolRunHandle
     {
+        $run = $this->findRun($handle);
         $this->assertRunning($run);
         $module = app(\App\Core\Tools\ToolRegistry::class)->findModule($run->tool_slug);
 
@@ -75,7 +77,7 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
             throw new HistoryDisabled('A ferramenta não fornece uma política de histórico.');
         }
 
-        return DB::transaction(function () use ($run, $result, $references, $module): ToolRun {
+        DB::transaction(function () use ($run, $result, $references, $module): void {
             $run->forceFill([
                 'status' => ToolRunStatus::Succeeded,
                 'result_payload' => $this->projector->project($result, $module->historyPolicy()->resultFields),
@@ -93,20 +95,21 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
                 metadata: ['tool_slug' => $run->tool_slug],
                 actorId: $run->user_id,
             );
-
-            return $run->refresh();
         });
+
+        return $handle;
     }
 
-    public function fail(ToolRun $run, string $errorCode): ToolRun
+    public function fail(ToolRunHandle $handle, string $errorCode): ToolRunHandle
     {
+        $run = $this->findRun($handle);
         $this->assertRunning($run);
 
         if (! preg_match('/^[a-z0-9_.-]{1,100}$/', $errorCode)) {
             throw new \InvalidArgumentException('O código de erro possui formato inválido.');
         }
 
-        return DB::transaction(function () use ($run, $errorCode): ToolRun {
+        DB::transaction(function () use ($run, $errorCode): void {
             $run->forceFill([
                 'status' => ToolRunStatus::Failed,
                 'error_code' => $errorCode,
@@ -123,9 +126,14 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
                 ],
                 actorId: $run->user_id,
             );
-
-            return $run->refresh();
         });
+
+        return $handle;
+    }
+
+    private function findRun(ToolRunHandle $handle): ToolRun
+    {
+        return ToolRun::query()->findOrFail($handle->id);
     }
 
     private function assertRunning(ToolRun $run): void

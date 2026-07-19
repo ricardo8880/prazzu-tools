@@ -32,7 +32,7 @@ final class Tool implements HasHistoryPolicy, HasMigrations, HasViews, HasWebRou
             category: ToolCategory::Fiscal,
             icon: 'bi-calculator',
             routeName: 'tools.calculadora-simples-nacional.index',
-            version: '1.1.0',
+            version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 10,

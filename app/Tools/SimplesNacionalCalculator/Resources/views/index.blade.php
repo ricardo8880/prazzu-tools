@@ -13,16 +13,11 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--purple"><i class="bi bi-calculator"></i></span>
-        <div class="flex-grow-1">
-            <span class="prazzu-badge prazzu-badge--green">Grátis</span>
-            <h1>Calculadora de Simples Nacional</h1>
-            <p>Calcule a faixa, a alíquota efetiva e o DAS estimado, com enquadramento automático pelo Fator R quando necessário.</p>
-        </div>
-    </header>
+    <x-tools.intro icon="calculator" title="Calculadora de Simples Nacional" description="Calcule a faixa, a alíquota efetiva e o DAS estimado, com enquadramento automático pelo Fator R quando necessário." badge="Grátis" />
 
     <x-tool-feature-tiers slug="calculadora-simples-nacional" />
+
+    <x-tools.validation-summary class="mb-4" />
 
     <section class="prazzu-tool-workspace text-start" aria-labelledby="calculation-data-title">
         <div class="mb-4">

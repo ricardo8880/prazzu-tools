@@ -11,7 +11,7 @@ use App\Core\Export\Data\PrintableDocument;
 use App\Core\Export\Services\BrowserPrintExporter;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Tools\History\Models\ToolRun;
+use App\Core\Tools\History\Data\ToolRunHandle;
 use App\Http\Controllers\Controller;
 use App\Tools\LaborTerminationCalculator\Application\Actions\CalculateLaborTermination;
 use App\Tools\LaborTerminationCalculator\Application\Actions\ManageLaborTerminationHistory;
@@ -106,7 +106,7 @@ final class LaborTerminationController extends Controller
 
     public function exportHistory(
         Request $request,
-        ToolRun $run,
+        string $run,
         BrowserPrintExporter $exporter,
         ManageLaborTerminationHistory $history,
     ): View {
@@ -114,36 +114,36 @@ final class LaborTerminationController extends Controller
 
         return $this->pdfView(
             $exporter,
-            $run->result_payload ?? [],
-            $run->input_payload ?? [],
-            $run->finished_at?->format('d/m/Y H:i') ?? now()->format('d/m/Y H:i'),
+            $run->result,
+            $run->input,
+            $run->finishedAt->format('d/m/Y H:i') ?? now()->format('d/m/Y H:i'),
         );
     }
 
     public function history(Request $request, ManageLaborTerminationHistory $history): View
     {
         return view('tools-calculadora-de-rescisao::history.index', [
-            'runs' => $history->paginate((int) $request->user()->getAuthIdentifier()),
+            'runs' => $history->paginate((int) $request->user()->getAuthIdentifier(), page: max(1, $request->integer('page', 1))),
         ]);
     }
 
-    public function showHistory(Request $request, ToolRun $run, ManageLaborTerminationHistory $history): View
+    public function showHistory(Request $request, string $run, ManageLaborTerminationHistory $history): View
     {
         $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
         return view('tools-calculadora-de-rescisao::history.show', ['run' => $run]);
     }
 
-    public function repeatHistory(Request $request, ToolRun $run, ManageLaborTerminationHistory $history): RedirectResponse
+    public function repeatHistory(Request $request, string $run, ManageLaborTerminationHistory $history): RedirectResponse
     {
         $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.calculadora-de-rescisao.index')
-            ->withInput($run->input_payload ?? [])
+            ->withInput($run->input)
             ->with('history_message', 'Os dados do cálculo foram carregados. Revise-os antes de calcular novamente.');
     }
 
-    public function destroyHistory(Request $request, ToolRun $run, ManageLaborTerminationHistory $history): RedirectResponse
+    public function destroyHistory(Request $request, string $run, ManageLaborTerminationHistory $history): RedirectResponse
     {
         $history->delete($run, (int) $request->user()->getAuthIdentifier());
 
@@ -192,7 +192,7 @@ final class LaborTerminationController extends Controller
         ));
     }
 
-    private function recordFailure(ToolRunRecorder $recorder, ?ToolRun $run, string $errorCode): void
+    private function recordFailure(ToolRunRecorder $recorder, ?ToolRunHandle $run, string $errorCode): void
     {
         if ($run !== null) {
             $recorder->fail($run, $errorCode);

@@ -17,8 +17,10 @@ use App\Core\Organizations\Contracts\EnterpriseAccessResolver;
 use App\Core\Organizations\Contracts\OrganizationSeatCounter;
 use App\Core\Organizations\Services\DatabaseEnterpriseAccessResolver;
 use App\Core\Organizations\Services\DatabaseOrganizationSeatCounter;
+use App\Core\Tools\History\Contracts\ToolRunFavorites;
 use App\Core\Tools\History\Contracts\ToolRunHistory;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
+use App\Core\Tools\History\Services\DatabaseToolRunFavorites;
 use App\Core\Tools\History\Services\DatabaseToolRunHistory;
 use App\Core\Tools\History\Services\DatabaseToolRunRecorder;
 use Illuminate\Pagination\Paginator;
@@ -36,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AuditLogger::class, DatabaseAuditLogger::class);
         $this->app->bind(ToolRunRecorder::class, DatabaseToolRunRecorder::class);
         $this->app->bind(ToolRunHistory::class, DatabaseToolRunHistory::class);
+        $this->app->bind(ToolRunFavorites::class, DatabaseToolRunFavorites::class);
         $this->app->bind(ImportDatasetStore::class, CacheImportDatasetStore::class);
         $this->app->bind(EnterpriseAccessResolver::class, DatabaseEnterpriseAccessResolver::class);
         $this->app->bind(OrganizationSeatCounter::class, DatabaseOrganizationSeatCounter::class);

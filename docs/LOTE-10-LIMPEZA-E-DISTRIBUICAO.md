@@ -51,7 +51,7 @@ Execute:
 powershell -ExecutionPolicy Bypass -File .\scripts\package-distribution.ps1
 ```
 
-O pacote gerado exclui dados locais e reconstruíveis, incluindo:
+O pacote gerado exclui dados locais e reconstruíveis e executa uma validação bloqueante antes da compactação, incluindo:
 
 - `.git`;
 - `.idea`;
@@ -97,3 +97,20 @@ O comando `verify` executa testes, arquitetura, formatação, caches e build, li
 O arquivo `.env` nunca deve ser distribuído. Somente `.env.example` faz parte do projeto compartilhável.
 
 A configuração de exemplo usa arquivos locais para sessão e cache e fila síncrona. Isso permite instalar o projeto antes de depender das tabelas de infraestrutura. Ambientes de produção podem usar banco, Redis ou outro backend conforme sua implantação.
+
+
+## Validação bloqueante
+
+O script `scripts/verify-distribution.php` encerra com erro quando o diretório de distribuição contém segredos, banco local, dependências reconstruíveis, caches, logs ou arquivos temporários de editores e suítes de escritório.
+
+Para validar manualmente um diretório já preparado:
+
+```bash
+php scripts/verify-distribution.php /caminho/do/pacote
+```
+
+O comando oficial de verificação para release é:
+
+```bash
+composer release:check
+```

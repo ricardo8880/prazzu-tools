@@ -4,35 +4,31 @@ declare(strict_types=1);
 
 namespace App\Tools\BusinessDocumentValidator\Application\Actions;
 
-use App\Core\Tools\History\Enums\ToolRunStatus;
-use App\Core\Tools\History\Models\ToolRun;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use App\Core\Tools\History\Contracts\ToolRunHistory;
+use App\Core\Tools\History\Data\ToolRunEntry;
+use App\Core\Tools\History\Data\ToolRunHistoryQuery;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-final class ListValidationHistory
+final readonly class ListValidationHistory
 {
     private const TOOL_SLUG = 'validador-de-cnpj';
 
-    /** @return Collection<int, ToolRun> */
-    public function recent(int $userId, int $limit = 3): Collection
+    public function __construct(private ToolRunHistory $history) {}
+
+    /** @return list<ToolRunEntry> */
+    public function recent(int $userId, int $limit = 3): array
     {
-        return $this->query($userId)
-            ->limit($limit)
-            ->get();
+        return $this->history->recentSucceeded(self::TOOL_SLUG, $userId, $limit);
     }
 
-    /** @return LengthAwarePaginator<ToolRun> */
-    public function paginate(int $userId, int $perPage = 10): LengthAwarePaginator
+    /** @return LengthAwarePaginator<int, ToolRunEntry> */
+    public function paginate(int $userId, int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
-        return $this->query($userId)->paginate($perPage);
-    }
+        $result = $this->history->paginateSucceeded(new ToolRunHistoryQuery(self::TOOL_SLUG, $userId, $page, $perPage));
 
-    private function query(int $userId)
-    {
-        return ToolRun::query()
-            ->where('user_id', $userId)
-            ->where('tool_slug', self::TOOL_SLUG)
-            ->where('status', ToolRunStatus::Succeeded)
-            ->latest('finished_at');
+        return new LengthAwarePaginator($result->items, $result->total, $result->perPage, $result->page, [
+            'path' => request()->url(),
+            'query' => request()->query(),
+        ]);
     }
 }

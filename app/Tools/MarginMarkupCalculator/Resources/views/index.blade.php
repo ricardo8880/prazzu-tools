@@ -13,19 +13,15 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--purple"><i class="bi bi-percent"></i></span>
-        <div class="flex-grow-1">
-            <span class="prazzu-badge prazzu-badge--green">Grátis</span>
-            <h1>Calculadora de Margem, Markup e Formação de Preço</h1>
-            <p>Monte um preço de venda considerando custos, despesas, impostos, comissões e taxas.</p>
-        </div>
-        @auth<a class="btn btn-outline-primary align-self-start" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>@endauth
-    </header>
+    <x-tools.intro icon="percent" title="Calculadora de Margem, Markup e Formação de Preço" description="Monte um preço de venda considerando custos, despesas, impostos, comissões e taxas." badge="Grátis">
+        @auth<x-slot:actions><a class="btn btn-outline-primary" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></x-slot:actions>@endauth
+    </x-tools.intro>
 
     <x-tool-feature-tiers slug="calculadora-margem-markup" />
 
     @if(session('history_message'))<div class="alert alert-success">{{ session('history_message') }}</div>@endif
+
+    <x-tools.validation-summary class="mb-4" />
 
     <section class="prazzu-tool-workspace text-start" aria-labelledby="tool-workspace-title">
         <div class="mb-4">

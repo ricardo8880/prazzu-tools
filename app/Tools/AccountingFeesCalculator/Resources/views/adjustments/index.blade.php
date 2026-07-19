@@ -13,14 +13,7 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--purple"><i class="bi bi-arrow-up-right-circle"></i></span>
-        <div class="flex-grow-1">
-            <span class="badge text-bg-primary mb-2">Lote 7</span>
-            <h1>Reajuste de honorários</h1>
-            <p>Aplique o índice do período, visualize a diferença e mantenha um histórico auditável.</p>
-        </div>
-    </header>
+    <x-tools.intro icon="arrow-up-right-circle" title="Reajuste de honorários" description="Aplique o índice do período, visualize a diferença e mantenha um histórico auditável." badge="Lote 7" badge-class="badge text-bg-primary mb-2" />
 
     @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
@@ -33,7 +26,9 @@
 
     @php($result = session('adjustment_result'))
     @if ($result)
-        <section class="row g-3 mb-4" aria-label="Resultado do reajuste">
+        <x-tools.validation-summary class="mb-4" />
+
+    <section class="row g-3 mb-4" aria-label="Resultado do reajuste">
             <div class="col-12 col-md-4">
                 <div class="card border-0 shadow-sm h-100"><div class="card-body">
                     <div class="small text-body-secondary">Valor atual</div>

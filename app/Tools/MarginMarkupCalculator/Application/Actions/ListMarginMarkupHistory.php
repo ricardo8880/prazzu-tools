@@ -1,22 +1,20 @@
 <?php
 
 declare(strict_types=1);
-
 namespace App\Tools\MarginMarkupCalculator\Application\Actions;
-
-use App\Core\Tools\History\Models\ToolRun;
-use App\Tools\MarginMarkupCalculator\Infrastructure\Repositories\EloquentMarginMarkupHistoryRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-
+use App\Core\Tools\History\Contracts\ToolRunHistory;
+use App\Core\Tools\History\Data\ToolRunEntry;
+use App\Core\Tools\History\Data\ToolRunHistoryQuery;
+use DateTimeImmutable;
+use Illuminate\Pagination\LengthAwarePaginator;
 final readonly class ListMarginMarkupHistory
 {
-    public function __construct(
-        private EloquentMarginMarkupHistoryRepository $history,
-    ) {}
-
-    /** @return LengthAwarePaginator<int, ToolRun> */
-    public function execute(int $userId, ?string $from, ?string $to): LengthAwarePaginator
+    private const TOOL_SLUG = 'calculadora-margem-markup';
+    public function __construct(private ToolRunHistory $history) {}
+    /** @return LengthAwarePaginator<int, ToolRunEntry> */
+    public function execute(int $userId, ?string $from, ?string $to, int $page = 1): LengthAwarePaginator
     {
-        return $this->history->paginateSucceededForUser($userId, $from, $to);
+        $result=$this->history->paginateSucceeded(new ToolRunHistoryQuery(self::TOOL_SLUG,$userId,$page,10,$from ? new DateTimeImmutable($from) : null,$to ? new DateTimeImmutable($to) : null));
+        return new LengthAwarePaginator($result->items,$result->total,$result->perPage,$result->page,['path'=>request()->url(),'query'=>request()->query()]);
     }
 }

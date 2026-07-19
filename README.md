@@ -1422,6 +1422,10 @@ Executar checklist
 
 ↓
 
+Executar `composer release:check` e gerar o pacote com `scripts/package-distribution.ps1`
+
+↓
+
 Concluir lote
 ```
 

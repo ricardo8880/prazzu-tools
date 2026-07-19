@@ -12,7 +12,6 @@ use App\Core\Export\Services\BrowserPrintExporter;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Tools\History\Models\ToolRun;
 use App\Http\Controllers\Controller;
 use App\Tools\BusinessDocumentValidator\Application\Actions\AnalyzeCompanyConsistency;
 use App\Tools\BusinessDocumentValidator\Application\Actions\BuildBatchExportRows;
@@ -43,7 +42,7 @@ final class BusinessDocumentValidatorController extends Controller
     public function index(Request $request, ListValidationHistory $history): View
     {
         $recentHistory = $request->user() === null
-            ? collect()
+            ? []
             : $history->recent((int) $request->user()->getAuthIdentifier());
 
         return view('tools-validador-de-cnpj::index', ['recentHistory' => $recentHistory]);
@@ -135,13 +134,13 @@ final class BusinessDocumentValidatorController extends Controller
     public function history(Request $request, ListValidationHistory $history): View
     {
         return view('tools-validador-de-cnpj::history.index', [
-            'runs' => $history->paginate((int) $request->user()->getAuthIdentifier()),
+            'runs' => $history->paginate((int) $request->user()->getAuthIdentifier(), page: max(1, $request->integer('page', 1))),
         ]);
     }
 
     public function destroyHistory(
         Request $request,
-        ToolRun $run,
+        string $run,
         DeleteValidationHistory $action,
     ): RedirectResponse {
         $action->execute($run, (int) $request->user()->getAuthIdentifier());

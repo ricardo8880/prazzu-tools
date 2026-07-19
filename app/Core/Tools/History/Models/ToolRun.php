@@ -5,6 +5,7 @@ namespace App\Core\Tools\History\Models;
 use App\Core\Tools\History\Enums\ToolRunStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class ToolRun extends Model
 {
@@ -25,6 +26,12 @@ final class ToolRun extends Model
         'finished_at',
         'expires_at',
     ];
+
+    /** @return HasMany<ToolRunFavorite, $this> */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(ToolRunFavorite::class);
+    }
 
     protected function casts(): array
     {

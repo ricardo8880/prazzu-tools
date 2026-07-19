@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\Tools\History\Contracts;
 
 use App\Core\Dates\ReferenceDate;
 use App\Core\Normative\NormativeReference;
 use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Tools\History\Models\ToolRun;
+use App\Core\Tools\History\Data\ToolRunHandle;
 
 interface ToolRunRecorder
 {
@@ -17,13 +19,13 @@ interface ToolRunRecorder
         ReferenceDate $referenceDate,
         array $input,
         ?int $userId = null,
-    ): ToolRun;
+    ): ToolRunHandle;
 
     /**
      * @param array<string, mixed> $result
      * @param array<int, NormativeReference> $references
      */
-    public function succeed(ToolRun $run, array $result, array $references = []): ToolRun;
+    public function succeed(ToolRunHandle $run, array $result, array $references = []): ToolRunHandle;
 
-    public function fail(ToolRun $run, string $errorCode): ToolRun;
+    public function fail(ToolRunHandle $run, string $errorCode): ToolRunHandle;
 }

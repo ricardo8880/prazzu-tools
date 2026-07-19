@@ -12,7 +12,7 @@ use App\Core\Export\Services\BrowserPrintExporter;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Tools\History\Models\ToolRun;
+use App\Core\Tools\History\Data\ToolRunHandle;
 use App\Core\Usage\Contracts\UsageMetrics;
 use App\Http\Controllers\Controller;
 use App\Tools\MarginMarkupCalculator\Application\Actions\CalculateMarginMarkup;
@@ -265,13 +265,14 @@ final class MarginMarkupController extends Controller
                 (int) $request->user()->getAuthIdentifier(),
                 $request->filled('from') ? $request->string('from')->toString() : null,
                 $request->filled('to') ? $request->string('to')->toString() : null,
+                max(1, $request->integer('page', 1)),
             ),
         ]);
     }
 
     public function showHistory(
         Request $request,
-        ToolRun $run,
+        string $run,
         ShowMarginMarkupHistory $action,
     ): View {
         return view(
@@ -282,7 +283,7 @@ final class MarginMarkupController extends Controller
 
     public function repeatHistory(
         Request $request,
-        ToolRun $run,
+        string $run,
         RepeatMarginMarkupHistory $action,
     ): RedirectResponse {
         return redirect()->route('tools.calculadora-margem-markup.index')
@@ -292,7 +293,7 @@ final class MarginMarkupController extends Controller
 
     public function exportHistory(
         Request $request,
-        ToolRun $run,
+        string $run,
         PrepareMarginMarkupHistoryReport $action,
         BrowserPrintExporter $exporter,
     ): View {
@@ -308,7 +309,7 @@ final class MarginMarkupController extends Controller
 
     public function destroyHistory(
         Request $request,
-        ToolRun $run,
+        string $run,
         DeleteMarginMarkupHistory $action,
     ): RedirectResponse {
         $action->execute($run, (int) $request->user()->getAuthIdentifier());
@@ -365,7 +366,7 @@ final class MarginMarkupController extends Controller
         ToolPersistenceAuthorizer $persistence,
         array $input,
         string $type,
-    ): ?ToolRun {
+    ): ?ToolRunHandle {
         if (! $persistence->allowsHistory($module, $request->user())) {
             return null;
         }
@@ -394,7 +395,7 @@ final class MarginMarkupController extends Controller
         ));
     }
 
-    private function recordFailure(ToolRunRecorder $recorder, ?ToolRun $run, string $errorCode): void
+    private function recordFailure(ToolRunRecorder $recorder, ?ToolRunHandle $run, string $errorCode): void
     {
         if ($run !== null) {
             $recorder->fail($run, $errorCode);

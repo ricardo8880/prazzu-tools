@@ -13,22 +13,9 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--pink"><i class="bi bi-briefcase"></i></span>
-        <div class="flex-grow-1">
-            <div class="d-flex flex-wrap gap-2 mb-2">
-                <span class="prazzu-badge prazzu-badge--green">Grátis</span>
-                <span class="badge text-bg-success">Ativa</span>
-            </div>
-            <h1>Calculadora de Rescisão Trabalhista</h1>
-            <p>Informe os dados do vínculo para estimar as principais verbas de uma rescisão de contrato de trabalho.</p>
-        </div>
-        @auth
-            <a class="btn btn-outline-primary align-self-start" href="{{ route('tools.calculadora-de-rescisao.history.index') }}">
-                <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Histórico
-            </a>
-        @endauth
-    </header>
+    <x-tools.intro icon="briefcase" tone="pink" title="Calculadora de Rescisão Trabalhista" description="Informe os dados do vínculo para estimar as principais verbas de uma rescisão de contrato de trabalho." badge="Grátis">
+        @auth<x-slot:actions><a class="btn btn-outline-primary" href="{{ route('tools.calculadora-de-rescisao.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></x-slot:actions>@endauth
+    </x-tools.intro>
 
     <x-tool-feature-tiers slug="calculadora-de-rescisao" />
 
@@ -73,10 +60,10 @@
                     <tbody>
                     @forelse ($recentHistory as $run)
                         <tr>
-                            <td>{{ $run->finished_at?->format('d/m/Y H:i') }}</td>
-                            <td>{{ $run->result_payload['termination_type_label'] ?? 'Rescisão' }}</td>
-                            <td class="fw-semibold">{{ $run->result_payload['net_total'] ?? '—' }}</td>
-                            <td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.show', $run) }}">Detalhes</a></td>
+                            <td>{{ $run->finishedAt?->format('d/m/Y H:i') }}</td>
+                            <td>{{ $run->result['termination_type_label'] ?? 'Rescisão' }}</td>
+                            <td class="fw-semibold">{{ $run->result['net_total'] ?? '—' }}</td>
+                            <td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.show', $run->id) }}">Detalhes</a></td>
                         </tr>
                     @empty
                         <tr><td colspan="4" class="text-center text-body-secondary py-4">Nenhum cálculo salvo ainda.</td></tr>

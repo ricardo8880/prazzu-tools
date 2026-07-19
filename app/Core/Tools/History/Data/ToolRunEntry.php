@@ -19,5 +19,9 @@ final readonly class ToolRunEntry
         public array $input,
         public array $result,
         public DateTimeImmutable $createdAt,
+        public DateTimeImmutable $finishedAt,
+        public string $toolVersion,
+        public string $ruleVersion,
+        public bool $favorite = false,
     ) {}
 }

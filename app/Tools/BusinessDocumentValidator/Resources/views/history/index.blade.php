@@ -13,16 +13,9 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--green"><i class="bi bi-clock-history"></i></span>
-        <div class="flex-grow-1">
-            <h1>Histórico de validações em lote</h1>
-            <p>Consulte os resumos armazenados sem expor documentos ou dados cadastrais importados.</p>
-        </div>
-        <a class="btn btn-primary align-self-start" href="{{ route('tools.validador-de-cnpj.index') }}">
-            <i class="bi bi-plus-lg me-1"></i>Nova validação
-        </a>
-    </header>
+    <x-tools.intro icon="clock-history" tone="green" title="Histórico de validações em lote" description="Consulte os resumos armazenados sem expor documentos ou dados cadastrais importados.">
+        <x-slot:actions><a class="btn btn-primary" href="{{ route('tools.validador-de-cnpj.index') }}"><i class="bi bi-plus-lg me-1"></i>Nova validação</a></x-slot:actions>
+    </x-tools.intro>
 
     @if (session('history_message'))
         <div class="alert alert-success alert-dismissible fade show" role="status">
@@ -40,13 +33,13 @@
                 <tbody>
                 @forelse ($runs as $run)
                     <tr>
-                        <td class="text-nowrap">{{ $run->finished_at?->format('d/m/Y H:i') }}</td>
-                        <td>{{ data_get($run->input_payload, 'file_name', 'Importação') }}</td>
-                        <td>{{ data_get($run->result_payload, 'summary.total', 0) }}</td>
-                        <td>{{ data_get($run->result_payload, 'summary.invalid', 0) }}</td>
-                        <td>{{ data_get($run->result_payload, 'summary.with_inconsistencies', 0) }}</td>
+                        <td class="text-nowrap">{{ $run->finishedAt?->format('d/m/Y H:i') }}</td>
+                        <td>{{ data_get($run->input, 'file_name', 'Importação') }}</td>
+                        <td>{{ data_get($run->result, 'summary.total', 0) }}</td>
+                        <td>{{ data_get($run->result, 'summary.invalid', 0) }}</td>
+                        <td>{{ data_get($run->result, 'summary.with_inconsistencies', 0) }}</td>
                         <td class="text-end">
-                            <form method="post" action="{{ route('tools.validador-de-cnpj.history.destroy', $run) }}" class="d-inline" onsubmit="return confirm('Excluir esta validação do histórico?')">
+                            <form method="post" action="{{ route('tools.validador-de-cnpj.history.destroy', $run->id) }}" class="d-inline" onsubmit="return confirm('Excluir esta validação do histórico?')">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir validação">

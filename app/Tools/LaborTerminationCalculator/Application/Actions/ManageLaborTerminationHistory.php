@@ -4,48 +4,37 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator\Application\Actions;
 
-use App\Core\Audit\Contracts\AuditLogger;
-use App\Core\Tools\History\Models\ToolRun;
-use App\Tools\LaborTerminationCalculator\Infrastructure\Repositories\LaborTerminationHistoryRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use App\Core\Tools\History\Contracts\ToolRunHistory;
+use App\Core\Tools\History\Data\ToolRunEntry;
+use App\Core\Tools\History\Data\ToolRunHistoryQuery;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 final readonly class ManageLaborTerminationHistory
 {
-    public function __construct(
-        private LaborTerminationHistoryRepository $history,
-        private AuditLogger $audit,
-    ) {}
+    private const TOOL_SLUG = 'calculadora-de-rescisao';
 
-    /** @return Collection<int, ToolRun> */
-    public function recent(int $userId, int $limit = 3): Collection
+    public function __construct(private ToolRunHistory $history) {}
+
+    /** @return list<ToolRunEntry> */
+    public function recent(int $userId, int $limit = 3): array
     {
-        return $this->history->recentForUser($userId, $limit);
+        return $this->history->recentSucceeded(self::TOOL_SLUG, $userId, $limit);
     }
 
-    /** @return LengthAwarePaginator<int, ToolRun> */
-    public function paginate(int $userId, int $perPage = 10): LengthAwarePaginator
+    /** @return LengthAwarePaginator<int, ToolRunEntry> */
+    public function paginate(int $userId, int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
-        return $this->history->paginateForUser($userId, $perPage);
+        $result = $this->history->paginateSucceeded(new ToolRunHistoryQuery(self::TOOL_SLUG, $userId, $page, $perPage));
+        return new LengthAwarePaginator($result->items, $result->total, $result->perPage, $result->page, ['path' => request()->url(), 'query' => request()->query()]);
     }
 
-    public function owned(ToolRun $run, int $userId): ToolRun
+    public function owned(string $runId, int $userId): ToolRunEntry
     {
-        return $this->history->ownedByUser($run, $userId);
+        return $this->history->findSucceededOwned(self::TOOL_SLUG, $runId, $userId);
     }
 
-    public function delete(ToolRun $run, int $userId): void
+    public function delete(string $runId, int $userId): void
     {
-        $run = $this->owned($run, $userId);
-
-        $this->audit->record(
-            action: 'tool_run.deleted',
-            auditableType: ToolRun::class,
-            auditableId: $run->id,
-            metadata: ['tool_slug' => $run->tool_slug],
-            actorId: $userId,
-        );
-
-        $this->history->delete($run);
+        $this->history->deleteSucceededOwned(self::TOOL_SLUG, $runId, $userId);
     }
 }

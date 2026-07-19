@@ -13,27 +13,17 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--green">
-            <i class="bi bi-shield-check" aria-hidden="true"></i>
-        </span>
-        <div class="flex-grow-1">
-            <span class="prazzu-badge prazzu-badge--green">Grátis</span>
-            <h1>Validador Inteligente de CNPJ, CPF e IE</h1>
-            <p>Valide CPF e CNPJ localmente, sem depender de consulta externa, e entenda com clareza o resultado.</p>
-        </div>
-        @auth
-            <a class="btn btn-outline-primary align-self-start" href="{{ route('tools.validador-de-cnpj.history.index') }}">
-                <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Histórico
-            </a>
-        @endauth
-    </header>
+    <x-tools.intro icon="shield-check" tone="green" title="Validador Inteligente de CNPJ, CPF e IE" description="Valide CPF e CNPJ localmente, sem depender de consulta externa, e entenda com clareza o resultado." badge="Grátis">
+        @auth<x-slot:actions><a class="btn btn-outline-primary" href="{{ route('tools.validador-de-cnpj.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></x-slot:actions>@endauth
+    </x-tools.intro>
 
     <x-tool-feature-tiers slug="validador-de-cnpj" />
 
     <div class="row g-4">
         <div class="col-12 col-xl-8">
-            <section class="prazzu-form-panel" aria-labelledby="individual-validation-title">
+            <x-tools.validation-summary class="mb-4" />
+
+    <section class="prazzu-form-panel" aria-labelledby="individual-validation-title">
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-4">
                     <div>
                         <h2 id="individual-validation-title" class="prazzu-section-title mb-1">Validação individual</h2>
@@ -646,8 +636,8 @@
                         </div>
                         @forelse ($recentHistory as $run)
                             <div class="border-bottom pb-2 mb-2">
-                                <div class="fw-semibold">{{ data_get($run->input_payload, 'file_name', 'Importação') }}</div>
-                                <div class="small text-body-secondary">{{ $run->finished_at?->format('d/m/Y H:i') }} · {{ data_get($run->result_payload, 'summary.total', 0) }} registros</div>
+                                <div class="fw-semibold">{{ data_get($run->input, 'file_name', 'Importação') }}</div>
+                                <div class="small text-body-secondary">{{ $run->finishedAt?->format('d/m/Y H:i') }} · {{ data_get($run->result, 'summary.total', 0) }} registros</div>
                             </div>
                         @empty
                             <p class="small text-body-secondary mb-0">Nenhum processamento salvo ainda.</p>

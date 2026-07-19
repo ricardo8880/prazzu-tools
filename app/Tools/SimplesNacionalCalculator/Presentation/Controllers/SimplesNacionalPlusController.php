@@ -66,7 +66,7 @@ final class SimplesNacionalPlusController extends Controller
             $projection = $action->execute(
                 (string) $input['annex'],
                 (string) $input['monthly_revenue'],
-                (float) $input['monthly_growth'],
+                (string) $input['monthly_growth'],
             );
         } catch (InvalidValue $exception) {
             throw ValidationException::withMessages(['monthly_revenue' => $exception->getMessage()]);

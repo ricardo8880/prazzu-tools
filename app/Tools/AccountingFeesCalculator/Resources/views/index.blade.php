@@ -13,14 +13,7 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--purple" aria-hidden="true"><i class="bi bi-calculator"></i></span>
-        <div class="flex-grow-1">
-            <span class="prazzu-badge prazzu-badge--green">Grátis</span>
-            <h1>Calculadora de Honorários Contábeis</h1>
-            <p>Estruture uma precificação coerente considerando o perfil e a complexidade de cada cliente.</p>
-        </div>
-    </header>
+    <x-tools.intro icon="calculator" title="Calculadora de Honorários Contábeis" description="Estruture uma precificação coerente considerando o perfil e a complexidade de cada cliente." badge="Grátis" />
 
     <x-tool-feature-tiers slug="calculadora-de-honorarios-contabeis" />
 
@@ -29,6 +22,8 @@
     @if (session('success'))
         <div class="alert alert-success" role="alert">{{ session('success') }}</div>
     @endif
+
+    <x-tools.validation-summary class="mb-4" />
 
     <section class="prazzu-tool-workspace text-start" aria-labelledby="pricing-data-title">
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">

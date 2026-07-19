@@ -12,24 +12,13 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--purple"><i class="bi bi-clock-history"></i></span>
-        <div class="flex-grow-1">
-            <h1>Histórico de cálculos</h1>
-            <p>Recupere precificações e marque referências importantes para reutilizar depois.</p>
-        </div>
-        <div class="d-flex flex-wrap gap-2 align-self-start">
-            <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.history.index', ['favorite' => $favorite ? null : 1]) }}">
-                <i class="bi bi-star{{ $favorite ? '-fill' : '' }} me-1"></i>{{ $favorite ? 'Ver todos' : 'Somente favoritos' }}
-            </a>
-            <a class="btn btn-outline-success" href="{{ route('tools.calculadora-de-honorarios-contabeis.history.export') }}">
-                <i class="bi bi-file-earmark-spreadsheet me-1"></i>Exportar CSV
-            </a>
-            <a class="btn btn-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">
-                <i class="bi bi-plus-lg me-1"></i>Novo cálculo
-            </a>
-        </div>
-    </header>
+    <x-tools.intro icon="clock-history" title="Histórico de cálculos" description="Recupere precificações e marque referências importantes para reutilizar depois.">
+        <x-slot:actions>
+            <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.history.index', ['favorite' => $favorite ? null : 1]) }}"><i class="bi bi-star{{ $favorite ? '-fill' : '' }} me-1"></i>{{ $favorite ? 'Ver todos' : 'Somente favoritos' }}</a>
+            <x-tools.export-button :href="route('tools.calculadora-de-honorarios-contabeis.history.export')" label="Exportar CSV" icon="file-earmark-spreadsheet" />
+            <a class="btn btn-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a>
+        </x-slot:actions>
+    </x-tools.intro>
 
     @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 

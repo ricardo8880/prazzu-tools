@@ -13,14 +13,9 @@
         </ol>
     </nav>
 
-    <header class="prazzu-tool-intro">
-        <span class="prazzu-icon-tile prazzu-icon-tile--pink"><i class="bi bi-clock-history"></i></span>
-        <div class="flex-grow-1">
-            <h1>Histórico de cálculos</h1>
-            <p>Consulte, repita ou exclua os cálculos salvos na sua conta.</p>
-        </div>
-        <a class="btn btn-primary align-self-start" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a>
-    </header>
+    <x-tools.intro icon="clock-history" tone="pink" title="Histórico de cálculos" description="Consulte, repita ou exclua os cálculos salvos na sua conta.">
+        <x-slot:actions><a class="btn btn-primary" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a></x-slot:actions>
+    </x-tools.intro>
 
     <nav class="mb-4" aria-label="Navegação da Calculadora de Rescisão Trabalhista">
         <div class="nav nav-pills flex-column flex-sm-row gap-2">
@@ -40,16 +35,16 @@
                 <tbody>
                 @forelse ($runs as $run)
                     <tr>
-                        <td>{{ $run->finished_at?->format('d/m/Y H:i') }}</td>
-                        <td>{{ $run->result_payload['termination_type_label'] ?? 'Rescisão' }}</td>
-                        <td>{{ $run->reference_date->format('d/m/Y') }}</td>
-                        <td class="fw-semibold">{{ $run->result_payload['net_total'] ?? '—' }}</td>
-                        <td>{{ $run->rule_version }}</td>
+                        <td>{{ $run->finishedAt?->format('d/m/Y H:i') }}</td>
+                        <td>{{ $run->result['termination_type_label'] ?? 'Rescisão' }}</td>
+                        <td>{{ $run->referenceDate->format('d/m/Y') }}</td>
+                        <td class="fw-semibold">{{ $run->result['net_total'] ?? '—' }}</td>
+                        <td>{{ $run->ruleVersion }}</td>
                         <td class="text-end">
                             <div class="d-inline-flex flex-wrap justify-content-end gap-1">
-                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.show', $run) }}" aria-label="Ver detalhes"><i class="bi bi-eye"></i></a>
-                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.repeat', $run) }}">@csrf<button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Repetir cálculo"><i class="bi bi-arrow-repeat"></i></button></form>
-                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run) }}" onsubmit="return confirm('Excluir este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir cálculo"><i class="bi bi-trash"></i></button></form>
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.show', $run->id) }}" aria-label="Ver detalhes"><i class="bi bi-eye"></i></a>
+                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.repeat', $run->id) }}">@csrf<button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Repetir cálculo"><i class="bi bi-arrow-repeat"></i></button></form>
+                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir cálculo"><i class="bi bi-trash"></i></button></form>
                             </div>
                         </td>
                     </tr>

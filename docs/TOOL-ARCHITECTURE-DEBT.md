@@ -27,10 +27,11 @@ reintroduzidos no Prazzu Tools.
 ## Prioridade 0 — Core compartilhado
 
 1. **Histórico:** Accounting ainda persiste histórico em tabela própria.
-   Simples já utiliza o contrato central de gravação, consulta e exclusão sem
-   conhecer Eloquent. Business Document, Labor e Margin gravam pelo Core, mas
-   parte da leitura e exclusão ainda depende diretamente do model `ToolRun`;
-   devem migrar para o mesmo contrato compartilhado.
+   Simples, Business Document, Labor e Margin utilizam contratos e DTOs do Core
+   para gravação, consulta e exclusão sem conhecer Eloquent. O recorder central
+   devolve `ToolRunHandle`, e o gate impede que Application ou Presentation
+   dependam de models internos do Core. Accounting ainda persiste histórico em
+   tabela própria e deve ser migrado antes do encerramento da dívida.
 2. **Favoritos:** Accounting mantém favorito na tabela própria de cálculo. O
    Core precisa de um gerenciador de favoritos vinculado à execução central.
 3. **Persistência e tier:** Accounting, Labor e o cálculo individual de Margin
@@ -42,16 +43,16 @@ reintroduzidos no Prazzu Tools.
 
 ## Prioridade 1 — domínio e apresentação
 
-1. Projeções e alertas do Simples ainda usam `float` para dinheiro e percentual
-   e mantêm regra em Actions. Devem migrar para `Money`, `Percentage` e serviços
-   puros de domínio.
-2. Há impressão direta por `window.print()` em views antigas. Toda impressão e
-   exportação deve passar pelos serviços do Core e por componentes Blade
-   compartilhados.
-3. O projeto ainda precisa dos componentes visuais comuns `tool-intro`,
-   `form-panel`, `validation-summary`, `result-panel`, `history-actions` e
-   `export-button`; até lá, HTML de módulos existentes não é um padrão para
-   cópia.
+1. Projeções e alertas do Simples utilizam `Money`, `Percentage` e serviços
+   puros de domínio. O gate `tools.no-financial-float` impede a reintrodução de
+   `float` em Application e Domain.
+2. Impressão direta foi removida das views das ferramentas. O componente
+   compartilhado `tools.print-button` concentra a integração com a impressão do
+   navegador, e o gate `tools.no-direct-browser-print` impede implementações
+   locais.
+3. Os componentes visuais comuns `intro`, `form-panel`, `validation-summary`,
+   `result-panel`, `history-actions`, `export-button` e `print-button` são
+   obrigatórios e validados pelo gate arquitetural.
 
 ## Critério de encerramento
 

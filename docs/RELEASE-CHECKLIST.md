@@ -2,6 +2,8 @@
 
 ## Código
 
+- [ ] `composer release:check` aprovado.
+
 - [ ] `composer format:check` aprovado.
 - [ ] `composer architecture` aprovado.
 - [ ] `composer test` aprovado.
@@ -32,3 +34,5 @@
 - [ ] Banco SQLite local não está no pacote.
 - [ ] Logs locais não estão no pacote.
 - [ ] README e documentação correspondem ao estado atual.
+- [ ] `scripts/verify-distribution.php` aprovou o diretório empacotado.
+- [ ] Nenhum arquivo temporário `~$*`, `.DS_Store` ou `Thumbs.db` está no pacote.

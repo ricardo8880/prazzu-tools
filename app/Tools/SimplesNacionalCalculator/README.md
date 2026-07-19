@@ -38,11 +38,10 @@ política central, mas a classificação permanece declarada no manifesto.
   últimos 12 meses.
 - Fator R igual ou superior a 28% seleciona o Anexo III nos casos aplicáveis;
   abaixo desse limite, seleciona o Anexo V.
-- O cálculo principal utiliza `Money` e `Percentage`; projeções e alertas ainda
-  possuem conversões legadas para `float` e não servem como referência para
-  novas ferramentas até essa dívida ser removida.
-- Comparações já delegam ao domínio. Projeções e alertas ainda concentram parte
-  da regra em Actions e devem ser extraídos para serviços de domínio.
+- Todos os cálculos monetários e percentuais, incluindo projeções e alertas,
+  utilizam `Money` e `Percentage`; `float` não participa das regras fiscais.
+- Comparações, projeções e alertas delegam suas regras a calculadores e serviços
+  puros do Domain; Actions apenas convertem a entrada e apresentam o resultado.
 - Visitantes acessam capacidades Essenciais e Plus sem autenticação durante a
   política gratuita de lançamento.
 - Login é exigido somente para salvar e recuperar histórico.
@@ -77,6 +76,8 @@ autenticado não são migrados, pois não há identidade segura à qual vinculá
 
 ## Histórico de versões
 
+- `1.2.0` — projeções e alertas migrados para serviços puros de domínio com
+  `Money` e `Percentage`, sem conversões monetárias para `float`.
 - `1.1.0` — histórico migrado para o Core com payload criptografado, exclusão da
   identificação empresarial e remoção da persistência local.
 - `1.0.0` — cálculo do Simples e Fator R, comparações,

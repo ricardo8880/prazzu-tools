@@ -9,9 +9,7 @@
         <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">
             <i class="bi bi-arrow-left me-1"></i>Voltar à calculadora
         </a>
-        <button class="btn btn-primary" type="button" onclick="window.print()">
-            <i class="bi bi-printer me-1"></i>Imprimir contrato
-        </button>
+        <x-tools.print-button label="Imprimir contrato" />
     </div>
 
     <div class="alert alert-warning d-print-none" role="alert">

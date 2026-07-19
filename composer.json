@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "prazzu/prazzu-tools",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Plataforma modular de ferramentas para profissionais da contabilidade.",
     "keywords": [
+        "contabilidade",
+        "ferramentas",
         "laravel",
-        "framework"
+        "prazzu"
     ],
     "license": "MIT",
     "require": {
@@ -96,6 +98,9 @@
             "@php artisan view:cache --ansi",
             "npm run build",
             "@php artisan optimize:clear --ansi"
+        ],
+        "release:check": [
+            "@verify"
         ]
     },
     "extra": {

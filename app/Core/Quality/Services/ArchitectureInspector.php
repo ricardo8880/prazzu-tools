@@ -32,6 +32,10 @@ final class ArchitectureInspector
             $this->inspectModuleDocumentation(),
             $this->inspectModuleDependencies(),
             $this->inspectDomainPurity(),
+            $this->inspectFinancialPrimitivesOutsideDomain(),
+            $this->inspectCoreImplementationLeaks(),
+            $this->inspectToolPrintImplementations(),
+            $this->inspectSharedToolComponents(),
             $this->inspectControllers(),
             $this->inspectRouteFiles(),
         ));
@@ -309,6 +313,125 @@ final class ArchitectureInspector
                     );
                 }
             }
+        }
+
+        return $violations;
+    }
+
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectFinancialPrimitivesOutsideDomain(): array
+    {
+        $violations = [];
+
+        foreach ($this->phpFiles(app_path('Tools')) as $file) {
+            $normalized = str_replace('\\', '/', $file);
+
+            if (! str_contains($normalized, '/Application/') && ! str_contains($normalized, '/Domain/')) {
+                continue;
+            }
+
+            foreach ($this->lines($file) as $lineNumber => $line) {
+                if (preg_match('/\bfloat\b|\(float\)|floatval\s*\(/', $line) !== 1) {
+                    continue;
+                }
+
+                $violations[] = new ArchitectureViolation(
+                    'tools.no-financial-float',
+                    $this->relative($file),
+                    $lineNumber,
+                    'Application e Domain de ferramentas não podem usar float; utilize Money, Percentage ou outro objeto financeiro do Core.',
+                );
+            }
+        }
+
+        return $violations;
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectCoreImplementationLeaks(): array
+    {
+        $violations = [];
+
+        foreach ($this->phpFiles(app_path('Tools')) as $file) {
+            $normalized = str_replace('\\', '/', $file);
+
+            if (str_contains($normalized, '/Infrastructure/') || str_contains($normalized, '/Tests/')) {
+                continue;
+            }
+
+            foreach ($this->lines($file) as $lineNumber => $line) {
+                if (! str_contains($line, 'App\\Core\\') || ! str_contains($line, '\\Models\\')) {
+                    continue;
+                }
+
+                $violations[] = new ArchitectureViolation(
+                    'tools.no-core-model-dependency',
+                    $this->relative($file),
+                    $lineNumber,
+                    'Ferramentas devem depender de contratos e DTOs do Core, nunca de models internos do Core.',
+                );
+            }
+        }
+
+        return $violations;
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectToolPrintImplementations(): array
+    {
+        $violations = [];
+
+        foreach ($this->phpFiles(app_path('Tools')) as $file) {
+            if (! str_ends_with(str_replace('\\', '/', $file), '.blade.php')) {
+                continue;
+            }
+
+            foreach ($this->lines($file) as $lineNumber => $line) {
+                if (preg_match('/window\.print\s*\(/', $line) !== 1) {
+                    continue;
+                }
+
+                $violations[] = new ArchitectureViolation(
+                    'tools.no-direct-browser-print',
+                    $this->relative($file),
+                    $lineNumber,
+                    'Views de ferramentas devem reutilizar o componente compartilhado de impressão do Core.',
+                );
+            }
+        }
+
+        return $violations;
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectSharedToolComponents(): array
+    {
+        $violations = [];
+        $required = [
+            'intro.blade.php',
+            'form-panel.blade.php',
+            'validation-summary.blade.php',
+            'result-panel.blade.php',
+            'history-actions.blade.php',
+            'export-button.blade.php',
+            'print-button.blade.php',
+        ];
+        $root = resource_path('views/components/tools');
+
+        foreach ($required as $component) {
+            $path = $root.DIRECTORY_SEPARATOR.$component;
+
+            if (is_file($path)) {
+                continue;
+            }
+
+            $violations[] = new ArchitectureViolation(
+                'tools.shared-component-required',
+                $this->relative($path),
+                1,
+                "O componente compartilhado [{$component}] é obrigatório para manter a experiência consistente entre ferramentas.",
+            );
         }
 
         return $violations;
