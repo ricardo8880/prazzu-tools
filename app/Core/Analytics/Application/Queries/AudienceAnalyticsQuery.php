@@ -72,6 +72,7 @@ final class AudienceAnalyticsQuery
             $row->total = (int) $row->total;
             $row->visitors = (int) $row->visitors;
             $row->percentage = round($row->total / $total * 100, 1);
+
             return $row;
         });
     }
@@ -89,6 +90,7 @@ final class AudienceAnalyticsQuery
 
         return collect(range(0, $period->days() - 1))->map(function (int $offset) use ($period, $sessions, $new): object {
             $day = $period->start->addDays($offset)->format('Y-m-d');
+
             return (object) [
                 'day' => $day,
                 'sessions' => (int) ($sessions->get($day)?->sessions ?? 0),
@@ -101,15 +103,16 @@ final class AudienceAnalyticsQuery
     private function brazilRegions(Collection $states): Collection
     {
         $groups = [
-            'Norte' => ['AC','AP','AM','PA','RO','RR','TO'],
-            'Nordeste' => ['AL','BA','CE','MA','PB','PE','PI','RN','SE'],
-            'Centro-Oeste' => ['DF','GO','MT','MS'],
-            'Sudeste' => ['ES','MG','RJ','SP'],
-            'Sul' => ['PR','RS','SC'],
+            'Norte' => ['AC', 'AP', 'AM', 'PA', 'RO', 'RR', 'TO'],
+            'Nordeste' => ['AL', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'SE'],
+            'Centro-Oeste' => ['DF', 'GO', 'MT', 'MS'],
+            'Sudeste' => ['ES', 'MG', 'RJ', 'SP'],
+            'Sul' => ['PR', 'RS', 'SC'],
         ];
 
         return collect($groups)->map(function (array $codes, string $name) use ($states): object {
             $total = (int) $states->filter(fn (object $row) => in_array(strtoupper((string) $row->label), $codes, true))->sum('total');
+
             return (object) ['label' => $name, 'total' => $total];
         })->sortByDesc('total')->values();
     }

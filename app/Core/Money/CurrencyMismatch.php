@@ -6,6 +6,4 @@ namespace App\Core\Money;
 
 use App\Core\Exceptions\CoreDomainException;
 
-final class CurrencyMismatch extends CoreDomainException
-{
-}
+final class CurrencyMismatch extends CoreDomainException {}

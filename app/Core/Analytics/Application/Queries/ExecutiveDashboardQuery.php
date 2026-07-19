@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 final class ExecutiveDashboardQuery
 {
     public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
+
     /** @return array<string, mixed> */
     public function execute(AnalyticsPeriod $period): array
     {
@@ -35,7 +36,6 @@ final class ExecutiveDashboardQuery
                 ->get(['event_name', 'channel', 'path', 'source', 'occurred_at']),
         ];
     }
-
 
     /** @return array{today:int,yesterday:int,last_7_days:int,last_30_days:int} */
     private function visitorSnapshots(): array

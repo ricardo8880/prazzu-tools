@@ -12,6 +12,7 @@ final readonly class AnalyticsQueryCache
 
     /**
      * @template T
+     *
      * @param array<string, mixed> $filters
      * @param Closure(): T $callback
      * @return T

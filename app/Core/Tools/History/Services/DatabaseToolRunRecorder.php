@@ -14,6 +14,7 @@ use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Exceptions\HistoryDisabled;
 use App\Core\Tools\History\Exceptions\InvalidToolRunTransition;
 use App\Core\Tools\History\Models\ToolRun;
+use App\Core\Tools\ToolRegistry;
 use Illuminate\Support\Facades\DB;
 
 final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
@@ -21,8 +22,7 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
     public function __construct(
         private PayloadProjector $projector,
         private AuditLogger $audit,
-    ) {
-    }
+    ) {}
 
     public function start(
         ToolModule $module,
@@ -71,7 +71,7 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
     {
         $run = $this->findRun($handle);
         $this->assertRunning($run);
-        $module = app(\App\Core\Tools\ToolRegistry::class)->findModule($run->tool_slug);
+        $module = app(ToolRegistry::class)->findModule($run->tool_slug);
 
         if (! $module instanceof HasHistoryPolicy) {
             throw new HistoryDisabled('A ferramenta não fornece uma política de histórico.');

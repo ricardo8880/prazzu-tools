@@ -15,10 +15,13 @@ use App\Tools\SimplesNacionalCalculator\Domain\Enums\TaxAnnex;
 final readonly class FactorRCalculator
 {
     public const THRESHOLD = '28';
+
     public const RULE_VERSION = 'lc-123-2006-factor-r-2018';
+
     public const VALID_FROM = '2018-01-01';
 
     private const PERCENT_SCALE = 100_000_000;
+
     private const THRESHOLD_UNITS = 28_000_000;
 
     public function calculate(Money $payroll12, Money $rbt12): FactorRResult

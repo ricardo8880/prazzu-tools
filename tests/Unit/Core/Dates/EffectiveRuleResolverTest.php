@@ -18,7 +18,7 @@ final class EffectiveRuleResolverTest extends TestCase
         $oldRule = new TestRule('old', EffectivePeriod::from('2024-01-01', '2024-12-31'));
         $currentRule = new TestRule('current', EffectivePeriod::from('2025-01-01'));
 
-        $resolved = (new EffectiveRuleResolver())->resolve(
+        $resolved = (new EffectiveRuleResolver)->resolve(
             [$oldRule, $currentRule],
             ReferenceDate::fromString('2026-07-13'),
         );
@@ -30,7 +30,7 @@ final class EffectiveRuleResolverTest extends TestCase
     {
         $this->expectException(NoEffectiveRule::class);
 
-        (new EffectiveRuleResolver())->resolve(
+        (new EffectiveRuleResolver)->resolve(
             [new TestRule('future', EffectivePeriod::from('2030-01-01'))],
             ReferenceDate::fromString('2026-07-13'),
         );
@@ -42,8 +42,7 @@ final readonly class TestRule implements EffectiveDated
     public function __construct(
         public string $name,
         private EffectivePeriod $period,
-    ) {
-    }
+    ) {}
 
     public function effectivePeriod(): EffectivePeriod
     {

@@ -8,9 +8,7 @@ use App\Core\Exceptions\InvalidValue;
 
 final readonly class Cpf
 {
-    private function __construct(private string $digits)
-    {
-    }
+    private function __construct(private string $digits) {}
 
     public static function fromString(string $value): self
     {

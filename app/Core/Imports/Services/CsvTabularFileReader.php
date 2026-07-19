@@ -35,6 +35,7 @@ final class CsvTabularFileReader implements TabularFileReader
 
             if ($headers === []) {
                 $headers = $this->normalizeHeaders($values);
+
                 continue;
             }
 

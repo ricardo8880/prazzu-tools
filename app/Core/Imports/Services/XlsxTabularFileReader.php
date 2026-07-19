@@ -23,7 +23,7 @@ final class XlsxTabularFileReader implements TabularFileReader
             throw new InvalidImportFile('A leitura de Excel exige as extensões ZIP e SimpleXML no servidor.');
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($file->getRealPath()) !== true) {
             throw new InvalidImportFile('Não foi possível abrir a planilha Excel.');
         }
@@ -105,6 +105,7 @@ final class XlsxTabularFileReader implements TabularFileReader
         foreach ($document->si as $item) {
             if (isset($item->t)) {
                 $strings[] = (string) $item->t;
+
                 continue;
             }
 

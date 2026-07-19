@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 final class AnalyticsReportQuery
 {
     public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
+
     /** @param array<string, mixed> $filters */
     public function execute(AnalyticsPeriod $period, array $filters, int $limit = 100): array
     {

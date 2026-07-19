@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 final class BlogAnalyticsQuery
 {
     public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
+
     /** @return array<string, mixed> */
     public function overview(AnalyticsPeriod $period): array
     {
@@ -170,6 +171,7 @@ final class BlogAnalyticsQuery
         return $rows->flatMap(fn (object $row): Collection => $row->tags->map(fn (string $tag): array => ['tag' => $tag, 'row' => $row]))
             ->groupBy('tag')->map(function (Collection $items, string $tag): object {
                 $postRows = $items->pluck('row');
+
                 return (object) ['name' => $tag, 'posts' => $postRows->count(), 'views' => (int) $postRows->sum('views'), 'subscriptions' => (int) $postRows->sum('subscriptions')];
             })->sortByDesc('views')->values();
     }
@@ -187,6 +189,7 @@ final class BlogAnalyticsQuery
         return collect(range(0, $period->days() - 1))->map(function (int $offset) use ($period, $rows): object {
             $date = $period->start->addDays($offset)->toDateString();
             $row = $rows->get($date);
+
             return (object) ['date' => $date, 'views' => (int) ($row?->views ?? 0), 'visitors' => (int) ($row?->visitors ?? 0), 'tool_clicks' => (int) ($row?->tool_clicks ?? 0)];
         });
     }
@@ -212,7 +215,6 @@ final class BlogAnalyticsQuery
             ->whereBetween('occurred_at', [$period->start, $period->end])
             ->when($postId !== null, fn (Builder $query) => $query->where('subject_id', (string) $postId));
     }
-
 
     /** @param list<AnalyticsEventName> $events @return list<string> */
     private function names(array $events): array

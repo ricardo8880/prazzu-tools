@@ -16,8 +16,7 @@ final readonly class Inconsistency
         public string $recommendation,
         public ?string $informedValue = null,
         public ?string $registryValue = null,
-    ) {
-    }
+    ) {}
 
     /** @return array<string, string|null> */
     public function toArray(): array

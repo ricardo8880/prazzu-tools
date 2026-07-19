@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 final class RunScheduledAnalyticsReportsCommand extends Command
 {
     protected $signature = 'analytics:run-scheduled-reports';
+
     protected $description = 'Gera os relatórios de Analytics agendados que estão vencidos.';
 
     public function handle(ScheduledAnalyticsReportRunner $runner): int

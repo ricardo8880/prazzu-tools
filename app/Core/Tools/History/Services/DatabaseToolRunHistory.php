@@ -55,7 +55,9 @@ final readonly class DatabaseToolRunHistory implements ToolRunHistory
             throw $exception;
         }
 
-        return $this->toEntry($run, false);
+        $persistedRun = ToolRun::query()->findOrFail($run->id);
+
+        return $this->toEntry($persistedRun, false);
     }
 
     public function recentSucceeded(string $toolSlug, int $userId, int $limit = 24): array

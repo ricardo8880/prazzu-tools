@@ -13,8 +13,7 @@ final readonly class CompanyConsistencyInput
         public ?string $state,
         public ?string $city,
         public ?string $stateRegistration,
-    ) {
-    }
+    ) {}
 
     /** @param array<string, mixed> $data */
     public static function fromArray(array $data): self

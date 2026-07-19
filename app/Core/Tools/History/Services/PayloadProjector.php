@@ -14,7 +14,7 @@ final class PayloadProjector
         $projected = [];
 
         foreach ($allowedFields as $field) {
-            $value = data_get($payload, $field, new MissingPayloadValue());
+            $value = data_get($payload, $field, new MissingPayloadValue);
             if ($value instanceof MissingPayloadValue) {
                 continue;
             }
@@ -26,6 +26,4 @@ final class PayloadProjector
     }
 }
 
-final class MissingPayloadValue
-{
-}
+final class MissingPayloadValue {}

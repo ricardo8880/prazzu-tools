@@ -10,9 +10,7 @@ use App\Tools\BusinessDocumentValidator\Domain\Validators\BusinessDocumentValida
 
 final readonly class ValidateBusinessDocument
 {
-    public function __construct(private BusinessDocumentValidator $validator)
-    {
-    }
+    public function __construct(private BusinessDocumentValidator $validator) {}
 
     /** @param array{document_type: string, document_number: string} $input */
     public function execute(array $input): DocumentValidationResult

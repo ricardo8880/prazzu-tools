@@ -9,11 +9,10 @@ use App\Core\Exceptions\InvalidValue;
 final readonly class Cnpj
 {
     private const FIRST_WEIGHTS = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
     private const SECOND_WEIGHTS = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
-    private function __construct(private string $digits)
-    {
-    }
+    private function __construct(private string $digits) {}
 
     public static function fromString(string $value): self
     {

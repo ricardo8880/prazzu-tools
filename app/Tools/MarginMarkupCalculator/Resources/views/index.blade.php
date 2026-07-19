@@ -14,7 +14,11 @@
     </nav>
 
     <x-tools.intro icon="percent" title="Calculadora de Margem, Markup e Formação de Preço" description="Monte um preço de venda considerando custos, despesas, impostos, comissões e taxas." badge="Grátis">
-        @auth<x-slot:actions><a class="btn btn-outline-primary" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></x-slot:actions>@endauth
+        <x-slot:actions>
+            @auth
+                <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>
+            @endauth
+        </x-slot:actions>
     </x-tools.intro>
 
     <x-tool-feature-tiers slug="calculadora-margem-markup" />

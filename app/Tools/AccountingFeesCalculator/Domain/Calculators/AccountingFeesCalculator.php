@@ -88,7 +88,6 @@ final class AccountingFeesCalculator
         );
     }
 
-
     /**
      * @param array<int, array{label: string, value: Money}> $items
      * @return array<int, array{label: string, value: Money, percentage: int}>

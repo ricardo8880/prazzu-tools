@@ -7,6 +7,7 @@ namespace App\Core\Analytics\Application\Services;
 use App\Core\Analytics\Application\Queries\AnalyticsReportQuery;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsReportSchedule;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
@@ -38,9 +39,10 @@ final class ScheduledAnalyticsReportRunner
         }
     }
 
-    public function nextRun(string $frequency): \Carbon\CarbonImmutable
+    public function nextRun(string $frequency): CarbonImmutable
     {
         $now = now()->toImmutable();
+
         return match ($frequency) {
             'weekly' => $now->addWeek()->startOfDay()->setTime(7, 0),
             'monthly' => $now->addMonthNoOverflow()->startOfDay()->setTime(7, 0),

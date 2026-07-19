@@ -36,7 +36,7 @@ final class BrasilApiCompanyRegistryProviderTest extends TestCase
             ], 200),
         ]);
 
-        $result = (new BrasilApiCompanyRegistryProvider())->lookup('04252011000110');
+        $result = (new BrasilApiCompanyRegistryProvider)->lookup('04252011000110');
 
         self::assertSame('found', $result->status->value);
         self::assertSame('EMPRESA EXEMPLO LTDA', $result->company?->legalName);
@@ -49,7 +49,7 @@ final class BrasilApiCompanyRegistryProviderTest extends TestCase
     {
         Http::fake(['*' => Http::response(['message' => 'not found'], 404)]);
 
-        $result = (new BrasilApiCompanyRegistryProvider())->lookup('04252011000110');
+        $result = (new BrasilApiCompanyRegistryProvider)->lookup('04252011000110');
 
         self::assertSame('not_found', $result->status->value);
     }
@@ -58,7 +58,7 @@ final class BrasilApiCompanyRegistryProviderTest extends TestCase
     {
         Http::fake(['*' => Http::response([], 503)]);
 
-        $result = (new BrasilApiCompanyRegistryProvider())->lookup('04252011000110');
+        $result = (new BrasilApiCompanyRegistryProvider)->lookup('04252011000110');
 
         self::assertSame('unavailable', $result->status->value);
     }

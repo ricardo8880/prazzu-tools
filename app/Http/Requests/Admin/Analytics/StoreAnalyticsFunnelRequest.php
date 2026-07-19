@@ -7,7 +7,10 @@ use Illuminate\Validation\Rule;
 
 final class StoreAnalyticsFunnelRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     public function rules(): array
     {
@@ -16,7 +19,9 @@ final class StoreAnalyticsFunnelRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:500'],
             'identity_type' => ['required', Rule::in(['visitor', 'session', 'user'])],
             'steps' => ['required', 'string', function (string $attribute, mixed $value, \Closure $fail): void {
-                if (count($this->parsedSteps()) < 2) $fail('Informe ao menos duas etapas válidas.');
+                if (count($this->parsedSteps()) < 2) {
+                    $fail('Informe ao menos duas etapas válidas.');
+                }
             }],
         ];
     }
@@ -28,6 +33,7 @@ final class StoreAnalyticsFunnelRequest extends FormRequest
             ->map(function (string $line): ?array {
                 [$name, $events] = array_pad(explode('|', $line, 2), 2, '');
                 $eventNames = collect(explode(',', $events))->map(fn ($v) => trim($v))->filter()->unique()->values()->all();
+
                 return trim($name) !== '' && $eventNames !== [] ? ['name' => trim($name), 'event_names' => $eventNames] : null;
             })->filter()->values()->all();
     }

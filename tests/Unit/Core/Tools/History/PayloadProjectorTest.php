@@ -14,7 +14,7 @@ final class PayloadProjectorTest extends TestCase
             'internal_token' => 'do-not-store',
         ];
 
-        $projected = (new PayloadProjector())->project($payload, [
+        $projected = (new PayloadProjector)->project($payload, [
             'employee.name',
             'employee.salary',
         ]);

@@ -14,8 +14,7 @@ final readonly class LookupCompanyRegistry
     public function __construct(
         private BusinessDocumentValidator $validator,
         private CompanyRegistryProvider $provider,
-    ) {
-    }
+    ) {}
 
     public function execute(string $document): CompanyRegistryLookupResult
     {

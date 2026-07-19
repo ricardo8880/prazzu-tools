@@ -14,8 +14,7 @@ final readonly class CompanyConsistencyAnalysisResult
         public string $message,
         public array $inconsistencies,
         public ?CompanyRegistryData $company = null,
-    ) {
-    }
+    ) {}
 
     public function errorCount(): int
     {

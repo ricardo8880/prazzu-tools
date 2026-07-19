@@ -20,6 +20,5 @@ final readonly class PrintableDocument
         public ?string $summaryValue = null,
         public string $backLabel = 'Voltar',
         public string $printLabel = 'Imprimir / Salvar como PDF',
-    ) {
-    }
+    ) {}
 }

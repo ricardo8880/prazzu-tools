@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 final class AcquisitionAnalyticsQuery
 {
     public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
+
     /** @return array<string, mixed> */
     public function execute(AnalyticsPeriod $period): array
     {
@@ -92,6 +93,7 @@ final class AcquisitionAnalyticsQuery
                     ->count();
                 $row->conversions = $conversions;
                 $row->conversion_rate = (int) $row->sessions === 0 ? 0.0 : round(($conversions / (int) $row->sessions) * 100, 1);
+
                 return $row;
             });
     }

@@ -6,11 +6,11 @@ use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsFunnel;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
-use Illuminate\Support\Collection;
 
 final class FunnelAnalyticsQuery
 {
     public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
+
     /** @param array<string,string|null> $filters */
     public function execute(AnalyticsPeriod $period, array $filters = []): array
     {
@@ -54,7 +54,9 @@ final class FunnelAnalyticsQuery
         $steps = collect($funnel->steps)->values();
         $steps = $steps->map(fn (array $step): array => [...$step, 'events' => $this->eventNames->expand($step['events'])]);
         $eventNames = $steps->flatMap(fn ($step) => $step['events'])->unique()->values();
-        $identityColumn = match ($funnel->identity_type) { 'session' => 'analytics_session_id', 'user' => 'user_id', default => 'visitor_id' };
+        $identityColumn = match ($funnel->identity_type) {
+            'session' => 'analytics_session_id', 'user' => 'user_id', default => 'visitor_id'
+        };
 
         $query = PlatformAnalyticsEvent::query()
             ->whereBetween('occurred_at', [$period->start, $period->end])
@@ -63,7 +65,9 @@ final class FunnelAnalyticsQuery
             ->orderBy('occurred_at');
 
         foreach (['source', 'device_type', 'subject_slug'] as $field) {
-            if (!empty($filters[$field])) $query->where($field, $filters[$field]);
+            if (! empty($filters[$field])) {
+                $query->where($field, $filters[$field]);
+            }
         }
 
         $groups = $query->get([$identityColumn, 'event_name', 'occurred_at'])->groupBy($identityColumn);
@@ -75,7 +79,9 @@ final class FunnelAnalyticsQuery
                 $matched = $events->first(function ($event) use ($step, $cursor): bool {
                     return in_array($event->event_name, $step['events'], true) && ($cursor === null || $event->occurred_at->greaterThanOrEqualTo($cursor));
                 });
-                if (!$matched) break;
+                if (! $matched) {
+                    break;
+                }
                 $counts[$index]++;
                 $cursor = $matched->occurred_at;
                 $events = $events->filter(fn ($event) => $event->occurred_at->greaterThanOrEqualTo($cursor));
@@ -84,6 +90,7 @@ final class FunnelAnalyticsQuery
 
         $rows = $steps->map(function (array $step, int $index) use ($counts): object {
             $previous = $index === 0 ? $counts[0] : $counts[$index - 1];
+
             return (object) [
                 'name' => $step['name'], 'events' => $step['events'], 'total' => $counts[$index],
                 'step_rate' => $previous > 0 ? round($counts[$index] / $previous * 100, 1) : 0.0,

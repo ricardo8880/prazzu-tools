@@ -48,6 +48,7 @@ final class FunnelAnalyticsController extends Controller
     public function destroy(Request $request, AnalyticsFunnel $funnel): RedirectResponse
     {
         $funnel->delete();
+
         return redirect()->route('admin.analytics.funnels')->with('status', 'Funil removido.');
     }
 }

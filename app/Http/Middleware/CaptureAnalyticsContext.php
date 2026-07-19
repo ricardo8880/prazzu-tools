@@ -23,29 +23,39 @@ final readonly class CaptureAnalyticsContext
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (! config('analytics.enabled', true) || $this->excluded($request)) return $next($request);
+        if (! config('analytics.enabled', true) || $this->excluded($request)) {
+            return $next($request);
+        }
         $context = $this->contextResolver->resolve($request);
         $request->attributes->set('analytics.visitor_id', $context->visitorId);
         $request->attributes->set('analytics.session_id', $context->analyticsSessionId);
         $response = $next($request);
 
         if ($response->getStatusCode() < 400) {
-            if (config('analytics.capture_page_views', true) && $request->isMethod('GET')) $this->analytics->track(AnalyticsEvent::make(AnalyticsEventName::PageViewed->value, 'platform'), $request);
+            if (config('analytics.capture_page_views', true) && $request->isMethod('GET')) {
+                $this->analytics->track(AnalyticsEvent::make(AnalyticsEventName::PageViewed->value, 'platform'), $request);
+            }
             $this->captureToolEvent($request);
         }
 
         if ($context->visitorId !== null && ! $request->cookies->has((string) config('analytics.visitor_cookie'))) {
-            $response->headers->setCookie(cookie(name:(string)config('analytics.visitor_cookie'),value:$context->visitorId,minutes:(int)config('analytics.visitor_cookie_days',730)*1440,secure:$request->isSecure(),httpOnly:true,raw:false,sameSite:'lax'));
+            $response->headers->setCookie(cookie(name: (string) config('analytics.visitor_cookie'), value: $context->visitorId, minutes: (int) config('analytics.visitor_cookie_days', 730) * 1440, secure: $request->isSecure(), httpOnly: true, raw: false, sameSite: 'lax'));
         }
+
         return $response;
     }
 
     private function captureToolEvent(Request $request): void
     {
         $routeName = (string) optional($request->route())->getName();
-        if (! str_starts_with($routeName, 'tools.')) return;
-        $parts = explode('.', $routeName); $slug = $parts[1] ?? null;
-        if (! $slug || $this->tools->find($slug) === null) return;
+        if (! str_starts_with($routeName, 'tools.')) {
+            return;
+        }
+        $parts = explode('.', $routeName);
+        $slug = $parts[1] ?? null;
+        if (! $slug || $this->tools->find($slug) === null) {
+            return;
+        }
         $action = implode('.', array_slice($parts, 2));
         $eventName = $this->toolEvents->classify($action, $request->method());
 
@@ -60,5 +70,14 @@ final readonly class CaptureAnalyticsContext
         }
     }
 
-    private function excluded(Request $request): bool { foreach ((array)config('analytics.excluded_paths',[]) as $pattern) if($request->is($pattern)) return true; return false; }
+    private function excluded(Request $request): bool
+    {
+        foreach ((array) config('analytics.excluded_paths', []) as $pattern) {
+            if ($request->is($pattern)) {
+                return true;
+            }
+        }
+
+return false;
+    }
 }

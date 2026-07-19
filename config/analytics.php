@@ -2,7 +2,6 @@
 
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 
-
 return [
     'enabled' => env('ANALYTICS_ENABLED', true),
     'async' => env('ANALYTICS_ASYNC', false),
@@ -44,7 +43,6 @@ return [
         'revenue_metadata_keys' => ['revenue_cents', 'amount_cents', 'value_cents'],
     ],
 
-
     'acquisition' => [
         'sources' => [
             'google' => ['medium' => 'organic', 'hosts' => ['google.com', 'google.com.br']],
@@ -84,7 +82,6 @@ return [
             'subscription' => ['label' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
         ],
     ],
-
 
     'funnels' => [
         'standard' => [

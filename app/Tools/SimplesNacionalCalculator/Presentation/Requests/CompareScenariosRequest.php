@@ -8,7 +8,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class CompareScenariosRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     public function rules(): array
     {

@@ -9,7 +9,10 @@ use Illuminate\Validation\Rule;
 
 final class CalculateLaborTerminationRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     /** @return array<string, array<int, mixed>> */
     public function rules(): array
@@ -20,7 +23,7 @@ final class CalculateLaborTerminationRequest extends FormRequest
             'monthly_salary' => ['required', $money[1]],
             'admission_date' => ['required', 'date', 'before_or_equal:termination_date'],
             'termination_date' => ['required', 'date', 'after_or_equal:admission_date'],
-            'termination_type' => ['required', Rule::in(['dismissal_without_cause','resignation','dismissal_with_cause','mutual_agreement','indirect_termination','contract_end','early_contract_end'])],
+            'termination_type' => ['required', Rule::in(['dismissal_without_cause', 'resignation', 'dismissal_with_cause', 'mutual_agreement', 'indirect_termination', 'contract_end', 'early_contract_end'])],
             'contract_type' => ['required', Rule::in(['indefinite', 'fixed_term', 'experience', 'domestic'])],
             'notice_type' => ['required', Rule::in(['worked', 'indemnified', 'not_worked', 'not_applicable'])],
             'days_worked_in_month' => ['required', 'integer', 'min:0', 'max:31'],

@@ -23,11 +23,11 @@ final class AuditLog extends Model
 
     protected static function booted(): void
     {
-        static::updating(static function (): never {
+        self::updating(static function (): never {
             throw new LogicException('Registros de auditoria não podem ser alterados.');
         });
 
-        static::deleting(static function (): never {
+        self::deleting(static function (): never {
             throw new LogicException('Registros de auditoria não podem ser removidos pelo modelo.');
         });
     }

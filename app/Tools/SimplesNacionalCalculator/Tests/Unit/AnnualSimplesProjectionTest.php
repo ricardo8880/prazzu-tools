@@ -17,7 +17,7 @@ final class AnnualSimplesProjectionTest extends TestCase
     public function test_it_projects_twelve_months_without_float_arithmetic(): void
     {
         $projection = new AnnualSimplesProjection(
-            new SimplesNacionalCalculator(new SimplesNacionalTaxTable()),
+            new SimplesNacionalCalculator(new SimplesNacionalTaxTable),
         );
 
         $result = $projection->project(

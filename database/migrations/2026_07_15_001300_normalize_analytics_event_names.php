@@ -15,7 +15,7 @@ return new class extends Migration
             return;
         }
 
-        $resolver = new AnalyticsEventNameResolver();
+        $resolver = new AnalyticsEventNameResolver;
 
         foreach ($resolver->legacyAliases() as $legacy => $canonical) {
             if ($legacy === $canonical) {

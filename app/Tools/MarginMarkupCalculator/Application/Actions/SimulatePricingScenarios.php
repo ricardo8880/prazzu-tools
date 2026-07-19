@@ -93,12 +93,14 @@ final readonly class SimulatePricingScenarios
     private function ratioAsPercentage(int $part, int $whole): string
     {
         $scaled = intdiv(($part * 100_000_000) + intdiv($whole, 2), $whole);
+
         return $this->percentageStringFromMillionths($scaled).'%';
     }
 
     private function decimalFromMinor(int $minor): string
     {
         $absolute = abs($minor);
+
         return ($minor < 0 ? '-' : '').intdiv($absolute, 100).','.str_pad((string) ($absolute % 100), 2, '0', STR_PAD_LEFT);
     }
 
@@ -108,6 +110,7 @@ final readonly class SimulatePricingScenarios
         $absolute = abs($value);
         $whole = intdiv($absolute, 1_000_000);
         $fraction = rtrim(str_pad((string) ($absolute % 1_000_000), 6, '0', STR_PAD_LEFT), '0');
+
         return ($negative ? '-' : '').$whole.($fraction === '' ? '' : '.'.$fraction);
     }
 

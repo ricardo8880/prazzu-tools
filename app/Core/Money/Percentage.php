@@ -9,11 +9,10 @@ use App\Core\Exceptions\InvalidValue;
 final readonly class Percentage
 {
     private const SCALE = 6;
+
     private const FACTOR = 1_000_000;
 
-    private function __construct(private int $millionthsOfPercent)
-    {
-    }
+    private function __construct(private int $millionthsOfPercent) {}
 
     public static function fromString(string $value): self
     {

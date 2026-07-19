@@ -48,6 +48,7 @@ final readonly class ProcessProductImport
 
             if ($errors !== []) {
                 $rejected[] = ['line' => $index + 2, 'reason' => implode('; ', $errors)];
+
                 continue;
             }
 

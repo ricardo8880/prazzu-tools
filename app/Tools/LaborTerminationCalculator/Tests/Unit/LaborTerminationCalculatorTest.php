@@ -113,7 +113,6 @@ final class LaborTerminationCalculatorTest extends TestCase
         self::assertSame(150000, $result->article479Indemnity->minorAmount());
     }
 
-
     public function test_domestic_dismissal_uses_compensatory_reserve_instead_of_forty_percent_penalty(): void
     {
         $result = (new LaborTerminationCalculator)->calculate(

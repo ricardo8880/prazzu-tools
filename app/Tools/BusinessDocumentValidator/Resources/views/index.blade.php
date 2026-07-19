@@ -14,7 +14,11 @@
     </nav>
 
     <x-tools.intro icon="shield-check" tone="green" title="Validador Inteligente de CNPJ, CPF e IE" description="Valide CPF e CNPJ localmente, sem depender de consulta externa, e entenda com clareza o resultado." badge="Grátis">
-        @auth<x-slot:actions><a class="btn btn-outline-primary" href="{{ route('tools.validador-de-cnpj.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></x-slot:actions>@endauth
+        <x-slot:actions>
+            @auth
+                <a class="btn btn-outline-primary" href="{{ route('tools.validador-de-cnpj.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>
+            @endauth
+        </x-slot:actions>
     </x-tools.intro>
 
     <x-tool-feature-tiers slug="validador-de-cnpj" />

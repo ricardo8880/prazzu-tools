@@ -23,6 +23,6 @@ final class AnalyticsReportRequest extends AnalyticsDashboardRequest
     /** @return array<string, mixed> */
     public function filters(): array
     {
-        return collect($this->validated())->only(['channel','category','author_id','tool','source','city','region','device_type','operating_system','user_id','event_name'])->filter(fn ($value) => $value !== null && $value !== '')->all();
+        return collect($this->validated())->only(['channel', 'category', 'author_id', 'tool', 'source', 'city', 'region', 'device_type', 'operating_system', 'user_id', 'event_name'])->filter(fn ($value) => $value !== null && $value !== '')->all();
     }
 }

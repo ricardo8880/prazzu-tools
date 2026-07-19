@@ -6,6 +6,4 @@ namespace App\Core\Dates\Exceptions;
 
 use App\Core\Exceptions\CoreDomainException;
 
-final class NoEffectiveRule extends CoreDomainException
-{
-}
+final class NoEffectiveRule extends CoreDomainException {}

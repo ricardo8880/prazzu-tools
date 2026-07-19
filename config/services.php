@@ -35,7 +35,6 @@ return [
         ],
     ],
 
-
     'brasil_api' => [
         'base_url' => env('BRASIL_API_BASE_URL', 'https://brasilapi.com.br/api'),
         'connect_timeout' => (int) env('BRASIL_API_CONNECT_TIMEOUT', 3),

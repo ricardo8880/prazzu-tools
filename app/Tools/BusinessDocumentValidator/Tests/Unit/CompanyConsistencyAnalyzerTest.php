@@ -14,7 +14,7 @@ final class CompanyConsistencyAnalyzerTest extends TestCase
 {
     public function test_it_reports_deterministic_inconsistencies(): void
     {
-        $result = (new CompanyConsistencyAnalyzer())->analyze(
+        $result = (new CompanyConsistencyAnalyzer)->analyze(
             new CompanyConsistencyInput(
                 cnpj: '04.252.011/0001-10',
                 legalName: 'OUTRA EMPRESA LTDA',
@@ -38,7 +38,7 @@ final class CompanyConsistencyAnalyzerTest extends TestCase
 
     public function test_it_accepts_equivalent_text_ignoring_case_accents_and_punctuation(): void
     {
-        $result = (new CompanyConsistencyAnalyzer())->analyze(
+        $result = (new CompanyConsistencyAnalyzer)->analyze(
             new CompanyConsistencyInput(
                 cnpj: '04.252.011/0001-10',
                 legalName: 'empresa exemplo ltda.',
@@ -56,7 +56,7 @@ final class CompanyConsistencyAnalyzerTest extends TestCase
 
     public function test_it_does_not_treat_provider_unavailability_as_company_irregularity(): void
     {
-        $result = (new CompanyConsistencyAnalyzer())->analyze(
+        $result = (new CompanyConsistencyAnalyzer)->analyze(
             new CompanyConsistencyInput('04.252.011/0001-10', null, null, null, null, null),
             CompanyRegistryLookupResult::unavailable(),
         );

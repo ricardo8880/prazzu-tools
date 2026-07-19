@@ -48,12 +48,12 @@ final class BlogPostController extends Controller
 
     public function create(ToolRegistry $registry): View
     {
-        return view('admin.blog.create', $this->formData(new BlogPost(), $registry));
+        return view('admin.blog.create', $this->formData(new BlogPost, $registry));
     }
 
     public function store(SaveBlogPostRequest $request): RedirectResponse
     {
-        $post = new BlogPost();
+        $post = new BlogPost;
         $this->persist($post, $request);
 
         return redirect()
@@ -74,7 +74,6 @@ final class BlogPostController extends Controller
             ->route('admin.blog.posts.edit', $post)
             ->with('status', 'Postagem atualizada com sucesso.');
     }
-
 
     public function preview(BlogPost $post, ToolCatalog $toolCatalog): View
     {
@@ -166,6 +165,7 @@ final class BlogPostController extends Controller
 
         if ($status === BlogPostStatus::Draft) {
             $data['published_at'] = null;
+
             return;
         }
 

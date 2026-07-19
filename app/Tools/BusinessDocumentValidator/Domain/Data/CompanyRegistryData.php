@@ -29,8 +29,7 @@ final readonly class CompanyRegistryData
         public ?string $postalCode,
         public string $source,
         public string $consultedAt,
-    ) {
-    }
+    ) {}
 
     /** @return array<string, mixed> */
     public function toArray(): array

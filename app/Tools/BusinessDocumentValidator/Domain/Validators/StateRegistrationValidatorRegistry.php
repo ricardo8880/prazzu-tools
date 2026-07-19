@@ -15,7 +15,9 @@ final class StateRegistrationValidatorRegistry
     /** @param iterable<StateRegistrationValidator> $validators */
     public function __construct(iterable $validators)
     {
-        foreach ($validators as $validator) $this->validators[$validator->state()] = $validator;
+        foreach ($validators as $validator) {
+            $this->validators[$validator->state()] = $validator;
+        }
         ksort($this->validators);
     }
 
@@ -23,7 +25,10 @@ final class StateRegistrationValidatorRegistry
     public function supportedStates(): array
     {
         $states = [];
-        foreach ($this->validators as $code => $validator) $states[$code] = $validator->label();
+        foreach ($this->validators as $code => $validator) {
+            $states[$code] = $validator->label();
+        }
+
         return $states;
     }
 
@@ -39,6 +44,7 @@ final class StateRegistrationValidatorRegistry
             }
 
             $valid = $validator->validate($normalized);
+
             return new StateRegistrationValidationResult(
                 $input,
                 $normalized,
@@ -53,12 +59,15 @@ final class StateRegistrationValidatorRegistry
 
         $candidates = [];
         foreach ($this->validators as $code => $validator) {
-            if ($validator->validate($normalized)) $candidates[] = $code.' — '.$validator->label();
+            if ($validator->validate($normalized)) {
+                $candidates[] = $code.' — '.$validator->label();
+            }
         }
 
         if (count($candidates) === 1) {
             [$code] = explode(' — ', $candidates[0], 2);
             $validator = $this->validators[$code];
+
             return new StateRegistrationValidationResult($input, $normalized, $code, $validator->label(), true, true, $validator->format($normalized), 'A UF foi identificada como candidata única entre as regras suportadas.', $candidates);
         }
 

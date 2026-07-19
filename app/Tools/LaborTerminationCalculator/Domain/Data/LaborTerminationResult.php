@@ -60,7 +60,9 @@ final readonly class LaborTerminationResult
             'contract_type' => $this->contractType, 'is_domestic' => $this->contractType === 'domestic',
             'notice_type' => $this->noticeType->value, 'notice_type_label' => $this->noticeType->label(),
             'early_termination_initiative' => $this->earlyTerminationInitiative,
-            'early_termination_initiative_label' => match ($this->earlyTerminationInitiative) { 'employer' => 'Empregador', 'employee' => 'Empregado', default => 'Não se aplica' },
+            'early_termination_initiative_label' => match ($this->earlyTerminationInitiative) {
+                'employer' => 'Empregador', 'employee' => 'Empregado', default => 'Não se aplica'
+            },
             'warnings' => $this->warnings, 'rule_version' => $this->ruleVersion, 'tax_table_version' => $this->taxTableVersion,
         ];
     }

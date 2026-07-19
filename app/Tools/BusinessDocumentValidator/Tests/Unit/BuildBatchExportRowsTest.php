@@ -16,7 +16,7 @@ final class BuildBatchExportRowsTest extends TestCase
             ['line' => 3, 'document' => '2', 'formatted_document' => '2', 'type' => 'CNPJ', 'valid' => false, 'duplicate' => false, 'registry_status' => null, 'company' => null, 'inconsistencies' => [], 'message' => 'inválido'],
         ]];
 
-        $rows = (new BuildBatchExportRows())->execute($result, true);
+        $rows = (new BuildBatchExportRows)->execute($result, true);
 
         self::assertCount(1, $rows);
         self::assertSame(3, $rows[0][0]);

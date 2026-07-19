@@ -10,7 +10,7 @@ final class BlogSeoAnalyzerTest extends TestCase
 {
     public function test_it_reports_missing_essential_seo_information(): void
     {
-        $issues = (new BlogSeoAnalyzer())->analyze(new BlogPost([
+        $issues = (new BlogSeoAnalyzer)->analyze(new BlogPost([
             'title' => '',
             'excerpt' => '',
             'content' => '<p>Conteúdo curto.</p>',

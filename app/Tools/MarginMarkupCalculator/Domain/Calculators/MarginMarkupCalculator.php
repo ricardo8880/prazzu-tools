@@ -14,6 +14,7 @@ use App\Tools\MarginMarkupCalculator\Domain\Data\MarginMarkupResult;
 final class MarginMarkupCalculator
 {
     public const RULE_VERSION = '2.0.0';
+
     private const PERCENT_FACTOR = 100_000_000;
 
     public function calculate(

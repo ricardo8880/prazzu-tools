@@ -81,7 +81,7 @@ final class AnalyticsReportFileBuilder
             }
             $stream .= 'ET';
             $objects[$pageId] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents {$contentId} 0 R >>";
-            $objects[$contentId] = "<< /Length ".strlen($stream)." >>\nstream\n{$stream}\nendstream";
+            $objects[$contentId] = '<< /Length '.strlen($stream)." >>\nstream\n{$stream}\nendstream";
         }
         $objects[1] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
         $objects[2] = '<< /Type /Pages /Kids ['.implode(' ', array_map(fn ($id) => "$id 0 R", $pageIds)).'] /Count '.count($pageIds).' >>';
@@ -100,7 +100,7 @@ final class AnalyticsReportFileBuilder
         for ($id = 1; $id <= $catalogId; $id++) {
             $pdf .= sprintf('%010d 00000 n ', $offsets[$id] ?? 0)."\n";
         }
-        $pdf .= "trailer << /Size ".($catalogId + 1)." /Root {$catalogId} 0 R >>\nstartxref\n{$xref}\n%%EOF";
+        $pdf .= 'trailer << /Size '.($catalogId + 1)." /Root {$catalogId} 0 R >>\nstartxref\n{$xref}\n%%EOF";
 
         return $pdf;
     }
@@ -119,6 +119,7 @@ final class AnalyticsReportFileBuilder
     {
         $value = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value) ?: $value;
         $value = preg_replace('/[^\x20-\x7E]/', '', $value) ?? '';
+
         return str_replace(['\\', '(', ')'], ['\\\\', '\\(', '\\)'], mb_substr($value, 0, 180));
     }
 }

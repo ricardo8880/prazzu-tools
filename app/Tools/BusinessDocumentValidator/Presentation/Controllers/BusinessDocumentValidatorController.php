@@ -54,6 +54,7 @@ final class BusinessDocumentValidatorController extends Controller
             $preview = $action->execute($request->file('batch_file'), $this->importOwnerKey($request));
         } catch (Throwable $exception) {
             report($exception);
+
             return back()->withErrors(['batch_file' => $exception->getMessage()]);
         }
 
@@ -92,6 +93,7 @@ final class BusinessDocumentValidatorController extends Controller
             if ($run !== null) {
                 $recorder->fail($run, 'batch.processing_failed');
             }
+
             return back()->withErrors(['batch_import' => $exception->getMessage()]);
         }
 
@@ -172,6 +174,7 @@ final class BusinessDocumentValidatorController extends Controller
     {
         $result = $request->session()->get('batch_validation_result');
         abort_unless(is_array($result), 404, 'Nenhum resultado em lote disponível para exportação.');
+
         return $result;
     }
 

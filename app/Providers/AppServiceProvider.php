@@ -43,8 +43,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EnterpriseAccessResolver::class, DatabaseEnterpriseAccessResolver::class);
         $this->app->bind(OrganizationSeatCounter::class, DatabaseOrganizationSeatCounter::class);
         $this->app->singleton(CompositeTabularFileReader::class, static fn (): CompositeTabularFileReader => new CompositeTabularFileReader([
-            new CsvTabularFileReader(),
-            new XlsxTabularFileReader(),
+            new CsvTabularFileReader,
+            new XlsxTabularFileReader,
         ]));
     }
 

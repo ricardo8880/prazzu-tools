@@ -26,7 +26,7 @@ final class LookupCompanyRegistryTest extends TestCase
             }
         };
 
-        $result = (new LookupCompanyRegistry(new BusinessDocumentValidator(), $provider))
+        $result = (new LookupCompanyRegistry(new BusinessDocumentValidator, $provider))
             ->execute('11.111.111/1111-11');
 
         self::assertFalse($provider->called);
@@ -48,7 +48,7 @@ final class LookupCompanyRegistryTest extends TestCase
             }
         };
 
-        (new LookupCompanyRegistry(new BusinessDocumentValidator(), $provider))
+        (new LookupCompanyRegistry(new BusinessDocumentValidator, $provider))
             ->execute('04.252.011/0001-10');
 
         self::assertSame('04252011000110', $provider->received);

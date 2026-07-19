@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 final class RealtimeAnalyticsQuery
 {
     public function __construct(private readonly AnalyticsEventNameResolver $eventNames) {}
+
     private const ONLINE_WINDOW_MINUTES = 5;
 
     /** @return array<string, mixed> */

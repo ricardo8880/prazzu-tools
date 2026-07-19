@@ -15,14 +15,25 @@ final class SingleDigitMod11StateRegistrationValidator extends AbstractStateRegi
         private readonly ?string $requiredPrefix = null,
     ) {}
 
-    public function state(): string { return $this->stateCode; }
-    public function label(): string { return $this->stateName; }
+    public function state(): string
+    {
+        return $this->stateCode;
+    }
+
+    public function label(): string
+    {
+        return $this->stateName;
+    }
 
     public function validate(string $registration): bool
     {
         $ie = $this->digits($registration);
-        if (strlen($ie) !== $this->length || preg_match('/^(\d)\1+$/', $ie)) return false;
-        if ($this->requiredPrefix !== null && ! str_starts_with($ie, $this->requiredPrefix)) return false;
+        if (strlen($ie) !== $this->length || preg_match('/^(\d)\1+$/', $ie)) {
+            return false;
+        }
+        if ($this->requiredPrefix !== null && ! str_starts_with($ie, $this->requiredPrefix)) {
+            return false;
+        }
 
         return $this->modulus11(substr($ie, 0, -1), $this->weights) === (int) substr($ie, -1);
     }

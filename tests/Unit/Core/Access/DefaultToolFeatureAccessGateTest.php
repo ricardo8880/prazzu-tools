@@ -78,8 +78,7 @@ final class DefaultToolFeatureAccessGateTest extends TestCase
         ToolAccessContext $context,
         bool $launchFree = false,
         bool $featureEnabled = true,
-    ): DefaultToolFeatureAccessGate
-    {
+    ): DefaultToolFeatureAccessGate {
         $flags = new class($featureEnabled) implements FeatureFlagRepository
         {
             public function __construct(private readonly bool $featureEnabled) {}
@@ -101,7 +100,6 @@ final class DefaultToolFeatureAccessGateTest extends TestCase
             {
                 return $this->launchFree;
             }
-
         };
         $resolver = new class($context) implements ToolAccessContextResolver
         {

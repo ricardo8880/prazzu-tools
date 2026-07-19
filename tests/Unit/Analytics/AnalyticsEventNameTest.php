@@ -28,7 +28,7 @@ final class AnalyticsEventNameTest extends TestCase
     #[DataProvider('legacyEventProvider')]
     public function test_legacy_names_resolve_to_their_canonical_name(string $legacy, AnalyticsEventName $canonical): void
     {
-        $resolver = new AnalyticsEventNameResolver();
+        $resolver = new AnalyticsEventNameResolver;
 
         self::assertSame($canonical->value, $resolver->canonical($legacy));
         self::assertTrue($resolver->isKnown($legacy));
@@ -37,7 +37,7 @@ final class AnalyticsEventNameTest extends TestCase
 
     public function test_expands_canonical_names_with_all_legacy_aliases(): void
     {
-        $resolver = new AnalyticsEventNameResolver();
+        $resolver = new AnalyticsEventNameResolver;
 
         self::assertSame([
             'blog.post.viewed',
@@ -53,7 +53,7 @@ final class AnalyticsEventNameTest extends TestCase
 
     public function test_unknown_names_are_preserved_for_backward_compatibility(): void
     {
-        $resolver = new AnalyticsEventNameResolver();
+        $resolver = new AnalyticsEventNameResolver;
 
         self::assertSame('integration.custom-event', $resolver->canonical('integration.custom-event'));
         self::assertFalse($resolver->isKnown('integration.custom-event'));

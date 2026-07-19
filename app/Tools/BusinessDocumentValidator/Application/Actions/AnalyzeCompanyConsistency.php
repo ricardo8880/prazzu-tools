@@ -19,8 +19,7 @@ final readonly class AnalyzeCompanyConsistency
         private CompanyRegistryProvider $provider,
         private StateRegistrationValidatorRegistry $stateRegistrationValidators,
         private CompanyConsistencyAnalyzer $analyzer,
-    ) {
-    }
+    ) {}
 
     /** @param array<string, mixed> $data */
     public function execute(array $data): CompanyConsistencyAnalysisResult

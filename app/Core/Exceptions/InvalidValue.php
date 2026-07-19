@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace App\Core\Exceptions;
 
-final class InvalidValue extends CoreDomainException
-{
-}
+final class InvalidValue extends CoreDomainException {}

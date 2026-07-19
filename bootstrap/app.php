@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\CaptureAnalyticsContext;
+use App\Http\Middleware\EnsureAuthenticatedForPersistence;
+use App\Http\Middleware\EnsureInternalAdministrator;
+use App\Http\Middleware\EnsureToolFeatureAccess;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,13 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\CaptureAnalyticsContext::class,
+            CaptureAnalyticsContext::class,
         ]);
 
         $middleware->alias([
-            'internal.admin' => \App\Http\Middleware\EnsureInternalAdministrator::class,
-            'persistence.auth' => \App\Http\Middleware\EnsureAuthenticatedForPersistence::class,
-            'tool.feature' => \App\Http\Middleware\EnsureToolFeatureAccess::class,
+            'internal.admin' => EnsureInternalAdministrator::class,
+            'persistence.auth' => EnsureAuthenticatedForPersistence::class,
+            'tool.feature' => EnsureToolFeatureAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

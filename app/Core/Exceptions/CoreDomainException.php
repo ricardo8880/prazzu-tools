@@ -6,6 +6,4 @@ namespace App\Core\Exceptions;
 
 use DomainException;
 
-abstract class CoreDomainException extends DomainException
-{
-}
+abstract class CoreDomainException extends DomainException {}

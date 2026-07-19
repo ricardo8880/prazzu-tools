@@ -9,9 +9,7 @@ use Illuminate\View\View;
 
 final class ToolCatalogController extends Controller
 {
-    public function __construct(private readonly ToolCatalog $catalog)
-    {
-    }
+    public function __construct(private readonly ToolCatalog $catalog) {}
 
     public function index(Request $request, ?string $category = null): View
     {

@@ -16,7 +16,7 @@ use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
 
-final class Tool implements ToolModule, HasWebRoutes, HasViews, HasHistoryPolicy
+final class Tool implements HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
     /** @var array<int, string> */
     private const HISTORY_INPUT_FIELDS = [

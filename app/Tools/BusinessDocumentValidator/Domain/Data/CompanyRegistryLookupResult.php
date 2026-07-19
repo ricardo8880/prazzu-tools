@@ -12,8 +12,7 @@ final readonly class CompanyRegistryLookupResult
         public RegistryLookupStatus $status,
         public ?CompanyRegistryData $company,
         public string $message,
-    ) {
-    }
+    ) {}
 
     public static function found(CompanyRegistryData $company): self
     {

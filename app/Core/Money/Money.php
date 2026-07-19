@@ -13,8 +13,7 @@ final readonly class Money
     private function __construct(
         private int $minorAmount,
         private Currency $currency,
-    ) {
-    }
+    ) {}
 
     public static function fromMinor(int $minorAmount, Currency $currency = Currency::BRL): self
     {
@@ -30,7 +29,7 @@ final readonly class Money
             $normalized = str_replace(',', '.', $normalized);
         }
         $digits = $currency->fractionDigits();
-        $pattern = '/^([+-]?)(\d+)(?:\.(\d{1,'.$digits.'}))?$/' ;
+        $pattern = '/^([+-]?)(\d+)(?:\.(\d{1,'.$digits.'}))?$/';
 
         if (! preg_match($pattern, $normalized, $matches)) {
             throw new InvalidValue("Valor monetário inválido para {$currency->value}.");

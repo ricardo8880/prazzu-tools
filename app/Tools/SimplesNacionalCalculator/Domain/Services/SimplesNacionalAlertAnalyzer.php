@@ -16,8 +16,11 @@ use App\Tools\SimplesNacionalCalculator\Domain\Rules\SimplesNacionalTaxTable;
 final readonly class SimplesNacionalAlertAnalyzer
 {
     private const LIMIT_MINOR = 480_000_000;
+
     private const LIMIT_WARNING_MINOR = 432_000_000;
+
     private const FACTOR_R_THRESHOLD_UNITS = 28_000_000;
+
     private const FACTOR_R_SENSITIVITY_UNITS = 3_000_000;
 
     public function __construct(

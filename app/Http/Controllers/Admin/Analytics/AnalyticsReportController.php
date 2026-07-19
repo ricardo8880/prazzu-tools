@@ -49,7 +49,7 @@ final class AnalyticsReportController extends Controller
     public function storeSchedule(StoreAnalyticsReportScheduleRequest $request, ScheduledAnalyticsReportRunner $runner): RedirectResponse
     {
         $data = $request->validated();
-        $filters = collect($data)->except(['name','frequency','format'])->filter(fn ($value) => $value !== null && $value !== '')->all();
+        $filters = collect($data)->except(['name', 'frequency', 'format'])->filter(fn ($value) => $value !== null && $value !== '')->all();
         AnalyticsReportSchedule::query()->create([
             'name' => $data['name'], 'frequency' => $data['frequency'], 'format' => $data['format'],
             'filters' => $filters, 'is_active' => true, 'next_run_at' => $runner->nextRun($data['frequency']),
@@ -61,18 +61,21 @@ final class AnalyticsReportController extends Controller
     public function toggleSchedule(AnalyticsReportSchedule $schedule): RedirectResponse
     {
         $schedule->update(['is_active' => ! $schedule->is_active]);
+
         return back()->with('status', $schedule->is_active ? 'Agendamento ativado.' : 'Agendamento pausado.');
     }
 
     public function destroySchedule(AnalyticsReportSchedule $schedule): RedirectResponse
     {
         $schedule->delete();
+
         return back()->with('status', 'Agendamento removido.');
     }
 
     public function downloadSchedule(AnalyticsReportSchedule $schedule): StreamedResponse
     {
         abort_unless($schedule->last_file_path && Storage::disk('local')->exists($schedule->last_file_path), 404);
+
         return Storage::disk('local')->download($schedule->last_file_path);
     }
 }

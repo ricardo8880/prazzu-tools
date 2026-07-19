@@ -25,6 +25,7 @@ final readonly class ManageLaborTerminationHistory
     public function paginate(int $userId, int $perPage = 10, int $page = 1): LengthAwarePaginator
     {
         $result = $this->history->paginateSucceeded(new ToolRunHistoryQuery(self::TOOL_SLUG, $userId, $page, $perPage));
+
         return new LengthAwarePaginator($result->items, $result->total, $result->perPage, $result->page, ['path' => request()->url(), 'query' => request()->query()]);
     }
 

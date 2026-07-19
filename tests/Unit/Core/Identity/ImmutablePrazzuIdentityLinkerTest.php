@@ -16,7 +16,7 @@ final class ImmutablePrazzuIdentityLinkerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $linked = (new ImmutablePrazzuIdentityLinker())->link($user, 'prazzu-account-001');
+        $linked = (new ImmutablePrazzuIdentityLinker)->link($user, 'prazzu-account-001');
 
         $this->assertSame('prazzu-account-001', $linked->prazzu_account_id);
     }
@@ -27,6 +27,6 @@ final class ImmutablePrazzuIdentityLinkerTest extends TestCase
 
         $this->expectException(DomainException::class);
 
-        (new ImmutablePrazzuIdentityLinker())->link($user, 'prazzu-account-002');
+        (new ImmutablePrazzuIdentityLinker)->link($user, 'prazzu-account-002');
     }
 }

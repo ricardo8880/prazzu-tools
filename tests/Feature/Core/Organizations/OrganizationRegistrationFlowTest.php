@@ -6,7 +6,6 @@ use App\Core\Organizations\Actions\CreateOrganization;
 use App\Core\Organizations\Enums\OrganizationInvitationStatus;
 use App\Core\Organizations\Enums\OrganizationMemberRole;
 use App\Core\Organizations\Enums\OrganizationMemberStatus;
-use App\Models\Organization;
 use App\Models\OrganizationInvitation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

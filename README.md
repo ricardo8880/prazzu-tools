@@ -2,24 +2,44 @@
 
 ## O que é o Prazzu Tools
 
-O **Prazzu Tools** é uma plataforma modular de ferramentas rápidas e
-independentes para profissionais da contabilidade.
+O **Prazzu Tools** é uma plataforma de ferramentas profissionais voltada a
+contadores, profissionais contábeis e escritórios de contabilidade de todos os
+portes e especialidades.
 
-Cada ferramenta resolve uma tarefa pontual e objetiva, como calcular,
-validar, comparar, converter ou gerar um resultado. O fluxo esperado é
-direto: informar dados, executar a ferramenta e receber uma resposta clara.
+Seu propósito é reunir ferramentas realmente úteis para a rotina contábil,
+como calculadoras, validadores, simuladores, conversores, geradores,
+comparadores e utilitários técnicos. Cada ferramenta deve resolver um problema
+real de forma completa, objetiva, confiável e transparente.
 
-O projeto não acompanha operações ao longo do tempo e não administra
-clientes, processos, departamentos ou rotinas empresariais. Essas
-responsabilidades pertencem ao Prazzu Core ou a outro produto apropriado do
-ecossistema.
+O Prazzu Tools **não é um SaaS de gestão**. Ele não pretende administrar a
+operação de um escritório, controlar clientes, tarefas, processos,
+departamentos, documentos operacionais ou fluxos de trabalho. Essas
+responsabilidades pertencem ao **Prazzu Core**, produto separado do ecossistema
+Prazzu.
 
-A plataforma é construída para evoluir continuamente, recebendo novas
-ferramentas, novos recursos e novos serviços sem comprometer a
-estabilidade das funcionalidades já existentes.
+A identidade deste projeto é simples:
 
-Cada decisão arquitetural foi pensada para permitir crescimento a longo
-prazo.
+> O Prazzu Tools é uma plataforma especializada em ferramentas 100% úteis para
+> contadores e escritórios de contabilidade.
+
+Cada ferramenta possui estrutura, domínio, regras, interface e testes próprios.
+Uma ferramenta não deve depender de outra nem interferir em seu funcionamento.
+Isso permite criar, alterar ou remover módulos com baixo risco de regressão nas
+demais áreas da plataforma.
+
+A independência dos módulos não autoriza duplicação. Tudo que for genérico ou
+reutilizável deve permanecer fora do domínio das ferramentas e ser oferecido
+pela infraestrutura compartilhada do Prazzu Tools. Por exemplo, se várias
+ferramentas geram PDF, elas devem utilizar o mesmo serviço compartilhado de PDF,
+em vez de manter bibliotecas ou implementações próprias em cada módulo.
+
+Esse princípio também se aplica a exportações, histórico, favoritos, analytics,
+autenticação, armazenamento, notificações, inteligência artificial e qualquer
+outra capacidade transversal.
+
+A plataforma foi projetada para receber muitas ferramentas ao longo do tempo,
+sem transformar o projeto em um sistema monolítico e sem recriar soluções que já
+existem.
 
 ------------------------------------------------------------------------
 
@@ -156,11 +176,12 @@ Todo o restante é responsabilidade da infraestrutura compartilhada.
 
 # Limites do Produto
 
-O Prazzu Tools é uma plataforma de ferramentas.
+O Prazzu Tools é exclusivamente uma plataforma de ferramentas para o universo
+contábil.
 
-Ele não implementa funcionalidades de ERP, CRM, gestão de clientes,
-workflow empresarial, departamentos, processos internos ou colaboração
-entre usuários.
+Ele não implementa funcionalidades de ERP, CRM, gestão de clientes, gestão de
+escritório, workflow empresarial, departamentos, tarefas, processos internos,
+controle operacional ou colaboração entre usuários.
 
 Sempre que uma funcionalidade ultrapassar a missão de uma plataforma de
 ferramentas, ela deverá ser avaliada para outro produto do ecossistema,
@@ -170,11 +191,16 @@ como o Prazzu Core, e não incorporada ao Prazzu Tools.
 
 O projeto segue um princípio simples.
 
-> Tudo que pertence ao domínio de uma ferramenta permanece dentro da
-> própria ferramenta.
+> Tudo que pertence exclusivamente ao domínio de uma ferramenta permanece
+> dentro da própria ferramenta.
 
-> Tudo que pode ser reutilizado por duas ou mais ferramentas pertence ao
-> Core da plataforma.
+> Tudo que pode ser reutilizado por duas ou mais ferramentas pertence à
+> infraestrutura compartilhada do Prazzu Tools.
+
+Neste documento, a expressão **Core técnico** significa somente o núcleo
+compartilhado interno deste repositório. Ela não deve ser confundida com o
+**Prazzu Core**, que é outro produto do ecossistema e concentra funcionalidades
+de gestão empresarial.
 
 Isso permite que qualquer ferramenta evolua sem gerar impactos nas
 demais.
@@ -213,9 +239,9 @@ alterar as já existentes.
 
 ------------------------------------------------------------------------
 
-# Core compartilhado
+# Infraestrutura compartilhada
 
-O Core representa a infraestrutura comum da plataforma.
+O Core técnico representa a infraestrutura comum do Prazzu Tools.
 
 Entre suas responsabilidades estão:
 
@@ -238,6 +264,20 @@ Entre suas responsabilidades estão:
 As ferramentas conhecem apenas os contratos do Core.
 
 Elas nunca conhecem detalhes de implementação.
+
+------------------------------------------------------------------------
+
+# Identidade do produto: plataforma de ferramentas, não SaaS de gestão
+
+Recursos de conta, histórico, favoritos, exportação ou eventual acesso Plus são
+serviços de apoio às ferramentas. Eles não alteram a natureza do produto e não
+devem evoluir para funcionalidades de ERP, CRM, workflow, gestão de escritório
+ou colaboração operacional.
+
+Uma proposta nova só pertence ao Prazzu Tools quando melhora a descoberta, o
+uso, a execução ou a continuidade de uma ferramenta. Quando a proposta passa a
+gerenciar pessoas, clientes, empresas, tarefas, processos ou operações, ela deve
+ser direcionada ao Prazzu Core.
 
 ------------------------------------------------------------------------
 
@@ -364,7 +404,9 @@ princípios:
 -   infraestrutura compartilhada para funcionalidades comuns;
 -   código limpo e de fácil manutenção;
 -   evolução contínua da plataforma;
--   foco em problemas reais, pontuais e bem delimitados da rotina contábil.
+-   foco em problemas reais, pontuais e bem delimitados da rotina contábil;
+-   nenhuma evolução em direção a ERP, CRM ou SaaS de gestão;
+-   separação inequívoca entre o Core técnico deste projeto e o produto Prazzu Core.
 
 Esses princípios orientam tanto o desenvolvimento técnico quanto a
 evolução do produto.
@@ -436,11 +478,16 @@ sem causar impacto nas demais.
 
 ------------------------------------------------------------------------
 
-## 3. Tudo que pode ser reutilizado pertence ao Core
+## 3. Tudo que pode ser reutilizado pertence à infraestrutura compartilhada
 
 Sempre que uma funcionalidade puder ser utilizada por duas ou mais
 ferramentas, ela deixa de ser responsabilidade da ferramenta e passa a
-fazer parte da plataforma.
+fazer parte da infraestrutura compartilhada da plataforma.
+
+Cada ferramenta pode conter apenas sua integração e suas regras específicas de
+uso. A biblioteca, o adaptador ou o serviço genérico deve existir uma única vez.
+Por exemplo, quatro ferramentas que exportam PDF devem compartilhar o mesmo
+serviço de PDF; nenhuma delas deve instalar ou manter uma solução paralela.
 
 Exemplos:
 

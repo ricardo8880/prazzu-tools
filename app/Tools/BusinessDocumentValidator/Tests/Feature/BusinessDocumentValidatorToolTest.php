@@ -110,8 +110,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
         $this->post(route('tools.validador-de-cnpj.lookup-company'), [
             'cnpj' => '11.111.111/1111-11',
         ])->assertRedirect()
-            ->assertSessionHas('registry_lookup_result', fn (array $result): bool =>
-                $result['status'] === 'not_found'
+            ->assertSessionHas('registry_lookup_result', fn (array $result): bool => $result['status'] === 'not_found'
                 && str_contains($result['message'], 'matematicamente inválido')
             );
     }
@@ -170,7 +169,6 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             });
     }
 
-
     public function test_it_previews_a_csv_batch_import(): void
     {
         Storage::fake('local');
@@ -195,5 +193,4 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             'analysis_state_registration' => '110042490114',
         ])->assertSessionHasErrors('analysis_state');
     }
-
 }

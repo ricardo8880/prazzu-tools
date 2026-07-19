@@ -44,12 +44,12 @@ final class AnalyzeSimplesNacionalAlertsTest extends TestCase
 
     private function action(): AnalyzeSimplesNacionalAlerts
     {
-        $table = new SimplesNacionalTaxTable();
+        $table = new SimplesNacionalTaxTable;
 
         return new AnalyzeSimplesNacionalAlerts(
             new SimplesNacionalAlertAnalyzer(
                 new SimplesNacionalCalculator($table),
-                new FactorRCalculator(),
+                new FactorRCalculator,
                 $table,
             ),
         );

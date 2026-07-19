@@ -318,7 +318,6 @@ final class ArchitectureInspector
         return $violations;
     }
 
-
     /** @return list<ArchitectureViolation> */
     private function inspectFinancialPrimitivesOutsideDomain(): array
     {

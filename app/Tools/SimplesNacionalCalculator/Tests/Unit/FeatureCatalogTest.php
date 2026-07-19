@@ -18,7 +18,7 @@ final class FeatureCatalogTest extends TestCase
         self::assertSame(ToolFeatureTier::Plus, $manifest->feature('monthly_history')?->tier);
         self::assertCount(4, $manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertCount(5, $manifest->featuresFor(ToolFeatureTier::Plus));
-        self::assertSame('1.1.0', $manifest->version);
+        self::assertSame('1.2.0', $manifest->version);
         self::assertTrue($manifest->supportsHistory);
         self::assertTrue($manifest->storesSensitiveData);
         self::assertSame(['rbt12', 'monthly_revenue'], (new Tool)->historyPolicy()->sensitiveFields);

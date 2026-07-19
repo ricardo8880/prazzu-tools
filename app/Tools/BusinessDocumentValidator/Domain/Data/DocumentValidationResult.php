@@ -16,8 +16,7 @@ final readonly class DocumentValidationResult
         public bool $valid,
         public bool $automaticallyDetected,
         public array $messages,
-    ) {
-    }
+    ) {}
 
     /** @return array<string, bool|string|list<string>> */
     public function toArray(): array

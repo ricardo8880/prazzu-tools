@@ -34,13 +34,13 @@ final class BlogCategoryController extends Controller
     public function create(): View
     {
         return view('admin.blog.categories.create', [
-            'category' => new BlogCategory(),
+            'category' => new BlogCategory,
         ]);
     }
 
     public function store(SaveBlogCategoryRequest $request): RedirectResponse
     {
-        $category = new BlogCategory();
+        $category = new BlogCategory;
         $this->persist($category, $request);
 
         return redirect()

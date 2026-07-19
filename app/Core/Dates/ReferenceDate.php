@@ -10,9 +10,7 @@ use DateTimeInterface;
 
 final readonly class ReferenceDate
 {
-    private function __construct(private DateTimeImmutable $date)
-    {
-    }
+    private function __construct(private DateTimeImmutable $date) {}
 
     public static function fromString(string $date): self
     {

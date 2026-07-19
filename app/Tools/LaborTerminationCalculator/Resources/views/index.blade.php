@@ -14,7 +14,11 @@
     </nav>
 
     <x-tools.intro icon="briefcase" tone="pink" title="Calculadora de Rescisão Trabalhista" description="Informe os dados do vínculo para estimar as principais verbas de uma rescisão de contrato de trabalho." badge="Grátis">
-        @auth<x-slot:actions><a class="btn btn-outline-primary" href="{{ route('tools.calculadora-de-rescisao.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></x-slot:actions>@endauth
+        <x-slot:actions>
+            @auth
+                <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-de-rescisao.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>
+            @endauth
+        </x-slot:actions>
     </x-tools.intro>
 
     <x-tool-feature-tiers slug="calculadora-de-rescisao" />

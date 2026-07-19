@@ -17,7 +17,7 @@ final class CsvTabularFileReaderTest extends TestCase
         file_put_contents($path, "CNPJ;Razão Social;UF\n04.252.011/0001-10;Empresa Exemplo;SP\n");
         $file = new UploadedFile($path, 'empresas.csv', 'text/csv', null, true);
 
-        $dataset = (new CsvTabularFileReader())->read($file, 500);
+        $dataset = (new CsvTabularFileReader)->read($file, 500);
 
         self::assertSame(['CNPJ', 'Razão Social', 'UF'], $dataset->headers);
         self::assertSame('04.252.011/0001-10', $dataset->rows[0]['CNPJ']);
@@ -32,6 +32,6 @@ final class CsvTabularFileReaderTest extends TestCase
         $file = new UploadedFile($path, 'documentos.csv', 'text/csv', null, true);
 
         $this->expectException(InvalidImportFile::class);
-        (new CsvTabularFileReader())->read($file, 1);
+        (new CsvTabularFileReader)->read($file, 1);
     }
 }

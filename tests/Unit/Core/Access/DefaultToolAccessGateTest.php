@@ -19,7 +19,7 @@ final class DefaultToolAccessGateTest extends TestCase
     {
         $gate = new DefaultToolAccessGate($this->flags(true), $this->commercialPolicy(true));
 
-        self::assertTrue($gate->decide($this->manifest(ToolAccess::Free), new ToolAccessContext())->allowed);
+        self::assertTrue($gate->decide($this->manifest(ToolAccess::Free), new ToolAccessContext)->allowed);
     }
 
     public function test_monetized_mode_keeps_the_public_tool_available(): void
@@ -27,7 +27,7 @@ final class DefaultToolAccessGateTest extends TestCase
         $gate = new DefaultToolAccessGate($this->flags(true), $this->commercialPolicy(false));
         $manifest = $this->manifest(ToolAccess::Free);
 
-        self::assertTrue($gate->decide($manifest, new ToolAccessContext())->allowed);
+        self::assertTrue($gate->decide($manifest, new ToolAccessContext)->allowed);
     }
 
     public function test_internal_tool_requires_administrator_even_during_launch_free_mode(): void
@@ -35,7 +35,7 @@ final class DefaultToolAccessGateTest extends TestCase
         $gate = new DefaultToolAccessGate($this->flags(true), $this->commercialPolicy(true));
         $manifest = $this->manifest(ToolAccess::Internal);
 
-        self::assertFalse($gate->decide($manifest, new ToolAccessContext())->allowed);
+        self::assertFalse($gate->decide($manifest, new ToolAccessContext)->allowed);
         self::assertTrue($gate->decide($manifest, new ToolAccessContext(userId: 1, role: AccountRole::Administrator))->allowed);
     }
 
@@ -43,7 +43,7 @@ final class DefaultToolAccessGateTest extends TestCase
     {
         $gate = new DefaultToolAccessGate($this->flags(false), $this->commercialPolicy(true));
 
-        self::assertSame('tool.feature_disabled', $gate->decide($this->manifest(ToolAccess::Free), new ToolAccessContext())->reason);
+        self::assertSame('tool.feature_disabled', $gate->decide($this->manifest(ToolAccess::Free), new ToolAccessContext)->reason);
     }
 
     public function test_tool_status_can_block_execution_during_launch_free_mode(): void
@@ -60,7 +60,7 @@ final class DefaultToolAccessGateTest extends TestCase
             status: ToolStatus::Maintenance,
         );
 
-        self::assertSame('tool.status_blocks_execution', $gate->decide($manifest, new ToolAccessContext())->reason);
+        self::assertSame('tool.status_blocks_execution', $gate->decide($manifest, new ToolAccessContext)->reason);
     }
 
     private function manifest(ToolAccess $access): ToolManifest
@@ -79,17 +79,27 @@ final class DefaultToolAccessGateTest extends TestCase
 
     private function flags(bool $enabled): FeatureFlagRepository
     {
-        return new class($enabled) implements FeatureFlagRepository {
+        return new class($enabled) implements FeatureFlagRepository
+        {
             public function __construct(private readonly bool $enabled) {}
-            public function enabled(string $flag, bool $default = false): bool { return $this->enabled; }
+
+            public function enabled(string $flag, bool $default = false): bool
+            {
+                return $this->enabled;
+            }
         };
     }
 
     private function commercialPolicy(bool $launchFree): CommercialAccessPolicy
     {
-        return new class($launchFree) implements CommercialAccessPolicy {
+        return new class($launchFree) implements CommercialAccessPolicy
+        {
             public function __construct(private readonly bool $launchFree) {}
-            public function grantsPublicCapabilitiesWithoutAuthentication(): bool { return $this->launchFree; }
+
+            public function grantsPublicCapabilitiesWithoutAuthentication(): bool
+            {
+                return $this->launchFree;
+            }
         };
     }
 }
