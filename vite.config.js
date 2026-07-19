@@ -15,7 +15,7 @@ function toolAssetEntries(root = 'app/Tools') {
             continue;
         }
 
-        for (const asset of ['Resources/js/index.js', 'Resources/css/index.css']) {
+        for (const asset of ['Resources/js/index.js']) {
             const path = join(root, module.name, asset);
 
             if (existsSync(path)) {

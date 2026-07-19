@@ -18,7 +18,6 @@ import 'tinymce/plugins/table';
 import 'tinymce/plugins/visualblocks';
 import 'tinymce/plugins/wordcount';
 
-import 'tinymce/skins/ui/oxide/skin.css';
 
 const form = document.querySelector('[data-blog-post-form]');
 const contentField = document.querySelector('[data-blog-content-editor]');
