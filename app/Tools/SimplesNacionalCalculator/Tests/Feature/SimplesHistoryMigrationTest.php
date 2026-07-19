@@ -36,6 +36,7 @@ final class SimplesHistoryMigrationTest extends TestCase
             'estimated_das_cents' => 60_000,
             'effective_rate' => '4.0000',
             'payload' => json_encode([
+                'company_name' => 'Empresa que não pode ser migrada',
                 'annex' => 'I',
                 'monthly_revenue' => 'R$ 15.000,00',
                 'effective_rate' => '4.000000%',

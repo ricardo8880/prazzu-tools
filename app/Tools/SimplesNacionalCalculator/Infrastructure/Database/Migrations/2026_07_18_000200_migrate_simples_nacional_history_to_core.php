@@ -19,8 +19,12 @@ return new class extends Migration
 
     public function up(): void
     {
-        if (! Schema::hasTable('simples_nacional_calculations') || ! Schema::hasTable('tool_runs')) {
+        if (! Schema::hasTable('simples_nacional_calculations')) {
             return;
+        }
+
+        if (! Schema::hasTable('tool_runs')) {
+            throw new RuntimeException('O histórico central deve existir antes da migração do histórico do Simples Nacional.');
         }
 
         DB::table('simples_nacional_calculations')
@@ -151,6 +155,7 @@ return new class extends Migration
     {
         $decoded = json_decode((string) $calculation->payload, true);
         $result = is_array($decoded) ? $decoded : [];
+        unset($result['company_name']);
 
         return [
             ...$result,

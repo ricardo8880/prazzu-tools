@@ -72,7 +72,8 @@ vagas empresariais ou detalhes de cobrança.
 O histórico serve somente para recuperar cálculos pessoais. Ele não cria
 cadastro de empresa, carteira de clientes, colaboração, compartilhamento ou
 workflow. Registros da antiga tabela local são migrados sem o nome da empresa e
-a tabela legada é removida por migration própria.
+a tabela legada é removida por migration própria. Registros antigos sem titular
+autenticado não são migrados, pois não há identidade segura à qual vinculá-los.
 
 ## Histórico de versões
 
