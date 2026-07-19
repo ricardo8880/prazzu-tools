@@ -1,22 +1,5 @@
 <aside class="prazzu-right-sidebar d-none d-xxl-flex flex-column" aria-label="Conteúdo complementar">
     <div class="prazzu-sidebar-scroll p-3">
-        <section class="prazzu-panel p-3 mb-3" aria-labelledby="popular-tools-title">
-            <h2 id="popular-tools-title" class="h6 mb-3">Ferramentas populares</h2>
-            <div class="d-grid gap-3">
-                @foreach ($popularTools as $tool)
-                    <a class="prazzu-popular-tool text-decoration-none" href="{{ route('tools.show', $tool['slug']) }}">
-                        <span class="prazzu-icon-tile prazzu-icon-tile--{{ $tool['tone'] }}">
-                            <i class="bi {{ $tool['icon'] }}" aria-hidden="true"></i>
-                        </span>
-                        <span class="min-w-0">
-                            <strong class="d-block text-truncate">{{ $tool['name'] }}</strong>
-                            <small class="text-body-secondary">{{ $tool['uses_label'] ?? number_format($tool['uses_count'], 0, ',', '.').' usos' }}</small>
-                        </span>
-                    </a>
-                @endforeach
-            </div>
-        </section>
-
         <section class="prazzu-panel p-3 mb-3" aria-labelledby="featured-articles-title">
             <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
                 <h2 id="featured-articles-title" class="h6 mb-0">Artigos recentes</h2>

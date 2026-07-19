@@ -37,7 +37,7 @@ final class AccountingFeesHistoryTest extends TestCase
             ->assertDownload('historico-honorarios-contabeis.csv');
     }
 
-    public function test_owner_can_favorite_duplicate_share_and_delete_a_calculation(): void
+    public function test_owner_can_favorite_duplicate_and_delete_a_calculation(): void
     {
         $user = User::factory()->create();
 
@@ -51,15 +51,6 @@ final class AccountingFeesHistoryTest extends TestCase
             ->patch(route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation))
             ->assertRedirect();
         $this->assertTrue($calculation->fresh()->is_favorite);
-
-        $this->actingAs($user)
-            ->post(route('tools.calculadora-de-honorarios-contabeis.history.share', $calculation))
-            ->assertRedirect();
-        $this->assertNotNull($calculation->fresh()->share_token);
-
-        $this->get(route('tools.calculadora-de-honorarios-contabeis.shared', $calculation->fresh()->share_token))
-            ->assertOk()
-            ->assertSee('R$ 500,00');
 
         $this->actingAs($user)
             ->post(route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $calculation))

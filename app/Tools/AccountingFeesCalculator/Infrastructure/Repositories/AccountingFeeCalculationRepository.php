@@ -42,26 +42,12 @@ final class AccountingFeeCalculationRepository
             ->get();
     }
 
-    public function findShared(string $token): AccountingFeeCalculation
-    {
-        return AccountingFeeCalculation::query()
-            ->where('share_token', $token)
-            ->firstOrFail();
-    }
-
     public function toggleFavorite(AccountingFeeCalculation $calculation): bool
     {
         $favorite = ! $calculation->is_favorite;
         $calculation->update(['is_favorite' => $favorite]);
 
         return $favorite;
-    }
-
-    public function setShareToken(AccountingFeeCalculation $calculation, string $token): string
-    {
-        $calculation->update(['share_token' => $token]);
-
-        return $token;
     }
 
     public function delete(AccountingFeeCalculation $calculation): void

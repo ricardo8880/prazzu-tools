@@ -18,6 +18,8 @@ use App\Core\Imports\Services\CompositeTabularFileReader;
 use App\Core\Imports\Services\CsvTabularFileReader;
 use App\Core\Imports\Services\XlsxTabularFileReader;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
+use App\Core\Tools\History\Contracts\ToolRunHistory;
+use App\Core\Tools\History\Services\DatabaseToolRunHistory;
 use App\Core\Tools\History\Services\DatabaseToolRunRecorder;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(AuditLogger::class, DatabaseAuditLogger::class);
         $this->app->bind(ToolRunRecorder::class, DatabaseToolRunRecorder::class);
+        $this->app->bind(ToolRunHistory::class, DatabaseToolRunHistory::class);
         $this->app->bind(ImportDatasetStore::class, CacheImportDatasetStore::class);
         $this->app->bind(EnterpriseAccessResolver::class, DatabaseEnterpriseAccessResolver::class);
         $this->app->bind(OrganizationSeatCounter::class, DatabaseOrganizationSeatCounter::class);

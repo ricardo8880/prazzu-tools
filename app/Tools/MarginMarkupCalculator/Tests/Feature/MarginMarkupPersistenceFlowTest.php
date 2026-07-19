@@ -7,7 +7,6 @@ namespace App\Tools\MarginMarkupCalculator\Tests\Feature;
 use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Models\User;
-use App\Tools\MarginMarkupCalculator\Infrastructure\Models\MarginMarkupShare;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -59,52 +58,6 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
             'auditable_id' => $run->id,
             'actor_id' => $user->id,
         ]);
-    }
-
-    public function test_user_can_create_unlock_and_revoke_protected_share(): void
-    {
-        $user = User::factory()->create();
-        $run = $this->createRun($user, salePrice: 'R$ 250,00');
-
-        $this->actingAs($user)
-            ->from(route('tools.calculadora-margem-markup.history.show', $run))
-            ->post(route('tools.calculadora-margem-markup.history.share', $run), [
-                'validity_days' => 7,
-                'access_code' => '4321',
-            ])
-            ->assertRedirect(route('tools.calculadora-margem-markup.history.show', $run))
-            ->assertSessionHas('share_url');
-
-        $share = MarginMarkupShare::query()->sole();
-
-        $this->get(route('tools.calculadora-margem-markup.shared.show', $share->token))
-            ->assertOk()
-            ->assertSee('Conteúdo protegido')
-            ->assertDontSee('R$ 250,00');
-
-        $this->from(route('tools.calculadora-margem-markup.shared.show', $share->token))
-            ->post(route('tools.calculadora-margem-markup.shared.unlock', $share->token), [
-                'access_code' => 'incorreto',
-            ])
-            ->assertRedirect(route('tools.calculadora-margem-markup.shared.show', $share->token))
-            ->assertSessionHasErrors('access_code');
-
-        $this->post(route('tools.calculadora-margem-markup.shared.unlock', $share->token), [
-            'access_code' => '4321',
-        ])->assertRedirect(route('tools.calculadora-margem-markup.shared.show', $share->token));
-
-        $this->get(route('tools.calculadora-margem-markup.shared.show', $share->token))
-            ->assertOk()
-            ->assertSee('R$ 250,00');
-
-        $this->actingAs($user)
-            ->delete(route('tools.calculadora-margem-markup.history.share.revoke', $run))
-            ->assertRedirect();
-
-        $this->assertNotNull($share->fresh()->revoked_at);
-
-        $this->get(route('tools.calculadora-margem-markup.shared.show', $share->token))
-            ->assertGone();
     }
 
     private function createRun(User $user, string $salePrice): ToolRun

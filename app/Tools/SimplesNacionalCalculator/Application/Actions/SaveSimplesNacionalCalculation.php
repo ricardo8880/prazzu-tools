@@ -4,32 +4,40 @@ declare(strict_types=1);
 
 namespace App\Tools\SimplesNacionalCalculator\Application\Actions;
 
-use App\Tools\SimplesNacionalCalculator\Infrastructure\Repositories\SimplesNacionalCalculationRepository;
+use App\Core\Dates\ReferenceDate;
+use App\Core\Tools\History\Contracts\ToolRunHistory;
+use App\Core\Tools\History\Data\RuleVersion;
+use App\Tools\SimplesNacionalCalculator\Tool;
 
 final readonly class SaveSimplesNacionalCalculation
 {
     public function __construct(
         private CalculateSimplesNacional $calculate,
-        private SimplesNacionalCalculationRepository $calculations,
+        private ToolRunHistory $history,
+        private Tool $module,
     ) {}
 
-    /** @param array{company_name: string, reference_month: string, annex: string, rbt12: string, monthly_revenue: string} $input */
+    /** @param array{reference_month: string, annex: string, rbt12: string, monthly_revenue: string} $input */
     public function execute(array $input, int $userId): void
     {
-        $result = $this->calculate->execute($input);
-        $payload = $result->toArray();
-
-        $this->calculations->create([
-            'user_id' => $userId,
-            'session_key' => null,
-            'company_name' => $input['company_name'],
-            'reference_month' => $input['reference_month'].'-01',
-            'annex' => $result->annex->value,
-            'rbt12_cents' => $result->rbt12->minorAmount(),
-            'monthly_revenue_cents' => $result->monthlyRevenue->minorAmount(),
-            'estimated_das_cents' => $result->estimatedDas->minorAmount(),
-            'effective_rate' => str_replace(['%', ','], ['', '.'], (string) $payload['effective_rate']),
-            'payload' => $payload,
+        $result = $this->calculate->execute([
+            'annex' => $input['annex'],
+            'rbt12' => $input['rbt12'],
+            'monthly_revenue' => $input['monthly_revenue'],
         ]);
+
+        $this->history->recordSucceeded(
+            module: $this->module,
+            ruleVersion: new RuleVersion(Tool::HISTORY_RULE_VERSION),
+            referenceDate: ReferenceDate::fromString($input['reference_month'].'-01'),
+            input: [
+                'reference_month' => $input['reference_month'],
+                'annex' => $result->annex->value,
+                'rbt12' => $input['rbt12'],
+                'monthly_revenue' => $input['monthly_revenue'],
+            ],
+            result: $result->toArray(),
+            userId: $userId,
+        );
     }
 }

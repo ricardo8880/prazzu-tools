@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\AccountingFeesCalculator\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Exceptions\InvalidValue;
 use App\Core\Export\Services\TabularExportService;
 use App\Http\Controllers\Controller;
@@ -12,30 +13,20 @@ use App\Tools\AccountingFeesCalculator\Application\Actions\BuildCommercialPropos
 use App\Tools\AccountingFeesCalculator\Application\Actions\BuildServiceContract;
 use App\Tools\AccountingFeesCalculator\Application\Actions\CalculateAndStoreAccountingFees;
 use App\Tools\AccountingFeesCalculator\Application\Actions\CalculateAndStoreFeeAdjustment;
-use App\Tools\AccountingFeesCalculator\Application\Actions\DeleteAccountingClient;
 use App\Tools\AccountingFeesCalculator\Application\Actions\DeleteAccountingFeeCalculation;
 use App\Tools\AccountingFeesCalculator\Application\Actions\DeleteFeeAdjustment;
 use App\Tools\AccountingFeesCalculator\Application\Actions\DuplicateAccountingFeeCalculation;
-use App\Tools\AccountingFeesCalculator\Application\Actions\GetAccountingClientForEditing;
-use App\Tools\AccountingFeesCalculator\Application\Actions\GetSharedAccountingFeeCalculation;
-use App\Tools\AccountingFeesCalculator\Application\Actions\ListAccountingClients;
 use App\Tools\AccountingFeesCalculator\Application\Actions\ListAccountingFeeHistory;
 use App\Tools\AccountingFeesCalculator\Application\Actions\ListFeeAdjustments;
-use App\Tools\AccountingFeesCalculator\Application\Actions\PrepareNewAccountingClient;
-use App\Tools\AccountingFeesCalculator\Application\Actions\ShareAccountingFeeCalculation;
-use App\Tools\AccountingFeesCalculator\Application\Actions\StoreAccountingClient;
 use App\Tools\AccountingFeesCalculator\Application\Actions\ToggleAccountingFeeCalculationFavorite;
-use App\Tools\AccountingFeesCalculator\Application\Actions\UpdateAccountingClient;
 use App\Tools\AccountingFeesCalculator\Application\Data\AccountingFeesOwner;
-use App\Tools\AccountingFeesCalculator\Infrastructure\Models\AccountingClient;
 use App\Tools\AccountingFeesCalculator\Infrastructure\Models\AccountingFeeCalculation;
 use App\Tools\AccountingFeesCalculator\Infrastructure\Models\FeeAdjustment;
 use App\Tools\AccountingFeesCalculator\Presentation\Requests\CalculateAccountingFeesRequest;
 use App\Tools\AccountingFeesCalculator\Presentation\Requests\CalculateFeeAdjustmentRequest;
 use App\Tools\AccountingFeesCalculator\Presentation\Requests\GenerateCommercialProposalRequest;
 use App\Tools\AccountingFeesCalculator\Presentation\Requests\GenerateServiceContractRequest;
-use App\Tools\AccountingFeesCalculator\Presentation\Requests\StoreAccountingClientRequest;
-use App\Tools\AccountingFeesCalculator\Presentation\Requests\UpdateAccountingClientRequest;
+use App\Tools\AccountingFeesCalculator\Tool;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -53,9 +44,13 @@ final class AccountingFeesController extends Controller
     public function calculate(
         CalculateAccountingFeesRequest $request,
         CalculateAndStoreAccountingFees $action,
+        ToolPersistenceAuthorizer $persistence,
+        Tool $module,
     ): RedirectResponse {
+        $canPersist = $persistence->allowsHistory($module, $request->user());
+
         try {
-            $outcome = $action->execute($request->validated(), $this->owner($request));
+            $outcome = $action->execute($request->validated(), $this->owner($request), $canPersist);
         } catch (InvalidValue $exception) {
             throw ValidationException::withMessages([
                 'monthly_revenue' => $exception->getMessage(),
@@ -65,9 +60,11 @@ final class AccountingFeesController extends Controller
         return back()
             ->withInput()
             ->with('calculation_result', $outcome['result'])
-            ->with('success', $outcome['saved']
-                ? 'Cálculo concluído e salvo no seu histórico.'
-                : 'Cálculo concluído. Crie uma conta gratuita para salvar e recuperar seus resultados.');
+            ->with('success', $this->persistenceMessage(
+                saved: $outcome['saved'],
+                authenticated: $request->user() !== null,
+                resource: 'Cálculo',
+            ));
     }
 
     public function proposal(GenerateCommercialProposalRequest $request, BuildCommercialProposal $action): View
@@ -117,23 +114,6 @@ final class AccountingFeesController extends Controller
             : 'Cálculo removido dos favoritos.');
     }
 
-    public function shareCalculation(
-        Request $request,
-        AccountingFeeCalculation $calculation,
-        ShareAccountingFeeCalculation $action,
-    ): RedirectResponse {
-        $token = $action->execute($calculation, $this->owner($request));
-
-        return back()->with('share_url', route('tools.calculadora-de-honorarios-contabeis.shared', $token));
-    }
-
-    public function sharedCalculation(string $token, GetSharedAccountingFeeCalculation $action): View
-    {
-        return view('tools-calculadora-de-honorarios-contabeis::history.shared', [
-            'calculation' => $action->execute($token),
-        ]);
-    }
-
     public function exportHistory(
         Request $request,
         BuildAccountingFeeHistoryExport $action,
@@ -168,17 +148,23 @@ final class AccountingFeesController extends Controller
     public function calculateAdjustment(
         CalculateFeeAdjustmentRequest $request,
         CalculateAndStoreFeeAdjustment $action,
+        ToolPersistenceAuthorizer $persistence,
+        Tool $module,
     ): RedirectResponse {
+        $canPersist = $persistence->allowsHistory($module, $request->user());
+
         try {
-            $outcome = $action->execute($request->validated(), $this->owner($request));
+            $outcome = $action->execute($request->validated(), $this->owner($request), $canPersist);
         } catch (InvalidValue $exception) {
             throw ValidationException::withMessages(['percentage' => $exception->getMessage()]);
         }
 
         return redirect()->route('tools.calculadora-de-honorarios-contabeis.adjustments.index')
-            ->with('success', $outcome['saved']
-                ? 'Reajuste calculado e salvo no seu histórico.'
-                : 'Reajuste calculado. Crie uma conta gratuita para salvar este resultado.')
+            ->with('success', $this->persistenceMessage(
+                saved: $outcome['saved'],
+                authenticated: $request->user() !== null,
+                resource: 'Reajuste',
+            ))
             ->with('adjustment_result', $outcome['result']);
     }
 
@@ -192,83 +178,13 @@ final class AccountingFeesController extends Controller
         return back()->with('success', 'Reajuste removido do histórico.');
     }
 
-    public function crm(Request $request, ListAccountingClients $action): View
-    {
-        $search = trim((string) $request->query('search'));
-        $status = (string) $request->query('status');
-        $listing = $action->execute($this->owner($request), $search, $status);
-
-        return view('tools-calculadora-de-honorarios-contabeis::crm.index', [
-            ...$listing,
-            'search' => $search,
-            'status' => $status,
-        ]);
-    }
-
-    public function createClient(PrepareNewAccountingClient $action): View
-    {
-        return view('tools-calculadora-de-honorarios-contabeis::crm.form', [
-            'client' => $action->execute(),
-        ]);
-    }
-
-    public function storeClient(
-        StoreAccountingClientRequest $request,
-        StoreAccountingClient $action,
-    ): RedirectResponse {
-        try {
-            $action->execute($request->validated(), $this->owner($request));
-        } catch (InvalidValue $exception) {
-            throw ValidationException::withMessages(['monthly_fee' => $exception->getMessage()]);
-        }
-
-        return redirect()->route('tools.calculadora-de-honorarios-contabeis.crm.index')
-            ->with('success', 'Cliente adicionado ao CRM.');
-    }
-
-    public function editClient(
-        Request $request,
-        AccountingClient $client,
-        GetAccountingClientForEditing $action,
-    ): View {
-        return view('tools-calculadora-de-honorarios-contabeis::crm.form', [
-            'client' => $action->execute($client, $this->owner($request)),
-        ]);
-    }
-
-    public function updateClient(
-        UpdateAccountingClientRequest $request,
-        AccountingClient $client,
-        UpdateAccountingClient $action,
-    ): RedirectResponse {
-        try {
-            $action->execute($client, $request->validated(), $this->owner($request));
-        } catch (InvalidValue $exception) {
-            throw ValidationException::withMessages(['monthly_fee' => $exception->getMessage()]);
-        }
-
-        return redirect()->route('tools.calculadora-de-honorarios-contabeis.crm.index')
-            ->with('success', 'Cadastro atualizado com sucesso.');
-    }
-
-    public function deleteClient(
-        Request $request,
-        AccountingClient $client,
-        DeleteAccountingClient $action,
-    ): RedirectResponse {
-        $action->execute($client, $this->owner($request));
-
-        return redirect()->route('tools.calculadora-de-honorarios-contabeis.crm.index')
-            ->with('success', 'Cliente removido do CRM.');
-    }
-
     private function owner(Request $request): AccountingFeesOwner
     {
-        $sessionKey = (string) $request->session()->get('accounting_fees_crm_key');
+        $sessionKey = (string) $request->session()->get('accounting_fees_history_key');
 
         if ($sessionKey === '') {
             $sessionKey = (string) Str::uuid();
-            $request->session()->put('accounting_fees_crm_key', $sessionKey);
+            $request->session()->put('accounting_fees_history_key', $sessionKey);
         }
 
         return new AccountingFeesOwner(
@@ -277,5 +193,18 @@ final class AccountingFeesController extends Controller
                 : (int) $request->user()->getAuthIdentifier(),
             sessionKey: $sessionKey,
         );
+    }
+
+    private function persistenceMessage(bool $saved, bool $authenticated, string $resource): string
+    {
+        if ($saved) {
+            return "{$resource} concluído e salvo no seu histórico.";
+        }
+
+        if (! $authenticated) {
+            return "{$resource} concluído. Entre em uma conta para salvar quando o histórico estiver disponível.";
+        }
+
+        return "{$resource} concluído. O histórico é um recurso de continuidade do Prazzu Plus.";
     }
 }

@@ -24,20 +24,20 @@ final class DefaultToolAccessContextResolverTest extends TestCase
 
     public function test_it_normalizes_the_authenticated_users_role_and_plan(): void
     {
-        $user = $this->user(AccountRole::Manager, SubscriptionPlan::Premium);
+        $user = $this->user(AccountRole::Manager, SubscriptionPlan::Plus);
 
         $context = $this->resolver(false)->resolve($user);
 
         self::assertSame(10, $context->userId);
         self::assertSame(AccountRole::Manager, $context->role);
-        self::assertSame(SubscriptionPlan::Premium, $context->plan);
+        self::assertSame(SubscriptionPlan::Plus, $context->plan);
     }
 
     public function test_enterprise_access_upgrades_the_effective_plan_in_core(): void
     {
         $user = $this->user(AccountRole::User, SubscriptionPlan::Free);
 
-        self::assertSame(SubscriptionPlan::Premium, $this->resolver(true)->resolve($user)->plan);
+        self::assertSame(SubscriptionPlan::Plus, $this->resolver(true)->resolve($user)->plan);
     }
 
     private function user(AccountRole $role, SubscriptionPlan $plan): User

@@ -40,6 +40,18 @@ da disponibilidade de provedores externos.
 - auditoria de execuções e exclusões por contratos do Core;
 - métricas de processamento e exportação pelo contrato `PlatformAnalytics`.
 
+## Experiência Essencial
+
+A experiência gratuita valida individualmente CPF, CNPJ e Inscrição Estadual,
+consulta o cadastro do CNPJ e apresenta a análise individual de inconsistências
+completa. Nenhum diagnóstico correto fica condicionado ao Plus.
+
+## Prazzu Plus
+
+O Plus acrescenta produtividade para volumes maiores: importação e validação em
+lote, mapeamento de colunas, exportações, relatório do lote e histórico.
+Durante o lançamento, a política central libera esses recursos gratuitamente.
+
 ## Regras
 
 - Validade matemática não depende de consulta externa.

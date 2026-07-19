@@ -24,7 +24,7 @@ final class AccountingFeesAdjustmentTest extends TestCase
     {
         $response = $this->actingAs(User::factory()->create())
             ->post(route('tools.calculadora-de-honorarios-contabeis.adjustments.calculate'), [
-                'client_name' => 'Empresa Exemplo',
+                'scenario_label' => 'Renovação anual — cenário A',
                 'index_type' => 'ipca',
                 'reference_period' => '2026-07',
                 'current_value' => '1.500,00',
@@ -41,13 +41,13 @@ final class AccountingFeesAdjustmentTest extends TestCase
         self::assertSame(150000, $adjustment->current_value_cents);
         self::assertSame(156930, $adjustment->adjusted_value_cents);
         self::assertSame('4.6200', $adjustment->percentage);
-        self::assertSame('Empresa Exemplo', $adjustment->client_name);
+        self::assertSame('Renovação anual — cenário A', $adjustment->scenario_label);
     }
 
     public function test_it_validates_adjustment_data(): void
     {
         $this->post(route('tools.calculadora-de-honorarios-contabeis.adjustments.calculate'), [])
-            ->assertSessionHasErrors(['client_name', 'index_type', 'reference_period', 'current_value', 'percentage']);
+            ->assertSessionHasErrors(['scenario_label', 'index_type', 'reference_period', 'current_value', 'percentage']);
     }
 
     public function test_only_the_owner_can_delete_an_adjustment(): void
@@ -56,7 +56,7 @@ final class AccountingFeesAdjustmentTest extends TestCase
         $otherUser = User::factory()->create();
         $adjustment = FeeAdjustment::query()->create([
             'user_id' => $owner->getAuthIdentifier(),
-            'client_name' => 'Empresa Exemplo',
+            'scenario_label' => 'Renovação anual — cenário A',
             'index_type' => 'ipca',
             'reference_period' => '2026-07',
             'percentage' => '4.6200',

@@ -97,7 +97,7 @@ final class SimplesNacionalPlusController extends Controller
         DeleteSimplesNacionalCalculation $action,
     ): RedirectResponse {
         $action->execute(
-            (int) $calculation,
+            $calculation,
             (int) $request->user()->getAuthIdentifier(),
         );
 

@@ -7,9 +7,11 @@ namespace App\Tools\{{ class }};
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 
 final class Tool implements ToolModule, HasWebRoutes, HasViews
@@ -24,9 +26,13 @@ final class Tool implements ToolModule, HasWebRoutes, HasViews
             icon: 'bi-tools',
             routeName: '{{ route_prefix }}.index',
             version: '0.1.0',
-            access: ToolAccess::{{ access_case }},
+            access: ToolAccess::Free,
             status: ToolStatus::{{ status_case }},
             keywords: [],
+            features: [
+                new ToolFeature('solve_problem', 'Solução completa do problema', ToolFeatureTier::Essential),
+                new ToolFeature('advanced_productivity', 'Produtividade avançada', ToolFeatureTier::Plus),
+            ],
         );
     }
 

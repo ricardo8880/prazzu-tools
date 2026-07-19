@@ -23,6 +23,18 @@ ao histórico criptografado e aos contratos compartilhados do Prazzu Tools.
 - relatório completo otimizado para impressão e salvamento como PDF pelo
   navegador.
 
+## Experiência Essencial
+
+A experiência gratuita calcula integralmente todas as verbas, descontos,
+tributos, FGTS e alertas aplicáveis e entrega o relatório completo do cálculo
+atual. O Plus não altera fórmulas nem libera parcelas ocultas do resultado.
+
+## Prazzu Plus
+
+O Plus oferece continuidade: histórico individual, recuperação, repetição e
+relatório de cálculos salvos. Durante o lançamento, esses recursos ficam
+liberados pela política comercial central, mantendo login apenas para salvar.
+
 ## Regras
 
 - Os resultados são estimativas informativas e não substituem TRCT, documentos

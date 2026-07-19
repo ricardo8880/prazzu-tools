@@ -18,10 +18,10 @@ final readonly class CalculateAndStoreAccountingFees
      * @param  array<string, mixed>  $input
      * @return array{result: array<string, mixed>, saved: bool}
      */
-    public function execute(array $input, AccountingFeesOwner $owner): array
+    public function execute(array $input, AccountingFeesOwner $owner, bool $persist): array
     {
         $result = $this->calculate->execute($input)->toArray();
-        $saved = $owner->userId !== null;
+        $saved = $persist && $owner->userId !== null;
 
         if ($saved) {
             $this->calculations->store($owner, $input, $result);

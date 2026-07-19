@@ -25,7 +25,7 @@ final readonly class DefaultToolAccessContextResolver implements ToolAccessConte
         $plan = $this->subscriptionPlan(data_get($user, 'subscription_plan'));
 
         if ($userId !== null && $this->enterpriseAccess->grantsPlusAccessTo($userId)) {
-            $plan = SubscriptionPlan::Premium;
+            $plan = SubscriptionPlan::Plus;
         }
 
         return new ToolAccessContext(

@@ -8,30 +8,65 @@ use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Data\ToolHistoryPolicy;
 
-final class Tool implements HasMigrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasHistoryPolicy, HasMigrations, HasViews, HasWebRoutes, ToolModule
 {
+    public const SLUG = 'calculadora-simples-nacional';
+
+    public const HISTORY_RULE_VERSION = '1.0.0';
+
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'calculadora-simples-nacional',
+            slug: self::SLUG,
             name: 'Calculadora de Simples Nacional',
             description: 'Estime o DAS, identifique faixa, anexo e alíquota efetiva, incluindo análise do Fator R.',
             category: ToolCategory::Fiscal,
             icon: 'bi-calculator',
             routeName: 'tools.calculadora-simples-nacional.index',
-            version: '1.0.0',
+            version: '1.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 10,
             featured: true,
-            supportsHistory: false,
-            storesSensitiveData: false,
+            supportsHistory: true,
+            storesSensitiveData: true,
             keywords: ['simples nacional', 'das', 'fator r', 'anexo', 'alíquota efetiva'],
+            features: [
+                new ToolFeature('calculate', 'Cálculo por anexo e faixa', ToolFeatureTier::Essential),
+                new ToolFeature('factor_r', 'Cálculo do Fator R', ToolFeatureTier::Essential),
+                new ToolFeature('effective_rate', 'Alíquota efetiva', ToolFeatureTier::Essential),
+                new ToolFeature('estimated_das', 'DAS estimado', ToolFeatureTier::Essential),
+                new ToolFeature('compare_scenarios', 'Comparação de cenários', ToolFeatureTier::Plus),
+                new ToolFeature('compare_annexes', 'Comparação entre anexos', ToolFeatureTier::Plus),
+                new ToolFeature('annual_projection', 'Projeção anual', ToolFeatureTier::Plus),
+                new ToolFeature('alerts', 'Alertas tributários', ToolFeatureTier::Plus),
+                new ToolFeature('monthly_history', 'Histórico mensal', ToolFeatureTier::Plus),
+            ],
+        );
+    }
+
+    public function historyPolicy(): ToolHistoryPolicy
+    {
+        return new ToolHistoryPolicy(
+            enabled: true,
+            retentionDays: 365,
+            inputFields: ['reference_month', 'annex', 'rbt12', 'monthly_revenue'],
+            resultFields: [
+                'annex', 'annex_label', 'rbt12', 'monthly_revenue', 'bracket',
+                'bracket_from', 'bracket_until', 'nominal_rate', 'deduction',
+                'effective_rate', 'estimated_das', 'formula', 'rule_version',
+                'rule_valid_from',
+            ],
+            sensitiveFields: ['rbt12', 'monthly_revenue'],
         );
     }
 

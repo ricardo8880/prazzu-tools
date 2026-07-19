@@ -9,6 +9,7 @@ use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use ReflectionClass;
@@ -19,6 +20,18 @@ final class ToolModuleValidator
     {
         $manifest = $module->manifest();
         $expectedRoutePrefix = "tools.{$manifest->slug}.";
+
+        if ($manifest->featuresFor(ToolFeatureTier::Essential) === []) {
+            throw new InvalidArgumentException(
+                "A ferramenta [{$manifest->slug}] deve declarar ao menos um recurso Essencial completo.",
+            );
+        }
+
+        if ($manifest->featuresFor(ToolFeatureTier::Plus) === []) {
+            throw new InvalidArgumentException(
+                "A ferramenta [{$manifest->slug}] deve declarar ao menos um recurso Prazzu Plus avançado.",
+            );
+        }
 
         if (! str_starts_with($manifest->routeName, $expectedRoutePrefix)) {
             throw new InvalidArgumentException(

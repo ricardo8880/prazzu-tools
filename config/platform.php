@@ -53,7 +53,7 @@ return [
         'criar-conta' => [
             'title' => 'Crie sua conta gratuita',
             'eyebrow' => 'Área do usuário',
-            'description' => 'A estrutura está pronta para receber cadastro, favoritos, histórico e recursos premium.',
+            'description' => 'A estrutura está pronta para receber cadastro, favoritos, histórico e recursos Prazzu Plus.',
             'icon' => 'bi-person-plus',
         ],
         'prazzu' => [

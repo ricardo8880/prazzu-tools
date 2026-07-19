@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\SimplesNacionalCalculator\Presentation\Controllers;
 
+use App\Core\Access\Contracts\ToolFeatureAccessGate;
 use App\Core\Exceptions\InvalidValue;
+use App\Core\Tools\ToolRegistry;
 use App\Http\Controllers\Controller;
-use App\Tools\SimplesNacionalCalculator\Application\Access\SimplesNacionalFeatureGate;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\CalculateFactorR;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\CalculateSimplesNacional;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\ListSimplesNacionalCalculations;
@@ -22,9 +23,13 @@ final class SimplesNacionalController extends Controller
 {
     public function index(
         Request $request,
-        SimplesNacionalFeatureGate $featureGate,
+        ToolFeatureAccessGate $featureGate,
+        ToolRegistry $tools,
         ListSimplesNacionalCalculations $history,
     ): View {
+        $manifest = $tools->findManifest('calculadora-simples-nacional');
+        abort_if($manifest === null, 404);
+
         return view('tools-calculadora-simples-nacional::index', [
             'annexes' => TaxAnnex::cases(),
             'history' => $history->recent(
@@ -39,7 +44,7 @@ final class SimplesNacionalController extends Controller
                 SimplesNacionalFeature::AnnualProjection,
                 SimplesNacionalFeature::Alerts,
             ])->mapWithKeys(fn (SimplesNacionalFeature $feature): array => [
-                $feature->value => $featureGate->decide($feature, $request->user())->allowed,
+                $feature->value => $featureGate->decide($manifest, $feature->value, $request->user())->allowed,
             ])->all(),
         ]);
     }

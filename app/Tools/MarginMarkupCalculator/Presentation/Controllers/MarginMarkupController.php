@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\MarginMarkupCalculator\Presentation\Controllers;
 
-use App\Core\Access\Contracts\ToolAccessContextResolver;
-use App\Core\Access\Data\AccessDecision;
-use App\Core\Access\Services\ToolExecutionAuthorizer;
+use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
 use App\Core\Export\Data\PrintableDocument;
@@ -16,30 +14,23 @@ use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Core\Usage\Contracts\UsageMetrics;
-use App\Core\Usage\Data\UsageLimit;
 use App\Http\Controllers\Controller;
 use App\Tools\MarginMarkupCalculator\Application\Actions\CalculateMarginMarkup;
 use App\Tools\MarginMarkupCalculator\Application\Actions\CalculateMarginMarkupBatch;
-use App\Tools\MarginMarkupCalculator\Application\Actions\CreateMarginMarkupShare;
 use App\Tools\MarginMarkupCalculator\Application\Actions\DeleteMarginMarkupHistory;
 use App\Tools\MarginMarkupCalculator\Application\Actions\ListMarginMarkupHistory;
 use App\Tools\MarginMarkupCalculator\Application\Actions\PrepareMarginMarkupHistoryReport;
 use App\Tools\MarginMarkupCalculator\Application\Actions\PreviewProductImport;
 use App\Tools\MarginMarkupCalculator\Application\Actions\ProcessProductImport;
 use App\Tools\MarginMarkupCalculator\Application\Actions\RepeatMarginMarkupHistory;
-use App\Tools\MarginMarkupCalculator\Application\Actions\RevokeMarginMarkupShare;
 use App\Tools\MarginMarkupCalculator\Application\Actions\ShowMarginMarkupHistory;
-use App\Tools\MarginMarkupCalculator\Application\Actions\ShowSharedMarginMarkup;
 use App\Tools\MarginMarkupCalculator\Application\Actions\SimulatePricingScenarios;
-use App\Tools\MarginMarkupCalculator\Application\Actions\UnlockSharedMarginMarkup;
 use App\Tools\MarginMarkupCalculator\Domain\Calculators\MarginMarkupCalculator;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\CalculateMarginMarkupBatchRequest;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\CalculateMarginMarkupRequest;
-use App\Tools\MarginMarkupCalculator\Presentation\Requests\CreateMarginMarkupShareRequest;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\PreviewProductImportRequest;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\ProcessProductImportRequest;
 use App\Tools\MarginMarkupCalculator\Presentation\Requests\SimulatePricingScenariosRequest;
-use App\Tools\MarginMarkupCalculator\Presentation\Requests\UnlockMarginMarkupShareRequest;
 use App\Tools\MarginMarkupCalculator\Tool;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -50,12 +41,6 @@ use Throwable;
 
 final class MarginMarkupController extends Controller
 {
-    private const USAGE_LIMIT = 20;
-
-    private const USAGE_WINDOW_SECONDS = 3600;
-
-    public function __construct(private readonly ToolAccessContextResolver $accessContextResolver) {}
-
     public function index(): View
     {
         return view('tools-calculadora-margem-markup::index');
@@ -64,21 +49,18 @@ final class MarginMarkupController extends Controller
     public function calculate(
         CalculateMarginMarkupRequest $request,
         CalculateMarginMarkup $action,
-        ToolExecutionAuthorizer $authorizer,
         ToolRunRecorder $recorder,
+        ToolPersistenceAuthorizer $persistence,
         UsageMetrics $metrics,
         Tool $module,
     ): RedirectResponse {
         $user = $request->user();
-        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
-
         $input = $request->validated();
         $startedAt = hrtime(true);
         $run = null;
 
         try {
-            // O histórico persistente fica restrito a usuários autenticados.
-            if ($user !== null) {
+            if ($persistence->allowsHistory($module, $user)) {
                 $run = $recorder->start(
                     module: $module,
                     ruleVersion: new RuleVersion(MarginMarkupCalculator::RULE_VERSION),
@@ -120,15 +102,14 @@ final class MarginMarkupController extends Controller
     public function calculateBatch(
         CalculateMarginMarkupBatchRequest $request,
         CalculateMarginMarkupBatch $action,
-        ToolExecutionAuthorizer $authorizer,
         ToolRunRecorder $recorder,
+        ToolPersistenceAuthorizer $persistence,
         UsageMetrics $metrics,
         Tool $module,
     ): RedirectResponse {
-        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
         $input = $request->validated();
         $startedAt = hrtime(true);
-        $run = $this->startRun($request, $recorder, $module, $input, 'batch');
+        $run = $this->startRun($request, $recorder, $module, $persistence, $input, 'batch');
 
         try {
             $results = $action->execute($input['products']);
@@ -156,15 +137,14 @@ final class MarginMarkupController extends Controller
     public function simulateScenarios(
         SimulatePricingScenariosRequest $request,
         SimulatePricingScenarios $action,
-        ToolExecutionAuthorizer $authorizer,
         ToolRunRecorder $recorder,
+        ToolPersistenceAuthorizer $persistence,
         UsageMetrics $metrics,
         Tool $module,
     ): RedirectResponse {
-        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
         $input = $request->validated();
         $startedAt = hrtime(true);
-        $run = $this->startRun($request, $recorder, $module, $input, 'scenarios');
+        $run = $this->startRun($request, $recorder, $module, $persistence, $input, 'scenarios');
 
         try {
             $results = $action->execute($input);
@@ -192,13 +172,10 @@ final class MarginMarkupController extends Controller
     public function export(
         CalculateMarginMarkupRequest $request,
         CalculateMarginMarkup $action,
-        ToolExecutionAuthorizer $authorizer,
         UsageMetrics $metrics,
         Tool $module,
         TabularExportService $exporter,
     ): StreamedResponse {
-        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
-
         $validated = $request->validated();
         $startedAt = hrtime(true);
 
@@ -238,11 +215,7 @@ final class MarginMarkupController extends Controller
         CalculateMarginMarkupRequest $request,
         CalculateMarginMarkup $action,
         BrowserPrintExporter $exporter,
-        ToolExecutionAuthorizer $authorizer,
-        Tool $module,
     ): View {
-        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
-
         try {
             $input = $request->validated();
             $result = $action->execute($input)->toArray();
@@ -256,12 +229,8 @@ final class MarginMarkupController extends Controller
     public function exportBatch(
         CalculateMarginMarkupBatchRequest $request,
         CalculateMarginMarkupBatch $action,
-        ToolExecutionAuthorizer $authorizer,
-        Tool $module,
         TabularExportService $exporter,
     ): StreamedResponse {
-        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
-
         $input = $request->validated();
         $results = $action->execute($input['products']);
 
@@ -278,12 +247,8 @@ final class MarginMarkupController extends Controller
     public function exportScenarios(
         SimulatePricingScenariosRequest $request,
         SimulatePricingScenarios $action,
-        ToolExecutionAuthorizer $authorizer,
-        Tool $module,
         TabularExportService $exporter,
     ): StreamedResponse {
-        $this->ensureExecutionIsAllowed($request, $authorizer, $module);
-
         $results = $action->execute($request->validated());
 
         return $exporter->csv(
@@ -352,59 +317,6 @@ final class MarginMarkupController extends Controller
             ->with('history_message', 'Registro removido do histórico.');
     }
 
-    public function createShare(
-        CreateMarginMarkupShareRequest $request,
-        ToolRun $run,
-        CreateMarginMarkupShare $action,
-    ): RedirectResponse {
-        $share = $action->execute(
-            $run,
-            (int) $request->user()->getAuthIdentifier(),
-            (int) $request->validated('validity_days'),
-            $request->filled('access_code') ? (string) $request->validated('access_code') : null,
-        );
-
-        return back()->with(
-            'share_url',
-            route('tools.calculadora-margem-markup.shared.show', $share->token),
-        );
-    }
-
-    public function revokeShare(
-        Request $request,
-        ToolRun $run,
-        RevokeMarginMarkupShare $action,
-    ): RedirectResponse {
-        $action->execute($run, (int) $request->user()->getAuthIdentifier());
-
-        return back()->with('history_message', 'Link de compartilhamento revogado.');
-    }
-
-    public function shared(
-        string $token,
-        Request $request,
-        ShowSharedMarginMarkup $action,
-    ): View {
-        return view('tools-calculadora-margem-markup::shared.show', $action->execute(
-            $token,
-            $request->session()->get($this->shareSessionKey($token)) === true,
-        ));
-    }
-
-    public function unlockShared(
-        string $token,
-        UnlockMarginMarkupShareRequest $request,
-        UnlockSharedMarginMarkup $action,
-    ): RedirectResponse {
-        $share = $action->execute($token, (string) $request->validated('access_code'));
-        $request->session()->put($this->shareSessionKey($share->token), true);
-
-        return redirect()->route(
-            'tools.calculadora-margem-markup.shared.show',
-            $share->token,
-        );
-    }
-
     public function previewImport(PreviewProductImportRequest $request, PreviewProductImport $action): RedirectResponse
     {
         try {
@@ -438,37 +350,6 @@ final class MarginMarkupController extends Controller
         );
     }
 
-    private function ensureExecutionIsAllowed(
-        Request $request,
-        ToolExecutionAuthorizer $authorizer,
-        Tool $module,
-    ): void {
-        $user = $request->user();
-        $context = $this->accessContextResolver->resolve($user);
-        $subject = $user !== null ? 'user:'.$user->id : 'ip:'.($request->ip() ?? 'unknown');
-        $decision = $authorizer->authorize(
-            manifest: $module->manifest(),
-            context: $context,
-            subjectKey: $subject,
-            limit: new UsageLimit(self::USAGE_LIMIT, self::USAGE_WINDOW_SECONDS),
-        );
-
-        if (! $decision->allowed) {
-            $this->abortForDeniedAccess($decision);
-        }
-    }
-
-    private function abortForDeniedAccess(AccessDecision $decision): never
-    {
-        match ($decision->reason) {
-            'tool.authentication_required' => abort(401, 'É necessário entrar para utilizar esta ferramenta.'),
-            'tool.premium_required', 'tool.internal_only' => abort(403, 'Você não possui permissão para utilizar esta ferramenta.'),
-            'tool.feature_disabled', 'tool.status_blocks_execution' => abort(503, 'Esta ferramenta está temporariamente indisponível.'),
-            'tool.usage_limit_reached' => abort(429, 'O limite de uso desta ferramenta foi atingido.'),
-            default => abort(403, 'A execução desta ferramenta não foi autorizada.'),
-        };
-    }
-
     private function importOwnerKey(Request $request): string
     {
         return $request->user() !== null
@@ -477,9 +358,15 @@ final class MarginMarkupController extends Controller
     }
 
     /** @param array<string, mixed> $input */
-    private function startRun(Request $request, ToolRunRecorder $recorder, Tool $module, array $input, string $type): ?ToolRun
-    {
-        if ($request->user() === null) {
+    private function startRun(
+        Request $request,
+        ToolRunRecorder $recorder,
+        Tool $module,
+        ToolPersistenceAuthorizer $persistence,
+        array $input,
+        string $type,
+    ): ?ToolRun {
+        if (! $persistence->allowsHistory($module, $request->user())) {
             return null;
         }
         $input['calculation_type'] = $type;
@@ -505,11 +392,6 @@ final class MarginMarkupController extends Controller
             summaryLabel: 'Preço de venda sugerido',
             summaryValue: $result['sale_price'] ?? '—',
         ));
-    }
-
-    private function shareSessionKey(string $token): string
-    {
-        return 'margin_markup_share_unlocked_'.$token;
     }
 
     private function recordFailure(ToolRunRecorder $recorder, ?ToolRun $run, string $errorCode): void

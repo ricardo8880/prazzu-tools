@@ -8,7 +8,6 @@ enum ToolCategory: string
     case Calculators = 'calculadoras';
     case Converters = 'conversores';
     case Validators = 'validadores';
-    case Organizers = 'organizadores';
     case Documents = 'documentos';
     case Fiscal = 'fiscal';
     case Labor = 'trabalhista';

@@ -5,10 +5,10 @@ namespace App\Core\Access\Enums;
 enum SubscriptionPlan: string
 {
     case Free = 'free';
-    case Premium = 'premium';
+    case Plus = 'plus';
 
-    public function grantsPremiumTools(): bool
+    public function grantsPlusFeatures(): bool
     {
-        return $this === self::Premium;
+        return $this === self::Plus;
     }
 }

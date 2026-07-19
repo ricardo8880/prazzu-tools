@@ -2,6 +2,7 @@
 
 namespace Tests\Architecture;
 
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\Support\ToolModuleValidator;
 use App\Tools\ArchitectureGeneratorProbe\Tool;
@@ -52,7 +53,7 @@ final class ToolGeneratorContractTest extends TestCase
 
         self::assertIsString($contents);
 
-        foreach (['Descrição', 'Funcionalidades', 'Regras de domínio', 'Dependências', 'Histórico de versões'] as $section) {
+        foreach (['Descrição', 'Funcionalidades', 'Experiência Essencial', 'Prazzu Plus', 'Regras de domínio', 'Dependências', 'Histórico de versões'] as $section) {
             self::assertStringContainsString("## {$section}", $contents);
         }
     }
@@ -99,6 +100,8 @@ final class ToolGeneratorContractTest extends TestCase
 
             $module = new Tool;
             self::assertSame(ToolStatus::Draft, $module->manifest()->status);
+            self::assertNotEmpty($module->manifest()->featuresFor(ToolFeatureTier::Essential));
+            self::assertNotEmpty($module->manifest()->featuresFor(ToolFeatureTier::Plus));
             (new ToolModuleValidator)->validate($module);
         } finally {
             $files->replace($configurationPath, $originalConfiguration);

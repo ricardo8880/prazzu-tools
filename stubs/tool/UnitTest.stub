@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\{{ class }}\Tests\Unit;
 
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Tools\{{ class }}\Tool;
 use PHPUnit\Framework\TestCase;
@@ -17,5 +18,7 @@ final class ToolManifestTest extends TestCase
         self::assertSame('{{ slug }}', $manifest->slug);
         self::assertSame('{{ route_prefix }}.index', $manifest->routeName);
         self::assertSame(ToolStatus::Draft, $manifest->status);
+        self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
+        self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));
     }
 }

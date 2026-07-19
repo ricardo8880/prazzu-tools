@@ -19,14 +19,14 @@ final readonly class CalculateAndStoreFeeAdjustment
      * @param  array<string, mixed>  $input
      * @return array{result: array<string, int|string>, saved: bool}
      */
-    public function execute(array $input, AccountingFeesOwner $owner): array
+    public function execute(array $input, AccountingFeesOwner $owner, bool $persist): array
     {
         $currentValue = Money::fromDecimal((string) $input['current_value']);
         $result = $this->calculate->execute(
             $currentValue->minorAmount(),
             (string) $input['percentage'],
         );
-        $saved = $owner->userId !== null;
+        $saved = $persist && $owner->userId !== null;
 
         if ($saved) {
             $this->adjustments->store($owner, $input, $result);

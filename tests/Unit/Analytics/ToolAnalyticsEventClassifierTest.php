@@ -17,7 +17,7 @@ final class ToolAnalyticsEventClassifierTest extends TestCase
         string $method,
         ?AnalyticsEventName $expected,
     ): void {
-        self::assertSame($expected, (new ToolAnalyticsEventClassifier())->classify($action, $method));
+        self::assertSame($expected, (new ToolAnalyticsEventClassifier)->classify($action, $method));
     }
 
     /** @return iterable<string, array{string, string, ?AnalyticsEventName}> */
@@ -28,7 +28,6 @@ final class ToolAnalyticsEventClassifierTest extends TestCase
         yield 'batch calculation' => ['batch.calculate', 'POST', AnalyticsEventName::ToolCalculationCompleted];
         yield 'validator result' => ['validate', 'POST', AnalyticsEventName::ToolCalculationCompleted];
         yield 'export' => ['history.pdf', 'GET', AnalyticsEventName::ToolResultExported];
-        yield 'share' => ['history.share', 'POST', AnalyticsEventName::ToolResultShared];
         yield 'plus feature' => ['plus.project', 'POST', AnalyticsEventName::ToolPlusUsed];
         yield 'history' => ['history.index', 'GET', AnalyticsEventName::ToolHistoryViewed];
         yield 'crm store is not a calculation' => ['crm.store', 'POST', null];

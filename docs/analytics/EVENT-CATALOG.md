@@ -59,7 +59,6 @@ app/Core/Analytics/Domain/Services/AnalyticsEventNameResolver.php
 | `tool.plus_used` | `tool.plus.used` |
 | `tool.exported` | `tool.result.exported` |
 | `result.exported` | `tool.result.exported` |
-| `tool.shared` | `tool.result.shared` |
 | `user.registered` | `account.created` |
 | `plus.subscribed` | `subscription.started` |
 | `business_document_validator.batch_processed` | `business-document-validator.batch.processed` |

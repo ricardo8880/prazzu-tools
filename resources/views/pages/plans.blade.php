@@ -11,8 +11,9 @@
             </span>
             <h1 id="plans-title" class="display-6 fw-bold mb-3">Todas as ferramentas. Uma única assinatura.</h1>
             <p class="lead text-body-secondary mx-auto mb-4" style="max-width: 780px;">
-                Use gratuitamente ferramentas completas ou escolha o Prazzu Plus para trabalhar com históricos,
-                simulações, projeções, alertas, automações e recursos avançados em toda a plataforma.
+                Durante o lançamento, os recursos Essenciais e Prazzu Plus estão liberados gratuitamente.
+                Quando a assinatura for ativada, o Essencial continuará completo e o Plus reunirá históricos,
+                volume, simulações, projeções, alertas e automações.
             </p>
 
             <div class="d-inline-flex flex-wrap justify-content-center gap-2" aria-label="Destaques do Prazzu Plus">
@@ -73,7 +74,7 @@
                                 <li class="d-flex gap-2"><i class="bi bi-check-circle-fill text-success flex-shrink-0" aria-hidden="true"></i><span>Versões gratuitas completas, sem cálculos artificialmente limitados</span></li>
                                 <li class="d-flex gap-2"><i class="bi bi-check-circle-fill text-success flex-shrink-0" aria-hidden="true"></i><span>Uso ilimitado de todas as ferramentas gratuitas</span></li>
                                 <li class="d-flex gap-2"><i class="bi bi-check-circle-fill text-success flex-shrink-0" aria-hidden="true"></i><span>Resultados transparentes e memória de cálculo quando disponível</span></li>
-                                <li class="d-flex gap-2"><i class="bi bi-stars text-warning flex-shrink-0" aria-hidden="true"></i><span>Uma experiência Plus gratuita por dia</span></li>
+                                <li class="d-flex gap-2"><i class="bi bi-stars text-warning flex-shrink-0" aria-hidden="true"></i><span>Recursos Plus liberados durante a fase de lançamento</span></li>
                             </ul>
 
                             <a class="btn btn-outline-primary btn-lg w-100 mt-auto" href="{{ route('tools.index') }}">
@@ -257,11 +258,11 @@
                     <tbody>
                     <tr><th scope="row">Cálculos e resultados completos</th><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
                     <tr><th scope="row">Uso das ferramentas</th><td class="text-center">Ilimitado</td><td class="text-center">Ilimitado</td></tr>
-                    <tr><th scope="row">Experiência Plus</th><td class="text-center">1 vez por dia</td><td class="text-center">Ilimitada</td></tr>
+                    <tr><th scope="row">Recursos Plus</th><td class="text-center">Liberados no lançamento</td><td class="text-center">Incluídos na assinatura</td></tr>
                     <tr><th scope="row">Histórico e salvamento</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
                     <tr><th scope="row">Simulações e comparações</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
                     <tr><th scope="row">Projeções, alertas e automações</th><td class="text-center text-body-secondary"><i class="bi bi-dash-lg" aria-label="Não incluído"></i></td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
-                    <tr><th scope="row">Ferramentas Plus atuais e futuras</th><td class="text-center">Experiência diária</td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
+                    <tr><th scope="row">Recursos Plus atuais e futuros</th><td class="text-center">Durante o lançamento</td><td class="text-center"><i class="bi bi-check-circle-fill text-success" aria-label="Incluído"></i></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -298,12 +299,12 @@
 
                 <div class="accordion-item">
                     <h3 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-daily" aria-expanded="false" aria-controls="faq-daily">
-                            Como funciona a experiência Plus diária?
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-launch" aria-expanded="false" aria-controls="faq-launch">
+                            Como funciona o lançamento gratuito?
                         </button>
                     </h3>
-                    <div id="faq-daily" class="accordion-collapse collapse" data-bs-parent="#plans-faq">
-                        <div class="accordion-body">Usuários sem assinatura poderão experimentar gratuitamente a experiência Plus uma vez por dia. A política definitiva será implementada junto ao sistema de contas e assinaturas.</div>
+                    <div id="faq-launch" class="accordion-collapse collapse" data-bs-parent="#plans-faq">
+                        <div class="accordion-body">Nesta fase, todos os recursos públicos Essenciais e Plus estão liberados gratuitamente e sem limites comerciais. O login é necessário somente para recursos vinculados à identidade, como salvar e recuperar histórico. A futura monetização será ativada por uma política central, sem reduzir a qualidade do Essencial.</div>
                     </div>
                 </div>
 
@@ -338,7 +339,7 @@
                 <span class="badge text-bg-primary mb-3">Experimente primeiro</span>
                 <h2 id="plans-cta-heading" class="h2 mb-3">Conheça a diferença antes de assinar</h2>
                 <p class="text-body-secondary mx-auto mb-4" style="max-width: 700px;">
-                    Use as ferramentas gratuitas sem limite e experimente a experiência Plus diariamente para entender quanto tempo ela pode economizar na sua rotina.
+                    Aproveite o lançamento para usar gratuitamente as soluções Essenciais completas e todos os recursos Plus disponíveis.
                 </p>
                 <a class="btn btn-primary btn-lg" href="{{ route('tools.index') }}">
                     <i class="bi bi-grid-3x3-gap me-1" aria-hidden="true"></i>Conhecer as ferramentas

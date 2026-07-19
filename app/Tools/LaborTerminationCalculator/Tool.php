@@ -7,9 +7,11 @@ namespace App\Tools\LaborTerminationCalculator;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
@@ -54,6 +56,13 @@ final class Tool implements ToolModule, HasWebRoutes, HasViews, HasHistoryPolicy
             supportsHistory: true,
             storesSensitiveData: true,
             keywords: ['rescisão', 'trabalhista', 'saldo de salário', 'férias', '13º salário', 'aviso-prévio', 'fgts', 'contrato de experiência', 'artigo 479', 'férias em dobro', 'comissões', 'empregado doméstico', 'simples doméstico', 'indenização compensatória', 'histórico', 'pdf', 'relatório'],
+            features: [
+                new ToolFeature('calculate', 'Cálculo completo da rescisão', ToolFeatureTier::Essential),
+                new ToolFeature('current_report', 'Relatório completo do cálculo atual', ToolFeatureTier::Essential),
+                new ToolFeature('history', 'Histórico de cálculos', ToolFeatureTier::Plus),
+                new ToolFeature('repeat_history', 'Repetição de cálculo salvo', ToolFeatureTier::Plus),
+                new ToolFeature('historical_report', 'Relatório de cálculo salvo', ToolFeatureTier::Plus),
+            ],
         );
     }
 

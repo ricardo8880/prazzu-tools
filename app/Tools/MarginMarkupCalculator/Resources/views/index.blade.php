@@ -23,6 +23,8 @@
         @auth<a class="btn btn-outline-primary align-self-start" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>@endauth
     </header>
 
+    <x-tool-feature-tiers slug="calculadora-margem-markup" />
+
     @if(session('history_message'))<div class="alert alert-success">{{ session('history_message') }}</div>@endif
 
     <section class="prazzu-tool-workspace text-start" aria-labelledby="tool-workspace-title">

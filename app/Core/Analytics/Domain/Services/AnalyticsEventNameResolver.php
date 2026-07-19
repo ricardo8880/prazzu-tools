@@ -27,7 +27,6 @@ final class AnalyticsEventNameResolver
         'tool.plus_used' => AnalyticsEventName::ToolPlusUsed->value,
         'tool.exported' => AnalyticsEventName::ToolResultExported->value,
         'result.exported' => AnalyticsEventName::ToolResultExported->value,
-        'tool.shared' => AnalyticsEventName::ToolResultShared->value,
         'user.registered' => AnalyticsEventName::AccountCreated->value,
         'plus.subscribed' => AnalyticsEventName::SubscriptionStarted->value,
         'business_document_validator.batch_processed' => AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value,

@@ -12,7 +12,7 @@ sem implementar ferramentas reais e sem alterar o layout.
 - capacidades opcionais para rotas, views e migrations;
 - `ToolRegistry` indexado por slug e com consultas explícitas;
 - `ToolCatalog` baseado em manifestos;
-- separação entre metadados estáticos e métricas demonstrativas;
+- catálogo público composto somente por módulos reais;
 - registro de módulos dividido por grupos;
 - convenções de slug, rota e versão validadas;
 - documentação e testes do novo contrato.
@@ -21,7 +21,8 @@ sem implementar ferramentas reais e sem alterar o layout.
 
 - Laravel continua como monólito modular;
 - o catálogo continua sendo a fonte única das telas;
-- módulos reais substituem placeholders pelo mesmo slug;
+- somente manifestos registrados podem aparecer no catálogo;
+- métricas demonstrativas e placeholders não são publicados;
 - não há descoberta automática por diretório;
 - o layout e seus assets não foram modificados.
 

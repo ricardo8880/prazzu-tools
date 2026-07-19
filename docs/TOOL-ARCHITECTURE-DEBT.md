@@ -12,21 +12,33 @@ ser copiadas. O comando `php artisan tools:check-architecture` valida estrutura,
 camadas de recursos, namespaces, documentação, migrations, rotas, controllers e
 dependências básicas.
 
+## Decisões de produto consolidadas
+
+- O CRM e o cadastro comercial foram removidos da Calculadora de Honorários.
+- O compartilhamento público de cálculos foi removido de Accounting e Margin.
+- O catálogo deixou de publicar ferramentas placeholder e métricas fictícias.
+- Cada manifesto real declara `ToolFeature` nos tiers Essencial e Prazzu Plus;
+  o acesso passa pelo gate central da plataforma.
+
+Essas remoções encerram desvios de produto e não constituem funcionalidades
+pendentes. CRM, colaboração e compartilhamento de cálculos não devem ser
+reintroduzidos no Prazzu Tools.
+
 ## Prioridade 0 — Core compartilhado
 
-1. **Histórico:** Accounting e Simples ainda persistem históricos em tabelas
-   próprias. Business Document, Labor e Margin gravam pelo Core, mas parte da
-   leitura e exclusão ainda depende do model Eloquent `ToolRun`. É necessário
-   completar um contrato central de consulta, posse, exclusão e auditoria,
-   migrar os dados locais e aposentar os armazenamentos paralelos.
+1. **Histórico:** Accounting ainda persiste histórico em tabela própria.
+   Simples já utiliza o contrato central de gravação, consulta e exclusão sem
+   conhecer Eloquent. Business Document, Labor e Margin gravam pelo Core, mas
+   parte da leitura e exclusão ainda depende diretamente do model `ToolRun`;
+   devem migrar para o mesmo contrato compartilhado.
 2. **Favoritos:** Accounting mantém favorito na tabela própria de cálculo. O
    Core precisa de um gerenciador de favoritos vinculado à execução central.
-3. **Compartilhamento:** Accounting e Margin possuem implementações próprias.
-   Além da duplicação, o README raiz proíbe compartilhamento de cálculos. A
-   remoção de rotas e dados exige decisão explícita de produto e migration.
-4. **Acesso por capacidade:** o plano efetivo e a política de lançamento agora
-   são resolvidos pelo Core. Falta mover limites por slug/capacidade para uma
-   política central, retirando números dos controllers legados.
+3. **Persistência e tier:** Accounting, Labor e o cálculo individual de Margin
+   ainda salvam automaticamente para qualquer pessoa autenticada. Antes da
+   monetização, o registro deve consultar centralmente a capacidade Plus de
+   histórico, sem bloquear o cálculo Essencial.
+4. **Declaração de dados:** Margin precisa revisar a classificação de nomes,
+   custos e cenários comerciais mantidos no histórico.
 
 ## Prioridade 1 — domínio e apresentação
 
@@ -40,9 +52,6 @@ dependências básicas.
    `form-panel`, `validation-summary`, `result-panel`, `history-actions` e
    `export-button`; até lá, HTML de módulos existentes não é um padrão para
    cópia.
-4. O cadastro comercial legado do Accounting é CRM/gestão de clientes e está
-   fora do produto definido no README raiz. Não pode receber evolução dentro do
-   Prazzu Tools.
 
 ## Critério de encerramento
 

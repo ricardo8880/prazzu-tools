@@ -22,6 +22,8 @@
         </div>
     </header>
 
+    <x-tool-feature-tiers slug="calculadora-simples-nacional" />
+
     <section class="prazzu-tool-workspace text-start" aria-labelledby="calculation-data-title">
         <div class="mb-4">
             <h2 id="calculation-data-title" class="mb-1">Dados do cálculo</h2>
@@ -159,10 +161,6 @@
             <div class="alert alert-success" role="status">{{ session('history_success') }}</div>
         @endif
 
-        @if (session('access_warning'))
-            <div class="alert alert-warning" role="alert"><i class="bi bi-lock-fill me-1"></i>{{ session('access_warning') }}</div>
-        @endif
-
         @if (collect($plusAccess)->every(static fn (bool $allowed): bool => $allowed))
             <div class="alert alert-info d-flex gap-2" role="status">
                 <i class="bi bi-unlock-fill" aria-hidden="true"></i>
@@ -267,14 +265,13 @@
                     @endguest
                     @auth
                     <form method="post" action="{{ route('tools.calculadora-simples-nacional.plus.history.store') }}" class="row g-3">@csrf
-                        <div class="col-md-4"><label class="form-label">Empresa</label><input class="form-control" name="company_name" value="{{ old('company_name') }}" required></div>
-                        <div class="col-md-2"><label class="form-label">Competência</label><input class="form-control" type="month" name="reference_month" value="{{ old('reference_month', now()->format('Y-m')) }}" required></div>
-                        <div class="col-md-2"><label class="form-label">Anexo</label><select class="form-select" name="annex">@foreach($annexes as $annex)<option value="{{ $annex->value }}">{{ $annex->label() }}</option>@endforeach</select></div>
-                        <div class="col-md-2"><label class="form-label">RBT12</label><input class="form-control" name="rbt12" value="{{ old('rbt12') }}" required></div>
-                        <div class="col-md-2"><label class="form-label">Faturamento</label><input class="form-control" name="monthly_revenue" value="{{ old('monthly_revenue') }}" required></div>
+                        <div class="col-md-3"><label class="form-label">Competência</label><input class="form-control" type="month" name="reference_month" value="{{ old('reference_month', now()->format('Y-m')) }}" required></div>
+                        <div class="col-md-3"><label class="form-label">Anexo</label><select class="form-select" name="annex">@foreach($annexes as $annex)<option value="{{ $annex->value }}">{{ $annex->label() }}</option>@endforeach</select></div>
+                        <div class="col-md-3"><label class="form-label">RBT12</label><input class="form-control" name="rbt12" value="{{ old('rbt12') }}" required></div>
+                        <div class="col-md-3"><label class="form-label">Faturamento</label><input class="form-control" name="monthly_revenue" value="{{ old('monthly_revenue') }}" required></div>
                         <div class="col-12"><button class="btn btn-primary" type="submit" @disabled(! ($plusAccess['monthly_history'] ?? false))><i class="bi bi-save me-1"></i> Salvar cálculo</button></div>
                     </form>
-                    <div class="table-responsive mt-4"><table class="table table-hover align-middle mb-0"><thead><tr><th>Competência</th><th>Empresa</th><th>Anexo</th><th>Receita</th><th>Alíquota</th><th>DAS</th><th></th></tr></thead><tbody>@forelse($history as $item)<tr><td>{{ $item->reference_month->format('m/Y') }}</td><td>{{ $item->company_name }}</td><td>Anexo {{ $item->annex }}</td><td>{{ $item->payload['monthly_revenue'] }}</td><td>{{ $item->payload['effective_rate'] }}</td><td>{{ $item->payload['estimated_das'] }}</td><td class="text-end"><form method="post" action="{{ route('tools.calculadora-simples-nacional.plus.history.destroy', $item) }}">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir" @disabled(! ($plusAccess['monthly_history'] ?? false))><i class="bi bi-trash"></i></button></form></td></tr>@empty<tr><td colspan="7" class="text-center text-secondary py-4">Nenhum cálculo salvo ainda.</td></tr>@endforelse</tbody></table></div>
+                    <div class="table-responsive mt-4"><table class="table table-hover align-middle mb-0"><thead><tr><th>Competência</th><th>Anexo</th><th>Receita</th><th>Alíquota</th><th>DAS</th><th></th></tr></thead><tbody>@forelse($history as $item)<tr><td>{{ $item->referenceDate->format('m/Y') }}</td><td>Anexo {{ data_get($item->input, 'annex') }}</td><td>{{ data_get($item->result, 'monthly_revenue') }}</td><td>{{ data_get($item->result, 'effective_rate') }}</td><td>{{ data_get($item->result, 'estimated_das') }}</td><td class="text-end"><form method="post" action="{{ route('tools.calculadora-simples-nacional.plus.history.destroy', $item->id) }}">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir" @disabled(! ($plusAccess['monthly_history'] ?? false))><i class="bi bi-trash"></i></button></form></td></tr>@empty<tr><td colspan="6" class="text-center text-secondary py-4">Nenhum cálculo salvo ainda.</td></tr>@endforelse</tbody></table></div>
                     @endauth
                 </div></div>
             </div>

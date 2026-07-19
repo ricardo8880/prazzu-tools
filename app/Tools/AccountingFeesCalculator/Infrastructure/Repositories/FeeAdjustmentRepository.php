@@ -26,7 +26,7 @@ final class FeeAdjustmentRepository
         FeeAdjustment::query()->create([
             'user_id' => $owner->userId,
             'session_key' => $owner->userId === null ? $owner->sessionKey : null,
-            'client_name' => trim((string) $input['client_name']),
+            'scenario_label' => trim((string) $input['scenario_label']),
             'index_type' => $input['index_type'],
             'reference_period' => $input['reference_period'],
             'percentage' => $result->percentage->toDecimalString(),

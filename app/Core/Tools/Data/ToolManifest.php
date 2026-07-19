@@ -4,12 +4,16 @@ namespace App\Core\Tools\Data;
 
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use InvalidArgumentException;
 
 final readonly class ToolManifest
 {
-    /** @param array<int, string> $keywords */
+    /**
+     * @param array<int, string> $keywords
+     * @param array<int, ToolFeature> $features
+     */
     public function __construct(
         public string $slug,
         public string $name,
@@ -25,6 +29,7 @@ final readonly class ToolManifest
         public bool $supportsHistory = false,
         public bool $storesSensitiveData = false,
         public array $keywords = [],
+        public array $features = [],
     ) {
         if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $this->slug)) {
             throw new InvalidArgumentException('O slug da ferramenta deve usar apenas letras minúsculas, números e hífens.');
@@ -51,6 +56,40 @@ final readonly class ToolManifest
                 throw new InvalidArgumentException('Todas as palavras-chave devem ser textos não vazios.');
             }
         }
+
+        $featureKeys = [];
+
+        foreach ($this->features as $feature) {
+            if (! $feature instanceof ToolFeature) {
+                throw new InvalidArgumentException('Todos os recursos da ferramenta devem ser instâncias de ToolFeature.');
+            }
+
+            if (isset($featureKeys[$feature->key])) {
+                throw new InvalidArgumentException("O recurso [{$feature->key}] está duplicado no manifesto.");
+            }
+
+            $featureKeys[$feature->key] = true;
+        }
+    }
+
+    public function feature(string $key): ?ToolFeature
+    {
+        foreach ($this->features as $feature) {
+            if ($feature->key === $key) {
+                return $feature;
+            }
+        }
+
+        return null;
+    }
+
+    /** @return array<int, ToolFeature> */
+    public function featuresFor(ToolFeatureTier $tier): array
+    {
+        return array_values(array_filter(
+            $this->features,
+            static fn (ToolFeature $feature): bool => $feature->tier === $tier,
+        ));
     }
 
     /** @param array<string, mixed> $data */
@@ -62,8 +101,8 @@ final readonly class ToolManifest
             description: (string) ($data['description'] ?? ''),
             category: ToolCategory::from((string) ($data['category'] ?? '')),
             icon: (string) ($data['icon'] ?? ''),
-            routeName: (string) ($data['route_name'] ?? 'tools.show'),
-            version: (string) ($data['version'] ?? '0.0.0-placeholder'),
+            routeName: (string) ($data['route_name'] ?? ''),
+            version: (string) ($data['version'] ?? '1.0.0'),
             access: ToolAccess::from((string) ($data['access'] ?? ToolAccess::Free->value)),
             status: ToolStatus::from((string) ($data['status'] ?? ToolStatus::Active->value)),
             position: (int) ($data['position'] ?? 1000),
@@ -71,6 +110,10 @@ final readonly class ToolManifest
             supportsHistory: (bool) ($data['supports_history'] ?? false),
             storesSensitiveData: (bool) ($data['stores_sensitive_data'] ?? false),
             keywords: array_values($data['keywords'] ?? []),
+            features: array_map(
+                static fn (array $feature): ToolFeature => ToolFeature::fromArray($feature),
+                array_values($data['features'] ?? []),
+            ),
         );
     }
 
@@ -92,6 +135,10 @@ final readonly class ToolManifest
             'supports_history' => $this->supportsHistory,
             'stores_sensitive_data' => $this->storesSensitiveData,
             'keywords' => $this->keywords,
+            'features' => array_map(
+                static fn (ToolFeature $feature): array => $feature->toArray(),
+                $this->features,
+            ),
         ];
     }
 }

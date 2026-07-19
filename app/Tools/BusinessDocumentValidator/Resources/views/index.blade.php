@@ -29,6 +29,8 @@
         @endauth
     </header>
 
+    <x-tool-feature-tiers slug="validador-de-cnpj" />
+
     <div class="row g-4">
         <div class="col-12 col-xl-8">
             <section class="prazzu-form-panel" aria-labelledby="individual-validation-title">

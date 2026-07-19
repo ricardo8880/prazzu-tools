@@ -28,7 +28,7 @@ final readonly class DefaultToolAccessGate implements ToolAccessGate
         }
 
         if (
-            $manifest->access !== ToolAccess::Internal
+            $manifest->access === ToolAccess::Free
             && $this->commercialPolicy->grantsPublicCapabilitiesWithoutAuthentication()
         ) {
             return AccessDecision::allow('tool.launch_free_access');
@@ -36,12 +36,6 @@ final readonly class DefaultToolAccessGate implements ToolAccessGate
 
         return match ($manifest->access) {
             ToolAccess::Free => AccessDecision::allow(),
-            ToolAccess::Authenticated => $context->authenticated()
-                ? AccessDecision::allow()
-                : AccessDecision::deny('tool.authentication_required'),
-            ToolAccess::Premium => $context->authenticated() && $context->plan->grantsPremiumTools()
-                ? AccessDecision::allow()
-                : AccessDecision::deny('tool.premium_required'),
             ToolAccess::Internal => $context->authenticated() && $context->role->isInternal()
                 ? AccessDecision::allow()
                 : AccessDecision::deny('tool.internal_only'),

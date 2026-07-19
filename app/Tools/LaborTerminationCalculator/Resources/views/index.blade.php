@@ -30,6 +30,8 @@
         @endauth
     </header>
 
+    <x-tool-feature-tiers slug="calculadora-de-rescisao" />
+
     @if (session('history_message'))
         <div class="alert alert-success d-flex gap-2 align-items-start" role="status">
             <i class="bi bi-check-circle-fill mt-1" aria-hidden="true"></i>

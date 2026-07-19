@@ -16,7 +16,7 @@
         <span class="prazzu-icon-tile prazzu-icon-tile--purple"><i class="bi bi-clock-history"></i></span>
         <div class="flex-grow-1">
             <h1>Histórico de cálculos</h1>
-            <p>Recupere precificações, marque referências importantes e compartilhe resultados com segurança.</p>
+            <p>Recupere precificações e marque referências importantes para reutilizar depois.</p>
         </div>
         <div class="d-flex flex-wrap gap-2 align-self-start">
             <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.history.index', ['favorite' => $favorite ? null : 1]) }}">
@@ -36,16 +36,6 @@
     @if (session('success'))
         <div class="alert alert-success" role="alert">{{ session('success') }}</div>
     @endif
-    @if (session('share_url'))
-        <div class="alert alert-info" role="alert">
-            <div class="fw-semibold mb-1">Link público criado</div>
-            <div class="input-group">
-                <input class="form-control" value="{{ session('share_url') }}" readonly onclick="this.select()">
-                <a class="btn btn-outline-primary" href="{{ session('share_url') }}" target="_blank" rel="noopener">Abrir</a>
-            </div>
-        </div>
-    @endif
-
     <section class="prazzu-tool-workspace text-start">
         @forelse ($calculations as $calculation)
             <article class="card border-0 shadow-sm mb-3">
@@ -70,7 +60,6 @@
                     <div class="d-flex flex-wrap gap-2 mt-3">
                         <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $calculation) }}">@csrf<button class="btn btn-sm btn-primary"><i class="bi bi-copy me-1"></i>Duplicar</button></form>
                         <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning"><i class="bi bi-star me-1"></i>{{ $calculation->is_favorite ? 'Desfavoritar' : 'Favoritar' }}</button></form>
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.share', $calculation) }}">@csrf<button class="btn btn-sm btn-outline-info"><i class="bi bi-share me-1"></i>Compartilhar</button></form>
                         <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation) }}" onsubmit="return confirm('Remover este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
                     </div>
                 </div>

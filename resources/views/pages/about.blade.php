@@ -41,7 +41,8 @@
                     </p>
                     <p class="text-body-secondary mb-0">
                         O Prazzu Tools foi criado para concentrar essas soluções em um ambiente simples, organizado e
-                        preparado para crescer sem perder qualidade.
+                        preparado para crescer sem perder qualidade. A plataforma resolve tarefas pontuais; gestão de
+                        clientes, processos e operações contínuas pertence ao Prazzu Core ou a outro produto apropriado.
                     </p>
                 </div>
 
@@ -159,7 +160,7 @@
                             </p>
                             <div class="alert alert-primary mb-0" role="note">
                                 <i class="bi bi-stars me-2" aria-hidden="true"></i>
-                                Usuários gratuitos poderão experimentar a experiência Plus uma vez por dia antes de decidir pela assinatura.
+                                Durante o lançamento, os recursos públicos Essenciais e Plus estão liberados gratuitamente. A futura assinatura manterá o Essencial completo e financiará os ganhos de produtividade do Plus.
                             </div>
                         </div>
                     </div>
@@ -199,7 +200,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-12 col-lg-5">
                     <span class="prazzu-eyebrow">Para quem foi criada</span>
-                    <h2 id="audience-title" class="h1 fw-bold mb-3">Uma plataforma para toda a rotina contábil</h2>
+                    <h2 id="audience-title" class="h1 fw-bold mb-3">Soluções pontuais para a rotina contábil</h2>
                     <p class="text-body-secondary mb-0">
                         O Prazzu Tools atende diferentes perfis, mantendo a mesma preocupação com clareza, qualidade e praticidade.
                     </p>

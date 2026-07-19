@@ -95,7 +95,7 @@
                 <h2 id="related-tools-title" class="h4 mt-2">Ferramentas relacionadas</h2>
                 <div class="row g-3 mt-1">
                     @foreach ($relatedTools as $tool)
-                        <div class="col-12 col-md-6"><a class="card h-100 text-decoration-none border-secondary-subtle bg-body js-blog-tool-link" data-tool-slug="{{ $tool['slug'] }}" href="{{ route('tools.show', $tool['slug']) }}"><div class="card-body d-flex gap-3"><span class="prazzu-icon-tile prazzu-icon-tile--{{ $tool['tone'] }} flex-shrink-0"><i class="bi {{ $tool['icon'] }}"></i></span><span><strong class="d-block">{{ $tool['name'] }}</strong><small class="text-body-secondary">{{ $tool['description'] }}</small></span></div></a></div>
+                        <div class="col-12 col-md-6"><a class="card h-100 text-decoration-none border-secondary-subtle bg-body js-blog-tool-link" data-tool-slug="{{ $tool['slug'] }}" href="{{ route($tool['route_name']) }}"><div class="card-body d-flex gap-3"><span class="prazzu-icon-tile prazzu-icon-tile--{{ $tool['tone'] }} flex-shrink-0"><i class="bi {{ $tool['icon'] }}"></i></span><span><strong class="d-block">{{ $tool['name'] }}</strong><small class="text-body-secondary">{{ $tool['description'] }}</small></span></div></a></div>
                     @endforeach
                 </div>
             </div></div>

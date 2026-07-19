@@ -68,15 +68,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(OrganizationInvitation::class, 'invited_by_user_id');
     }
 
-    public function hasPremiumAccess(): bool
+    public function hasPlusAccess(): bool
     {
-        return ($this->subscription_plan ?? SubscriptionPlan::Free)->grantsPremiumTools()
+        return ($this->subscription_plan ?? SubscriptionPlan::Free)->grantsPlusFeatures()
             || app(EnterpriseAccessResolver::class)->grantsPlusAccessTo($this->getKey());
     }
 
     public function effectiveSubscriptionPlan(): SubscriptionPlan
     {
-        return $this->hasPremiumAccess() ? SubscriptionPlan::Premium : SubscriptionPlan::Free;
+        return $this->hasPlusAccess() ? SubscriptionPlan::Plus : SubscriptionPlan::Free;
     }
 
     public function isInternalAdministrator(): bool

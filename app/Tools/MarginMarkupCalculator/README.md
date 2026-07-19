@@ -19,8 +19,19 @@ piloto do padrão modular no Lote 8.
 - relatório para impressão e salvamento como PDF pelo navegador;
 - histórico persistente para usuários autenticados;
 - repetição e exclusão de cálculos salvos;
-- compartilhamento por link protegido ou público;
 - métricas, auditoria e autorização integradas à plataforma.
+
+## Experiência Essencial
+
+A experiência gratuita realiza o cálculo individual completo de preço, custo,
+lucro, margem e markup, incluindo todas as despesas e deduções informadas. O
+resultado e sua composição não dependem do Plus.
+
+## Prazzu Plus
+
+O Plus acrescenta cenários, cálculo e importação em lote, exportações e
+histórico com repetição. Durante o lançamento, a política central libera esses
+recursos gratuitamente, sem espalhar condicionais comerciais pelo módulo.
 
 ## Regras
 
@@ -53,12 +64,6 @@ O módulo não depende de outra ferramenta.
 
 ## Dívida arquitetural formal
 
-O compartilhamento por link foi implementado em um ciclo anterior com tabela e
-repositório próprios. O README raiz proíbe compartilhamento de cálculos no
-Prazzu Tools; portanto, essa capacidade não pode ser expandida nem copiada. Sua
-remoção envolve rotas e dados existentes e depende de uma decisão explícita de
-produto e de uma migration segura.
-
 A leitura e exclusão do histórico ainda conhecem o model Eloquent do Core por
 meio de adaptadores locais. O próximo passo é completar no Core o contrato de
 consulta e gestão de histórico e retirar essa dependência concreta.
@@ -66,4 +71,6 @@ consulta e gestão de histórico e retirar essa dependência concreta.
 ## Histórico de versões
 
 - `1.0.0` — Lote 8: domínio e cálculo inicial, lote, importação, cenários,
-  histórico, compartilhamento, métricas, autorização, CSV, impressão e testes.
+  histórico, métricas, autorização, CSV, impressão e testes.
+- ciclo atual — compartilhamento de cálculos removido para manter o módulo
+  alinhado ao escopo de ferramenta pontual definido pelo produto.

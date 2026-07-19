@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\Support\ToolModuleStructure;
@@ -17,7 +16,6 @@ final class MakeToolCommand extends Command
         {name : Nome da classe da ferramenta, por exemplo CalculadoraRescisao}
         {--slug= : Slug público; por padrão é gerado a partir do nome}
         {--category=outros : Categoria oficial da ferramenta}
-        {--access=free : Tipo de acesso inicial}
         {--status=draft : Estado inicial da ferramenta}
         {--force : Sobrescreve arquivos existentes}';
 
@@ -61,15 +59,13 @@ final class MakeToolCommand extends Command
 
         $slug = trim((string) ($this->option('slug') ?: $this->kebab($class)));
         $category = trim((string) $this->option('category'));
-        $access = trim((string) $this->option('access'));
         $status = trim((string) $this->option('status'));
 
         try {
             $categoryEnum = ToolCategory::from($category);
-            $accessEnum = ToolAccess::from($access);
             $statusEnum = ToolStatus::from($status);
         } catch (\ValueError $exception) {
-            throw new RuntimeException('Categoria, acesso ou status informado não é reconhecido.', previous: $exception);
+            throw new RuntimeException('Categoria ou status informado não é reconhecido.', previous: $exception);
         }
 
         return [
@@ -78,8 +74,6 @@ final class MakeToolCommand extends Command
             'name' => $this->headline($class),
             'category' => $category,
             'category_case' => $categoryEnum->name,
-            'access' => $access,
-            'access_case' => $accessEnum->name,
             'status' => $status,
             'status_case' => $statusEnum->name,
             'route_prefix' => "tools.{$slug}",
@@ -215,7 +209,6 @@ final class MakeToolCommand extends Command
             '{{ slug }}' => $context['slug'],
             '{{ name }}' => $context['name'],
             '{{ category_case }}' => $context['category_case'],
-            '{{ access_case }}' => $context['access_case'],
             '{{ status_case }}' => $context['status_case'],
             '{{ route_prefix }}' => $context['route_prefix'],
             '{{ view_namespace }}' => $context['view_namespace'],

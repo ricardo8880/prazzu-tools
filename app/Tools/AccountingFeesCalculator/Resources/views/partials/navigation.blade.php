@@ -17,12 +17,5 @@
            @if (request()->routeIs('tools.calculadora-de-honorarios-contabeis.adjustments.*')) aria-current="page" @endif>
             <i class="bi bi-arrow-up-right-circle me-1" aria-hidden="true"></i>Reajustes
         </a>
-        @auth
-        <a class="nav-link {{ request()->routeIs('tools.calculadora-de-honorarios-contabeis.crm.*') ? 'active' : '' }}"
-           href="{{ route('tools.calculadora-de-honorarios-contabeis.crm.index') }}"
-           @if (request()->routeIs('tools.calculadora-de-honorarios-contabeis.crm.*')) aria-current="page" @endif>
-            <i class="bi bi-people me-1" aria-hidden="true"></i>CRM
-        </a>
-        @endauth
     </div>
 </nav>

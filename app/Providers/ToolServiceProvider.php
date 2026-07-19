@@ -65,9 +65,5 @@ final class ToolServiceProvider extends ServiceProvider
         View::composer(['components.layout.left-sidebar', 'components.layout.mobile-navigation'], function ($view) use ($catalog): void {
             $view->with('toolCategories', $catalog->categories(false));
         });
-
-        View::composer('components.layout.right-sidebar', function ($view) use ($catalog): void {
-            $view->with('popularTools', $catalog->popular());
-        });
     }
 }

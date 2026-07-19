@@ -8,9 +8,11 @@ use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
@@ -26,14 +28,22 @@ final class Tool implements HasHistoryPolicy, HasMigrations, HasViews, HasWebRou
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.calculadora-de-honorarios-contabeis.index',
-            version: '1.1.0',
+            version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,
             position: 30,
             featured: true,
             supportsHistory: true,
-            storesSensitiveData: false,
+            storesSensitiveData: true,
             keywords: ['honorários contábeis', 'precificação contábil', 'contador', 'mensalidade contábil', 'proposta comercial', 'contrato contábil'],
+            features: [
+                new ToolFeature('calculate', 'Precificação completa de honorários', ToolFeatureTier::Essential),
+                new ToolFeature('adjust_fee', 'Cálculo completo de reajuste', ToolFeatureTier::Essential),
+                new ToolFeature('commercial_proposal', 'Geração de proposta comercial', ToolFeatureTier::Plus),
+                new ToolFeature('service_contract', 'Geração de contrato de serviços', ToolFeatureTier::Plus),
+                new ToolFeature('history', 'Histórico, favoritos e duplicação', ToolFeatureTier::Plus),
+                new ToolFeature('history_export', 'Exportação do histórico', ToolFeatureTier::Plus),
+            ],
         );
     }
 
@@ -42,8 +52,18 @@ final class Tool implements HasHistoryPolicy, HasMigrations, HasViews, HasWebRou
         return new ToolHistoryPolicy(
             enabled: true,
             retentionDays: 365,
-            inputFields: ['monthly_revenue', 'employees', 'partners', 'monthly_invoices', 'monthly_bank_transactions', 'tax_regime', 'business_segment', 'complexity'],
-            resultFields: ['minimum_fee', 'recommended_fee', 'upper_reference_fee', 'complexity_score', 'complexity_level', 'rule_version'],
+            inputFields: [
+                'monthly_revenue', 'employees', 'partners', 'monthly_invoices',
+                'monthly_bank_transactions', 'tax_regime', 'business_segment',
+                'complexity', 'scenario_label', 'index_type', 'reference_period',
+                'current_value', 'percentage', 'notes',
+            ],
+            resultFields: [
+                'minimum_fee', 'recommended_fee', 'upper_reference_fee',
+                'complexity_score', 'complexity_level', 'rule_version',
+                'current_value_cents', 'difference_cents', 'adjusted_value_cents',
+            ],
+            sensitiveFields: ['scenario_label', 'notes'],
         );
     }
 

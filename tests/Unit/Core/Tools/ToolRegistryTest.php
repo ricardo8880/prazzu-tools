@@ -3,8 +3,10 @@
 namespace Tests\Unit\Core\Tools;
 
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Exceptions\DuplicateToolException;
 use App\Core\Tools\ToolRegistry;
 use Illuminate\Container\Container;
@@ -14,7 +16,7 @@ final class ToolRegistryTest extends TestCase
 {
     public function test_registry_indexes_modules_by_manifest_slug(): void
     {
-        $registry = new ToolRegistry(new Container(), [ExampleToolModule::class]);
+        $registry = new ToolRegistry(new Container, [ExampleToolModule::class]);
 
         $this->assertTrue($registry->has('ferramenta-exemplo'));
         $this->assertSame(1, $registry->count());
@@ -23,12 +25,12 @@ final class ToolRegistryTest extends TestCase
 
     public function test_registry_rejects_duplicate_slugs(): void
     {
-        $registry = new ToolRegistry(new Container());
-        $registry->register(new ExampleToolModule());
+        $registry = new ToolRegistry(new Container);
+        $registry->register(new ExampleToolModule);
 
         $this->expectException(DuplicateToolException::class);
 
-        $registry->register(new ExampleToolModule());
+        $registry->register(new ExampleToolModule);
     }
 }
 
@@ -43,6 +45,10 @@ final class ExampleToolModule implements ToolModule
             category: ToolCategory::Other,
             icon: 'bi-tools',
             routeName: 'tools.ferramenta-exemplo.index',
+            features: [
+                new ToolFeature('calculate', 'Cálculo completo', ToolFeatureTier::Essential),
+                new ToolFeature('history', 'Histórico de cálculos', ToolFeatureTier::Plus),
+            ],
         );
     }
 }

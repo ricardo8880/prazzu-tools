@@ -1,5 +1,10 @@
 # Lote 6 — acesso e infraestrutura transversal
 
+> **Registro histórico, não normativo.** Este documento descreve o estado do
+> lote em que foi produzido. Para as regras atuais, prevalecem o `README.md` da
+> raiz, `app/Tools/README.md` e `docs/ARCHITECTURE.md`. Nomes antigos de planos
+> ou modelos de acesso não representam o contrato atual.
+
 Este lote prepara a aplicação para ferramentas públicas, autenticadas, premium e internas sem implementar telas de autenticação, cobrança ou modificar o layout.
 
 ## Princípios
@@ -34,7 +39,9 @@ O lote cria apenas os planos técnicos `free` e `premium`. Cobrança, gateway, r
 
 ## Limites
 
-`CacheUsageLimiter` usa janelas fixas e nunca armazena diretamente CPF, e-mail ou IP: o identificador recebido é transformado em hash. Os limites padrão estão em `config/tool-usage.php`.
+O limitador comercial por execução descrito neste lote histórico foi removido.
+A experiência Essencial atual é completa e ilimitada; proteção operacional
+contra abuso deve usar throttling técnico separado da política Essencial/Plus.
 
 ## Métricas
 

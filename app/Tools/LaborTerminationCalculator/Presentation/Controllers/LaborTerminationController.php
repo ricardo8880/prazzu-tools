@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
 use App\Core\Export\Data\PrintableDocument;
@@ -51,12 +52,13 @@ final class LaborTerminationController extends Controller
         CalculateLaborTermination $action,
         ToolRunRecorder $recorder,
         Tool $module,
+        ToolPersistenceAuthorizer $persistence,
     ): RedirectResponse {
         $input = $request->validated();
         $run = null;
 
         try {
-            if ($request->user() !== null) {
+            if ($persistence->allowsHistory($module, $request->user())) {
                 $run = $recorder->start(
                     module: $module,
                     ruleVersion: new RuleVersion(LaborTerminationCalculator::RULE_VERSION),

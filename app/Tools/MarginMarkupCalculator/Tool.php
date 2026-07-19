@@ -8,9 +8,11 @@ use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
@@ -34,6 +36,13 @@ final class Tool implements HasHistoryPolicy, HasMigrations, HasViews, HasWebRou
             supportsHistory: true,
             storesSensitiveData: false,
             keywords: ['margem', 'markup', 'preço de venda', 'lucro', 'custos'],
+            features: [
+                new ToolFeature('calculate', 'Cálculo individual completo', ToolFeatureTier::Essential),
+                new ToolFeature('export', 'Exportação do cálculo', ToolFeatureTier::Plus),
+                new ToolFeature('batch_processing', 'Cálculo e importação em lote', ToolFeatureTier::Plus),
+                new ToolFeature('scenarios', 'Simulação de cenários', ToolFeatureTier::Plus),
+                new ToolFeature('history', 'Histórico de cálculos', ToolFeatureTier::Plus),
+            ],
         );
     }
 

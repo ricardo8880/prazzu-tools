@@ -3,13 +3,29 @@
 ## Descrição
 
 Ferramenta para estimar honorários mensais a partir do faturamento, regime
-tributário, equipe, segmento, volume operacional e complexidade do cliente.
+tributário, equipe, segmento, volume operacional e complexidade do cenário.
 
 A estimativa é gerencial e apoia a precificação do serviço contábil. Ela não
 substitui a análise de custos, escopo, região e posicionamento de cada
 profissional ou escritório.
 
 ## Funcionalidades
+
+## Experiência Essencial
+
+A experiência gratuita resolve integralmente os dois problemas centrais do
+módulo: precificação completa de honorários e cálculo completo de reajuste. O
+resultado, a memória de cálculo e as orientações necessárias não dependem do
+Prazzu Plus.
+
+## Prazzu Plus
+
+O Plus agrega produtividade e continuidade por meio da geração pontual de
+proposta e contrato, histórico individual, favoritos, duplicação e exportação
+do histórico. Durante a fase gratuita de lançamento, a política central da
+plataforma mantém esses recursos disponíveis para todos.
+
+## Detalhamento das funcionalidades
 
 ### Precificação
 
@@ -28,12 +44,14 @@ profissional ou escritório.
 - contrato com partes, escopo, honorários, vencimento, vigência, reajuste,
   multa, aviso de rescisão e cláusulas opcionais de LGPD e confidencialidade;
 - páginas próprias para revisão e impressão pelo navegador;
+- dados informados são usados somente para gerar o documento atual e não são
+  vinculados a cadastros nem persistidos pelo módulo;
 - aviso para validação jurídica do contrato.
 
 ### Reajustes
 
 - cálculo por IPCA, INPC, IGP-M ou percentual manual;
-- competência de referência e identificação do cliente;
+- competência e rótulo genérico para identificar o cenário calculado;
 - valor atual, diferença monetária e novo honorário;
 - percentuais positivos ou negativos;
 - histórico e exclusão de reajustes implementados no ciclo anterior.
@@ -44,19 +62,13 @@ profissional ou escritório.
 - filtro e marcação de favoritos;
 - duplicação de cenários;
 - exportação CSV em UTF-8;
-- link público por token para compartilhamento;
-- impressão do resultado compartilhado;
 - exclusão de registros.
 
-### Cadastro comercial legado
+### Limites do módulo
 
-O módulo recebeu em um ciclo anterior cadastro de prospects e clientes, etapas
-comerciais, proposta, contrato, pesquisa, filtros e observações. Essa informação
-é preservada para registrar o histórico da implementação, mas CRM, gestão de
-clientes e workflow não pertencem ao Prazzu Tools segundo o README raiz. Essa
-capacidade não deve ser expandida nem usada como referência para novas
-ferramentas; sua evolução exige extração para o produto apropriado do
-ecossistema.
+O módulo não cadastra nem gerencia prospects, clientes, funil comercial,
+atividades ou documentos persistentes. Também não publica cálculos por links ou
+tokens. Essas capacidades pertencem a outros produtos do ecossistema Prazzu.
 
 ## Regras
 
@@ -64,21 +76,22 @@ ecossistema.
 - O cálculo considera porte, regime, equipe, segmento, volume e complexidade.
 - Índices de reajuste não são consultados automaticamente; o usuário informa a
   taxa oficial aplicável e registra sua origem nas observações.
+- A referência do cenário não cria cadastro nem relacionamento com cliente. O
+  histórico pode persistir esse rótulo e as observações, que são tratados como
+  campos sensíveis e devem evitar dados pessoais desnecessários.
 - Dinheiro e percentuais devem utilizar os value objects do Core, nunca
   `float`.
 - Visitantes podem calcular, gerar os documentos atuais, exportar e imprimir
   sem autenticação durante a fase gratuita.
 - Persistência, histórico e favoritos pertencem ao Core e exigem autenticação.
-- Exportação, impressão e compartilhamento devem utilizar os contratos centrais
-  da plataforma; implementações próprias existentes são dívida arquitetural.
+- Exportação e impressão devem utilizar os contratos centrais da plataforma.
 - Propostas e contratos são modelos auxiliares e devem ser revisados por
   profissional habilitado antes do uso.
 
 ## Dependências
 
 - value objects `Money` e `Percentage` e regras de arredondamento do Core;
-- contratos centrais de histórico, favoritos, compartilhamento, exportação e
-  impressão;
+- contratos centrais de histórico, favoritos, exportação e impressão;
 - Laravel para Presentation e adaptadores de Infrastructure;
 - banco de dados para recursos persistentes, após execução das migrations;
 - recurso nativo de impressão do navegador para os documentos atuais.
@@ -88,7 +101,9 @@ devem ser consumidas por contratos do Core.
 
 ## Histórico de versões
 
-- `1.1.0`: consolidação dos ciclos de contrato, cadastro comercial legado,
-  reajustes, histórico, favoritos, duplicação, CSV e compartilhamento.
+- `1.2.0`: remoção do CRM e do compartilhamento de cálculos; reajustes passaram
+  a utilizar referência genérica de cenário, sem vínculo persistente a clientes.
+- `1.1.0`: consolidação dos ciclos de contrato, reajustes, histórico, favoritos,
+  duplicação e CSV.
 - `1.0.0`: precificação inicial, detalhamento, recomendações e proposta
   comercial.

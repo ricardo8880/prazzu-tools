@@ -2,14 +2,17 @@
 
 ## O que é o Prazzu Tools
 
-O **Prazzu Tools** é uma plataforma modular criada para se tornar a
-principal referência em ferramentas digitais para profissionais da
-contabilidade.
+O **Prazzu Tools** é uma plataforma modular de ferramentas rápidas e
+independentes para profissionais da contabilidade.
 
-Mais do que disponibilizar calculadoras, o projeto tem como objetivo
-reunir em um único ambiente tudo aquilo que faz parte da rotina de
-escritórios contábeis, departamentos financeiros, consultores e
-profissionais da área fiscal.
+Cada ferramenta resolve uma tarefa pontual e objetiva, como calcular,
+validar, comparar, converter ou gerar um resultado. O fluxo esperado é
+direto: informar dados, executar a ferramenta e receber uma resposta clara.
+
+O projeto não acompanha operações ao longo do tempo e não administra
+clientes, processos, departamentos ou rotinas empresariais. Essas
+responsabilidades pertencem ao Prazzu Core ou a outro produto apropriado do
+ecossistema.
 
 A plataforma é construída para evoluir continuamente, recebendo novas
 ferramentas, novos recursos e novos serviços sem comprometer a
@@ -23,14 +26,14 @@ prazo.
 # Nossa visão
 
 Acreditamos que o profissional da contabilidade deve encontrar, em um
-único lugar, ferramentas confiáveis, conteúdo técnico atualizado e
-recursos que realmente aumentem sua produtividade.
+único lugar, ferramentas confiáveis para resolver rapidamente problemas
+reais e bem delimitados.
 
 O objetivo do Prazzu Tools não é apenas reduzir o tempo gasto em
 cálculos.
 
-O objetivo é construir um ecossistema completo capaz de acompanhar toda
-a rotina do profissional contábil.
+O objetivo é construir o melhor catálogo de soluções pontuais para a
+rotina contábil, sem transformar a plataforma em sistema de gestão.
 
 Conforme a plataforma evolui, novas ferramentas passam a fazer parte
 desse ecossistema, mantendo sempre a mesma experiência de uso, a mesma
@@ -47,6 +50,15 @@ A plataforma distingue duas categorias de capacidade:
 
 -   **Essencial**
 -   **Prazzu Plus**
+
+A capacidade **Essencial** é gratuita e resolve por completo o problema
+principal da ferramenta, com a mesma correção, transparência e qualidade
+que existirá em qualquer modalidade.
+
+O **Prazzu Plus** acrescenta produtividade, volume, automação, continuidade,
+análises, cenários e formatos de conveniência. Ele nunca libera uma parte
+necessária da fórmula, corrige um resultado incompleto ou esconde informações
+necessárias para solucionar o caso básico.
 
 Essa classificação existe para organizar o produto e preparar sua futura
 monetização. Ela não autoriza limitar artificialmente cálculos, esconder
@@ -352,7 +364,7 @@ princípios:
 -   infraestrutura compartilhada para funcionalidades comuns;
 -   código limpo e de fácil manutenção;
 -   evolução contínua da plataforma;
--   foco total na rotina do profissional contábil.
+-   foco em problemas reais, pontuais e bem delimitados da rotina contábil.
 
 Esses princípios orientam tanto o desenvolvimento técnico quanto a
 evolução do produto.
@@ -364,10 +376,10 @@ evolução do produto.
 O objetivo do Prazzu Tools é tornar-se a principal plataforma de
 ferramentas para contabilidade no Brasil.
 
-Mais do que disponibilizar calculadoras, a proposta é construir um
-ecossistema completo onde profissionais encontrem ferramentas
-confiáveis, conteúdo técnico de qualidade e recursos capazes de aumentar
-sua produtividade diariamente.
+A proposta é reunir calculadoras, validadores, geradores, conversores e
+outras soluções pontuais confiáveis, acompanhadas de conteúdo técnico de
+qualidade. Gestão empresarial, acompanhamento operacional e relacionamento
+com clientes permanecem fora deste produto.
 
 Cada nova ferramenta, cada novo artigo e cada novo recurso devem
 aproximar a plataforma desse objetivo.
@@ -774,7 +786,6 @@ Sempre deverão ser implementadas no Core:
 -   Exportação XLSX
 -   Impressão
 -   Histórico
--   Compartilhamento
 -   Favoritos
 -   Auditoria
 -   Métricas
@@ -870,7 +881,6 @@ Caso exista um padrão adotado pela plataforma, ele deverá ser seguido.
 Quando uma ferramenta possuir funcionalidades complementares, como:
 
 -   Histórico;
--   CRM;
 -   Reajustes;
 -   Propostas;
 -   Contratos;
@@ -1263,21 +1273,23 @@ poderá acoplar ferramentas individuais ao serviço de identidade.
 
 # 25. Capabilities
 
-Toda ferramenta deverá declarar claramente suas capacidades.
+Toda ferramenta deverá declarar claramente, em seu `ToolManifest`, os
+recursos que realmente oferece. Cada `ToolFeature` possui uma chave estável,
+um nome e exatamente um dos seguintes tiers:
 
-Exemplos:
+-   `Essential`: solução gratuita e completa do problema principal;
+-   `Plus`: produtividade, volume, automação, continuidade, análise ou
+    conveniência adicional.
 
--   Calculation
--   History
--   BrowserPrint
--   PDF
--   CSV
--   XLSX
--   Metrics
--   Audit
--   Favorites
--   Authentication
--   Premium
+Uma ferramenta publicada deve possuir ao menos um recurso Essencial e um
+recurso Plus. O Core valida essa declaração e decide o acesso por recurso. É
+proibido transformar a ferramenta inteira em Prazzu Plus ou implementar gates
+comerciais particulares dentro do módulo.
+
+Capacidades técnicas, como rotas, views, migrations e política de histórico,
+continuam sendo declaradas pelos contratos do Core. Autenticação e tier são
+requisitos independentes: um histórico pode ser Plus e também exigir login por
+depender da identidade do titular.
 
 ------------------------------------------------------------------------
 

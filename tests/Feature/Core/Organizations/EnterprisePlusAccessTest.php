@@ -26,8 +26,8 @@ final class EnterprisePlusAccessTest extends TestCase
         app(AssignOrganizationSeat::class)->execute($subscription, $member);
 
         self::assertSame(SubscriptionPlan::Free, $user->fresh()->subscription_plan);
-        self::assertTrue($user->fresh()->hasPremiumAccess());
-        self::assertSame(SubscriptionPlan::Premium, $user->fresh()->effectiveSubscriptionPlan());
+        self::assertTrue($user->fresh()->hasPlusAccess());
+        self::assertSame(SubscriptionPlan::Plus, $user->fresh()->effectiveSubscriptionPlan());
     }
 
     public function test_released_seat_removes_only_enterprise_benefit(): void
@@ -36,7 +36,7 @@ final class EnterprisePlusAccessTest extends TestCase
         $seat = app(AssignOrganizationSeat::class)->execute($subscription, $member);
         app(ReleaseOrganizationSeat::class)->execute($seat);
 
-        self::assertFalse($user->fresh()->hasPremiumAccess());
+        self::assertFalse($user->fresh()->hasPlusAccess());
         self::assertDatabaseHas('users', ['id' => $user->id, 'email' => $user->email]);
     }
 
@@ -64,7 +64,7 @@ final class EnterprisePlusAccessTest extends TestCase
         app(AssignOrganizationSeat::class)->execute($subscription, $member);
         $subscription->update(['status' => OrganizationSubscriptionStatus::Suspended]);
 
-        self::assertFalse($user->fresh()->hasPremiumAccess());
+        self::assertFalse($user->fresh()->hasPlusAccess());
     }
 
     private function enterpriseMember(int $seatLimit): array

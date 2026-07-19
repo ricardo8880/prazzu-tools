@@ -15,10 +15,21 @@ ser apresentados como estimativas tributárias transparentes.
 - comparação entre anexos;
 - projeção anual;
 - alertas de proximidade de faixa, limite e sensibilidade do Fator R;
-- histórico mensal para usuários autenticados;
+- histórico mensal individual, criptografado e centralizado no Core;
 - catálogo interno de capacidades Essenciais e Prazzu Plus;
 - página inicial e formulários construídos com Bootstrap;
 - registro no catálogo e rotas próprias do módulo.
+
+## Experiência Essencial
+
+A experiência gratuita calcula o DAS completo, a faixa, a alíquota efetiva e o
+Fator R. Resultado, memória e correção tributária não dependem do Plus.
+
+## Prazzu Plus
+
+O Plus acrescenta comparação de cenários e anexos, projeção anual, alertas e
+histórico mensal. Durante o lançamento, esses recursos são liberados pela
+política central, mas a classificação permanece declarada no manifesto.
 
 ## Regras
 
@@ -35,6 +46,10 @@ ser apresentados como estimativas tributárias transparentes.
 - Visitantes acessam capacidades Essenciais e Plus sem autenticação durante a
   política gratuita de lançamento.
 - Login é exigido somente para salvar e recuperar histórico.
+- O histórico não recebe nome de empresa, cliente, CNPJ ou vínculo comercial.
+  Competência, anexo e valores do cálculo bastam para identificar o cenário.
+- RBT12 e receita mensal são dados financeiros sensíveis: o Core os armazena em
+  payload criptografado, com retenção de 365 dias e acesso restrito ao titular.
 - A ferramenta declara quais capacidades são Plus, mas não consulta plano,
   cobrança ou gratuidade. Essa decisão pertence ao Core.
 - Cobrança recorrente não é implementada pelo módulo.
@@ -43,8 +58,7 @@ ser apresentados como estimativas tributárias transparentes.
 
 - `Money`, `Percentage`, arredondamento e exceções compartilhadas do Core;
 - contratos centrais de acesso e política comercial;
-- contratos centrais de histórico, que substituirão a persistência local
-  legada antes da promoção do módulo;
+- contrato central de histórico para gravação, consulta e exclusão de execuções;
 - Laravel somente em Presentation e Infrastructure;
 - Bootstrap e componentes visuais compartilhados da plataforma;
 - JavaScript específico, quando necessário, dentro de `Resources/js` deste
@@ -53,18 +67,18 @@ ser apresentados como estimativas tributárias transparentes.
 O módulo não depende de outra ferramenta nem conhece organizações, assinaturas,
 vagas empresariais ou detalhes de cobrança.
 
-## Dívida arquitetural formal
+## Limites do histórico
 
-O histórico mensal atual é uma implementação legada local. Ele grava inclusive
-o nome da empresa, enquanto o manifesto ainda declara `supportsHistory: false`
-e `storesSensitiveData: false`. O módulo permanece em `beta` e não pode ser
-promovido para `active` até que esse histórico seja migrado para o Core, os
-dados existentes sejam tratados com segurança e o manifesto passe a refletir a
-capacidade real. Essa persistência não deve ser copiada para novos módulos.
+O histórico serve somente para recuperar cálculos pessoais. Ele não cria
+cadastro de empresa, carteira de clientes, colaboração, compartilhamento ou
+workflow. Registros da antiga tabela local são migrados sem o nome da empresa e
+a tabela legada é removida por migration própria.
 
 ## Histórico de versões
 
-- `1.0.0` — estado beta atual: cálculo do Simples e Fator R, comparações,
+- `1.1.0` — histórico migrado para o Core com payload criptografado, exclusão da
+  identificação empresarial e remoção da persistência local.
+- `1.0.0` — cálculo do Simples e Fator R, comparações,
   projeção, alertas, capacidades e histórico mensal.
 - Lote 1: registro do módulo, rota inicial, domínio de anexos e faixas, catálogo
   de capacidades, página Bootstrap e testes básicos.

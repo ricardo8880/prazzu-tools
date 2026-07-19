@@ -4,6 +4,7 @@ namespace Tests\Feature\Platform;
 
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\ToolCatalog;
+use App\Core\Tools\ToolRegistry;
 use Tests\TestCase;
 
 final class ToolCatalogConsistencyTest extends TestCase
@@ -30,13 +31,33 @@ final class ToolCatalogConsistencyTest extends TestCase
         }
     }
 
-    public function test_static_metadata_and_demonstration_metrics_are_separated(): void
+    public function test_catalog_contains_only_visible_registered_tool_manifests(): void
     {
-        foreach (config('tools.catalog', []) as $tool) {
+        $catalogSlugs = $this->app->make(ToolCatalog::class)->all()->pluck('slug')->sort()->values();
+        $manifestSlugs = collect($this->app->make(ToolRegistry::class)->manifests())
+            ->pluck('slug')
+            ->sort()
+            ->values();
+
+        $this->assertSame($manifestSlugs->all(), $catalogSlugs->all());
+        $this->assertSame([], config('tools.catalog', []));
+        $this->assertSame([], config('tools.metrics', []));
+
+        foreach ($this->app->make(ToolCatalog::class)->all() as $tool) {
+            $this->assertNotSame('0.0.0-placeholder', $tool['version']);
             $this->assertArrayNotHasKey('uses_count', $tool);
+            $this->assertArrayNotHasKey('uses_label', $tool);
             $this->assertArrayNotHasKey('is_popular', $tool);
-            $this->assertArrayHasKey($tool['slug'], config('tools.metrics', []));
+            $this->assertArrayNotHasKey('is_premium', $tool);
+            $this->assertNotEmpty($tool['essential_features']);
+            $this->assertNotEmpty($tool['plus_features']);
+            $this->assertTrue($tool['has_plus_features']);
+            $this->assertSame('Grátis + Plus', $tool['badge']);
+            $this->assertNotSame('tools.show', $tool['route_name']);
+            $this->assertTrue($this->app['router']->has($tool['route_name']));
         }
+
+        $this->get('/ferramentas/ferramenta-inexistente')->assertNotFound();
     }
 
     public function test_home_and_catalog_use_the_same_tool_source(): void

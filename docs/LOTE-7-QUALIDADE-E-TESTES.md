@@ -1,5 +1,10 @@
 # Lote 7 — Qualidade e testes arquiteturais
 
+> **Registro histórico, não normativo.** Este documento descreve o estado do
+> lote em que foi produzido. Para as regras atuais, prevalecem o `README.md` da
+> raiz, `app/Tools/README.md` e `docs/ARCHITECTURE.md`. Referências antigas a
+> CRM ou compartilhamento de cálculos não autorizam essas capacidades.
+
 Este lote transforma as regras do `README.md` da raiz em verificações
 executáveis. A documentação raiz é a autoridade máxima para aceitar ou rejeitar
 uma implementação.

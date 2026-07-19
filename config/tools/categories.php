@@ -17,10 +17,6 @@ return [
         'name' => 'Validadores',
         'icon' => 'bi-shield-check',
     ],
-    'organizadores' => [
-        'name' => 'Organizadores',
-        'icon' => 'bi-calendar2-week',
-    ],
     'documentos' => [
         'name' => 'Documentos',
         'icon' => 'bi-file-earmark-text',

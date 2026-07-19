@@ -27,7 +27,6 @@ enum AnalyticsEventName: string
     case ToolHistoryViewed = 'tool.history.viewed';
     case ToolPlusUsed = 'tool.plus.used';
     case ToolResultExported = 'tool.result.exported';
-    case ToolResultShared = 'tool.result.shared';
 
     case AccountCreated = 'account.created';
     case SubscriptionStarted = 'subscription.started';

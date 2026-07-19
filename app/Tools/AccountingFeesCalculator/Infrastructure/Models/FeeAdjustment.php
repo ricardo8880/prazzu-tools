@@ -12,7 +12,7 @@ final class FeeAdjustment extends Model
     protected $table = 'accounting_fee_adjustments';
 
     protected $fillable = [
-        'user_id', 'session_key', 'client_name', 'index_type', 'reference_period',
+        'user_id', 'session_key', 'scenario_label', 'index_type', 'reference_period',
         'percentage', 'current_value_cents', 'difference_cents', 'adjusted_value_cents', 'notes',
     ];
 

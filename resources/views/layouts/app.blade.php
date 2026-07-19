@@ -100,6 +100,14 @@
                 </div>
             @endif
 
+            @if (session('access_warning'))
+                <div class="alert alert-warning prazzu-flash-alert alert-dismissible fade show" role="alert">
+                    <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                    <span>{{ session('access_warning') }}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                </div>
+            @endif
+
             @yield('content')
         </main>
 

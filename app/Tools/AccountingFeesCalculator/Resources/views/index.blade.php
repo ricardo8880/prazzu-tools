@@ -22,6 +22,8 @@
         </div>
     </header>
 
+    <x-tool-feature-tiers slug="calculadora-de-honorarios-contabeis" />
+
     @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
     @if (session('success'))

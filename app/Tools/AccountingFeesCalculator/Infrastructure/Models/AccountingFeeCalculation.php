@@ -12,7 +12,7 @@ final class AccountingFeeCalculation extends Model
     protected $table = 'accounting_fee_calculations';
 
     protected $fillable = [
-        'user_id', 'session_key', 'input', 'result', 'is_favorite', 'share_token',
+        'user_id', 'session_key', 'input', 'result', 'is_favorite',
     ];
 
     protected function casts(): array

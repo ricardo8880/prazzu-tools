@@ -36,10 +36,6 @@ final class ToolAnalyticsEventClassifier
             return AnalyticsEventName::ToolHistoryViewed;
         }
 
-        if (str_contains($action, 'share') && ! str_contains($action, 'revoke')) {
-            return AnalyticsEventName::ToolResultShared;
-        }
-
         if (str_starts_with($action, 'plus.')) {
             return AnalyticsEventName::ToolPlusUsed;
         }

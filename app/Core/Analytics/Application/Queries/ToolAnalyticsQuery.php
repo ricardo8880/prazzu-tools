@@ -23,6 +23,7 @@ final readonly class ToolAnalyticsQuery
         $metrics = $this->metrics($period)->keyBy('tool_slug');
         $tools = $this->catalog->all(false)->map(function (array $tool) use ($metrics): object {
             $row = $metrics->get($tool['slug']);
+
             return $this->row($tool, $row);
         })->sortByDesc('opens')->values();
 
@@ -31,8 +32,8 @@ final readonly class ToolAnalyticsQuery
             'summary' => [
                 'tools' => $tools->count(), 'opens' => (int) $tools->sum('opens'),
                 'starts' => (int) $tools->sum('starts'), 'completions' => (int) $tools->sum('completions'),
-                'exports' => (int) $tools->sum('exports'), 'shares' => (int) $tools->sum('shares'),
-                'history' => (int) $tools->sum('history'), 'plus' => (int) $tools->sum('plus'),
+                'exports' => (int) $tools->sum('exports'), 'history' => (int) $tools->sum('history'),
+                'plus' => (int) $tools->sum('plus'),
             ],
             'tools' => $tools,
             'rankings' => [
@@ -60,18 +61,20 @@ final readonly class ToolAnalyticsQuery
             'daily' => $this->daily($period, $slug),
             'devices' => $this->base($period, $slug)->selectRaw("COALESCE(device_type, 'unknown') as label, COUNT(*) as total")->groupBy('device_type')->orderByDesc('total')->get(),
             'sources' => $this->base($period, $slug)->selectRaw("COALESCE(source, 'direct') as label, COUNT(*) as total")->groupBy('source')->orderByDesc('total')->limit(10)->get(),
-            'recent_events' => $this->base($period, $slug)->latest('occurred_at')->limit(30)->get(['event_name','device_type','source','occurred_at']),
+            'recent_events' => $this->base($period, $slug)->latest('occurred_at')->limit(30)->get(['event_name', 'device_type', 'source', 'occurred_at']),
         ];
     }
 
     private function row(array $tool, ?object $metric): object
     {
-        $starts = (int) ($metric?->starts ?? 0); $completed = (int) ($metric?->completions ?? 0);
+        $starts = (int) ($metric?->starts ?? 0);
+        $completed = (int) ($metric?->completions ?? 0);
         $abandoned = max(0, $starts - $completed);
+
         return (object) array_merge($tool, [
             'opens' => (int) ($metric?->opens ?? 0), 'starts' => $starts, 'completions' => $completed,
-            'exports' => (int) ($metric?->exports ?? 0), 'shares' => (int) ($metric?->shares ?? 0),
-            'history' => (int) ($metric?->history ?? 0), 'registrations' => (int) ($metric?->registrations ?? 0),
+            'exports' => (int) ($metric?->exports ?? 0), 'history' => (int) ($metric?->history ?? 0),
+            'registrations' => (int) ($metric?->registrations ?? 0),
             'plus' => (int) ($metric?->plus ?? 0), 'unique_visitors' => (int) ($metric?->unique_visitors ?? 0),
             'average_time_seconds' => (int) round((float) ($metric?->average_time_seconds ?? 0)),
             'abandonments' => $abandoned,
@@ -87,7 +90,6 @@ final readonly class ToolAnalyticsQuery
             ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
             ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
             ->selectRaw($this->sumCase([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]).' as exports', $this->names([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolResultShared]).' as shares', $this->names([AnalyticsEventName::ToolResultShared]))
             ->selectRaw($this->sumCase([AnalyticsEventName::ToolHistoryViewed]).' as history', $this->names([AnalyticsEventName::ToolHistoryViewed]))
             ->selectRaw($this->sumCase([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
             ->selectRaw($this->sumCase([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]).' as plus', $this->names([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]))
@@ -111,7 +113,6 @@ final readonly class ToolAnalyticsQuery
             ->when($slug, fn (Builder $q) => $q->where('subject_slug', $slug));
     }
 
-
     /** @param list<AnalyticsEventName> $events @return list<string> */
     private function names(array $events): array
     {
@@ -130,6 +131,17 @@ final readonly class ToolAnalyticsQuery
         return implode(',', array_fill(0, max(1, count($values)), '?'));
     }
 
-    private function dateExpression(): string { return match (PlatformAnalyticsEvent::query()->getConnection()->getDriverName()) { 'pgsql' => 'DATE(occurred_at)', default => 'DATE(occurred_at)' }; }
-    private function jsonNumber(string $key): string { return match (PlatformAnalyticsEvent::query()->getConnection()->getDriverName()) { 'pgsql' => "CAST(metadata->>'$key' AS DECIMAL(12,2))", 'sqlite' => "CAST(json_extract(metadata, '$.$key') AS REAL)", default => "CAST(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.$key')) AS DECIMAL(12,2))" }; }
+    private function dateExpression(): string
+    {
+        return match (PlatformAnalyticsEvent::query()->getConnection()->getDriverName()) {
+            'pgsql' => 'DATE(occurred_at)', default => 'DATE(occurred_at)'
+        };
+    }
+
+    private function jsonNumber(string $key): string
+    {
+        return match (PlatformAnalyticsEvent::query()->getConnection()->getDriverName()) {
+            'pgsql' => "CAST(metadata->>'$key' AS DECIMAL(12,2))", 'sqlite' => "CAST(json_extract(metadata, '$.$key') AS REAL)", default => "CAST(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.$key')) AS DECIMAL(12,2))"
+        };
+    }
 }

@@ -20,9 +20,6 @@
             <h1>Reajuste de honorários</h1>
             <p>Aplique o índice do período, visualize a diferença e mantenha um histórico auditável.</p>
         </div>
-        <a class="btn btn-outline-primary align-self-start" href="{{ route('tools.calculadora-de-honorarios-contabeis.crm.index') }}">
-            <i class="bi bi-people me-1"></i>Abrir CRM
-        </a>
     </header>
 
     @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
@@ -71,9 +68,9 @@
                     <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.calculate') }}" class="row g-3">
                         @csrf
                         <div class="col-12">
-                            <label class="form-label" for="client_name">Cliente ou empresa *</label>
-                            <input class="form-control @error('client_name') is-invalid @enderror" id="client_name" name="client_name" value="{{ old('client_name') }}" required maxlength="150">
-                            @error('client_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label class="form-label" for="scenario_label">Referência do cálculo *</label>
+                            <input class="form-control @error('scenario_label') is-invalid @enderror" id="scenario_label" name="scenario_label" value="{{ old('scenario_label') }}" required maxlength="150" placeholder="Ex.: Renovação anual — cenário A">
+                            @error('scenario_label')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-12 col-md-6">
                             <label class="form-label" for="index_type">Índice *</label>
@@ -141,12 +138,12 @@
                     @else
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
-                                <thead><tr><th>Cliente</th><th>Índice</th><th>Atual</th><th>Novo</th><th>Competência</th><th class="text-end">Ação</th></tr></thead>
+                                <thead><tr><th>Referência</th><th>Índice</th><th>Atual</th><th>Novo</th><th>Competência</th><th class="text-end">Ação</th></tr></thead>
                                 <tbody>
                                     @php($indexLabels = ['ipca' => 'IPCA', 'inpc' => 'INPC', 'igpm' => 'IGP-M', 'manual' => 'Manual'])
                                     @foreach ($adjustments as $adjustment)
                                         <tr>
-                                            <td><div class="fw-semibold">{{ $adjustment->client_name }}</div><div class="small text-body-secondary">{{ number_format((float) $adjustment->percentage, 4, ',', '.') }}%</div></td>
+                                            <td><div class="fw-semibold">{{ $adjustment->scenario_label }}</div><div class="small text-body-secondary">{{ number_format((float) $adjustment->percentage, 4, ',', '.') }}%</div></td>
                                             <td><span class="badge text-bg-light border">{{ $indexLabels[$adjustment->index_type] }}</span></td>
                                             <td class="text-nowrap">{{ $adjustment->formattedValue('current_value_cents') }}</td>
                                             <td class="fw-semibold text-primary text-nowrap">{{ $adjustment->formattedValue('adjusted_value_cents') }}</td>

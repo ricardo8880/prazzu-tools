@@ -44,7 +44,7 @@ final class OrganizationLifecycleTest extends TestCase
 
         app(AssignOrganizationSeat::class)->execute($subscription, $member);
 
-        self::assertTrue($collaborator->fresh()->hasPremiumAccess());
+        self::assertTrue($collaborator->fresh()->hasPlusAccess());
         self::assertSame(SubscriptionPlan::Free, $collaborator->fresh()->subscription_plan);
 
         $this->actingAs($owner)->patch(
@@ -52,7 +52,7 @@ final class OrganizationLifecycleTest extends TestCase
             ['role' => 'member', 'status' => 'inactive'],
         )->assertSessionHasNoErrors();
 
-        self::assertFalse($collaborator->fresh()->hasPremiumAccess());
+        self::assertFalse($collaborator->fresh()->hasPlusAccess());
         self::assertSame(SubscriptionPlan::Free, $collaborator->fresh()->subscription_plan);
         $this->assertDatabaseHas('users', [
             'id' => $collaborator->id,
@@ -99,7 +99,7 @@ final class OrganizationLifecycleTest extends TestCase
         self::assertNotSame($oldSeat->id, $currentSeat->id);
         self::assertNotNull($oldSeat->fresh()->released_at);
         self::assertNull($currentSeat->released_at);
-        self::assertTrue($user->fresh()->hasPremiumAccess());
+        self::assertTrue($user->fresh()->hasPlusAccess());
     }
 
     public function test_company_manager_never_receives_access_to_another_members_personal_area(): void

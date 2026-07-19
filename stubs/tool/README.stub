@@ -9,6 +9,17 @@ Descreva o problema contábil resolvido pela ferramenta e o público atendido.
 - Estrutura inicial da página pública.
 - Manifesto registrado como `draft`.
 
+## Experiência Essencial
+
+Descreva a solução gratuita completa. Ela deve resolver corretamente o
+problema principal sem esconder fórmulas, resultados ou memória de cálculo.
+
+## Prazzu Plus
+
+Descreva somente recursos avançados de produtividade, volume, automação,
+comparação, exportação ou continuidade. O Plus nunca corrige nem completa o
+cálculo Essencial.
+
 ## Regras de domínio
 
 Documente fórmulas, arredondamentos, datas de referência, casos de fronteira e
@@ -38,11 +49,12 @@ favoritos, analytics, acesso e persistência devem usar contratos do Core.
 
 ## Antes de ativar
 
-1. Defina entradas e saídas do domínio.
-2. Adicione casos de referência e fontes normativas quando aplicável.
-3. Use os value objects do Core para dinheiro, percentuais, datas, CPF e CNPJ.
-4. Faça regras temporais receberem a data de referência e declararem vigência.
-5. Implemente validação, regras e apresentação.
-6. Adicione testes Unit e Feature para todos os casos implementados.
-7. Revise acesso, persistência, dados sensíveis e histórico.
-8. Execute o checklist obrigatório do README raiz.
+1. Renomeie as chaves provisórias `solve_problem` e `advanced_productivity`.
+2. Defina entradas e saídas do domínio e a divisão Essencial × Plus.
+3. Adicione casos de referência e fontes normativas quando aplicável.
+4. Use os value objects do Core para dinheiro, percentuais, datas, CPF e CNPJ.
+5. Faça regras temporais receberem a data de referência e declararem vigência.
+6. Implemente validação, regras e apresentação.
+7. Adicione testes Unit e Feature para todos os casos implementados.
+8. Revise acesso, persistência, dados sensíveis e histórico.
+9. Execute o checklist obrigatório do README raiz.

@@ -1,5 +1,10 @@
 # Lote 3 — Padrão interno dos módulos
 
+> **Registro histórico, não normativo.** Este documento descreve o estado do
+> lote em que foi produzido. Para as regras atuais, prevalecem o `README.md` da
+> raiz, `app/Tools/README.md` e `docs/ARCHITECTURE.md`. Referências antigas a
+> CRM ou compartilhamento de cálculos não autorizam essas capacidades.
+
 ## Objetivo
 
 Garantir que novas ferramentas sejam criadas com a mesma arquitetura, os mesmos

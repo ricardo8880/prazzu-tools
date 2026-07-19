@@ -17,10 +17,10 @@
             </nav>
         </section>
 
-        <section class="prazzu-panel prazzu-premium-card p-3 mb-4" aria-labelledby="premium-title">
+        <section class="prazzu-panel prazzu-premium-card p-3 mb-4" aria-labelledby="prazzu-plus-title">
             <i class="bi bi-crown prazzu-premium-card__icon" aria-hidden="true"></i>
-            <h2 id="premium-title" class="h6 mt-3 mb-2">Ferramentas Premium</h2>
-            <p class="small text-body-secondary mb-3">Acesso ilimitado a todas as ferramentas e recursos exclusivos.</p>
+            <h2 id="prazzu-plus-title" class="h6 mt-3 mb-2">Prazzu Plus</h2>
+            <p class="small text-body-secondary mb-3">Recursos avançados de produtividade, volume e histórico. A solução Essencial de cada ferramenta continua gratuita.</p>
             <a class="btn btn-primary prazzu-btn-primary w-100" href="{{ route('plans') }}">Ver planos</a>
         </section>
 

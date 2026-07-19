@@ -16,7 +16,7 @@ final class PlansPageTest extends TestCase
             ->assertSee('R$ 109,90')
             ->assertSee('R$ 399,90')
             ->assertSee('Uma única assinatura')
-            ->assertSee('uma vez por dia');
+            ->assertSee('recursos Essenciais e Prazzu Plus estão liberados gratuitamente');
     }
 
     public function test_plans_page_displays_billing_periods_and_savings(): void

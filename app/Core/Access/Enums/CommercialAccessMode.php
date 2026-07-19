@@ -30,8 +30,4 @@ enum CommercialAccessMode: string
         return $this === self::LaunchFree;
     }
 
-    public function enforcesUsageLimits(): bool
-    {
-        return $this === self::Monetized;
-    }
 }

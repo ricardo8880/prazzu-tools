@@ -5,7 +5,6 @@ namespace Tests\Unit\Core\Access;
 use App\Core\Access\Contracts\CommercialAccessPolicy;
 use App\Core\Access\Data\ToolAccessContext;
 use App\Core\Access\Enums\AccountRole;
-use App\Core\Access\Enums\SubscriptionPlan;
 use App\Core\Access\Services\DefaultToolAccessGate;
 use App\Core\FeatureFlags\Contracts\FeatureFlagRepository;
 use App\Core\Tools\Data\ToolManifest;
@@ -21,18 +20,14 @@ final class DefaultToolAccessGateTest extends TestCase
         $gate = new DefaultToolAccessGate($this->flags(true), $this->commercialPolicy(true));
 
         self::assertTrue($gate->decide($this->manifest(ToolAccess::Free), new ToolAccessContext())->allowed);
-        self::assertTrue($gate->decide($this->manifest(ToolAccess::Authenticated), new ToolAccessContext())->allowed);
-        self::assertTrue($gate->decide($this->manifest(ToolAccess::Premium), new ToolAccessContext())->allowed);
     }
 
-    public function test_monetized_mode_requires_authenticated_premium_account_for_premium_tool(): void
+    public function test_monetized_mode_keeps_the_public_tool_available(): void
     {
         $gate = new DefaultToolAccessGate($this->flags(true), $this->commercialPolicy(false));
-        $manifest = $this->manifest(ToolAccess::Premium);
+        $manifest = $this->manifest(ToolAccess::Free);
 
-        self::assertFalse($gate->decide($manifest, new ToolAccessContext())->allowed);
-        self::assertFalse($gate->decide($manifest, new ToolAccessContext(userId: 1))->allowed);
-        self::assertTrue($gate->decide($manifest, new ToolAccessContext(userId: 1, plan: SubscriptionPlan::Premium))->allowed);
+        self::assertTrue($gate->decide($manifest, new ToolAccessContext())->allowed);
     }
 
     public function test_internal_tool_requires_administrator_even_during_launch_free_mode(): void
@@ -61,7 +56,7 @@ final class DefaultToolAccessGateTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.ferramenta-teste.index',
-            access: ToolAccess::Premium,
+            access: ToolAccess::Free,
             status: ToolStatus::Maintenance,
         );
 
@@ -95,7 +90,6 @@ final class DefaultToolAccessGateTest extends TestCase
         return new class($launchFree) implements CommercialAccessPolicy {
             public function __construct(private readonly bool $launchFree) {}
             public function grantsPublicCapabilitiesWithoutAuthentication(): bool { return $this->launchFree; }
-            public function enforcesUsageLimits(): bool { return ! $this->launchFree; }
         };
     }
 }

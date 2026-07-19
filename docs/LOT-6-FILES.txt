@@ -3,7 +3,6 @@ app/Http/Controllers/Platform/HomeController.php
 app/Http/Controllers/Platform/NewsletterController.php
 app/Http/Controllers/Platform/SuggestToolController.php
 app/Http/Controllers/Platform/ToolCatalogController.php
-app/Http/Controllers/Platform/ToolPageController.php
 app/Http/Requests/Platform/NewsletterRequest.php
 app/Http/Requests/Platform/SuggestToolRequest.php
 app/Providers/ToolServiceProvider.php

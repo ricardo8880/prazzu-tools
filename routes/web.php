@@ -11,6 +11,11 @@ use App\Http\Controllers\Admin\Analytics\SeoAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\SeoPostAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\ToolAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\ToolDetailAnalyticsController;
+use App\Http\Controllers\Admin\Blog\BlogAnalyticsController as AdminBlogAnalyticsController;
+use App\Http\Controllers\Admin\Blog\BlogCategoryController;
+use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
+use App\Http\Controllers\Admin\Blog\BlogPostController;
+use App\Http\Controllers\Analytics\CaptureAudienceContextController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
 use App\Http\Controllers\Auth\AccountController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -19,26 +24,20 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\Analytics\CaptureAudienceContextController;
-use App\Http\Controllers\Admin\Blog\BlogAnalyticsController as AdminBlogAnalyticsController;
-use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
-use App\Http\Controllers\Admin\Blog\BlogCategoryController;
-use App\Http\Controllers\Admin\Blog\BlogPostController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Blog\BlogAnalyticsController;
 use App\Http\Controllers\Blog\BlogController;
-use App\Http\Controllers\Platform\ContentPageController;
-use App\Http\Controllers\Platform\HomeController;
-use App\Http\Controllers\Platform\NewsletterController;
-use App\Http\Controllers\Platform\SuggestToolController;
-use App\Http\Controllers\Platform\ToolCatalogController;
-use App\Http\Controllers\Platform\ToolPageController;
 use App\Http\Controllers\Organizations\InvitationAcceptanceController;
 use App\Http\Controllers\Organizations\OrganizationController;
 use App\Http\Controllers\Organizations\OrganizationInvitationController;
 use App\Http\Controllers\Organizations\OrganizationMemberController;
 use App\Http\Controllers\Organizations\OrganizationSeatController;
+use App\Http\Controllers\Platform\ContentPageController;
+use App\Http\Controllers\Platform\HomeController;
+use App\Http\Controllers\Platform\NewsletterController;
+use App\Http\Controllers\Platform\SuggestToolController;
+use App\Http\Controllers\Platform\ToolCatalogController;
 use App\Http\Controllers\Seo\BlogSitemapController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,9 +50,6 @@ Route::get('/ferramentas/{category}', [ToolCatalogController::class, 'index'])
     ->name('tools.category');
 
 require __DIR__.'/tools.php';
-
-Route::get('/ferramentas/{tool}', [ToolPageController::class, 'show'])
-    ->name('tools.show');
 
 Route::prefix('admin/analytics')
     ->name('admin.analytics.')

@@ -15,11 +15,6 @@ final readonly class ConfigCommercialAccessPolicy implements CommercialAccessPol
         return $this->mode()->grantsPublicCapabilitiesWithoutAuthentication();
     }
 
-    public function enforcesUsageLimits(): bool
-    {
-        return $this->mode()->enforcesUsageLimits();
-    }
-
     private function mode(): CommercialAccessMode
     {
         return CommercialAccessMode::fromConfiguration(

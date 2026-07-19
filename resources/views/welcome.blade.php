@@ -73,7 +73,7 @@
                 @foreach ($featuredTools as $tool)
                     <div class="col-12 col-sm-6 col-xl-3">
                         <article class="prazzu-tool-card h-100">
-                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ url('/ferramentas/'.$tool['slug']) }}" aria-label="Abrir {{ $tool['name'] }}"></a>
+                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ route($tool['route_name']) }}" aria-label="Abrir {{ $tool['name'] }}"></a>
                             <span class="prazzu-icon-tile prazzu-icon-tile--{{ $tool['tone'] }} mb-3">
                                 <i class="bi {{ $tool['icon'] }}" aria-hidden="true"></i>
                             </span>

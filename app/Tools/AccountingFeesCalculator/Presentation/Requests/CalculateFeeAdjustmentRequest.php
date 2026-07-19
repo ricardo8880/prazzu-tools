@@ -17,7 +17,7 @@ final class CalculateFeeAdjustmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_name' => ['required', 'string', 'max:150'],
+            'scenario_label' => ['required', 'string', 'max:150'],
             'index_type' => ['required', Rule::in(['ipca', 'inpc', 'igpm', 'manual'])],
             'reference_period' => ['required', 'date_format:Y-m'],
             'current_value' => ['required', 'string', 'regex:/^\s*(?:R\$\s*)?\d{1,3}(?:\.\d{3})*(?:,\d{1,2})?\s*$|^\s*(?:R\$\s*)?\d+(?:,\d{1,2})?\s*$/'],

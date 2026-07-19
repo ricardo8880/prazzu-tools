@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\Tools\SimplesNacionalCalculator\Application\Actions;
 
-use App\Tools\SimplesNacionalCalculator\Infrastructure\Models\SimplesNacionalCalculation;
-use App\Tools\SimplesNacionalCalculator\Infrastructure\Repositories\SimplesNacionalCalculationRepository;
-use Illuminate\Support\Collection;
+use App\Core\Tools\History\Contracts\ToolRunHistory;
+use App\Core\Tools\History\Data\ToolRunEntry;
+use App\Tools\SimplesNacionalCalculator\Tool;
 
 final readonly class ListSimplesNacionalCalculations
 {
-    public function __construct(private SimplesNacionalCalculationRepository $calculations) {}
+    public function __construct(private ToolRunHistory $history) {}
 
-    /** @return Collection<int, SimplesNacionalCalculation> */
-    public function recent(?int $userId, int $limit = 24): Collection
+    /** @return list<ToolRunEntry> */
+    public function recent(?int $userId, int $limit = 24): array
     {
         if ($userId === null) {
-            return collect();
+            return [];
         }
 
-        return $this->calculations->recentForUser($userId, $limit);
+        return $this->history->recentSucceeded(Tool::SLUG, $userId, $limit);
     }
 }

@@ -149,7 +149,15 @@ final class ArchitectureInspector
     private function inspectModuleDocumentation(): array
     {
         $violations = [];
-        $requiredSections = ['Descrição', 'Funcionalidades', 'Regras', 'Dependências', 'Histórico de versões'];
+        $requiredSections = [
+            'Descrição',
+            'Funcionalidades',
+            'Experiência Essencial',
+            'Prazzu Plus',
+            'Regras',
+            'Dependências',
+            'Histórico de versões',
+        ];
 
         foreach ($this->moduleDirectories() as $moduleRoot) {
             $readme = $moduleRoot.DIRECTORY_SEPARATOR.'README.md';
