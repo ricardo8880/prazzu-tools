@@ -76,6 +76,7 @@
         <span class="badge text-bg-light border">Comparação: {{ $previous_period->label() }}</span>
     </div>
 
+    @include('admin.analytics.partials.page-guide', ['page' => 'dashboard'])
     <div class="row g-3 mb-4">
         @foreach([
             ['hoje', $visitor_snapshots['today']],

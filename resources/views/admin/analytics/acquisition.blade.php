@@ -46,6 +46,8 @@
         </form>
     </div>
 
+    @include('admin.analytics.partials.page-guide', ['page' => 'acquisition'])
+
     @if($errors->any())
         <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i>{{ $errors->first() }}</div>
     @endif

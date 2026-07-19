@@ -32,6 +32,7 @@
         </div>
     </div>
 
+    @include('admin.analytics.partials.page-guide', ['page' => 'realtime'])
     <div class="alert alert-warning d-none" role="alert" data-error><i class="bi bi-exclamation-triangle me-2"></i>Não foi possível atualizar os dados agora.</div>
 
     <div class="row g-3 mb-4">

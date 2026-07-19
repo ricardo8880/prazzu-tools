@@ -33,6 +33,7 @@
         @if($selected_funnel->custom)<form method="post" action="{{ route('admin.analytics.funnels.destroy', $selected_funnel->id) }}" onsubmit="return confirm('Remover este funil?')">@csrf @method('delete')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Remover</button></form>@endif
     </div></div>
 
+    @include('admin.analytics.partials.page-guide', ['page' => 'funnels'])
     <div class="row g-3 mb-4">
         @foreach([['Entradas',$result['entrants'],'bi-box-arrow-in-right'],['Conclusões',$result['completed'],'bi-check2-circle'],['Conversão',number_format($result['conversion_rate'],1,',','.').' %','bi-graph-up-arrow'],['Identidades analisadas',$result['identities'],'bi-people']] as [$label,$value,$icon])
         <div class="col-6 col-xl-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="d-flex justify-content-between"><span class="small text-body-secondary">{{ $label }}</span><i class="bi {{ $icon }} text-primary"></i></div><div class="h4 mt-2 mb-0">{{ $value }}</div></div></div></div>

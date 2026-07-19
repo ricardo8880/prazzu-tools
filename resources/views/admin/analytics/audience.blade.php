@@ -23,6 +23,7 @@
         </form>
     </div>
 
+    @include('admin.analytics.partials.page-guide', ['page' => 'audience'])
     <div class="row g-3 mb-4">
         @foreach([
             ['Visitantes',$summary['visitors'],'bi-people'],['Novos',$summary['new_visitors'],'bi-person-plus'],['Recorrentes',$summary['returning_visitors'],'bi-arrow-repeat'],['Taxa de retorno',number_format($summary['returning_rate'],1,',','.').' %','bi-percent'],['Sessões',$summary['sessions'],'bi-window'],['Usuários identificados',$summary['identified_users'],'bi-person-check']

@@ -6,6 +6,7 @@
   <div><div class="d-flex flex-wrap gap-2 mb-2"><span class="badge text-bg-warning">Analytics 2.0</span><a class="badge text-bg-light border text-decoration-none" href="{{ route('admin.analytics.index') }}">Dashboard</a><a class="badge text-bg-light border text-decoration-none" href="{{ route('admin.analytics.funnels') }}">Funis</a></div><h1 class="h2 mb-1">Insights inteligentes</h1><p class="text-body-secondary mb-0">Alertas, tendências, oportunidades e recomendações geradas a partir dos eventos auditáveis.</p></div>
   <form method="post" action="{{ route('admin.analytics.insights.generate', request()->query()) }}">@csrf<button class="btn btn-primary"><i class="bi bi-arrow-repeat me-1"></i>Analisar agora</button></form>
  </div>
+    @include('admin.analytics.partials.page-guide', ['page' => 'insights'])
  @if(session('status'))<div class="alert alert-success">{{ session('status') }}</div>@endif
  <form method="get" class="card border-0 shadow-sm mb-4"><div class="card-body"><div class="row g-2 align-items-end">
   <div class="col-md-3"><label class="form-label">Período</label><select name="period" class="form-select">@foreach(['today'=>'Hoje','yesterday'=>'Ontem','7'=>'7 dias','30'=>'30 dias','90'=>'90 dias'] as $v=>$l)<option value="{{ $v }}" @selected($selected_period===$v)>{{ $l }}</option>@endforeach</select></div>

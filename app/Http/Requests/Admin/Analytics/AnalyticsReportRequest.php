@@ -16,7 +16,7 @@ final class AnalyticsReportRequest extends AnalyticsDashboardRequest
             'source' => ['nullable', 'string', 'max:120'], 'city' => ['nullable', 'string', 'max:120'],
             'region' => ['nullable', 'string', 'max:120'], 'device_type' => ['nullable', 'string', 'max:30'],
             'operating_system' => ['nullable', 'string', 'max:80'], 'user_id' => ['nullable', 'integer', 'min:1'],
-            'event_name' => ['nullable', 'string', 'max:120'], 'format' => ['nullable', Rule::in(['csv', 'excel', 'pdf'])],
+            'event_name' => ['nullable', 'string', 'max:120'], 'format' => ['nullable', Rule::in(['csv', 'excel', 'pdf', 'markdown', 'json', 'package', 'package_summary'])],
         ];
     }
 

@@ -599,6 +599,40 @@ A plataforma centraliza esses eventos e disponibiliza métricas
 administrativas, sem que as ferramentas conheçam a implementação
 utilizada.
 
+
+### Catálogo semântico de eventos
+
+Todo evento oficial deve possuir uma definição no catálogo central
+`App\Core\Analytics\Domain\Catalog\AnalyticsEventCatalog`.
+
+A definição deve informar, no mínimo:
+
+-   nome amigável para apresentação;
+-   categoria funcional;
+-   descrição objetiva do que ocorreu;
+-   significado de negócio e cuidado de interpretação.
+
+A interface administrativa deve priorizar o nome amigável, mas preservar
+e exibir o identificador técnico para auditoria. Novos eventos adicionados
+a `AnalyticsEventName` devem receber sua definição semântica e teste no
+mesmo lote de desenvolvimento.
+
+Nomes legados continuam sendo aceitos pelo resolver central e devem usar
+a definição do evento canônico, sem apagar o nome técnico originalmente
+registrado.
+
+As explicações das abas do Analytics pertencem ao Core e devem orientar
+qual decisão cada visão ajuda a tomar. Elas não devem afirmar causalidade
+quando os dados mostram apenas associação.
+
+### Evolução planejada dos relatórios
+
+A exportação existente permanece como relatório de dados brutos. A próxima
+etapa de evolução deve adicionar um relatório estratégico autoexplicativo,
+com contexto do produto, comparação de períodos, dicionário de dados e
+formatos adequados para análise por inteligência artificial, sem remover
+ou alterar a compatibilidade das exportações atuais.
+
 ------------------------------------------------------------------------
 
 ## 10. A arquitetura deve favorecer crescimento
@@ -1651,3 +1685,67 @@ mínimo:
 A revisão arquitetural deve falhar caso qualquer arquivo dentro de `app/Tools` passe a
 depender diretamente de organizações, membros, assinaturas empresariais, vagas ou ações
 do domínio empresarial.
+
+### Relatório estratégico para análise por IA
+
+A aba de Relatórios deve manter duas famílias de exportação claramente separadas:
+
+- **dados brutos**, nos formatos CSV, Excel e PDF, destinados a auditoria e análise tabular;
+- **relatório estratégico**, nos formatos Markdown e JSON, destinado a leitura humana e análise por inteligência artificial.
+
+O relatório estratégico pertence ao Core Analytics e deve ser autoexplicativo. Ele precisa conter, no mínimo:
+
+- versão explícita do esquema (`schema_version`);
+- período atual e período anterior equivalente;
+- filtros aplicados;
+- contexto do Prazzu Tools, incluindo que conta não é obrigatória para usar as ferramentas;
+- resumo executivo comparativo;
+- detalhamento por eventos, ferramentas, canais e origens;
+- dicionário semântico dos eventos observados;
+- instruções para diferenciar fatos, inferências e hipóteses;
+- alerta para não tratar correlação como causalidade.
+
+Mudanças futuras no formato estruturado devem preservar compatibilidade ou incrementar a versão do esquema. As exportações brutas existentes não devem ser removidas nem silenciosamente transformadas em relatório estratégico.
+
+O Lote 3 deverá partir deste contrato e acrescentar métricas derivadas e insights com evidências, sem duplicar o catálogo semântico nem alterar a finalidade dos formatos entregues neste lote.
+
+### Continuidade do Analytics — Lote 3
+
+O relatório estratégico possui métricas derivadas e insights automáticos. Estas regras são obrigatórias em correções futuras:
+
+- O funil oficial das ferramentas é `tool.opened` → `tool.calculation.started` → `tool.calculation.completed` → `tool.result.exported`.
+- Validadores em lote podem usar `business_document_validator.batch_processed` como conclusão equivalente, sempre por meio do `AnalyticsEventNameResolver`.
+- Taxa de início é `inícios / aberturas`, taxa de conclusão é `conclusões / inícios` e taxa de exportação é `exportações / conclusões`.
+- Comparações entre taxas devem usar pontos percentuais, não variação percentual relativa.
+- Insights devem manter campos separados para observação, evidências, hipóteses, ações recomendadas, prioridade e confiança.
+- Hipóteses nunca podem ser apresentadas como fatos. Correlação não comprova causalidade.
+- Alertas automáticos devem aplicar amostra mínima para evitar conclusões baseadas em poucos eventos.
+- Novas métricas devem reutilizar o catálogo semântico e o resolver de eventos; não devem criar listas paralelas de aliases.
+- O formato estratégico foi atualizado para `schema_version` 1.1. Alterações incompatíveis futuras exigem nova versão.
+- O próximo lote deve partir da soma do projeto original e dos Lotes 1, 2 e 3, preservando CSV, Excel e PDF como exportações brutas.
+
+
+## Continuidade do Analytics — Lote 4
+
+O pacote estratégico para IA conclui a sequência iniciada pelos Lotes 1, 2 e 3. Toda manutenção futura do Analytics deve considerar cumulativamente o catálogo semântico, o relatório estratégico versionado, as métricas derivadas e os insights com evidências.
+
+### Pacotes para IA
+
+A tela de Relatórios oferece dois pacotes ZIP:
+
+- **Pacote completo**: inclui `LEIA-ME.md`, resumo estratégico, JSON canônico, dicionário, insights e bases CSV de eventos, ferramentas, canais, origens e dispositivos.
+- **Pacote resumido**: inclui somente contexto, resumo, JSON, dicionário e insights, sendo indicado quando não é necessário compartilhar eventos brutos.
+
+Os pacotes devem ser gerados no Core Analytics e nunca dentro de uma ferramenta específica. O gerador ZIP interno não depende da extensão nativa `zip`, preservando a portabilidade do projeto.
+
+Regras obrigatórias para alterações futuras:
+
+- não duplicar cálculos ou definições já existentes no `StrategicAnalyticsReportBuilder`, no `AnalyticsReportQuery` ou no `AnalyticsEventCatalog`;
+- manter o arquivo `metricas.json` como fonte canônica e versionada do pacote;
+- manter o `LEIA-ME.md` com contexto do produto, filtros, período, limitações e prompt recomendado;
+- diferenciar o pacote completo do resumido para evitar compartilhamento desnecessário de eventos brutos;
+- qualquer novo detalhamento estratégico relevante deve ser incluído no JSON antes de ser exportado em CSV;
+- CSVs do pacote devem usar UTF-8 com BOM e separador ponto e vírgula;
+- nomes internos dos arquivos do pacote são contratos de integração e não devem ser alterados sem justificativa e documentação;
+- os pacotes não substituem as exportações brutas CSV, Excel e PDF já existentes;
+- qualquer correção posterior deve revisar os quatro lotes anteriores antes de modificar o fluxo de relatórios.

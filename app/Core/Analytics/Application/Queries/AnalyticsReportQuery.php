@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Analytics\Application\Queries;
 
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
@@ -29,6 +30,148 @@ final class AnalyticsReportQuery
             'total_rows' => (clone $current)->count(),
             'dimensions' => $this->dimensions(),
         ];
+    }
+
+
+    /** @param array<string, mixed> $filters */
+    public function strategic(AnalyticsPeriod $period, array $filters): array
+    {
+        $current = $this->filtered($period, $filters);
+        $previous = $this->filtered($period->previous(), $filters);
+        $conversionEvents = $this->eventNames->expand(config('analytics.dashboard.conversion_events', []));
+
+        return [
+            'summary' => $this->comparison($this->summary(clone $current), $this->summary(clone $previous)),
+            'event_breakdown' => (clone $current)->select('platform_analytics_events.event_name', DB::raw('COUNT(*) as total'))->groupBy('platform_analytics_events.event_name')->orderByDesc('total')->get()->map->toArray()->all(),
+            'tool_breakdown' => $this->breakdown(clone $current, 'subject_slug', $conversionEvents, fn (Builder $query) => $query->where('platform_analytics_events.subject_type', 'tool')),
+            'channel_breakdown' => $this->breakdown(clone $current, 'channel', $conversionEvents),
+            'source_breakdown' => $this->breakdown(clone $current, 'source', $conversionEvents),
+            'device_breakdown' => $this->breakdown(clone $current, 'device_type', $conversionEvents),
+            'tool_performance' => $this->toolPerformance($period, $filters),
+            'funnel' => $this->funnel($period, $filters),
+        ];
+    }
+
+    /** @param list<string> $conversionEvents */
+    private function breakdown(Builder $query, string $column, array $conversionEvents, ?callable $scope = null): array
+    {
+        if ($scope !== null) {
+            $scope($query);
+        }
+
+        return $query->selectRaw("COALESCE(platform_analytics_events.$column, '') as name")
+            ->selectRaw('COUNT(*) as events')
+            ->selectRaw('COUNT(DISTINCT platform_analytics_events.visitor_id) as visitors')
+            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.collect($conversionEvents)->map(fn () => '?')->implode(',').') THEN 1 ELSE 0 END) as conversions', $conversionEvents)
+            ->groupBy("platform_analytics_events.$column")
+            ->orderByDesc('events')
+            ->limit(100)
+            ->get()->map(fn ($row) => ['name' => (string) $row->name, 'events' => (int) $row->events, 'visitors' => (int) $row->visitors, 'conversions' => (int) $row->conversions])->all();
+    }
+
+
+    /** @param array<string, mixed> $filters */
+    private function toolPerformance(AnalyticsPeriod $period, array $filters): array
+    {
+        $current = collect($this->toolPerformanceRows($this->filtered($period, $filters)))->keyBy('name');
+        $previous = collect($this->toolPerformanceRows($this->filtered($period->previous(), $filters)))->keyBy('name');
+
+        return $current->map(function (array $row, string $name) use ($previous): array {
+            $before = $previous->get($name, []);
+            $row['previous'] = $before;
+            $row['completion_rate_delta_pp'] = isset($before['completion_rate'])
+                ? round($row['completion_rate'] - $before['completion_rate'], 1)
+                : null;
+            $row['start_rate_delta_pp'] = isset($before['start_rate'])
+                ? round($row['start_rate'] - $before['start_rate'], 1)
+                : null;
+
+            return $row;
+        })->sortByDesc('completed')->values()->all();
+    }
+
+    private function toolPerformanceRows(Builder $query): array
+    {
+        $opened = $this->eventNames->acceptedNamesFor(AnalyticsEventName::ToolOpened);
+        $started = $this->eventNames->acceptedNamesFor(AnalyticsEventName::ToolCalculationStarted);
+        $completed = $this->eventNames->expand([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]);
+        $exported = $this->eventNames->acceptedNamesFor(AnalyticsEventName::ToolResultExported);
+
+        return $query->where('platform_analytics_events.subject_type', 'tool')
+            ->whereNotNull('platform_analytics_events.subject_slug')
+            ->selectRaw("platform_analytics_events.subject_slug as name")
+            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($opened).') THEN 1 ELSE 0 END) as opened', $opened)
+            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($started).') THEN 1 ELSE 0 END) as started', $started)
+            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($completed).') THEN 1 ELSE 0 END) as completed', $completed)
+            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($exported).') THEN 1 ELSE 0 END) as exported', $exported)
+            ->groupBy('platform_analytics_events.subject_slug')
+            ->get()->map(function ($row): array {
+                $opened = (int) $row->opened;
+                $started = (int) $row->started;
+                $completed = (int) $row->completed;
+                $exported = (int) $row->exported;
+
+                return [
+                    'name' => (string) $row->name,
+                    'opened' => $opened,
+                    'started' => $started,
+                    'completed' => $completed,
+                    'exported' => $exported,
+                    'start_rate' => $this->rate($started, $opened),
+                    'completion_rate' => $this->rate($completed, $started),
+                    'export_rate' => $this->rate($exported, $completed),
+                ];
+            })->all();
+    }
+
+    /** @param array<string, mixed> $filters */
+    private function funnel(AnalyticsPeriod $period, array $filters): array
+    {
+        $current = $this->funnelValues($this->filtered($period, $filters));
+        $previous = $this->funnelValues($this->filtered($period->previous(), $filters));
+
+        return [
+            'current' => $current,
+            'previous' => $previous,
+            'rates' => [
+                'open_to_start' => $this->rate($current['started'], $current['opened']),
+                'start_to_complete' => $this->rate($current['completed'], $current['started']),
+                'complete_to_export' => $this->rate($current['exported'], $current['completed']),
+            ],
+            'previous_rates' => [
+                'open_to_start' => $this->rate($previous['started'], $previous['opened']),
+                'start_to_complete' => $this->rate($previous['completed'], $previous['started']),
+                'complete_to_export' => $this->rate($previous['exported'], $previous['completed']),
+            ],
+        ];
+    }
+
+    private function funnelValues(Builder $query): array
+    {
+        $events = [
+            'opened' => $this->eventNames->acceptedNamesFor(AnalyticsEventName::ToolOpened),
+            'started' => $this->eventNames->acceptedNamesFor(AnalyticsEventName::ToolCalculationStarted),
+            'completed' => $this->eventNames->expand([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]),
+            'exported' => $this->eventNames->acceptedNamesFor(AnalyticsEventName::ToolResultExported),
+        ];
+
+        $result = [];
+        foreach ($events as $key => $names) {
+            $result[$key] = (clone $query)->whereIn('platform_analytics_events.event_name', $names)->count();
+        }
+
+        return $result;
+    }
+
+    /** @param list<string> $values */
+    private function placeholders(array $values): string
+    {
+        return implode(',', array_fill(0, max(1, count($values)), '?'));
+    }
+
+    private function rate(int $numerator, int $denominator): float
+    {
+        return $denominator === 0 ? 0.0 : round(($numerator / $denominator) * 100, 1);
     }
 
     /** @param array<string, mixed> $filters */

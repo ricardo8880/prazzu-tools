@@ -6,6 +6,8 @@
 @php
     $selected = fn (string $key, mixed $value): bool => (string) ($filters[$key] ?? '') === (string) $value;
     $query = array_filter(request()->except('format'), fn ($value) => $value !== null && $value !== '');
+    $eventCatalog = app(\App\Core\Analytics\Domain\Catalog\AnalyticsEventCatalog::class);
+    $eventGroups = $eventCatalog->groupedOptions($dimensions['events']);
 @endphp
 <div class="container-fluid py-4">
     <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 mb-4">
@@ -17,13 +19,25 @@
             <h1 class="h2 mb-1">Relatórios do Analytics</h1>
             <p class="text-body-secondary mb-0">Filtre, compare, exporte e programe relatórios recorrentes.</p>
         </div>
-        <div class="d-flex flex-wrap gap-2 align-self-xl-start">
-            <a class="btn btn-outline-secondary" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'csv']) }}"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
-            <a class="btn btn-outline-success" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'excel']) }}"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
-            <a class="btn btn-outline-danger" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'pdf']) }}"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>
+        <div class="d-flex flex-column gap-2 align-self-xl-start">
+            <div class="small fw-semibold text-body-secondary">Relatório estratégico para análise por IA</div>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-primary" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'package']) }}"><i class="bi bi-file-earmark-zip me-1"></i>Pacote completo</a>
+                <a class="btn btn-outline-primary" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'package_summary']) }}"><i class="bi bi-file-zip me-1"></i>Pacote resumido</a>
+                <a class="btn btn-outline-primary" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'markdown']) }}"><i class="bi bi-markdown me-1"></i>Markdown</a>
+                <a class="btn btn-outline-primary" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'json']) }}"><i class="bi bi-braces me-1"></i>JSON</a>
+            </div>
+            <div class="small text-body-secondary">O pacote completo inclui eventos brutos e CSVs especializados; o resumido contém apenas contexto, métricas, insights e dicionário.</div>
+            <div class="small fw-semibold text-body-secondary mt-1">Exportação de dados brutos</div>
+            <div class="d-flex flex-wrap gap-2">
+                <a class="btn btn-outline-secondary" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'csv']) }}"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+                <a class="btn btn-outline-success" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'excel']) }}"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
+                <a class="btn btn-outline-danger" href="{{ route('admin.analytics.reports.export', $query + ['format' => 'pdf']) }}"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>
+            </div>
         </div>
     </div>
 
+    @include('admin.analytics.partials.page-guide', ['page' => 'reports'])
     @if(session('status'))<div class="alert alert-success">{{ session('status') }}</div>@endif
     @if($errors->any())<div class="alert alert-danger">{{ $errors->first() }}</div>@endif
 
@@ -39,10 +53,24 @@
                     'category'=>['Categoria',$dimensions['categories']], 'author_id'=>['Autor',$dimensions['authors']],
                     'tool'=>['Ferramenta',$dimensions['tools']], 'device_type'=>['Dispositivo',$dimensions['devices']],
                     'operating_system'=>['Sistema operacional',$dimensions['operating_systems']], 'region'=>['Estado',$dimensions['regions']],
-                    'city'=>['Cidade',$dimensions['cities']], 'event_name'=>['Evento',$dimensions['events']],
+                    'city'=>['Cidade',$dimensions['cities']],
                 ] as $name=>[$label,$options])
                     <div class="col-md-3"><label class="form-label" for="{{ $name }}">{{ $label }}</label><select class="form-select" id="{{ $name }}" name="{{ $name }}"><option value="">Todos</option>@foreach($options as $key=>$option)@php($value = $name === 'author_id' ? $key : $option)<option value="{{ $value }}" @selected($selected($name,$value))>{{ $option }}</option>@endforeach</select></div>
                 @endforeach
+                <div class="col-md-3">
+                    <label class="form-label" for="event_name">Evento</label>
+                    <select class="form-select" id="event_name" name="event_name">
+                        <option value="">Todos</option>
+                        @foreach($eventGroups as $category => $events)
+                            <optgroup label="{{ $category }}">
+                                @foreach($events as $event)
+                                    <option value="{{ $event['value'] }}" title="{{ $event['description'] }}" @selected($selected('event_name', $event['value']))>{{ $event['label'] }} — {{ $event['technical_name'] }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                    <div class="form-text">Nome amigável seguido do identificador técnico.</div>
+                </div>
                 <div class="col-md-3"><label class="form-label" for="user_id">ID do usuário</label><input class="form-control" id="user_id" name="user_id" type="number" min="1" value="{{ $filters['user_id'] ?? '' }}"></div>
                 <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-funnel me-1"></i>Aplicar</button><a class="btn btn-outline-secondary" href="{{ route('admin.analytics.reports') }}">Limpar</a></div>
             </form>
@@ -59,7 +87,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-transparent d-flex justify-content-between"><span class="fw-semibold">Eventos encontrados</span><span class="badge text-bg-light border">{{ number_format($total_rows,0,',','.') }} registros</span></div>
         <div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Data/hora</th><th>Evento</th><th>Canal</th><th>Objeto</th><th>Origem</th><th>Dispositivo</th><th>Localização</th><th>Página</th></tr></thead><tbody>
-        @forelse($rows as $row)<tr><td class="text-nowrap">{{ $row->occurred_at?->format('d/m/Y H:i') }}</td><td><code>{{ $row->event_name }}</code></td><td>{{ $row->channel ?: '—' }}</td><td>{{ $row->subject_slug ?: '—' }}</td><td>{{ $row->source ?: 'Direto' }}</td><td>{{ $row->device_type ?: '—' }}</td><td>{{ collect([$row->city,$row->region])->filter()->implode(' / ') ?: '—' }}</td><td class="text-truncate" style="max-width:280px" title="{{ $row->path }}">{{ $row->path ?: '—' }}</td></tr>@empty<tr><td colspan="8" class="text-center text-body-secondary py-5">Nenhum evento encontrado para os filtros.</td></tr>@endforelse
+        @forelse($rows as $row)<tr><td class="text-nowrap">{{ $row->occurred_at?->format('d/m/Y H:i') }}</td><td>@php($eventDefinition = $eventCatalog->describe($row->event_name))<div class="fw-semibold" title="{{ $eventDefinition['description'] }} {{ $eventDefinition['business_meaning'] }}">{{ $eventDefinition['label'] }}</div><code class="small">{{ $row->event_name }}</code></td><td>{{ $row->channel ?: '—' }}</td><td>{{ $row->subject_slug ?: '—' }}</td><td>{{ $row->source ?: 'Direto' }}</td><td>{{ $row->device_type ?: '—' }}</td><td>{{ collect([$row->city,$row->region])->filter()->implode(' / ') ?: '—' }}</td><td class="text-truncate" style="max-width:280px" title="{{ $row->path }}">{{ $row->path ?: '—' }}</td></tr>@empty<tr><td colspan="8" class="text-center text-body-secondary py-5">Nenhum evento encontrado para os filtros.</td></tr>@endforelse
         </tbody></table></div>
         @if($total_rows > $rows->count())<div class="card-footer bg-transparent small text-body-secondary">A tela exibe os 100 registros mais recentes. As exportações incluem até {{ number_format(config('analytics.reports.export_limit',10000),0,',','.') }} registros.</div>@endif
     </div>
