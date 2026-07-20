@@ -4,7 +4,10 @@ namespace App\Core\Tools;
 
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolFeatureTier;
+use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\Enums\ToolAccess;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -19,6 +22,32 @@ final class ToolCatalog
             ->map(fn (ToolManifest $tool): array => $this->present($tool))
             ->sortBy('position')
             ->values();
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    public function byCategory(string $category): Collection
+    {
+        return $this->all()->where('category', $category)->values();
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    public function withCapability(ToolCapability $capability): Collection
+    {
+        return $this->all()->filter(
+            static fn (array $tool): bool => in_array($capability->value, $tool['capabilities'], true),
+        )->values();
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    public function byStatus(ToolStatus $status): Collection
+    {
+        return $this->all(false)->where('status', $status->value)->values();
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    public function byAccess(ToolAccess $access): Collection
+    {
+        return $this->all(false)->where('access', $access->value)->values();
     }
 
     /** @return Collection<int, array<string, mixed>> */
@@ -41,7 +70,7 @@ final class ToolCatalog
         $tools = $this->all();
 
         if ($category !== null && $category !== 'todas') {
-            $tools = $tools->where('category', $category);
+            $tools = $this->byCategory($category);
         }
 
         $query = trim((string) $query);
@@ -110,6 +139,10 @@ final class ToolCatalog
             'essential_features' => $essentialFeatures,
             'plus_features' => $plusFeatures,
             'has_plus_features' => $hasPlusFeatures,
+            'capability_labels' => array_map(
+                static fn (ToolCapability $capability): string => $capability->label(),
+                $manifest->capabilities,
+            ),
             'tone' => 'purple',
             'badge' => $hasPlusFeatures ? 'Grátis + Plus' : 'Grátis',
             'badge_tone' => $hasPlusFeatures ? 'purple' : 'green',

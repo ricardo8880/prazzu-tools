@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Platform;
 
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\ToolCatalog;
 use App\Core\Tools\ToolRegistry;
@@ -28,6 +29,8 @@ final class ToolCatalogConsistencyTest extends TestCase
             $this->assertNotEmpty($tool['icon']);
             $this->assertNotEmpty($tool['version']);
             $this->assertStringStartsWith('tools.', $tool['route_name']);
+            $this->assertNotEmpty($tool['capabilities']);
+            $this->assertSame(count($tool['capabilities']), count(array_unique($tool['capabilities'])));
         }
     }
 
@@ -58,6 +61,18 @@ final class ToolCatalogConsistencyTest extends TestCase
         }
 
         $this->get('/ferramentas/ferramenta-inexistente')->assertNotFound();
+    }
+
+    public function test_catalog_filters_by_declared_capability(): void
+    {
+        $catalog = $this->app->make(ToolCatalog::class);
+
+        $tools = $catalog->withCapability(ToolCapability::History);
+
+        $this->assertNotEmpty($tools);
+        foreach ($tools as $tool) {
+            $this->assertContains(ToolCapability::History->value, $tool['capabilities']);
+        }
     }
 
     public function test_home_and_catalog_use_the_same_tool_source(): void

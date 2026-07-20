@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Tools\{{ class }}\Presentation\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Tools\{{ class }}\Application\Actions\CalculateTool;
 use App\Tools\{{ class }}\Application\Actions\ShowToolPage;
+use App\Tools\{{ class }}\Presentation\Requests\ExecuteToolRequest;
 use Illuminate\Contracts\View\View;
 
 final class ToolController extends Controller
@@ -13,5 +15,13 @@ final class ToolController extends Controller
     public function index(ShowToolPage $page): View
     {
         return view('{{ view_namespace }}::index', $page->execute());
+    }
+
+    public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
+    {
+        return view('{{ view_namespace }}::index', [
+            ...app(ShowToolPage::class)->execute(),
+            'result' => $action->execute($request->validated()),
+        ]);
     }
 }

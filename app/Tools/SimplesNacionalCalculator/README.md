@@ -84,3 +84,11 @@ autenticado não são migrados, pois não há identidade segura à qual vinculá
   projeção, alertas, capacidades e histórico mensal.
 - Lote 1: registro do módulo, rota inicial, domínio de anexos e faixas, catálogo
   de capacidades, página Bootstrap e testes básicos.
+
+## Conformidade arquitetural — Lote 9
+
+Esta ferramenta foi migrada para o padrão definitivo da plataforma: manifesto final,
+capacidades Essencial/Plus, contratos de cálculo e integração, componentes visuais
+compartilhados e políticas transversais de histórico, persistência versionada,
+exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
+responsabilidades não devem ser introduzidas no módulo.

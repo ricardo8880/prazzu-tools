@@ -15,6 +15,7 @@ final class ToolRun extends Model
         'user_id',
         'tool_slug',
         'tool_version',
+        'schema_version',
         'rule_version',
         'reference_date',
         'status',
@@ -37,6 +38,7 @@ final class ToolRun extends Model
     {
         return [
             'status' => ToolRunStatus::class,
+            'schema_version' => 'integer',
             'reference_date' => 'immutable_date',
             'input_payload' => 'encrypted:array',
             'result_payload' => 'encrypted:array',

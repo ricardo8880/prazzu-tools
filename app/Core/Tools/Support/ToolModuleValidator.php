@@ -7,9 +7,12 @@ use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use ReflectionClass;
@@ -57,6 +60,64 @@ final class ToolModuleValidator
                 $manifest->slug,
                 implode(', ', $missingPaths),
             ));
+        }
+
+        if ($manifest->supportsHistory !== $manifest->hasCapability(ToolCapability::History)) {
+            throw new InvalidArgumentException(
+                "A capacidade de histórico de [{$manifest->slug}] não corresponde ao manifesto.",
+            );
+        }
+
+        if ($manifest->storesSensitiveData !== $manifest->hasCapability(ToolCapability::SensitiveData)) {
+            throw new InvalidArgumentException(
+                "A capacidade de dados sensíveis de [{$manifest->slug}] não corresponde ao manifesto.",
+            );
+        }
+
+        if ($manifest->persistence !== null) {
+            if ($manifest->persistence->enabled !== $manifest->hasCapability(ToolCapability::VersionedPersistence)) {
+                throw new InvalidArgumentException("A persistência versionada de [{$manifest->slug}] não corresponde às capacidades declaradas.");
+            }
+
+            if ($manifest->persistence->enabled !== $manifest->supportsHistory) {
+                throw new InvalidArgumentException("A persistência versionada de [{$manifest->slug}] deve acompanhar o suporte a histórico.");
+            }
+        }
+
+        if ($manifest->export !== null && $manifest->export->enabled !== $manifest->hasCapability(ToolCapability::Export)) {
+            throw new InvalidArgumentException("A exportação de [{$manifest->slug}] não corresponde às capacidades declaradas.");
+        }
+
+        if ($manifest->sharing !== null && $manifest->sharing->enabled !== $manifest->hasCapability(ToolCapability::Sharing)) {
+            throw new InvalidArgumentException("O compartilhamento de [{$manifest->slug}] não corresponde às capacidades declaradas.");
+        }
+
+        if ($manifest->sensitiveData !== null) {
+            $hasSensitivePolicy = $manifest->sensitiveData->mode !== SensitiveDataMode::None;
+
+            if ($manifest->storesSensitiveData !== $hasSensitivePolicy) {
+                throw new InvalidArgumentException("A política de dados sensíveis de [{$manifest->slug}] não corresponde ao manifesto.");
+            }
+        }
+
+        if (($manifest->sharing?->allowSensitivePayload ?? false) && ($manifest->sensitiveData?->mode ?? SensitiveDataMode::None) === SensitiveDataMode::None) {
+            throw new InvalidArgumentException("O compartilhamento de [{$manifest->slug}] permite payload sensível sem declarar uma política de dados sensíveis.");
+        }
+
+        if ($module instanceof HasToolIntegrations) {
+            $integrations = $module->integrations();
+
+            if (($integrations->publishes !== []) !== $manifest->hasCapability(ToolCapability::PublishesIntegrations)) {
+                throw new InvalidArgumentException(
+                    "A capacidade de publicação de integrações de [{$manifest->slug}] não corresponde ao manifesto.",
+                );
+            }
+
+            if (($integrations->accepts !== []) !== $manifest->hasCapability(ToolCapability::AcceptsIntegrations)) {
+                throw new InvalidArgumentException(
+                    "A capacidade de consumo de integrações de [{$manifest->slug}] não corresponde ao manifesto.",
+                );
+            }
         }
 
         if ($manifest->supportsHistory !== ($module instanceof HasHistoryPolicy)) {

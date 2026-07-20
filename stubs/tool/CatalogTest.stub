@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tools\{{ class }}\Tests\Architecture;
+
+use App\Core\Tools\ToolRegistry;
+use PHPUnit\Framework\TestCase;
+
+final class CatalogRegistrationTest extends TestCase
+{
+    public function test_tool_is_registered_in_the_catalog(): void
+    {
+        $module = app(ToolRegistry::class)->findModule('{{ slug }}');
+
+        self::assertNotNull($module);
+        self::assertSame('{{ slug }}', $module->manifest()->slug);
+    }
+}

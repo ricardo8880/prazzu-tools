@@ -38,6 +38,12 @@ final class ToolGeneratorContractTest extends TestCase
             'quality contract test' => ['QualityContractTest.stub'],
             'quality checklist' => ['QUALITY.stub'],
             'integration contract test' => ['IntegrationContractTest.stub'],
+            'calculation input' => ['CalculationInput.stub'],
+            'calculator' => ['Calculator.stub'],
+            'calculation action' => ['CalculateAction.stub'],
+            'calculation test' => ['CalculationTest.stub'],
+            'module architecture test' => ['ArchitectureTest.stub'],
+            'catalog registration test' => ['CatalogTest.stub'],
         ];
     }
 
@@ -137,6 +143,12 @@ final class ToolGeneratorContractTest extends TestCase
             self::assertFileExists($modulePath.'/Quality/RiskProfile.php');
             self::assertFileExists($modulePath.'/QUALITY.md');
             self::assertFileExists($modulePath.'/Tests/Unit/ToolIntegrationContractTest.php');
+            self::assertFileExists($modulePath.'/Application/Data/CalculationInput.php');
+            self::assertFileExists($modulePath.'/Application/Actions/CalculateTool.php');
+            self::assertFileExists($modulePath.'/Domain/Services/Calculator.php');
+            self::assertFileExists($modulePath.'/Tests/Unit/CalculatorTest.php');
+            self::assertFileExists($modulePath.'/Tests/Architecture/ModuleArchitectureTest.php');
+            self::assertFileExists($modulePath.'/Tests/Architecture/CatalogRegistrationTest.php');
             self::assertStringContainsString(
                 '\\App\\Tools\\ArchitectureGeneratorProbe\\Tool::class,',
                 $files->get($configurationPath),

@@ -13,11 +13,17 @@ use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasMigrations, HasViews, HasWebRoutes, ToolModule
 {
@@ -46,6 +52,13 @@ final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasMigrations
             supportsHistory: true,
             storesSensitiveData: false,
             keywords: ['margem', 'markup', 'preço de venda', 'lucro', 'custos'],
+            capabilities: [
+                ToolCapability::History,
+                ToolCapability::VersionedPersistence,
+                ToolCapability::Export,
+                ToolCapability::PublishesIntegrations,
+                ToolCapability::AcceptsIntegrations,
+            ],
             features: [
                 new ToolFeature('calculate', 'Cálculo individual completo', ToolFeatureTier::Essential),
                 new ToolFeature('export', 'Exportação do cálculo', ToolFeatureTier::Plus),
@@ -53,6 +66,10 @@ final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasMigrations
                 new ToolFeature('scenarios', 'Simulação de cenários', ToolFeatureTier::Plus),
                 new ToolFeature('history', 'Histórico de cálculos', ToolFeatureTier::Plus),
             ],
+            persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 90, minimumReadableSchemaVersion: 1),
+            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
+            sharing: ToolSharingPolicy::disabled(),
+            sensitiveData: ToolSensitiveDataPolicy::none(),
         );
     }
 

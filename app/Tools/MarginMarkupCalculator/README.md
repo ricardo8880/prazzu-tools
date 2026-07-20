@@ -74,3 +74,11 @@ consulta e gestão de histórico e retirar essa dependência concreta.
   histórico, métricas, autorização, CSV, impressão e testes.
 - ciclo atual — compartilhamento de cálculos removido para manter o módulo
   alinhado ao escopo de ferramenta pontual definido pelo produto.
+
+## Conformidade arquitetural — Lote 9
+
+Esta ferramenta foi migrada para o padrão definitivo da plataforma: manifesto final,
+capacidades Essencial/Plus, contratos de cálculo e integração, componentes visuais
+compartilhados e políticas transversais de histórico, persistência versionada,
+exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
+responsabilidades não devem ser introduzidas no módulo.

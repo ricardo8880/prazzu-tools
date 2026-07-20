@@ -63,6 +63,16 @@ final class ToolRegistry
         return $this->modules;
     }
 
+    /**
+     * Compatibility alias for callers that enumerate registered modules.
+     *
+     * @return array<string, ToolModule>
+     */
+    public function all(): array
+    {
+        return $this->modules();
+    }
+
     /** @return array<int, ToolManifest> */
     public function manifests(bool $onlyCatalogVisible = true): array
     {

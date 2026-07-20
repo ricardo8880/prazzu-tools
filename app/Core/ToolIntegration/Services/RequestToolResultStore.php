@@ -21,7 +21,7 @@ final readonly class RequestToolResultStore implements ToolResultStore
             'contract_name' => $payload->contractName,
             'contract_version' => $payload->contractVersion,
             'data' => $payload->data,
-            'created_at' => $payload->createdAt->format(DATE_ATOM),
+            'created_at' => $payload->createdAt->format('Y-m-d\TH:i:s.uP'),
         ];
         $this->session->put(self::SESSION_KEY, $payloads);
     }

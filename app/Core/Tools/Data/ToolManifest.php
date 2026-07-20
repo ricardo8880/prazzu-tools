@@ -3,9 +3,14 @@
 namespace App\Core\Tools\Data;
 
 use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use InvalidArgumentException;
 
 final readonly class ToolManifest
@@ -13,6 +18,7 @@ final readonly class ToolManifest
     /**
      * @param array<int, string> $keywords
      * @param array<int, ToolFeature> $features
+     * @param array<int, ToolCapability> $capabilities
      */
     public function __construct(
         public string $slug,
@@ -30,6 +36,11 @@ final readonly class ToolManifest
         public bool $storesSensitiveData = false,
         public array $keywords = [],
         public array $features = [],
+        public array $capabilities = [],
+        public ?ToolPersistencePolicy $persistence = null,
+        public ?ToolExportPolicy $export = null,
+        public ?ToolSharingPolicy $sharing = null,
+        public ?ToolSensitiveDataPolicy $sensitiveData = null,
     ) {
         if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $this->slug)) {
             throw new InvalidArgumentException('O slug da ferramenta deve usar apenas letras minúsculas, números e hífens.');
@@ -57,6 +68,20 @@ final readonly class ToolManifest
             }
         }
 
+        $capabilityValues = [];
+
+        foreach ($this->capabilities as $capability) {
+            if (! $capability instanceof ToolCapability) {
+                throw new InvalidArgumentException('Todas as capacidades devem ser instâncias de ToolCapability.');
+            }
+
+            if (isset($capabilityValues[$capability->value])) {
+                throw new InvalidArgumentException("A capacidade [{$capability->value}] está duplicada no manifesto.");
+            }
+
+            $capabilityValues[$capability->value] = true;
+        }
+
         $featureKeys = [];
 
         foreach ($this->features as $feature) {
@@ -70,6 +95,11 @@ final readonly class ToolManifest
 
             $featureKeys[$feature->key] = true;
         }
+    }
+
+    public function hasCapability(ToolCapability $capability): bool
+    {
+        return in_array($capability, $this->capabilities, true);
     }
 
     public function feature(string $key): ?ToolFeature
@@ -114,6 +144,14 @@ final readonly class ToolManifest
                 static fn (array $feature): ToolFeature => ToolFeature::fromArray($feature),
                 array_values($data['features'] ?? []),
             ),
+            capabilities: array_map(
+                static fn (string $capability): ToolCapability => ToolCapability::from($capability),
+                array_values($data['capabilities'] ?? []),
+            ),
+            persistence: isset($data['persistence']) ? ToolPersistencePolicy::fromArray($data['persistence']) : null,
+            export: isset($data['export']) ? ToolExportPolicy::fromArray($data['export']) : null,
+            sharing: isset($data['sharing']) ? ToolSharingPolicy::fromArray($data['sharing']) : null,
+            sensitiveData: isset($data['sensitive_data']) ? ToolSensitiveDataPolicy::fromArray($data['sensitive_data']) : null,
         );
     }
 
@@ -139,6 +177,14 @@ final readonly class ToolManifest
                 static fn (ToolFeature $feature): array => $feature->toArray(),
                 $this->features,
             ),
+            'capabilities' => array_map(
+                static fn (ToolCapability $capability): string => $capability->value,
+                $this->capabilities,
+            ),
+            'persistence' => $this->persistence?->toArray(),
+            'export' => $this->export?->toArray(),
+            'sharing' => $this->sharing?->toArray(),
+            'sensitive_data' => $this->sensitiveData?->toArray(),
         ];
     }
 }

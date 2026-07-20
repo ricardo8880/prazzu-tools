@@ -12,11 +12,17 @@ use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
@@ -66,6 +72,12 @@ final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasViews, Has
             supportsHistory: true,
             storesSensitiveData: true,
             keywords: ['rescisão', 'trabalhista', 'saldo de salário', 'férias', '13º salário', 'aviso-prévio', 'fgts', 'contrato de experiência', 'artigo 479', 'férias em dobro', 'comissões', 'empregado doméstico', 'simples doméstico', 'indenização compensatória', 'histórico', 'pdf', 'relatório'],
+            capabilities: [
+                ToolCapability::History,
+                ToolCapability::VersionedPersistence,
+                ToolCapability::Export,
+                ToolCapability::SensitiveData,
+            ],
             features: [
                 new ToolFeature('calculate', 'Cálculo completo da rescisão', ToolFeatureTier::Essential),
                 new ToolFeature('current_report', 'Relatório completo do cálculo atual', ToolFeatureTier::Essential),
@@ -73,6 +85,10 @@ final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasViews, Has
                 new ToolFeature('repeat_history', 'Repetição de cálculo salvo', ToolFeatureTier::Plus),
                 new ToolFeature('historical_report', 'Relatório de cálculo salvo', ToolFeatureTier::Plus),
             ],
+            persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 180, minimumReadableSchemaVersion: 1),
+            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
+            sharing: ToolSharingPolicy::disabled(),
+            sensitiveData: new ToolSensitiveDataPolicy(SensitiveDataMode::Encrypted, ['history_payload']),
         );
     }
 

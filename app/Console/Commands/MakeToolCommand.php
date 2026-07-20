@@ -34,6 +34,15 @@ final class MakeToolCommand extends Command
         {--result-risk=informational : Risco do resultado}
         {--update-frequency=rare : Frequência esperada de atualização}
         {--exports= : Formatos de exportação separados por vírgula}
+        {--history : Habilita histórico e persistência versionada}
+        {--retention-days=365 : Retenção do histórico em dias}
+        {--schema-version=1 : Versão inteira do schema persistido}
+        {--minimum-readable-schema-version=1 : Menor versão de schema ainda legível}
+        {--share : Habilita compartilhamento temporário de resultados}
+        {--share-expires=60 : Expiração do compartilhamento em minutos}
+        {--share-auth : Exige autenticação para abrir compartilhamentos}
+        {--sensitive-mode=none : none, redact ou encrypted}
+        {--sensitive-fields= : Campos sensíveis separados por vírgula}
         {--publishes= : Contratos de integração publicados, separados por vírgula}
         {--accepts= : Contratos de integração aceitos, separados por vírgula}
         {--force : Sobrescreve arquivos existentes}';
@@ -88,6 +97,15 @@ final class MakeToolCommand extends Command
         $resultRisk = trim((string) $this->option('result-risk'));
         $updateFrequency = trim((string) $this->option('update-frequency'));
         $exports = $this->parseExports((string) $this->option('exports'));
+        $history = (bool) $this->option('history');
+        $retentionDays = (int) $this->option('retention-days');
+        $schemaVersion = (int) $this->option('schema-version');
+        $minimumReadableSchemaVersion = (int) $this->option('minimum-readable-schema-version');
+        $sharing = (bool) $this->option('share');
+        $shareExpires = (int) $this->option('share-expires');
+        $shareAuth = (bool) $this->option('share-auth');
+        $sensitiveMode = strtolower(trim((string) $this->option('sensitive-mode')));
+        $sensitiveFields = $this->parseFieldList((string) $this->option('sensitive-fields'));
         $publishes = $this->parseIntegrationContracts((string) $this->option('publishes'));
         $accepts = $this->parseIntegrationContracts((string) $this->option('accepts'));
 
@@ -133,6 +151,20 @@ final class MakeToolCommand extends Command
             'accepts_php' => $this->stringListPhp($accepts),
             'publishes_markdown' => $publishes === [] ? 'Nenhum.' : implode(', ', $publishes),
             'accepts_markdown' => $accepts === [] ? 'Nenhum.' : implode(', ', $accepts),
+            'supports_history_php' => $history ? 'true' : 'false',
+            'stores_sensitive_data_php' => $sensitiveMode === 'none' ? 'false' : 'true',
+            'capabilities_php' => $this->capabilitiesPhp($history, $exports, $sharing, $sensitiveMode, $publishes, $accepts),
+            'persistence_php' => $history ? "new ToolPersistencePolicy(enabled: true, schemaVersion: {$schemaVersion}, retentionDays: {$retentionDays}, minimumReadableSchemaVersion: {$minimumReadableSchemaVersion})" : 'ToolPersistencePolicy::disabled()',
+            'export_policy_php' => $exports === [] ? 'ToolExportPolicy::disabled()' : "new ToolExportPolicy(enabled: true, formats: {$this->exportsPhp($exports)})",
+            'sharing_policy_php' => $sharing ? "new ToolSharingPolicy(enabled: true, expiresAfterMinutes: {$shareExpires}, requiresAuthentication: ".($shareAuth ? 'true' : 'false').")" : 'ToolSharingPolicy::disabled()',
+            'sensitive_policy_php' => $sensitiveMode === 'none' ? 'ToolSensitiveDataPolicy::none()' : "new ToolSensitiveDataPolicy(SensitiveDataMode::".$this->sensitiveModeCase($sensitiveMode).", {$this->stringListPhp($sensitiveFields)})",
+            'history_contract_import' => $history ? "use App\\Core\\Tools\\History\\Contracts\\HasHistoryPolicy;\n" : '',
+            'history_policy_import' => $history ? "use App\\Core\\Tools\\History\\Data\\ToolHistoryPolicy;\n" : '',
+            'history_interface' => $history ? 'HasHistoryPolicy, ' : '',
+            'history_policy_method' => $history ? "    public function historyPolicy(): ToolHistoryPolicy\n    {\n        return new ToolHistoryPolicy(enabled: true, retentionDays: {$retentionDays}, inputFields: ['value'], resultFields: ['result'], sensitiveFields: {$this->stringListPhp($sensitiveFields)});\n    }\n\n" : '',
+            'history_markdown' => $history ? "Ativo, com retenção de {$retentionDays} dias e schema {$schemaVersion}." : 'Desabilitado por padrão.',
+            'sharing_markdown' => $sharing ? "Ativo, com expiração de {$shareExpires} minutos." : 'Desabilitado por padrão.',
+            'sensitive_markdown' => $sensitiveMode === 'none' ? 'Nenhum campo sensível declarado.' : $sensitiveMode.' — '.implode(', ', $sensitiveFields),
         ];
     }
 
@@ -141,6 +173,29 @@ final class MakeToolCommand extends Command
     {
         if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $context['slug'])) {
             throw new RuntimeException('O slug deve conter apenas letras minúsculas, números e hífens.');
+        }
+
+        if ((int) $this->option('schema-version') < 1
+            || (int) $this->option('minimum-readable-schema-version') < 1
+            || (int) $this->option('minimum-readable-schema-version') > (int) $this->option('schema-version')) {
+            throw new RuntimeException('As versões de schema informadas são incompatíveis.');
+        }
+
+        if ((bool) $this->option('history') && (int) $this->option('retention-days') < 1) {
+            throw new RuntimeException('Histórico ativo exige retenção mínima de um dia.');
+        }
+
+        if ((bool) $this->option('share') && ((int) $this->option('share-expires') < 5 || (int) $this->option('share-expires') > 10080)) {
+            throw new RuntimeException('O compartilhamento deve expirar entre 5 minutos e 7 dias.');
+        }
+
+        $sensitiveMode = strtolower(trim((string) $this->option('sensitive-mode')));
+        $sensitiveFields = $this->parseFieldList((string) $this->option('sensitive-fields'));
+        if (! in_array($sensitiveMode, ['none', 'redact', 'encrypted'], true)) {
+            throw new RuntimeException('O modo de dados sensíveis deve ser none, redact ou encrypted.');
+        }
+        if (($sensitiveMode === 'none') !== ($sensitiveFields === [])) {
+            throw new RuntimeException('Campos sensíveis devem ser declarados somente com modo redact ou encrypted.');
         }
 
         if ($context['status'] !== ToolStatus::Draft->value) {
@@ -209,6 +264,7 @@ final class MakeToolCommand extends Command
         return [
             'Tool.stub' => "app/Tools/{$context['class']}/Tool.php",
             'Action.stub' => "app/Tools/{$context['class']}/Application/Actions/ShowToolPage.php",
+            'CalculateAction.stub' => "app/Tools/{$context['class']}/Application/Actions/CalculateTool.php",
             'Controller.stub' => "app/Tools/{$context['class']}/Presentation/Controllers/ToolController.php",
             'Request.stub' => "app/Tools/{$context['class']}/Presentation/Requests/ExecuteToolRequest.php",
             'web.stub' => "app/Tools/{$context['class']}/Routes/web.php",
@@ -221,6 +277,11 @@ final class MakeToolCommand extends Command
             'QualityContractTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolQualityContractTest.php",
             'QUALITY.stub' => "app/Tools/{$context['class']}/QUALITY.md",
             'IntegrationContractTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolIntegrationContractTest.php",
+            'CalculationInput.stub' => "app/Tools/{$context['class']}/Application/Data/CalculationInput.php",
+            'Calculator.stub' => "app/Tools/{$context['class']}/Domain/Services/Calculator.php",
+            'CalculationTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/CalculatorTest.php",
+            'ArchitectureTest.stub' => "app/Tools/{$context['class']}/Tests/Architecture/ModuleArchitectureTest.php",
+            'CatalogTest.stub' => "app/Tools/{$context['class']}/Tests/Architecture/CatalogRegistrationTest.php",
         ];
     }
 
@@ -285,6 +346,20 @@ final class MakeToolCommand extends Command
             '{{ accepts_php }}' => $context['accepts_php'],
             '{{ publishes_markdown }}' => $context['publishes_markdown'],
             '{{ accepts_markdown }}' => $context['accepts_markdown'],
+            '{{ supports_history_php }}' => $context['supports_history_php'],
+            '{{ stores_sensitive_data_php }}' => $context['stores_sensitive_data_php'],
+            '{{ capabilities_php }}' => $context['capabilities_php'],
+            '{{ persistence_php }}' => $context['persistence_php'],
+            '{{ export_policy_php }}' => $context['export_policy_php'],
+            '{{ sharing_policy_php }}' => $context['sharing_policy_php'],
+            '{{ sensitive_policy_php }}' => $context['sensitive_policy_php'],
+            '{{ history_contract_import }}' => $context['history_contract_import'],
+            '{{ history_policy_import }}' => $context['history_policy_import'],
+            '{{ history_interface }}' => $context['history_interface'],
+            '{{ history_policy_method }}' => $context['history_policy_method'],
+            '{{ history_markdown }}' => $context['history_markdown'],
+            '{{ sharing_markdown }}' => $context['sharing_markdown'],
+            '{{ sensitive_markdown }}' => $context['sensitive_markdown'],
         ];
 
         return str_replace(array_keys($replacements), array_values($replacements), $contents);
@@ -382,6 +457,52 @@ final class MakeToolCommand extends Command
         }
 
         return "['".implode("', '", $values)."']";
+    }
+
+    /** @return list<string> */
+    private function parseFieldList(string $value): array
+    {
+        if (trim($value) === '') {
+            return [];
+        }
+
+        $fields = array_values(array_filter(array_map('trim', explode(',', $value))));
+        foreach ($fields as $field) {
+            if (! preg_match('/^[A-Za-z0-9_.-]+$/', $field)) {
+                throw new RuntimeException('Campos devem usar apenas letras, números, ponto, hífen ou sublinhado.');
+            }
+        }
+        if (count($fields) !== count(array_unique($fields))) {
+            throw new RuntimeException('Campos não podem se repetir.');
+        }
+
+        return $fields;
+    }
+
+    /** @param list<string> $exports @param list<string> $publishes @param list<string> $accepts */
+    private function capabilitiesPhp(bool $history, array $exports, bool $sharing, string $sensitiveMode, array $publishes, array $accepts): string
+    {
+        $capabilities = [];
+        if ($history) {
+            $capabilities[] = 'ToolCapability::History';
+            $capabilities[] = 'ToolCapability::VersionedPersistence';
+        }
+        if ($exports !== []) $capabilities[] = 'ToolCapability::Export';
+        if ($sharing) $capabilities[] = 'ToolCapability::Sharing';
+        if ($sensitiveMode !== 'none') $capabilities[] = 'ToolCapability::SensitiveData';
+        if ($publishes !== []) $capabilities[] = 'ToolCapability::PublishesIntegrations';
+        if ($accepts !== []) $capabilities[] = 'ToolCapability::AcceptsIntegrations';
+
+        return $capabilities === [] ? '[]' : "[\n                ".implode(",\n                ", $capabilities).",\n            ]";
+    }
+
+    private function sensitiveModeCase(string $mode): string
+    {
+        return match ($mode) {
+            'redact' => 'Redact',
+            'encrypted' => 'Encrypted',
+            default => 'None',
+        };
     }
 
     private function configGroup(string $category): string

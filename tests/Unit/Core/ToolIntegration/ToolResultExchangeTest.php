@@ -45,7 +45,7 @@ final class ToolResultExchangeTest extends TestCase
 
         $exchange->publish($payload);
 
-        self::assertSame($payload, $exchange->latest('company-tax-snapshot', 1));
+        self::assertEquals($payload, $exchange->latest('company-tax-snapshot', 1));
     }
 
     public function test_it_rejects_an_unregistered_contract(): void
@@ -91,6 +91,7 @@ final class ToolResultExchangeTest extends TestCase
             data: ['cnpj' => 123, 'unexpected' => true],
         ));
     }
+
     private function session(): Store
     {
         return new Store('tool-integration-test', new ArraySessionHandler(120));

@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tools\{{ class }}\Application\Data;
+
+use App\Core\Tools\Contracts\ToolCalculationInput;
+
+final readonly class CalculationInput implements ToolCalculationInput
+{
+    public function __construct(public float $value) {}
+
+    /** @return array<string, mixed> */
+    public function toArray(): array
+    {
+        return ['value' => $this->value];
+    }
+}

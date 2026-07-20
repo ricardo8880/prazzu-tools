@@ -4,98 +4,81 @@
 @section('meta_description', 'Calcule anexo, faixa, Fator R, alíquota efetiva e DAS estimado do Simples Nacional.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-simples-nacional">
-    <nav aria-label="Breadcrumb" class="mb-3">
-        <ol class="breadcrumb prazzu-breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.index') }}">Ferramentas</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Calculadora de Simples Nacional</li>
-        </ol>
-    </nav>
-
-    <x-tools.intro icon="calculator" title="Calculadora de Simples Nacional" description="Calcule a faixa, a alíquota efetiva e o DAS estimado, com enquadramento automático pelo Fator R quando necessário." badge="Grátis" />
-
-    <x-tool-feature-tiers slug="calculadora-simples-nacional" />
-
-    <x-tools.validation-summary class="mb-4" />
-
+<x-tools.page
+    title="Calculadora de Simples Nacional"
+    description="Calcule a faixa, a alíquota efetiva e o DAS estimado, com enquadramento automático pelo Fator R quando necessário."
+    icon="calculator"
+    slug="calculadora-simples-nacional"
+>
     @if ($operatingProfileIntegration)
-        <div class="alert alert-primary d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3" role="status">
-            <div>
-                <div class="fw-semibold"><i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i> Perfil disponível da Calculadora de Honorários</div>
-                <div class="small">Faturamento mensal informado: R$ {{ $operatingProfileIntegration->data['monthly_revenue'] }}. O preenchimento só ocorrerá após sua confirmação.</div>
-            </div>
-            <button class="btn btn-primary btn-sm flex-shrink-0" type="button" data-apply-operating-profile>Usar faturamento</button>
-        </div>
+        <x-tools.integration-import
+            title="Perfil disponível da Calculadora de Honorários"
+            description="Faturamento mensal informado: R$ {{ $operatingProfileIntegration->data['monthly_revenue'] }}. O preenchimento só ocorrerá após sua confirmação."
+            button-label="Usar faturamento"
+        >
+            <x-slot:button data-apply-operating-profile></x-slot:button>
+        </x-tools.integration-import>
     @endif
 
-    <section class="prazzu-tool-workspace text-start" aria-labelledby="calculation-data-title">
-        <div class="mb-4">
-            <h2 id="calculation-data-title" class="mb-1">Dados do cálculo</h2>
-            <p class="text-body-secondary mb-0">Informe os valores da empresa para estimar o anexo, a alíquota efetiva e o DAS mensal.</p>
-        </div>
-
+    <x-tools.form-panel
+        class="prazzu-tool-workspace text-start"
+        title="Dados do cálculo"
+        description="Informe os valores da empresa para estimar o anexo, a alíquota efetiva e o DAS mensal."
+        heading-id="calculation-data-title"
+    >
         <form method="post" action="{{ route('tools.calculadora-simples-nacional.calculate') }}" class="row g-3">
             @csrf
 
             <div class="col-12">
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="use_factor_r" name="use_factor_r" value="1" @checked(old('use_factor_r'))>
-                    <label class="form-check-label fw-semibold" for="use_factor_r">A atividade está sujeita ao Fator R</label>
-                </div>
-                <div class="form-text">Ao ativar, o sistema define automaticamente entre os Anexos III e V.</div>
+                <x-tools.form.switch
+                    name="use_factor_r"
+                    label="A atividade está sujeita ao Fator R"
+                    help="Ao ativar, o sistema define automaticamente entre os Anexos III e V."
+                />
             </div>
 
             <div class="col-12 col-lg-6" id="annex-field">
-                <label class="form-label" for="annex">Anexo</label>
-                <select class="form-select" id="annex" name="annex">
-                    <option value="">Selecione</option>
-                    @foreach ($annexes as $annex)
-                        <option value="{{ $annex->value }}" @selected(old('annex') === $annex->value)>{{ $annex->label() }}</option>
-                    @endforeach
-                </select>
+                <x-tools.form.select
+                    name="annex"
+                    label="Anexo"
+                    :options="collect($annexes)->mapWithKeys(fn ($annex) => [$annex->value => $annex->label()])->all()"
+                    placeholder="Selecione"
+                />
             </div>
 
             <div class="col-12 col-lg-6">
-                <label class="form-label" for="rbt12">Receita bruta acumulada nos últimos 12 meses (RBT12)</label>
-                <div class="input-group">
-                    <span class="input-group-text">R$</span>
-                    <input class="form-control" id="rbt12" name="rbt12" value="{{ old('rbt12') }}" placeholder="180.000,00" inputmode="decimal" required>
-                </div>
+                <x-tools.form.money
+                    name="rbt12"
+                    label="Receita bruta acumulada nos últimos 12 meses (RBT12)"
+                    placeholder="180.000,00"
+                    required
+                />
             </div>
 
             <div class="col-12 col-lg-6">
-                <label class="form-label" for="monthly_revenue">Faturamento do mês</label>
-                <div class="input-group">
-                    <span class="input-group-text">R$</span>
-                    <input class="form-control" id="monthly_revenue" name="monthly_revenue" value="{{ old('monthly_revenue') }}" placeholder="15.000,00" inputmode="decimal" required>
-                </div>
+                <x-tools.form.money
+                    name="monthly_revenue"
+                    label="Faturamento do mês"
+                    placeholder="15.000,00"
+                    required
+                />
             </div>
 
             <div class="col-12 col-lg-6" id="payroll-field">
-                <label class="form-label" for="payroll_12">Folha de salários dos últimos 12 meses</label>
-                <div class="input-group">
-                    <span class="input-group-text">R$</span>
-                    <input class="form-control" id="payroll_12" name="payroll_12" value="{{ old('payroll_12') }}" placeholder="50.400,00" inputmode="decimal">
-                </div>
-                <div class="form-text">Inclua salários, pró-labore e encargos considerados pela regra do Fator R.</div>
+                <x-tools.form.money
+                    name="payroll_12"
+                    label="Folha de salários dos últimos 12 meses"
+                    placeholder="50.400,00"
+                    help="Inclua salários, pró-labore e encargos considerados pela regra do Fator R."
+                />
             </div>
-
-            @if ($errors->any())
-                <div class="col-12">
-                    <div class="alert alert-danger mb-0" role="alert">
-                        <div class="fw-semibold mb-1">Revise os dados informados:</div>
-                        <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-                    </div>
-                </div>
-            @endif
 
             <div class="col-12 d-flex flex-wrap gap-2 pt-2">
                 <button class="btn btn-primary prazzu-btn-primary" type="submit"><i class="bi bi-calculator me-1" aria-hidden="true"></i> Calcular DAS</button>
                 <button class="btn btn-outline-secondary" type="reset"><i class="bi bi-eraser me-1" aria-hidden="true"></i> Limpar formulário</button>
             </div>
         </form>
-    </section>
+    </x-tools.form-panel>
 
     @if (session('calculation_result'))
         @php($result = session('calculation_result'))
@@ -126,10 +109,7 @@
                     'monthly_revenue' => ['Faturamento do mês', 'bi-cash-stack'],
                 ] as $key => [$label, $icon])
                     <div class="col-12 col-md-6 col-xl-4">
-                        <div class="prazzu-related-tool h-100">
-                            <i class="bi {{ $icon }}" aria-hidden="true"></i>
-                            <span><small>{{ $label }}</small><strong>{{ $result[$key] }}</strong></span>
-                        </div>
+                        <x-tools.result-metric :label="$label" :value="$result[$key]" :icon="str_replace('bi-', '', $icon)" />
                     </div>
                 @endforeach
             </div>
@@ -283,7 +263,7 @@
         </div>
     </section>
 
-</div>
+</x-tools.page>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {

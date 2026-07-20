@@ -239,6 +239,69 @@ alterar as já existentes.
 
 ------------------------------------------------------------------------
 
+# Componentes visuais compartilhados
+
+A interface das ferramentas deve utilizar os componentes Blade compartilhados antes de criar marcação própria. O objetivo é permitir que melhorias de acessibilidade, Bootstrap e experiência sejam aplicadas uma única vez em toda a plataforma.
+
+Os componentes ficam em `resources/views/components/tools` e devem seguir estas regras:
+
+- Bootstrap é a primeira opção para layout, formulários, alertas, cards, badges e responsividade;
+- classes próprias já existentes podem complementar Bootstrap quando a identidade visual exigir;
+- CSS novo só deve ser criado quando Bootstrap e os estilos existentes forem insuficientes;
+- componentes compartilhados cuidam apenas de apresentação e não recebem regras de domínio;
+- cada ferramenta continua responsável por seus textos, campos, cálculos e decisões específicas;
+- novos componentes só são extraídos quando houver repetição real ou benefício transversal comprovado;
+- a ferramenta deve permanecer utilizável e acessível sem depender de integração com outra ferramenta.
+
+Componentes-base disponíveis:
+
+```text
+<x-tools.page>
+<x-tools.form-panel>
+<x-tools.integration-import>
+<x-tools.form.input>
+<x-tools.form.money>
+<x-tools.form.select>
+<x-tools.form.switch>
+<x-tools.result-metric>
+<x-tools.result-panel>
+<x-tools.validation-summary>
+```
+
+A Calculadora de Simples Nacional é a ferramenta-piloto deste padrão. As demais ferramentas só devem ser migradas depois que o padrão estiver validado em uso real, evitando alterações em massa antes da estabilização.
+
+------------------------------------------------------------------------
+
+# Contrato padrão de cálculo
+
+Cálculos que precisem participar de recursos transversais da plataforma devem expor uma camada de aplicação baseada no contrato compartilhado em `app/Core/Tools/Calculation`. Esse contrato não substitui entidades, regras ou resultados de domínio específicos de cada ferramenta.
+
+O padrão é composto por:
+
+```text
+ToolCalculationInput
+ToolCalculator
+ToolCalculationResult
+ToolCalculationSummaryItem
+ToolCalculationWarning
+ToolCalculationAction
+```
+
+Regras obrigatórias:
+
+- a entrada padronizada deve ser um DTO imutável e já normalizado;
+- validação HTTP continua pertencendo ao `FormRequest`;
+- regras e cálculos continuam pertencendo ao domínio da ferramenta;
+- o resultado compartilhado organiza resumo, detalhes, alertas e próximas ações sem apagar o resultado de domínio;
+- `schemaVersion` deve seguir versionamento semântico e evoluir quando a estrutura persistida mudar;
+- contratos de integração podem ser anexados ao resultado, mas permanecem opcionais;
+- uma ferramenta deve continuar funcionando sem histórico, exportação, compartilhamento ou integração;
+- não se deve criar adaptadores vazios apenas para cumprir o padrão; o contrato é aplicado quando houver uso transversal real.
+
+A Calculadora de Simples Nacional é a ferramenta-piloto. Seu fluxo principal utiliza `SimplesNacionalCalculationInput` e `StandardSimplesNacionalCalculator`, preservando a calculadora e o resultado tributário de domínio existentes. As demais ferramentas serão migradas somente após validação desse formato.
+
+------------------------------------------------------------------------
+
 # Integração entre ferramentas
 
 As ferramentas da plataforma podem reaproveitar dados e resultados produzidos
@@ -1955,3 +2018,103 @@ O gerador oficial `make:tool` deve criar o perfil de risco, os casos dourados pr
 # Lote 5 — Endurecimento operacional
 
 A segurança HTTP, o mascaramento de logs, a retenção e os objetivos de recuperação são contratos transversais da plataforma. Ferramentas não podem redefinir esses comportamentos localmente. O procedimento operacional está documentado em `docs/OPERATIONS.md`.
+
+------------------------------------------------------------------------
+
+# Lote 7 — Manifesto evoluído e catálogo central
+
+O manifesto de cada ferramenta é a fonte única de metadados para catálogo, navegação,
+busca, categorias, status, acesso, recursos e capacidades transversais. Novas listas
+paralelas de ferramentas são proibidas.
+
+Capacidades devem ser declaradas com `ToolCapability` e precisam corresponder ao que o
+módulo realmente implementa. O validador arquitetural deve falhar quando houver
+inconsistência entre manifesto, política de histórico, dados sensíveis ou contratos de
+integração.
+
+O catálogo central deve ser consultado para:
+
+- listar e localizar ferramentas;
+- montar home, menu e página de catálogo;
+- filtrar por categoria, status, acesso ou capacidade;
+- realizar busca por nome, descrição e palavras-chave;
+- apresentar recursos Essential e Plus.
+
+É proibido editar home, menu ou busca para cadastrar manualmente uma ferramenta que já
+está registrada em `config/tools/modules.php`.
+
+------------------------------------------------------------------------
+
+# Infraestrutura transversal das ferramentas
+
+Histórico, persistência, exportação, compartilhamento, acesso Essential/Plus e
+proteção de dados sensíveis pertencem ao Core técnico. Ferramentas não devem
+criar implementações paralelas para essas capacidades.
+
+A adesão ao padrão transversal é gradual e **opt-in por manifesto**. Durante a
+migração, manifestos antigos continuam válidos; uma ferramenta passa a usar a
+nova infraestrutura quando declara explicitamente suas políticas:
+
+```php
+persistence: new ToolPersistencePolicy(
+    enabled: true,
+    schemaVersion: 2,
+    retentionDays: 90,
+    minimumReadableSchemaVersion: 1,
+),
+export: new ToolExportPolicy(enabled: true, formats: ['json', 'csv']),
+sharing: new ToolSharingPolicy(
+    enabled: true,
+    expiresAfterMinutes: 120,
+    requiresAuthentication: true,
+    allowSensitivePayload: false,
+),
+sensitiveData: new ToolSensitiveDataPolicy(
+    mode: SensitiveDataMode::Redacted,
+    fields: ['document'],
+),
+```
+
+Regras obrigatórias:
+
+- resultados persistidos carregam `tool_version` e `schema_version`;
+- compatibilidade considera a faixa legível do schema e a versão principal da ferramenta;
+- retenção é declarada no manifesto e nunca definida isoladamente por controller;
+- formatos de exportação são autorizados pelo manifesto e executados por serviços compartilhados;
+- compartilhamento sempre possui expiração e pode exigir autenticação;
+- payload sensível só pode ser compartilhado quando o manifesto autorizar explicitamente;
+- campos sensíveis devem ser declarados e protegidos por modo `encrypted` ou `redacted`;
+- recursos Essential e Plus continuam usando os gates compartilhados de acesso;
+- capacidades transversais devem usar contratos do Core técnico, permitindo troca de adaptadores;
+- validações arquiteturais devem aceitar ferramentas ainda não migradas, mas validar integralmente qualquer política declarada.
+
+Os contratos e implementações padrão ficam em
+`app/Core/Tools/Infrastructure`. Ferramentas podem fornecer adaptadores de
+formato ou integração específicos, mas não podem substituir as regras comuns de
+autorização, expiração, compatibilidade, retenção ou proteção de dados.
+
+------------------------------------------------------------------------
+
+# Gerador definitivo de ferramentas
+
+O comando `php artisan make:tool NomeDaFerramenta` reproduz a arquitetura
+estabilizada nas ferramentas reais. Ele cria manifesto, contratos de entrada e
+cálculo, resultado padronizado, catálogo, interface Blade compartilhada,
+integrações, testes e documentação inicial.
+
+Capacidades transversais são opt-in:
+
+- `--history --retention-days=365 --schema-version=1` habilita histórico e
+  persistência versionada;
+- `--exports=csv,json,pdf` declara formatos suportados pelo serviço comum;
+- `--share --share-expires=60 [--share-auth]` habilita compartilhamento
+  temporário;
+- `--sensitive-mode=redact|encrypted --sensitive-fields=campo1,campo2`
+  declara proteção explícita para dados sensíveis;
+- `--publishes=contrato:v1` e `--accepts=contrato:v1` registram integrações
+  versionadas.
+
+Toda ferramenta nasce em `draft`. O gerador rejeita combinações incompletas ou
+incompatíveis antes de criar qualquer arquivo. Os cálculos provisórios e as
+chaves de funcionalidades geradas devem ser substituídos pelas regras reais do
+domínio antes da ativação.

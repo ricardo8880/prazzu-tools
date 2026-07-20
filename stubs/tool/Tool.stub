@@ -12,11 +12,17 @@ use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
+{{ history_contract_import }}{{ history_policy_import }}use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
-final class Tool implements ToolModule, HasToolIntegrations, HasWebRoutes, HasViews
+final class Tool implements {{ history_interface }}HasToolIntegrations, HasWebRoutes, HasViews, ToolModule
 {
     public function integrations(): ToolIntegrationManifest
     {
@@ -38,15 +44,22 @@ final class Tool implements ToolModule, HasToolIntegrations, HasWebRoutes, HasVi
             version: '0.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::{{ status_case }},
+            supportsHistory: {{ supports_history_php }},
+            storesSensitiveData: {{ stores_sensitive_data_php }},
             keywords: [],
+            capabilities: {{ capabilities_php }},
             features: [
                 new ToolFeature('solve_problem', 'Solução completa do problema', ToolFeatureTier::Essential),
                 new ToolFeature('advanced_productivity', 'Produtividade avançada', ToolFeatureTier::Plus),
             ],
+            persistence: {{ persistence_php }},
+            export: {{ export_policy_php }},
+            sharing: {{ sharing_policy_php }},
+            sensitiveData: {{ sensitive_policy_php }},
         );
     }
 
-    public function webRoutesPath(): string
+{{ history_policy_method }}    public function webRoutesPath(): string
     {
         return __DIR__.'/Routes/web.php';
     }

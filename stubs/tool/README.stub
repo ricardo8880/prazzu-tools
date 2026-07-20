@@ -48,6 +48,11 @@ Este módulo não pode importar a implementação interna de outra ferramenta.
 Declare aqui as capacidades realmente utilizadas. Histórico, exportação,
 favoritos, analytics, acesso e persistência devem usar contratos do Core.
 
+- Histórico e persistência: {{ history_markdown }}
+- Exportação: {{ exports_markdown }}
+- Compartilhamento: {{ sharing_markdown }}
+- Dados sensíveis: {{ sensitive_markdown }}
+
 ## Histórico de versões
 
 | Versão | Estado | Alterações |

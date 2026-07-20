@@ -107,3 +107,11 @@ devem ser consumidas por contratos do Core.
   duplicação e CSV.
 - `1.0.0`: precificação inicial, detalhamento, recomendações e proposta
   comercial.
+
+## Conformidade arquitetural — Lote 9
+
+Esta ferramenta foi migrada para o padrão definitivo da plataforma: manifesto final,
+capacidades Essencial/Plus, contratos de cálculo e integração, componentes visuais
+compartilhados e políticas transversais de histórico, persistência versionada,
+exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
+responsabilidades não devem ser introduzidas no módulo.

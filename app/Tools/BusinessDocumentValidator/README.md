@@ -105,3 +105,11 @@ O módulo não depende de outra ferramenta.
 - `0.x` — Lotes 1 a 6: validação de CPF/CNPJ/IE, consulta cadastral, motor de
   inconsistências, importação compartilhada, pré-visualização e processamento
   em lote.
+
+## Conformidade arquitetural — Lote 9
+
+Esta ferramenta foi migrada para o padrão definitivo da plataforma: manifesto final,
+capacidades Essencial/Plus, contratos de cálculo e integração, componentes visuais
+compartilhados e políticas transversais de histórico, persistência versionada,
+exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
+responsabilidades não devem ser introduzidas no módulo.

@@ -8,12 +8,12 @@ use App\Core\Access\Contracts\ToolFeatureAccessGate;
 use App\Core\Exceptions\InvalidValue;
 use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
 use App\Core\ToolIntegration\Contracts\ToolResultResolver;
-use App\Core\ToolIntegration\Data\IntegrationPayload;
 use App\Core\Tools\ToolRegistry;
 use App\Http\Controllers\Controller;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\CalculateFactorR;
-use App\Tools\SimplesNacionalCalculator\Application\Actions\CalculateSimplesNacional;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\ListSimplesNacionalCalculations;
+use App\Tools\SimplesNacionalCalculator\Application\Calculators\StandardSimplesNacionalCalculator;
+use App\Tools\SimplesNacionalCalculator\Application\Data\SimplesNacionalCalculationInput;
 use App\Tools\SimplesNacionalCalculator\Application\Features\SimplesNacionalFeature;
 use App\Tools\SimplesNacionalCalculator\Domain\Enums\TaxAnnex;
 use App\Tools\SimplesNacionalCalculator\Presentation\Requests\CalculateSimplesNacionalRequest;
@@ -56,7 +56,7 @@ final class SimplesNacionalController extends Controller
 
     public function calculate(
         CalculateSimplesNacionalRequest $request,
-        CalculateSimplesNacional $calculateSimples,
+        StandardSimplesNacionalCalculator $calculateSimples,
         CalculateFactorR $calculateFactorR,
         ToolResultPublisher $integrations,
     ): RedirectResponse {
@@ -73,31 +73,22 @@ final class SimplesNacionalController extends Controller
                 $input['annex'] = $factorRResult->applicableAnnex->value;
             }
 
-            $result = $calculateSimples->execute([
+            $calculation = $calculateSimples->calculate(SimplesNacionalCalculationInput::fromArray([
                 'annex' => (string) $input['annex'],
                 'rbt12' => (string) $input['rbt12'],
                 'monthly_revenue' => (string) $input['monthly_revenue'],
-            ]);
+            ]));
         } catch (InvalidValue $exception) {
             throw ValidationException::withMessages([
                 'rbt12' => $exception->getMessage(),
             ]);
         }
 
-        $resultData = $result->toArray();
+        $resultData = $calculation->details;
 
-        $integrations->publish(new IntegrationPayload(
-            sourceTool: 'calculadora-simples-nacional',
-            contractName: 'company-tax-snapshot',
-            contractVersion: 1,
-            data: [
-                'monthly_revenue' => (string) $input['monthly_revenue'],
-                'rbt12' => (string) $input['rbt12'],
-                'annex' => (string) $resultData['annex'],
-                'effective_rate' => (string) $resultData['effective_rate'],
-                'estimated_das' => (string) $resultData['estimated_das'],
-            ],
-        ));
+        if ($calculation->integrationPayload !== null) {
+            $integrations->publish($calculation->integrationPayload);
+        }
 
         return redirect()
             ->route('tools.calculadora-simples-nacional.index')

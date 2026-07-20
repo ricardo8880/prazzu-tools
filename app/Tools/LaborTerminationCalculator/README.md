@@ -72,3 +72,11 @@ das regras e referências gerais.
   histórico autenticado, repetição, exclusão e relatório para impressão.
 - Regra de cálculo: versionada em `LaborTerminationCalculator::RULE_VERSION`.
 - Tabelas tributárias: versionadas no calculador de folha.
+
+## Conformidade arquitetural — Lote 9
+
+Esta ferramenta foi migrada para o padrão definitivo da plataforma: manifesto final,
+capacidades Essencial/Plus, contratos de cálculo e integração, componentes visuais
+compartilhados e políticas transversais de histórico, persistência versionada,
+exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
+responsabilidades não devem ser introduzidas no módulo.

@@ -43,6 +43,7 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
                 'user_id' => $userId,
                 'tool_slug' => $manifest->slug,
                 'tool_version' => $manifest->version,
+                'schema_version' => $manifest->persistence?->schemaVersion ?? 1,
                 'rule_version' => $ruleVersion->value,
                 'reference_date' => $referenceDate->toString(),
                 'status' => ToolRunStatus::Running,
@@ -58,6 +59,7 @@ final readonly class DatabaseToolRunRecorder implements ToolRunRecorder
                 metadata: [
                     'tool_slug' => $manifest->slug,
                     'tool_version' => $manifest->version,
+                    'schema_version' => $manifest->persistence?->schemaVersion ?? 1,
                     'rule_version' => $ruleVersion->value,
                 ],
                 actorId: $userId,

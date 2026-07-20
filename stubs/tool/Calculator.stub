@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tools\{{ class }}\Domain\Services;
+
+use App\Core\Tools\Contracts\ToolCalculationInput;
+use App\Core\Tools\Contracts\ToolCalculator;
+use App\Core\Tools\Calculation\Data\ToolCalculationResult;
+use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
+use App\Tools\{{ class }}\Application\Data\CalculationInput;
+use InvalidArgumentException;
+
+final class Calculator implements ToolCalculator
+{
+    public function calculate(ToolCalculationInput $input): ToolCalculationResult
+    {
+        if (! $input instanceof CalculationInput) {
+            throw new InvalidArgumentException('Entrada incompatível com a ferramenta {{ slug }}.');
+        }
+
+        // Substitua esta implementação provisória pelas regras reais do domínio.
+        return new ToolCalculationResult(
+            toolSlug: '{{ slug }}',
+            schemaVersion: '1.0.0',
+            summary: [new ToolCalculationSummaryItem('result', 'Resultado', $input->value)],
+            details: ['input' => $input->toArray()],
+        );
+    }
+}

@@ -13,11 +13,17 @@ use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasMigrations, HasViews, HasWebRoutes, ToolModule
 {
@@ -50,6 +56,14 @@ final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasMigrations
             supportsHistory: true,
             storesSensitiveData: true,
             keywords: ['simples nacional', 'das', 'fator r', 'anexo', 'alíquota efetiva'],
+            capabilities: [
+                ToolCapability::History,
+                ToolCapability::VersionedPersistence,
+                ToolCapability::Export,
+                ToolCapability::SensitiveData,
+                ToolCapability::PublishesIntegrations,
+                ToolCapability::AcceptsIntegrations,
+            ],
             features: [
                 new ToolFeature('calculate', 'Cálculo por anexo e faixa', ToolFeatureTier::Essential),
                 new ToolFeature('factor_r', 'Cálculo do Fator R', ToolFeatureTier::Essential),
@@ -61,6 +75,10 @@ final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasMigrations
                 new ToolFeature('alerts', 'Alertas tributários', ToolFeatureTier::Plus),
                 new ToolFeature('monthly_history', 'Histórico mensal', ToolFeatureTier::Plus),
             ],
+            persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
+            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
+            sharing: ToolSharingPolicy::disabled(),
+            sensitiveData: new ToolSensitiveDataPolicy(SensitiveDataMode::Encrypted, ['history_payload']),
         );
     }
 

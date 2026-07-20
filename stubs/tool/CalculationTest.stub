@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tools\{{ class }}\Tests\Unit;
+
+use App\Tools\{{ class }}\Application\Data\CalculationInput;
+use App\Tools\{{ class }}\Domain\Services\Calculator;
+use PHPUnit\Framework\TestCase;
+
+final class CalculatorTest extends TestCase
+{
+    public function test_it_returns_the_standardized_result_contract(): void
+    {
+        $result = (new Calculator())->calculate(new CalculationInput(100));
+
+        self::assertSame('{{ slug }}', $result->toolSlug);
+        self::assertSame('1.0.0', $result->schemaVersion);
+        self::assertSame('result', $result->summary[0]->key);
+    }
+}
