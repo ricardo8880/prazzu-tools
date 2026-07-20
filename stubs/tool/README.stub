@@ -25,6 +25,13 @@ cálculo Essencial.
 Documente fórmulas, arredondamentos, datas de referência, casos de fronteira e
 fontes normativas antes de implementar o cálculo.
 
+## Integração entre ferramentas
+
+- Contratos publicados: {{ publishes_markdown }}
+- Contratos aceitos: {{ accepts_markdown }}
+
+Toda integração deve ser opcional, explícita, revisável e intermediada pelo Core. A ferramenta deve funcionar integralmente sem dados de outros módulos. Não importe classes internas de outra ferramenta.
+
 ## Dependências
 
 - Contratos e value objects compartilhados do Core.

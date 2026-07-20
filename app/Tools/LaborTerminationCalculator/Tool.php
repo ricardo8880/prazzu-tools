@@ -6,7 +6,9 @@ namespace App\Tools\LaborTerminationCalculator;
 
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -16,7 +18,7 @@ use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
 
-final class Tool implements HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
     /** @var array<int, string> */
     private const HISTORY_INPUT_FIELDS = [
@@ -38,6 +40,14 @@ final class Tool implements HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
         'notice_days', 'projected_termination_date', 'termination_type_label', 'notice_type_label', 'is_domestic',
         'warnings', 'rule_version', 'tax_table_version',
     ];
+
+    public function integrations(): ToolIntegrationManifest
+    {
+        return new ToolIntegrationManifest(
+            publishes: [],
+            accepts: [],
+        );
+    }
 
     public function manifest(): ToolManifest
     {

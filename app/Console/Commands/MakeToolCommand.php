@@ -34,6 +34,8 @@ final class MakeToolCommand extends Command
         {--result-risk=informational : Risco do resultado}
         {--update-frequency=rare : Frequência esperada de atualização}
         {--exports= : Formatos de exportação separados por vírgula}
+        {--publishes= : Contratos de integração publicados, separados por vírgula}
+        {--accepts= : Contratos de integração aceitos, separados por vírgula}
         {--force : Sobrescreve arquivos existentes}';
 
     protected $description = 'Cria a estrutura padrão de um módulo de ferramenta';
@@ -86,6 +88,8 @@ final class MakeToolCommand extends Command
         $resultRisk = trim((string) $this->option('result-risk'));
         $updateFrequency = trim((string) $this->option('update-frequency'));
         $exports = $this->parseExports((string) $this->option('exports'));
+        $publishes = $this->parseIntegrationContracts((string) $this->option('publishes'));
+        $accepts = $this->parseIntegrationContracts((string) $this->option('accepts'));
 
         try {
             $categoryEnum = ToolCategory::from($category);
@@ -125,6 +129,10 @@ final class MakeToolCommand extends Command
             'exports_php' => $this->exportsPhp($exports),
             'exports_markdown' => $exports === [] ? 'Nenhum.' : implode(', ', $exports),
             'normative_value' => $normativeEnum->value,
+            'publishes_php' => $this->stringListPhp($publishes),
+            'accepts_php' => $this->stringListPhp($accepts),
+            'publishes_markdown' => $publishes === [] ? 'Nenhum.' : implode(', ', $publishes),
+            'accepts_markdown' => $accepts === [] ? 'Nenhum.' : implode(', ', $accepts),
         ];
     }
 
@@ -212,6 +220,7 @@ final class MakeToolCommand extends Command
             'GoldenCases.stub' => "app/Tools/{$context['class']}/Tests/Fixtures/GoldenCases.php",
             'QualityContractTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolQualityContractTest.php",
             'QUALITY.stub' => "app/Tools/{$context['class']}/QUALITY.md",
+            'IntegrationContractTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolIntegrationContractTest.php",
         ];
     }
 
@@ -272,6 +281,10 @@ final class MakeToolCommand extends Command
             '{{ exports_php }}' => $context['exports_php'],
             '{{ exports_markdown }}' => $context['exports_markdown'],
             '{{ normative_value }}' => $context['normative_value'],
+            '{{ publishes_php }}' => $context['publishes_php'],
+            '{{ accepts_php }}' => $context['accepts_php'],
+            '{{ publishes_markdown }}' => $context['publishes_markdown'],
+            '{{ accepts_markdown }}' => $context['accepts_markdown'],
         ];
 
         return str_replace(array_keys($replacements), array_values($replacements), $contents);
@@ -333,6 +346,42 @@ final class MakeToolCommand extends Command
         }
 
         return "['".implode("', '", $exports)."']";
+    }
+
+
+    /** @return list<string> */
+    private function parseIntegrationContracts(string $value): array
+    {
+        if (trim($value) === '') {
+            return [];
+        }
+
+        $contracts = array_values(array_filter(array_map(
+            static fn (string $contract): string => strtolower(trim($contract)),
+            explode(',', $value),
+        )));
+
+        foreach ($contracts as $contract) {
+            if (! preg_match('/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*:v[1-9][0-9]*$/', $contract)) {
+                throw new RuntimeException('Os contratos de integração devem usar o formato nome-do-contrato:v1.');
+            }
+        }
+
+        if (count($contracts) !== count(array_unique($contracts))) {
+            throw new RuntimeException('Os contratos de integração não podem se repetir.');
+        }
+
+        return $contracts;
+    }
+
+    /** @param list<string> $values */
+    private function stringListPhp(array $values): string
+    {
+        if ($values === []) {
+            return '[]';
+        }
+
+        return "['".implode("', '", $values)."']";
     }
 
     private function configGroup(string $category): string

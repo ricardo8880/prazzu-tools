@@ -37,6 +37,7 @@ final class ToolGeneratorContractTest extends TestCase
             'golden cases' => ['GoldenCases.stub'],
             'quality contract test' => ['QualityContractTest.stub'],
             'quality checklist' => ['QUALITY.stub'],
+            'integration contract test' => ['IntegrationContractTest.stub'],
         ];
     }
 
@@ -57,7 +58,7 @@ final class ToolGeneratorContractTest extends TestCase
 
         self::assertIsString($contents);
 
-        foreach (['Descrição', 'Funcionalidades', 'Experiência Essencial', 'Prazzu Plus', 'Regras de domínio', 'Dependências', 'Histórico de versões'] as $section) {
+        foreach (['Descrição', 'Funcionalidades', 'Experiência Essencial', 'Prazzu Plus', 'Regras de domínio', 'Integração entre ferramentas', 'Dependências', 'Histórico de versões'] as $section) {
             self::assertStringContainsString("## {$section}", $contents);
         }
     }
@@ -94,6 +95,22 @@ final class ToolGeneratorContractTest extends TestCase
         self::assertStringContainsString('Uma das opções informadas não é reconhecida', Artisan::output());
     }
 
+    public function test_generator_rejects_invalid_integration_contracts_before_creating_files(): void
+    {
+        $modulePath = app_path('Tools/ArchitectureIntegrationProbe');
+
+        self::assertDirectoryDoesNotExist($modulePath);
+
+        $exitCode = Artisan::call('make:tool', [
+            'name' => 'ArchitectureIntegrationProbe',
+            '--publishes' => 'contrato-sem-versao',
+        ]);
+
+        self::assertSame(Command::FAILURE, $exitCode);
+        self::assertDirectoryDoesNotExist($modulePath);
+        self::assertStringContainsString('formato nome-do-contrato:v1', Artisan::output());
+    }
+
     public function test_generator_creates_a_loadable_and_valid_draft_module(): void
     {
         $files = new Filesystem;
@@ -108,6 +125,8 @@ final class ToolGeneratorContractTest extends TestCase
                 'name' => 'ArchitectureGeneratorProbe',
                 '--slug' => 'architecture-generator-probe',
                 '--category' => 'fiscal',
+                '--publishes' => 'company-tax-snapshot:v1',
+                '--accepts' => 'pricing-scenario:v1',
             ]);
 
             self::assertSame(Command::SUCCESS, $exitCode, Artisan::output());
@@ -117,6 +136,7 @@ final class ToolGeneratorContractTest extends TestCase
             self::assertFileExists($modulePath.'/Tests/Fixtures/GoldenCases.php');
             self::assertFileExists($modulePath.'/Quality/RiskProfile.php');
             self::assertFileExists($modulePath.'/QUALITY.md');
+            self::assertFileExists($modulePath.'/Tests/Unit/ToolIntegrationContractTest.php');
             self::assertStringContainsString(
                 '\\App\\Tools\\ArchitectureGeneratorProbe\\Tool::class,',
                 $files->get($configurationPath),
@@ -126,6 +146,8 @@ final class ToolGeneratorContractTest extends TestCase
             self::assertSame(ToolStatus::Draft, $module->manifest()->status);
             self::assertNotEmpty($module->manifest()->featuresFor(ToolFeatureTier::Essential));
             self::assertNotEmpty($module->manifest()->featuresFor(ToolFeatureTier::Plus));
+            self::assertSame(['company-tax-snapshot:v1'], $module->integrations()->publishes);
+            self::assertSame(['pricing-scenario:v1'], $module->integrations()->accepts);
             (new ToolModuleValidator)->validate($module);
         } finally {
             $files->replace($configurationPath, $originalConfiguration);

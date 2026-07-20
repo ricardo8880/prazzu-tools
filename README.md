@@ -239,6 +239,168 @@ alterar as já existentes.
 
 ------------------------------------------------------------------------
 
+# Integração entre ferramentas
+
+As ferramentas da plataforma podem reaproveitar dados e resultados produzidos
+por outras ferramentas quando isso gerar valor real para o usuário, reduzir
+preenchimentos repetidos ou permitir análises mais completas.
+
+Essa interoperabilidade não altera o princípio de independência dos módulos.
+Uma ferramenta pode consumir dados publicados por outra, mas nunca pode depender
+diretamente de classes, tabelas ou detalhes internos de sua implementação.
+
+## Princípios de integração
+
+1. Toda ferramenta deve continuar funcionando de forma isolada.
+
+2. Uma ferramenta não pode importar ou utilizar diretamente Actions, Services,
+   Models, Repositories, DTOs, controllers ou outras classes internas de outra
+   ferramenta.
+
+3. A comunicação entre ferramentas deve ocorrer exclusivamente por contratos de
+   dados estáveis, versionados e disponibilizados pelo Core técnico.
+
+4. A ferramenta de origem publica somente dados necessários, semanticamente
+   claros e permitidos para o contexto atual.
+
+5. A ferramenta de destino declara os contratos que aceita e continua responsável
+   por validar os dados antes de utilizá-los.
+
+6. O reaproveitamento deve ser opcional, explícito e visível. A plataforma não
+   deve preencher, recalcular ou alterar resultados silenciosamente.
+
+7. O usuário deve poder revisar e confirmar os dados importados antes de executar
+   o cálculo ou a ação da ferramenta de destino.
+
+8. Dados compartilhados devem respeitar autenticação, organização, autorização,
+   privacidade, consentimento e escopo do usuário.
+
+9. Uma integração ausente, indisponível ou incompatível nunca pode impedir o
+   funcionamento principal da ferramenta.
+
+10. Integrações devem existir por valor de produto, e não apenas por possibilidade
+    técnica.
+
+## Contratos de integração
+
+Cada conjunto de dados compartilhável deve possuir:
+
+-   nome único;
+-   versão explícita;
+-   descrição objetiva;
+-   ferramenta ou capacidade de origem;
+-   campos obrigatórios e opcionais;
+-   unidade, formato e significado dos valores;
+-   regras de validação;
+-   política de compatibilidade e evolução;
+-   regras de autorização e privacidade.
+
+Exemplos de contratos:
+
+```text
+company-profile:v1
+company-tax-snapshot:v1
+revenue-projection:v1
+pricing-scenario:v1
+labor-calculation-snapshot:v1
+```
+
+Os nomes acima são exemplos de modelagem. Um contrato somente passa a ser oficial
+quando estiver definido e registrado no Core técnico.
+
+## Manifesto da ferramenta
+
+Toda nova ferramenta deve declarar em seu manifesto quais contratos publica e
+quais contratos aceita.
+
+```php
+'integrations' => [
+    'publishes' => [
+        'company-tax-snapshot:v1',
+    ],
+
+    'accepts' => [
+        'company-profile:v1',
+        'revenue-projection:v1',
+    ],
+],
+```
+
+Uma lista vazia é válida quando não existir integração relevante. Nenhuma
+ferramenta deve criar contratos artificiais apenas para aparentar integração com
+a plataforma.
+
+## Fluxo esperado
+
+```text
+Ferramenta de origem
+        ↓
+publica um contrato de dados
+        ↓
+Core valida autorização, escopo e compatibilidade
+        ↓
+usuário escolhe reaproveitar os dados
+        ↓
+ferramenta de destino importa os campos compatíveis
+        ↓
+usuário revisa e confirma
+```
+
+## Limites arquiteturais
+
+Não é permitido:
+
+-   criar dependência direta entre namespaces de ferramentas;
+-   consultar tabelas privadas de outra ferramenta;
+-   reutilizar Models pertencentes a outra ferramenta;
+-   acessar Actions, Services, Repositories ou DTOs internos de outro módulo;
+-   conhecer detalhes internos da implementação de outra ferramenta;
+-   exigir que outra ferramenta esteja habilitada para executar o fluxo
+    essencial;
+-   compartilhar dados sem autorização e escopo adequados;
+-   tornar uma integração obrigatória para resolver o problema básico;
+-   duplicar no módulo um contrato ou serviço já mantido pelo Core.
+
+Quando um conceito for verdadeiramente comum a várias ferramentas, ele deve ser
+promovido para o Core técnico em vez de ser copiado ou importado de um módulo
+específico.
+
+## Checklist para novas ferramentas
+
+Antes de concluir uma nova ferramenta, deve-se responder:
+
+-   A ferramenta publica algum dado realmente útil para outras ferramentas?
+-   Ela pode aceitar dados já produzidos pela plataforma?
+-   Os contratos utilizados estão versionados e registrados no Core?
+-   A integração reduz trabalho real para o usuário?
+-   O reaproveitamento é opcional e visível?
+-   O usuário consegue revisar os dados importados?
+-   A ferramenta funciona normalmente sem qualquer integração?
+-   Existem testes para contrato válido, ausente, incompatível e não autorizado?
+-   A integração respeita a separação entre Essencial e Prazzu Plus?
+
+## Governança automatizada das integrações
+
+O comando oficial `make:tool` deve receber os contratos por meio das opções
+`--publishes` e `--accepts`, sempre no formato versionado `nome-do-contrato:v1`.
+O gerador deve criar o manifesto, a documentação, o checklist e o teste de
+contratos mesmo quando as listas estiverem vazias.
+
+Os testes arquiteturais devem bloquear:
+
+- contratos declarados que não estejam registrados no Core técnico;
+- imports de classes internas pertencentes a outra ferramenta;
+- remoção dos stubs e seções obrigatórias de integração;
+- geração de contratos com nome inválido, sem versão ou duplicado.
+
+A existência de automação não substitui a análise de produto. Uma nova integração
+só deve ser declarada quando reduzir trabalho real, permanecer opcional e manter
+a ferramenta totalmente funcional de forma isolada.
+-   A integração preserva os limites do Prazzu Tools e não cria funções de ERP,
+    CRM ou gestão operacional?
+
+------------------------------------------------------------------------
+
 # Infraestrutura compartilhada
 
 O Core técnico representa a infraestrutura comum do Prazzu Tools.

@@ -38,6 +38,18 @@ Documente para cada caso:
 - [ ] Persistência e exclusão seguem as políticas do Core.
 - [ ] Rotas protegidas usam gates e middlewares centrais.
 
+## Integração entre ferramentas
+
+- Contratos publicados: {{ publishes_markdown }}
+- Contratos aceitos: {{ accepts_markdown }}
+
+- [ ] Todos os contratos declarados estão registrados no Core.
+- [ ] A ferramenta funciona normalmente sem integração.
+- [ ] O reaproveitamento é iniciado por ação explícita do usuário.
+- [ ] Dados importados permanecem revisáveis antes da execução.
+- [ ] Contratos ausentes, incompatíveis e não autorizados possuem testes.
+- [ ] Nenhuma classe interna de outro módulo em `app/Tools` é importada.
+
 ## Interface
 
 - [ ] Bootstrap e componentes compartilhados foram usados antes de CSS específico.

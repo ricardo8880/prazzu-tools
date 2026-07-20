@@ -25,6 +25,16 @@
 
     <x-tools.validation-summary class="mb-4" />
 
+    @if ($taxSnapshotIntegration)
+        <div class="alert alert-primary d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3" role="status">
+            <div>
+                <div class="fw-semibold"><i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i> Dados disponíveis do Simples Nacional</div>
+                <div class="small">Faturamento mensal: R$ {{ $taxSnapshotIntegration->data['monthly_revenue'] }} · Anexo {{ $taxSnapshotIntegration->data['annex'] }}</div>
+            </div>
+            <button class="btn btn-primary btn-sm flex-shrink-0" type="button" data-apply-tax-snapshot>Usar estes dados</button>
+        </div>
+    @endif
+
     <section class="prazzu-tool-workspace text-start" aria-labelledby="pricing-data-title">
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
             <div>
@@ -507,4 +517,14 @@
         </section>
     @endif
 </div>
+@if ($taxSnapshotIntegration)
+    <script>
+        document.querySelector('[data-apply-tax-snapshot]')?.addEventListener('click', () => {
+            document.getElementById('monthly_revenue').value = @json($taxSnapshotIntegration->data['monthly_revenue']);
+            document.getElementById('tax_regime').value = 'simples_nacional';
+            document.getElementById('monthly_revenue').focus();
+        });
+    </script>
+@endif
+
 @endsection

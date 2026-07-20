@@ -27,6 +27,16 @@
 
     <x-tools.validation-summary class="mb-4" />
 
+    @if ($taxSnapshotIntegration)
+        <div class="alert alert-primary d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3" role="status">
+            <div>
+                <div class="fw-semibold"><i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i> Alíquota disponível do Simples Nacional</div>
+                <div class="small">Alíquota efetiva calculada: {{ $taxSnapshotIntegration->data['effective_rate'] }}. Revise antes de usar na formação do preço.</div>
+            </div>
+            <button class="btn btn-primary btn-sm flex-shrink-0" type="button" data-apply-effective-rate>Usar como imposto</button>
+        </div>
+    @endif
+
     <section class="prazzu-tool-workspace text-start" aria-labelledby="tool-workspace-title">
         <div class="mb-4">
             <h2 id="tool-workspace-title" class="mb-1">Dados do cálculo</h2>
@@ -163,4 +173,15 @@
     @include('tools-calculadora-margem-markup::partials.product-import')
     @include('tools-calculadora-margem-markup::partials.batch-calculator')
 </div>
+@if ($taxSnapshotIntegration)
+    <script>
+        document.querySelector('[data-apply-effective-rate]')?.addEventListener('click', () => {
+            const rate = String(@json($taxSnapshotIntegration->data['effective_rate']))
+                .replace('%', '').replace('.', '').replace(',', '.').trim();
+            document.getElementById('taxes_percentage').value = rate;
+            document.getElementById('taxes_percentage').focus();
+        });
+    </script>
+@endif
+
 @endsection

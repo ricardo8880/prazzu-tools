@@ -7,7 +7,9 @@ namespace App\Tools\BusinessDocumentValidator;
 use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -18,8 +20,16 @@ use App\Core\Tools\History\Contracts\HasHistoryPolicy;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
 use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
 
-final class Tool implements HasHistoryPolicy, HasServiceProviders, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasServiceProviders, HasViews, HasWebRoutes, ToolModule
 {
+    public function integrations(): ToolIntegrationManifest
+    {
+        return new ToolIntegrationManifest(
+            publishes: [],
+            accepts: [],
+        );
+    }
+
     public function manifest(): ToolManifest
     {
         return new ToolManifest(

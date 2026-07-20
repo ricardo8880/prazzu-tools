@@ -23,12 +23,25 @@ use App\Core\Identity\Contracts\PrazzuIdentityLinker;
 use App\Core\Identity\Services\ImmutablePrazzuIdentityLinker;
 use App\Core\Integrations\Contracts\ExternalServiceClient;
 use App\Core\Integrations\Services\LaravelHttpServiceClient;
+use App\Core\ToolIntegration\Contracts\ToolIntegrationCatalog;
+use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
+use App\Core\ToolIntegration\Contracts\ToolResultResolver;
+use App\Core\ToolIntegration\Contracts\ToolResultStore;
+use App\Core\ToolIntegration\Services\DefaultToolResultExchange;
+use App\Core\ToolIntegration\Services\InMemoryToolIntegrationCatalog;
+use App\Core\ToolIntegration\Services\RequestToolResultStore;
+use App\Core\ToolIntegration\Services\StandardIntegrationContracts;
 use App\Core\Usage\Contracts\UsageMetrics;
 use App\Core\Usage\Services\DatabaseUsageMetrics;
 use Illuminate\Support\ServiceProvider;
 
 final class CoreInfrastructureServiceProvider extends ServiceProvider
 {
+    public function boot(StandardIntegrationContracts $contracts): void
+    {
+        $contracts->register();
+    }
+
     public function register(): void
     {
         $this->app->singleton(FeatureFlagRepository::class, ConfigFeatureFlagRepository::class);
@@ -44,5 +57,10 @@ final class CoreInfrastructureServiceProvider extends ServiceProvider
         $this->app->singleton(UsageMetrics::class, DatabaseUsageMetrics::class);
         $this->app->bind(PrazzuIdentityLinker::class, ImmutablePrazzuIdentityLinker::class);
         $this->app->bind(ExternalServiceClient::class, LaravelHttpServiceClient::class);
+        $this->app->singleton(ToolIntegrationCatalog::class, InMemoryToolIntegrationCatalog::class);
+        $this->app->scoped(ToolResultStore::class, RequestToolResultStore::class);
+        $this->app->scoped(DefaultToolResultExchange::class);
+        $this->app->scoped(ToolResultPublisher::class, static fn ($app): ToolResultPublisher => $app->make(DefaultToolResultExchange::class));
+        $this->app->scoped(ToolResultResolver::class, static fn ($app): ToolResultResolver => $app->make(DefaultToolResultExchange::class));
     }
 }

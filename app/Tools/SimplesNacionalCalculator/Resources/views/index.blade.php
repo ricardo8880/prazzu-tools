@@ -19,6 +19,16 @@
 
     <x-tools.validation-summary class="mb-4" />
 
+    @if ($operatingProfileIntegration)
+        <div class="alert alert-primary d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3" role="status">
+            <div>
+                <div class="fw-semibold"><i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i> Perfil disponível da Calculadora de Honorários</div>
+                <div class="small">Faturamento mensal informado: R$ {{ $operatingProfileIntegration->data['monthly_revenue'] }}. O preenchimento só ocorrerá após sua confirmação.</div>
+            </div>
+            <button class="btn btn-primary btn-sm flex-shrink-0" type="button" data-apply-operating-profile>Usar faturamento</button>
+        </div>
+    @endif
+
     <section class="prazzu-tool-workspace text-start" aria-labelledby="calculation-data-title">
         <div class="mb-4">
             <h2 id="calculation-data-title" class="mb-1">Dados do cálculo</h2>
@@ -295,4 +305,13 @@ document.addEventListener('DOMContentLoaded', () => {
     syncFactorRFields();
 });
 </script>
+@if ($operatingProfileIntegration)
+    <script>
+        document.querySelector('[data-apply-operating-profile]')?.addEventListener('click', () => {
+            document.getElementById('monthly_revenue').value = @json($operatingProfileIntegration->data['monthly_revenue']);
+            document.getElementById('monthly_revenue').focus();
+        });
+    </script>
+@endif
+
 @endsection

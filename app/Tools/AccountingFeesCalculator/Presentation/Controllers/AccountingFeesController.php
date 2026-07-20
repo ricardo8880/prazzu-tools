@@ -6,6 +6,9 @@ namespace App\Tools\AccountingFeesCalculator\Presentation\Controllers;
 
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Exceptions\InvalidValue;
+use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
+use App\Core\ToolIntegration\Contracts\ToolResultResolver;
+use App\Core\ToolIntegration\Data\IntegrationPayload;
 use App\Core\Export\Services\TabularExportService;
 use App\Http\Controllers\Controller;
 use App\Tools\AccountingFeesCalculator\Application\Actions\BuildAccountingFeeHistoryExport;
@@ -36,9 +39,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class AccountingFeesController extends Controller
 {
-    public function index(): View
+    public function index(ToolResultResolver $integrations): View
     {
-        return view('tools-calculadora-de-honorarios-contabeis::index');
+        return view('tools-calculadora-de-honorarios-contabeis::index', [
+            'taxSnapshotIntegration' => $integrations->latest('company-tax-snapshot', 1),
+        ]);
     }
 
     public function calculate(
@@ -46,6 +51,7 @@ final class AccountingFeesController extends Controller
         CalculateAndStoreAccountingFees $action,
         ToolPersistenceAuthorizer $persistence,
         Tool $module,
+        ToolResultPublisher $integrations,
     ): RedirectResponse {
         $canPersist = $persistence->allowsHistory($module, $request->user());
 
@@ -56,6 +62,20 @@ final class AccountingFeesController extends Controller
                 'monthly_revenue' => $exception->getMessage(),
             ]);
         }
+
+        $validated = $request->validated();
+        $integrations->publish(new IntegrationPayload(
+            sourceTool: 'calculadora-de-honorarios-contabeis',
+            contractName: 'company-operating-profile',
+            contractVersion: 1,
+            data: [
+                'monthly_revenue' => (string) $validated['monthly_revenue'],
+                'employees' => (int) $validated['employees'],
+                'partners' => (int) $validated['partners'],
+                'tax_regime' => (string) $validated['tax_regime'],
+                'business_segment' => (string) $validated['business_segment'],
+            ],
+        ));
 
         return back()
             ->withInput()

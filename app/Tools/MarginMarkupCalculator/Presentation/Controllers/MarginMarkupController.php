@@ -10,6 +10,9 @@ use App\Core\Exceptions\InvalidValue;
 use App\Core\Export\Data\PrintableDocument;
 use App\Core\Export\Services\BrowserPrintExporter;
 use App\Core\Export\Services\TabularExportService;
+use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
+use App\Core\ToolIntegration\Contracts\ToolResultResolver;
+use App\Core\ToolIntegration\Data\IntegrationPayload;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
 use App\Core\Tools\History\Data\ToolRunHandle;
@@ -41,9 +44,11 @@ use Throwable;
 
 final class MarginMarkupController extends Controller
 {
-    public function index(): View
+    public function index(ToolResultResolver $integrations): View
     {
-        return view('tools-calculadora-margem-markup::index');
+        return view('tools-calculadora-margem-markup::index', [
+            'taxSnapshotIntegration' => $integrations->latest('company-tax-snapshot', 1),
+        ]);
     }
 
     public function calculate(
@@ -53,6 +58,7 @@ final class MarginMarkupController extends Controller
         ToolPersistenceAuthorizer $persistence,
         UsageMetrics $metrics,
         Tool $module,
+        ToolResultPublisher $integrations,
     ): RedirectResponse {
         $user = $request->user();
         $input = $request->validated();
@@ -76,6 +82,19 @@ final class MarginMarkupController extends Controller
                 $recorder->succeed($run, ['calculation_type' => 'single', ...$result->toArray()]);
             }
 
+            $resultData = $result->toArray();
+            $integrations->publish(new IntegrationPayload(
+                sourceTool: 'calculadora-margem-markup',
+                contractName: 'pricing-scenario',
+                contractVersion: 1,
+                data: [
+                    'product_name' => (string) ($input['product_name'] ?? ''),
+                    'sale_price' => (string) $resultData['sale_price'],
+                    'margin' => (string) $resultData['margin'],
+                    'markup' => (string) $resultData['markup'],
+                ],
+            ));
+
             $metrics->record(
                 toolSlug: $module->manifest()->slug,
                 event: 'calculated',
@@ -85,7 +104,7 @@ final class MarginMarkupController extends Controller
 
             return back()
                 ->withInput()
-                ->with('calculation_result', $result->toArray());
+                ->with('calculation_result', $resultData);
         } catch (InvalidValue $exception) {
             $this->recordFailure($recorder, $run, 'calculation.invalid_input');
 

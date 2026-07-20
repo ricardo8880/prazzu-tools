@@ -6,6 +6,9 @@ namespace App\Tools\SimplesNacionalCalculator\Presentation\Controllers;
 
 use App\Core\Access\Contracts\ToolFeatureAccessGate;
 use App\Core\Exceptions\InvalidValue;
+use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
+use App\Core\ToolIntegration\Contracts\ToolResultResolver;
+use App\Core\ToolIntegration\Data\IntegrationPayload;
 use App\Core\Tools\ToolRegistry;
 use App\Http\Controllers\Controller;
 use App\Tools\SimplesNacionalCalculator\Application\Actions\CalculateFactorR;
@@ -26,6 +29,7 @@ final class SimplesNacionalController extends Controller
         ToolFeatureAccessGate $featureGate,
         ToolRegistry $tools,
         ListSimplesNacionalCalculations $history,
+        ToolResultResolver $integrations,
     ): View {
         $manifest = $tools->findManifest('calculadora-simples-nacional');
         abort_if($manifest === null, 404);
@@ -37,6 +41,7 @@ final class SimplesNacionalController extends Controller
                     ? null
                     : (int) $request->user()->getAuthIdentifier(),
             ),
+            'operatingProfileIntegration' => $integrations->latest('company-operating-profile', 1),
             'plusAccess' => collect([
                 SimplesNacionalFeature::CompareScenarios,
                 SimplesNacionalFeature::CompareAnnexes,
@@ -53,6 +58,7 @@ final class SimplesNacionalController extends Controller
         CalculateSimplesNacionalRequest $request,
         CalculateSimplesNacional $calculateSimples,
         CalculateFactorR $calculateFactorR,
+        ToolResultPublisher $integrations,
     ): RedirectResponse {
         $input = $request->validated();
         $factorRResult = null;
@@ -78,10 +84,25 @@ final class SimplesNacionalController extends Controller
             ]);
         }
 
+        $resultData = $result->toArray();
+
+        $integrations->publish(new IntegrationPayload(
+            sourceTool: 'calculadora-simples-nacional',
+            contractName: 'company-tax-snapshot',
+            contractVersion: 1,
+            data: [
+                'monthly_revenue' => (string) $input['monthly_revenue'],
+                'rbt12' => (string) $input['rbt12'],
+                'annex' => (string) $resultData['annex'],
+                'effective_rate' => (string) $resultData['effective_rate'],
+                'estimated_das' => (string) $resultData['estimated_das'],
+            ],
+        ));
+
         return redirect()
             ->route('tools.calculadora-simples-nacional.index')
             ->withInput()
-            ->with('calculation_result', $result->toArray())
+            ->with('calculation_result', $resultData)
             ->with('factor_r_result', $factorRResult?->toArray());
     }
 }
