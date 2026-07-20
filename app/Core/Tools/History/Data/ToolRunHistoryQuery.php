@@ -17,6 +17,8 @@ final readonly class ToolRunHistoryQuery
         public ?DateTimeImmutable $from = null,
         public ?DateTimeImmutable $to = null,
         public bool $favoritesOnly = false,
+        /** @var list<string> */
+        public array $ruleVersions = [],
     ) {
         if (trim($this->toolSlug) === '') {
             throw new InvalidArgumentException('O slug da ferramenta é obrigatório.');
@@ -32,6 +34,12 @@ final readonly class ToolRunHistoryQuery
 
         if ($this->perPage < 1 || $this->perPage > 100) {
             throw new InvalidArgumentException('A quantidade por página deve estar entre 1 e 100.');
+        }
+
+        foreach ($this->ruleVersions as $ruleVersion) {
+            if (! is_string($ruleVersion) || ! preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/', $ruleVersion)) {
+                throw new InvalidArgumentException('A versão de regra do histórico é inválida.');
+            }
         }
 
         if ($this->from !== null && $this->to !== null && $this->from > $this->to) {

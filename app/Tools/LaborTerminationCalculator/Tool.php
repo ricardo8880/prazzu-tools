@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
+use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
-use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\ToolModule;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -24,7 +24,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
-final class Tool implements HasToolIntegrations, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     /** @var array<int, string> */
     private const HISTORY_INPUT_FIELDS = [

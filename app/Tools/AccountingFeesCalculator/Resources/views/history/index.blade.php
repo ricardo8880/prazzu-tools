@@ -32,10 +32,10 @@
                     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                         <div>
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <span class="badge text-bg-light border">{{ $calculation->created_at?->format('d/m/Y H:i') }}</span>
-                                @if ($calculation->is_favorite)<span class="badge text-bg-warning"><i class="bi bi-star-fill me-1"></i>Favorito</span>@endif
+                                <span class="badge text-bg-light border">{{ $calculation->finishedAt->format('d/m/Y H:i') }}</span>
+                                @if ($calculation->favorite)<span class="badge text-bg-warning"><i class="bi bi-star-fill me-1"></i>Favorito</span>@endif
                             </div>
-                            <h2 class="h5 mb-1">Honorário recomendado: {{ $calculation->recommendedFee() }}</h2>
+                            <h2 class="h5 mb-1">Honorário recomendado: {{ data_get($calculation->result, 'recommended_fee') }}</h2>
                             <p class="text-body-secondary mb-0">
                                 {{ data_get($calculation->input, 'tax_regime') }} · {{ data_get($calculation->input, 'employees', 0) }} funcionário(s) · complexidade {{ data_get($calculation->result, 'complexity_level') }}
                             </p>
@@ -47,9 +47,9 @@
                     </div>
 
                     <div class="d-flex flex-wrap gap-2 mt-3">
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $calculation) }}">@csrf<button class="btn btn-sm btn-primary"><i class="bi bi-copy me-1"></i>Duplicar</button></form>
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning"><i class="bi bi-star me-1"></i>{{ $calculation->is_favorite ? 'Desfavoritar' : 'Favoritar' }}</button></form>
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation) }}" onsubmit="return confirm('Remover este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
+                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $calculation->id) }}">@csrf<button class="btn btn-sm btn-primary"><i class="bi bi-copy me-1"></i>Duplicar</button></form>
+                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation->id) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning"><i class="bi bi-star me-1"></i>{{ $calculation->favorite ? 'Desfavoritar' : 'Favoritar' }}</button></form>
+                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation->id) }}" onsubmit="return confirm('Remover este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
                     </div>
                 </div>
             </article>

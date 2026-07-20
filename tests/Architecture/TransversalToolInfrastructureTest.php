@@ -45,7 +45,7 @@ final class TransversalToolInfrastructureTest extends TestCase
 
     public function test_compatibility_respects_schema_range_and_semantic_major_version(): void
     {
-        $service = new ManifestToolResultCompatibility();
+        $service = new ManifestToolResultCompatibility;
         $module = $this->module($this->manifest());
 
         self::assertTrue($service->canRead($module, '1.4.0', 1));
@@ -57,9 +57,9 @@ final class TransversalToolInfrastructureTest extends TestCase
     public function test_export_sharing_and_sensitive_data_follow_manifest_policies(): void
     {
         $module = $this->module($this->manifest());
-        $exporter = new ManifestToolResultExporter();
-        $sharing = new ManifestToolResultSharingGuard();
-        $protector = new ManifestSensitiveToolPayloadProtector();
+        $exporter = new ManifestToolResultExporter;
+        $sharing = new ManifestToolResultSharingGuard;
+        $protector = new ManifestSensitiveToolPayloadProtector;
 
         self::assertJson($exporter->export($module, ['total' => 10], 'json'));
         self::assertStringContainsString('total', $exporter->export($module, ['total' => 10], 'csv'));

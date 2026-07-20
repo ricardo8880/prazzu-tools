@@ -33,7 +33,7 @@ final readonly class ToolSensitiveDataPolicy
 
     public static function none(): self
     {
-        return new self();
+        return new self;
     }
 
     /** @param array<string, mixed> $data */

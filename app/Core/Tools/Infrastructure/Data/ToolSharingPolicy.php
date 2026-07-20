@@ -23,7 +23,7 @@ final readonly class ToolSharingPolicy
 
     public static function disabled(): self
     {
-        return new self();
+        return new self;
     }
 
     /** @param array<string, mixed> $data */

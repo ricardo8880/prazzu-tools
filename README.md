@@ -41,6 +41,54 @@ A plataforma foi projetada para receber muitas ferramentas ao longo do tempo,
 sem transformar o projeto em um sistema monolítico e sem recriar soluções que já
 existem.
 
+
+
+------------------------------------------------------------------------
+
+# 💡 Evolução Contínua da Plataforma (Instrução para Assistentes de IA)
+
+Esta seção é destinada aos assistentes de IA que auxiliam no desenvolvimento deste projeto.
+
+Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
+
+Sempre que identificar uma melhoria que:
+
+- reduza retrabalho futuro;
+- elimine duplicação entre ferramentas;
+- padronize comportamentos;
+- simplifique a criação de novas ferramentas;
+- torne o Core mais reutilizável;
+- mantenha a arquitetura limpa, simples e leve;
+- preserve a filosofia descrita neste README;
+
+informe essa oportunidade ao final da resposta.
+
+## Importante
+
+Essas sugestões **não devem interromper a tarefa principal**.
+
+Primeiro execute exatamente o que foi solicitado.
+
+Depois, se identificar alguma oportunidade real de melhoria, apresente-a em uma seção separada chamada:
+
+> **💡 Oportunidade de Evolução**
+
+A sugestão deve conter:
+
+- qual problema foi observado;
+- por que isso pode gerar retrabalho no futuro;
+- qual padronização ou melhoria pode resolver o problema;
+- se a mudança vale a pena agora ou apenas quando mais ferramentas existirem.
+
+## Evite sugestões desnecessárias
+
+Não proponha abstrações apenas por serem "boas práticas".
+
+Só sugira melhorias quando houver um benefício concreto para a evolução da plataforma.
+
+A filosofia deste projeto é evoluir a arquitetura baseada em necessidades reais, e não em abstrações prematuras.
+
+
 ------------------------------------------------------------------------
 
 # Nossa visão

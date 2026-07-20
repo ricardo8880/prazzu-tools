@@ -138,13 +138,13 @@
                                     @php($indexLabels = ['ipca' => 'IPCA', 'inpc' => 'INPC', 'igpm' => 'IGP-M', 'manual' => 'Manual'])
                                     @foreach ($adjustments as $adjustment)
                                         <tr>
-                                            <td><div class="fw-semibold">{{ $adjustment->scenario_label }}</div><div class="small text-body-secondary">{{ number_format((float) $adjustment->percentage, 4, ',', '.') }}%</div></td>
-                                            <td><span class="badge text-bg-light border">{{ $indexLabels[$adjustment->index_type] }}</span></td>
-                                            <td class="text-nowrap">{{ $adjustment->formattedValue('current_value_cents') }}</td>
-                                            <td class="fw-semibold text-primary text-nowrap">{{ $adjustment->formattedValue('adjusted_value_cents') }}</td>
-                                            <td>{{ \Carbon\Carbon::createFromFormat('Y-m', $adjustment->reference_period)->format('m/Y') }}</td>
+                                            <td><div class="fw-semibold">{{ data_get($adjustment->input, 'scenario_label') }}</div><div class="small text-body-secondary">{{ number_format((float) data_get($adjustment->result, 'percentage'), 4, ',', '.') }}%</div></td>
+                                            <td><span class="badge text-bg-light border">{{ $indexLabels[data_get($adjustment->input, 'index_type')] }}</span></td>
+                                            <td class="text-nowrap">R$ {{ number_format(data_get($adjustment->result, 'current_value_cents') / 100, 2, ',', '.') }}</td>
+                                            <td class="fw-semibold text-primary text-nowrap">R$ {{ number_format(data_get($adjustment->result, 'adjusted_value_cents') / 100, 2, ',', '.') }}</td>
+                                            <td>{{ \Carbon\Carbon::createFromFormat('Y-m', data_get($adjustment->input, 'reference_period'))->format('m/Y') }}</td>
                                             <td class="text-end">
-                                                <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.delete', $adjustment) }}" onsubmit="return confirm('Remover este reajuste do histórico?')">
+                                                <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.delete', $adjustment->id) }}" onsubmit="return confirm('Remover este reajuste do histórico?')">
                                                     @csrf @method('DELETE')
                                                     <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir reajuste"><i class="bi bi-trash"></i></button>
                                                 </form>

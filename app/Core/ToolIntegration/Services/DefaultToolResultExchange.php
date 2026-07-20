@@ -15,8 +15,7 @@ final readonly class DefaultToolResultExchange implements ToolResultPublisher, T
         private ToolIntegrationCatalog $catalog,
         private ToolResultStore $store,
         private IntegrationPayloadValidator $validator,
-    ) {
-    }
+    ) {}
 
     public function publish(IntegrationPayload $payload): void
     {

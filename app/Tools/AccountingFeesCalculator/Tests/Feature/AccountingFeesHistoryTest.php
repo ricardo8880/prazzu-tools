@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tools\AccountingFeesCalculator\Tests\Feature;
 
+use App\Core\Tools\History\Enums\ToolRunStatus;
+use App\Core\Tools\History\Models\ToolRun;
 use App\Models\User;
-use App\Tools\AccountingFeesCalculator\Infrastructure\Models\AccountingFeeCalculation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,71 +19,45 @@ final class AccountingFeesHistoryTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)->post(route('tools.calculadora-de-honorarios-contabeis.calculate'), [
-            'monthly_revenue' => '100.000,00',
-            'employees' => 3,
-            'partners' => 2,
-            'monthly_invoices' => 80,
-            'monthly_bank_transactions' => 150,
-            'tax_regime' => 'simples_nacional',
-            'business_segment' => 'services',
-            'complexity' => 'medium',
+            'monthly_revenue' => '100.000,00', 'employees' => 3, 'partners' => 2,
+            'monthly_invoices' => 80, 'monthly_bank_transactions' => 150,
+            'tax_regime' => 'simples_nacional', 'business_segment' => 'services', 'complexity' => 'medium',
         ])->assertRedirect();
 
-        $this->assertDatabaseCount('accounting_fee_calculations', 1);
-        $this->actingAs($user)->get(route('tools.calculadora-de-honorarios-contabeis.history.index'))
-            ->assertOk()
-            ->assertSee('Histórico de cálculos');
-        $this->actingAs($user)
-            ->get(route('tools.calculadora-de-honorarios-contabeis.history.export'))
-            ->assertDownload('historico-honorarios-contabeis.csv');
+        $this->assertDatabaseHas('tool_runs', ['tool_slug' => 'calculadora-de-honorarios-contabeis', 'user_id' => $user->id, 'status' => ToolRunStatus::Succeeded->value]);
+        $this->actingAs($user)->get(route('tools.calculadora-de-honorarios-contabeis.history.index'))->assertOk()->assertSee('Histórico de cálculos');
+        $this->actingAs($user)->get(route('tools.calculadora-de-honorarios-contabeis.history.export'))->assertDownload('historico-honorarios-contabeis.csv');
     }
 
     public function test_owner_can_favorite_duplicate_and_delete_a_calculation(): void
     {
         $user = User::factory()->create();
+        $run = $this->runFor($user, 'accounting_fee');
 
-        $calculation = AccountingFeeCalculation::query()->create([
-            'user_id' => $user->getAuthIdentifier(),
-            'input' => ['monthly_revenue' => '50.000,00', 'tax_regime' => 'mei'],
-            'result' => ['recommended_fee' => 'R$ 500,00'],
-        ]);
-
-        $this->actingAs($user)
-            ->patch(route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation))
-            ->assertRedirect();
-        $this->assertTrue($calculation->fresh()->is_favorite);
-
-        $this->actingAs($user)
-            ->post(route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $calculation))
-            ->assertRedirect(route('tools.calculadora-de-honorarios-contabeis.index'));
-
-        $this->actingAs($user)
-            ->delete(route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation))
-            ->assertRedirect();
-        $this->assertDatabaseMissing('accounting_fee_calculations', ['id' => $calculation->id]);
+        $this->actingAs($user)->patch(route('tools.calculadora-de-honorarios-contabeis.history.favorite', $run->id))->assertRedirect();
+        $this->assertDatabaseHas('tool_run_favorites', ['tool_run_id' => $run->id, 'user_id' => $user->id]);
+        $this->actingAs($user)->post(route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $run->id))->assertRedirect(route('tools.calculadora-de-honorarios-contabeis.index'));
+        $this->actingAs($user)->delete(route('tools.calculadora-de-honorarios-contabeis.history.delete', $run->id))->assertRedirect();
+        $this->assertDatabaseMissing('tool_runs', ['id' => $run->id]);
     }
 
     public function test_user_cannot_change_another_users_calculation(): void
     {
         $owner = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $calculation = AccountingFeeCalculation::query()->create([
-            'user_id' => $owner->getAuthIdentifier(),
-            'input' => ['monthly_revenue' => '50.000,00'],
-            'result' => ['recommended_fee' => 'R$ 500,00'],
-        ]);
+        $other = User::factory()->create();
+        $run = $this->runFor($owner, 'accounting_fee');
+        $this->actingAs($other)->patch(route('tools.calculadora-de-honorarios-contabeis.history.favorite', $run->id))->assertNotFound();
+        $this->actingAs($other)->delete(route('tools.calculadora-de-honorarios-contabeis.history.delete', $run->id))->assertNotFound();
+        $this->assertDatabaseHas('tool_runs', ['id' => $run->id]);
+    }
 
-        $this->actingAs($otherUser)
-            ->patch(route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation))
-            ->assertNotFound();
-
-        $this->actingAs($otherUser)
-            ->delete(route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation))
-            ->assertNotFound();
-
-        $this->assertDatabaseHas('accounting_fee_calculations', [
-            'id' => $calculation->getKey(),
-            'is_favorite' => false,
+    private function runFor(User $user, string $type): ToolRun
+    {
+        return ToolRun::query()->create([
+            'user_id' => $user->id, 'tool_slug' => 'calculadora-de-honorarios-contabeis', 'tool_version' => '1.2.0',
+            'schema_version' => 1, 'rule_version' => '1.0.0', 'reference_date' => now()->toDateString(),
+            'status' => ToolRunStatus::Succeeded, 'input_payload' => ['run_type' => $type, 'monthly_revenue' => '50.000,00', 'tax_regime' => 'mei'],
+            'result_payload' => ['recommended_fee' => 'R$ 500,00'], 'started_at' => now(), 'finished_at' => now(), 'expires_at' => now()->addYear(),
         ]);
     }
 }

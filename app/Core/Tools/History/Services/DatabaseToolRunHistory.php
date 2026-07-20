@@ -87,6 +87,10 @@ final readonly class DatabaseToolRunHistory implements ToolRunHistory
             ])
             ->when($query->from !== null, static fn (Builder $builder): Builder => $builder->whereDate('reference_date', '>=', $query->from?->format('Y-m-d')))
             ->when($query->to !== null, static fn (Builder $builder): Builder => $builder->whereDate('reference_date', '<=', $query->to?->format('Y-m-d')))
+            ->when(
+                $query->ruleVersions !== [],
+                static fn (Builder $builder): Builder => $builder->whereIn('rule_version', $query->ruleVersions),
+            )
             ->when($query->favoritesOnly, static fn (Builder $builder): Builder => $builder->whereHas(
                 'favorites',
                 static fn (Builder $favoriteQuery): Builder => $favoriteQuery->where('user_id', $query->userId),

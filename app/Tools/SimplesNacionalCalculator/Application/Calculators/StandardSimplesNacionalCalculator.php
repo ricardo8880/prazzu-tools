@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Tools\SimplesNacionalCalculator\Application\Calculators;
 
 use App\Core\ToolIntegration\Data\IntegrationPayload;
-use App\Core\Tools\Contracts\ToolCalculationInput;
-use App\Core\Tools\Contracts\ToolCalculator;
 use App\Core\Tools\Calculation\Data\ToolCalculationAction;
 use App\Core\Tools\Calculation\Data\ToolCalculationResult;
 use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
+use App\Core\Tools\Contracts\ToolCalculationInput;
+use App\Core\Tools\Contracts\ToolCalculator;
 use App\Tools\SimplesNacionalCalculator\Application\Data\SimplesNacionalCalculationInput;
 use App\Tools\SimplesNacionalCalculator\Domain\Calculators\SimplesNacionalCalculator;
 use App\Tools\SimplesNacionalCalculator\Tool;

@@ -156,8 +156,8 @@ final class MakeToolCommand extends Command
             'capabilities_php' => $this->capabilitiesPhp($history, $exports, $sharing, $sensitiveMode, $publishes, $accepts),
             'persistence_php' => $history ? "new ToolPersistencePolicy(enabled: true, schemaVersion: {$schemaVersion}, retentionDays: {$retentionDays}, minimumReadableSchemaVersion: {$minimumReadableSchemaVersion})" : 'ToolPersistencePolicy::disabled()',
             'export_policy_php' => $exports === [] ? 'ToolExportPolicy::disabled()' : "new ToolExportPolicy(enabled: true, formats: {$this->exportsPhp($exports)})",
-            'sharing_policy_php' => $sharing ? "new ToolSharingPolicy(enabled: true, expiresAfterMinutes: {$shareExpires}, requiresAuthentication: ".($shareAuth ? 'true' : 'false').")" : 'ToolSharingPolicy::disabled()',
-            'sensitive_policy_php' => $sensitiveMode === 'none' ? 'ToolSensitiveDataPolicy::none()' : "new ToolSensitiveDataPolicy(SensitiveDataMode::".$this->sensitiveModeCase($sensitiveMode).", {$this->stringListPhp($sensitiveFields)})",
+            'sharing_policy_php' => $sharing ? "new ToolSharingPolicy(enabled: true, expiresAfterMinutes: {$shareExpires}, requiresAuthentication: ".($shareAuth ? 'true' : 'false').')' : 'ToolSharingPolicy::disabled()',
+            'sensitive_policy_php' => $sensitiveMode === 'none' ? 'ToolSensitiveDataPolicy::none()' : 'new ToolSensitiveDataPolicy(SensitiveDataMode::'.$this->sensitiveModeCase($sensitiveMode).", {$this->stringListPhp($sensitiveFields)})",
             'history_contract_import' => $history ? "use App\\Core\\Tools\\History\\Contracts\\HasHistoryPolicy;\n" : '',
             'history_policy_import' => $history ? "use App\\Core\\Tools\\History\\Data\\ToolHistoryPolicy;\n" : '',
             'history_interface' => $history ? 'HasHistoryPolicy, ' : '',
@@ -423,7 +423,6 @@ final class MakeToolCommand extends Command
         return "['".implode("', '", $exports)."']";
     }
 
-
     /** @return list<string> */
     private function parseIntegrationContracts(string $value): array
     {
@@ -487,11 +486,21 @@ final class MakeToolCommand extends Command
             $capabilities[] = 'ToolCapability::History';
             $capabilities[] = 'ToolCapability::VersionedPersistence';
         }
-        if ($exports !== []) $capabilities[] = 'ToolCapability::Export';
-        if ($sharing) $capabilities[] = 'ToolCapability::Sharing';
-        if ($sensitiveMode !== 'none') $capabilities[] = 'ToolCapability::SensitiveData';
-        if ($publishes !== []) $capabilities[] = 'ToolCapability::PublishesIntegrations';
-        if ($accepts !== []) $capabilities[] = 'ToolCapability::AcceptsIntegrations';
+        if ($exports !== []) {
+            $capabilities[] = 'ToolCapability::Export';
+        }
+        if ($sharing) {
+            $capabilities[] = 'ToolCapability::Sharing';
+        }
+        if ($sensitiveMode !== 'none') {
+            $capabilities[] = 'ToolCapability::SensitiveData';
+        }
+        if ($publishes !== []) {
+            $capabilities[] = 'ToolCapability::PublishesIntegrations';
+        }
+        if ($accepts !== []) {
+            $capabilities[] = 'ToolCapability::AcceptsIntegrations';
+        }
 
         return $capabilities === [] ? '[]' : "[\n                ".implode(",\n                ", $capabilities).",\n            ]";
     }

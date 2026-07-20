@@ -20,16 +20,16 @@ Route::prefix('ferramentas/calculadora-de-honorarios-contabeis')
             Route::get('/', [AccountingFeesController::class, 'history'])->name('index');
             Route::middleware('tool.feature:calculadora-de-honorarios-contabeis,history_export')
                 ->get('/exportar', [AccountingFeesController::class, 'exportHistory'])->name('export');
-            Route::post('/{calculation}/duplicar', [AccountingFeesController::class, 'duplicateCalculation'])->name('duplicate');
-            Route::patch('/{calculation}/favorito', [AccountingFeesController::class, 'toggleFavorite'])->name('favorite');
-            Route::delete('/{calculation}', [AccountingFeesController::class, 'deleteCalculation'])->name('delete');
+            Route::post('/{run}/duplicar', [AccountingFeesController::class, 'duplicateCalculation'])->name('duplicate');
+            Route::patch('/{run}/favorito', [AccountingFeesController::class, 'toggleFavorite'])->name('favorite');
+            Route::delete('/{run}', [AccountingFeesController::class, 'deleteCalculation'])->name('delete');
         });
 
         Route::prefix('reajustes')->name('adjustments.')->group(function (): void {
             Route::get('/', [AccountingFeesController::class, 'adjustments'])->name('index');
             Route::middleware('tool.feature:calculadora-de-honorarios-contabeis,adjust_fee')
                 ->post('/', [AccountingFeesController::class, 'calculateAdjustment'])->name('calculate');
-            Route::delete('/{adjustment}', [AccountingFeesController::class, 'deleteAdjustment'])
+            Route::delete('/{run}', [AccountingFeesController::class, 'deleteAdjustment'])
                 ->middleware(['tool.feature:calculadora-de-honorarios-contabeis,history', 'persistence.auth'])
                 ->name('delete');
         });
