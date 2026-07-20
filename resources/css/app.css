@@ -265,8 +265,20 @@ body.prazzu-app .text-body-secondary {
 
 
 
-.prazzu-brand__mark img{
-    width: 100px;
+.prazzu-brand__mark img {
+    width: 132px;
+}
+
+.prazzu-brand__logo--light {
+    display: none;
+}
+
+[data-bs-theme="light"] .prazzu-brand__logo--light {
+    display: block;
+}
+
+[data-bs-theme="light"] .prazzu-brand__logo--dark {
+    display: none;
 }
 
 

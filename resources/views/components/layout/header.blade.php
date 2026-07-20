@@ -25,7 +25,8 @@
 
             <a class="prazzu-brand text-decoration-none flex-shrink-0" href="{{ route('home') }}" aria-label="Prazzu - Página inicial">
                 <span class="prazzu-brand__mark" aria-hidden="true">
-                    <img src="{{ asset('assets/images/prazzu-logo-mark.png') }}" alt="">
+                    <img class="prazzu-brand__logo prazzu-brand__logo--light" src="{{ asset('assets/images/logo-tema-claro.png') }}" alt="">
+                    <img class="prazzu-brand__logo prazzu-brand__logo--dark" src="{{ asset('assets/images/logo-tema-escuro.png') }}" alt="">
                 </span>
             </a>
 
