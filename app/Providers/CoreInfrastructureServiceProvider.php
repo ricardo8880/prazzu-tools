@@ -31,6 +31,8 @@ use App\Core\ToolIntegration\Services\DefaultToolResultExchange;
 use App\Core\ToolIntegration\Services\InMemoryToolIntegrationCatalog;
 use App\Core\ToolIntegration\Services\RequestToolResultStore;
 use App\Core\ToolIntegration\Services\StandardIntegrationContracts;
+use App\Core\Taxation\Contracts\TaxEstimateProviderRegistry;
+use App\Core\Taxation\Services\InMemoryTaxEstimateProviderRegistry;
 use App\Core\Tools\Infrastructure\Contracts\SensitiveToolPayloadProtector;
 use App\Core\Tools\Infrastructure\Contracts\ToolResultCompatibility;
 use App\Core\Tools\Infrastructure\Contracts\ToolResultExporter;
@@ -70,6 +72,7 @@ final class CoreInfrastructureServiceProvider extends ServiceProvider
         $this->app->bind(PrazzuIdentityLinker::class, ImmutablePrazzuIdentityLinker::class);
         $this->app->bind(ExternalServiceClient::class, LaravelHttpServiceClient::class);
         $this->app->singleton(ToolIntegrationCatalog::class, InMemoryToolIntegrationCatalog::class);
+        $this->app->singleton(TaxEstimateProviderRegistry::class, InMemoryTaxEstimateProviderRegistry::class);
         $this->app->scoped(ToolResultStore::class, RequestToolResultStore::class);
         $this->app->scoped(DefaultToolResultExchange::class);
         $this->app->scoped(ToolResultPublisher::class, static fn ($app): ToolResultPublisher => $app->make(DefaultToolResultExchange::class));

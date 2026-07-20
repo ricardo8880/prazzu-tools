@@ -10,6 +10,7 @@ return [
     ],
     'fiscal' => [
         App\Tools\SimplesNacionalCalculator\Tool::class,
+        App\Tools\TaxRegimeComparator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [

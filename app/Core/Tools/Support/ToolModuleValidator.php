@@ -164,19 +164,41 @@ final class ToolModuleValidator
 
         if ($module instanceof HasServiceProviders) {
             foreach ($module->serviceProviders() as $providerClass) {
-                if (! is_a($providerClass, ServiceProvider::class, true)) {
+                $providerDirectory = $moduleRoot.'/Infrastructure/Providers';
+                $declaredProviderFile = $providerDirectory.'/'.class_basename($providerClass).'.php';
+
+                $this->validateFile(
+                    $declaredProviderFile,
+                    $providerDirectory,
+                    'provider de serviço',
+                    $manifest->slug,
+                );
+
+                if (! class_exists($providerClass, false)) {
+                    require_once $declaredProviderFile;
+                }
+
+                if (! class_exists($providerClass, false)) {
+                    throw new InvalidArgumentException(
+                        "A classe do provider [{$providerClass}] de [{$manifest->slug}] não foi declarada em [{$declaredProviderFile}].",
+                    );
+                }
+
+                $providerReflection = new ReflectionClass($providerClass);
+
+                if (! $providerReflection->isSubclassOf(ServiceProvider::class)) {
                     throw new InvalidArgumentException(
                         "O provider [{$providerClass}] de [{$manifest->slug}] deve estender ".ServiceProvider::class.'.',
                     );
                 }
 
-                $providerFile = (new ReflectionClass($providerClass))->getFileName();
+                $loadedProviderFile = $providerReflection->getFileName();
 
-                if ($providerFile === false) {
+                if ($loadedProviderFile === false) {
                     throw new InvalidArgumentException("Não foi possível localizar o provider [{$providerClass}].");
                 }
 
-                $this->validateFile($providerFile, $moduleRoot.'/Infrastructure/Providers', 'provider de serviço', $manifest->slug);
+                $this->validateFile($loadedProviderFile, $providerDirectory, 'provider de serviço', $manifest->slug);
             }
         }
     }

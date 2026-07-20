@@ -6,6 +6,7 @@ namespace App\Tools\SimplesNacionalCalculator;
 
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
+use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
@@ -24,8 +25,9 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
+use App\Tools\SimplesNacionalCalculator\Infrastructure\Providers\SimplesNacionalServiceProvider;
 
-final class Tool implements HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-simples-nacional';
 
@@ -96,6 +98,11 @@ final class Tool implements HasHistoryPolicy, HasMigrations, HasToolIntegrations
             ],
             sensitiveFields: ['rbt12', 'monthly_revenue'],
         );
+    }
+
+    public function serviceProviders(): array
+    {
+        return [SimplesNacionalServiceProvider::class];
     }
 
     public function webRoutesPath(): string
