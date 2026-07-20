@@ -211,7 +211,7 @@ final class LaborTerminationCalculator
             return 30;
         }
 
-return min(90, 30 + ((int) $admission->diff($termination)->y * 3));
+        return min(90, 30 + ((int) $admission->diff($termination)->y * 3));
     }
 
     private function noticePay(Money $salary, TerminationType $type, NoticeType $notice, int $days): Money
@@ -240,7 +240,7 @@ return min(90, 30 + ((int) $admission->diff($termination)->y * 3));
             }
         }
 
-return $months;
+        return $months;
     }
 
     private function currentAcquisitionPeriodStart(DateTimeImmutable $admissionDate, DateTimeImmutable $terminationDate): DateTimeImmutable
@@ -250,7 +250,7 @@ return $months;
             $start = $start->modify('+1 year');
         }
 
-return $start;
+        return $start;
     }
 
     private function proportionalThirteenthMonths(DateTimeImmutable $admissionDate, DateTimeImmutable $terminationDate): int
@@ -267,6 +267,6 @@ return $start;
             }
         }
 
-return $months;
+        return $months;
     }
 }

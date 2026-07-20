@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\Tools\History\Data;
 
-use InvalidArgumentException;
+use App\Core\Versioning\SemanticVersion;
 
 final readonly class RuleVersion
 {
     public function __construct(public string $value)
     {
-        if (! preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/', $this->value)) {
-            throw new InvalidArgumentException('A versão da regra deve seguir versionamento semântico.');
-        }
+        new SemanticVersion($value);
     }
 
     public function __toString(): string

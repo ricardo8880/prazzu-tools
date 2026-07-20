@@ -11,7 +11,7 @@ final class StrategicAnalyticsInsightGeneratorTest extends TestCase
 {
     public function test_it_separates_observation_evidence_hypotheses_and_actions(): void
     {
-        $insights = (new StrategicAnalyticsInsightGenerator())->generate([
+        $insights = (new StrategicAnalyticsInsightGenerator)->generate([
             'funnel' => [
                 'current' => ['opened' => 200, 'started' => 60, 'completed' => 20, 'exported' => 4],
                 'rates' => ['open_to_start' => 30.0, 'start_to_complete' => 33.3, 'complete_to_export' => 20.0],
@@ -31,7 +31,7 @@ final class StrategicAnalyticsInsightGeneratorTest extends TestCase
 
     public function test_it_ignores_small_samples(): void
     {
-        $insights = (new StrategicAnalyticsInsightGenerator())->generate([
+        $insights = (new StrategicAnalyticsInsightGenerator)->generate([
             'funnel' => [
                 'current' => ['opened' => 5, 'started' => 1, 'completed' => 0, 'exported' => 0],
                 'rates' => ['open_to_start' => 20.0, 'start_to_complete' => 0.0, 'complete_to_export' => 0.0],

@@ -58,7 +58,9 @@ final class StrategicAnalyticsPackageBuilder
             '- Correlação entre métricas não demonstra causalidade.', '',
             '## Filtros aplicados', '',
         ];
-        foreach ($filters as $key => $value) $lines[] = '- '.$key.': '.(is_scalar($value) ? (string) $value : json_encode($value, JSON_UNESCAPED_UNICODE));
+        foreach ($filters as $key => $value) {
+            $lines[] = '- '.$key.': '.(is_scalar($value) ? (string) $value : json_encode($value, JSON_UNESCAPED_UNICODE));
+        }
         $lines = array_merge($lines, ['', '## Como usar no ChatGPT', '',
             'Envie este ZIP e peça para analisar todos os arquivos em conjunto. Solicite que fatos, inferências e hipóteses sejam separados e que toda recomendação cite as métricas de suporte.', '',
             'Prompt recomendado:', '',
@@ -105,7 +107,7 @@ final class StrategicAnalyticsPackageBuilder
     /** @param list<array<string,mixed>> $insights */
     private function insightsCsv(array $insights): string
     {
-        $rows = [['Prioridade','Tipo','Título','Observação','Confiança','Evidências JSON','Hipóteses','Ações']];
+        $rows = [['Prioridade', 'Tipo', 'Título', 'Observação', 'Confiança', 'Evidências JSON', 'Hipóteses', 'Ações']];
         foreach ($insights as $insight) {
             $rows[] = [
                 $insight['priority'] ?? '', $insight['type'] ?? '', $insight['title'] ?? '', $insight['observation'] ?? '',
@@ -121,15 +123,18 @@ final class StrategicAnalyticsPackageBuilder
     private function breakdownCsv(array $rows, string $type): string
     {
         if ($type === 'tool') {
-            $output = [['Ferramenta','Aberturas','Inícios','Conclusões','Exportações','Taxa de início (%)','Taxa de conclusão (%)','Taxa de exportação (%)','Variação início (pp)','Variação conclusão (pp)']];
+            $output = [['Ferramenta', 'Aberturas', 'Inícios', 'Conclusões', 'Exportações', 'Taxa de início (%)', 'Taxa de conclusão (%)', 'Taxa de exportação (%)', 'Variação início (pp)', 'Variação conclusão (pp)']];
             foreach ($rows as $row) {
                 $output[] = [$row['name'] ?? '', $row['opened'] ?? 0, $row['started'] ?? 0, $row['completed'] ?? 0, $row['exported'] ?? 0, $row['start_rate'] ?? 0, $row['completion_rate'] ?? 0, $row['export_rate'] ?? 0, $row['start_rate_delta_pp'] ?? '', $row['completion_rate_delta_pp'] ?? ''];
             }
+
             return $this->csv($output);
         }
 
-        $output = [['Nome','Eventos','Visitantes','Conversões']];
-        foreach ($rows as $row) $output[] = [$row['name'] ?? 'Não informado', $row['events'] ?? 0, $row['visitors'] ?? 0, $row['conversions'] ?? 0];
+        $output = [['Nome', 'Eventos', 'Visitantes', 'Conversões']];
+        foreach ($rows as $row) {
+            $output[] = [$row['name'] ?? 'Não informado', $row['events'] ?? 0, $row['visitors'] ?? 0, $row['conversions'] ?? 0];
+        }
 
         return $this->csv($output);
     }
@@ -139,7 +144,9 @@ final class StrategicAnalyticsPackageBuilder
     {
         $stream = fopen('php://temp', 'w+b');
         fwrite($stream, "\xEF\xBB\xBF");
-        foreach ($rows as $row) fputcsv($stream, $row, ';');
+        foreach ($rows as $row) {
+            fputcsv($stream, $row, ';');
+        }
         rewind($stream);
         $content = stream_get_contents($stream) ?: '';
         fclose($stream);

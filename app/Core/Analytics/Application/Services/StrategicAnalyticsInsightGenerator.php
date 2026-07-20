@@ -105,6 +105,7 @@ final class StrategicAnalyticsInsightGenerator
         $qualified = collect($channels)->filter(fn (array $row): bool => (int) ($row['visitors'] ?? 0) >= 20)
             ->map(function (array $row): array {
                 $row['conversion_rate'] = (int) $row['visitors'] === 0 ? 0.0 : round(((int) $row['conversions'] / (int) $row['visitors']) * 100, 1);
+
                 return $row;
             });
 

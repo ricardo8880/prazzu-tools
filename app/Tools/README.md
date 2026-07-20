@@ -151,10 +151,18 @@ As divergências ainda presentes em módulos antigos estão registradas em
 ```bash
 php artisan make:tool CalculadoraRescisao \
     --slug=calculadora-rescisao \
-    --category=trabalhista
+    --category=trabalhista \
+    --nature=calculation \
+    --normative=high \
+    --personal-data=common \
+    --result-risk=labor \
+    --update-frequency=unpredictable \
+    --exports=pdf,csv
 ```
 
-O gerador cria a estrutura inicial completa. Depois da geração:
+O gerador cria a estrutura inicial completa, incluindo perfil de risco, casos
+dourados provisórios, contrato automatizado de qualidade e checklist de
+segurança, privacidade e interface. Depois da geração:
 
 1. documente descrição, funcionalidades, regras, dependências e histórico de
    versões;

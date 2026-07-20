@@ -78,6 +78,6 @@ final readonly class CaptureAnalyticsContext
             }
         }
 
-return false;
+        return false;
     }
 }

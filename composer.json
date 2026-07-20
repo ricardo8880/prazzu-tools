@@ -73,7 +73,7 @@
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
         ],
         "lint": [
-            "@php -r \"$it=new RecursiveIteratorIterator(new RecursiveDirectoryIterator('app')); foreach($it as $f){if($f->isFile()&&$f->getExtension()==='php'){passthru('php -l '.escapeshellarg($f->getPathname()),$c); if($c!==0) exit($c);}}\""
+            "@php scripts/lint-php.php"
         ],
         "format:check": [
             "@php vendor/bin/pint --test"
@@ -83,6 +83,7 @@
             "@php artisan analytics:check"
         ],
         "quality": [
+            "@platform:check",
             "@lint",
             "@format:check",
             "@architecture",
@@ -105,6 +106,9 @@
         "dev:with-logs": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
+        ],
+        "platform:check": [
+            "@php scripts/check-platform.php"
         ]
     },
     "extra": {

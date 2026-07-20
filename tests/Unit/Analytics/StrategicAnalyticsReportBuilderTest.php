@@ -15,7 +15,7 @@ final class StrategicAnalyticsReportBuilderTest extends TestCase
     public function test_payload_is_self_describing_and_preserves_product_context(): void
     {
         CarbonImmutable::setTestNow('2026-07-19 12:00:00');
-        $builder = new StrategicAnalyticsReportBuilder(new AnalyticsEventCatalog());
+        $builder = new StrategicAnalyticsReportBuilder(new AnalyticsEventCatalog);
         $period = AnalyticsPeriod::between('2026-07-01', '2026-07-10');
 
         $payload = $builder->payload($period, ['tool' => 'simples-nacional'], $this->report());
@@ -32,7 +32,7 @@ final class StrategicAnalyticsReportBuilderTest extends TestCase
 
     public function test_markdown_and_json_include_context_metrics_and_dictionary(): void
     {
-        $builder = new StrategicAnalyticsReportBuilder(new AnalyticsEventCatalog());
+        $builder = new StrategicAnalyticsReportBuilder(new AnalyticsEventCatalog);
         $payload = $builder->payload(AnalyticsPeriod::between('2026-07-01', '2026-07-10'), [], $this->report());
 
         $markdown = $builder->markdown($payload);

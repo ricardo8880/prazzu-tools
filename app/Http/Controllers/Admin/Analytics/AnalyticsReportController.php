@@ -45,7 +45,9 @@ final class AnalyticsReportController extends Controller
             $rows = $query->rows($request->period(), $request->filters(), (int) config('analytics.reports.export_limit', 10000));
             $content = $files->build($format, $rows, 'Relatório Analytics - '.$request->period()->label());
         }
-        $extension = match ($format) { 'excel' => 'xml', 'markdown' => 'md', 'package', 'package_summary' => 'zip', default => $format };
+        $extension = match ($format) {
+            'excel' => 'xml', 'markdown' => 'md', 'package', 'package_summary' => 'zip', default => $format
+        };
         $mime = match ($format) {
             'excel' => 'application/vnd.ms-excel; charset=UTF-8',
             'pdf' => 'application/pdf',

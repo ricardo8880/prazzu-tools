@@ -2,6 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Core\Quality\Enums\ExternalIntegrationDependency;
+use App\Core\Quality\Enums\NormativeDependency;
+use App\Core\Quality\Enums\PersistenceMode;
+use App\Core\Quality\Enums\PersonalDataExposure;
+use App\Core\Quality\Enums\ProcessingMode;
+use App\Core\Quality\Enums\ResultRisk;
+use App\Core\Quality\Enums\ToolNature;
+use App\Core\Quality\Enums\UpdateFrequency;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\Support\ToolModuleStructure;
@@ -17,6 +25,15 @@ final class MakeToolCommand extends Command
         {--slug= : Slug público; por padrão é gerado a partir do nome}
         {--category=outros : Categoria oficial da ferramenta}
         {--status=draft : Estado inicial da ferramenta}
+        {--nature=calculation : Natureza da ferramenta}
+        {--normative=none : Dependência normativa}
+        {--personal-data=none : Exposição a dados pessoais}
+        {--integration=none : Dependência de integração externa}
+        {--persistence=temporary : Forma de persistência}
+        {--processing=synchronous : Modo de processamento}
+        {--result-risk=informational : Risco do resultado}
+        {--update-frequency=rare : Frequência esperada de atualização}
+        {--exports= : Formatos de exportação separados por vírgula}
         {--force : Sobrescreve arquivos existentes}';
 
     protected $description = 'Cria a estrutura padrão de um módulo de ferramenta';
@@ -60,12 +77,29 @@ final class MakeToolCommand extends Command
         $slug = trim((string) ($this->option('slug') ?: $this->kebab($class)));
         $category = trim((string) $this->option('category'));
         $status = trim((string) $this->option('status'));
+        $nature = trim((string) $this->option('nature'));
+        $normative = trim((string) $this->option('normative'));
+        $personalData = trim((string) $this->option('personal-data'));
+        $integration = trim((string) $this->option('integration'));
+        $persistence = trim((string) $this->option('persistence'));
+        $processing = trim((string) $this->option('processing'));
+        $resultRisk = trim((string) $this->option('result-risk'));
+        $updateFrequency = trim((string) $this->option('update-frequency'));
+        $exports = $this->parseExports((string) $this->option('exports'));
 
         try {
             $categoryEnum = ToolCategory::from($category);
             $statusEnum = ToolStatus::from($status);
+            $natureEnum = ToolNature::from($nature);
+            $normativeEnum = NormativeDependency::from($normative);
+            $personalDataEnum = PersonalDataExposure::from($personalData);
+            $integrationEnum = ExternalIntegrationDependency::from($integration);
+            $persistenceEnum = PersistenceMode::from($persistence);
+            $processingEnum = ProcessingMode::from($processing);
+            $resultRiskEnum = ResultRisk::from($resultRisk);
+            $updateFrequencyEnum = UpdateFrequency::from($updateFrequency);
         } catch (\ValueError $exception) {
-            throw new RuntimeException('Categoria ou status informado não é reconhecido.', previous: $exception);
+            throw new RuntimeException('Uma das opções informadas não é reconhecida.', previous: $exception);
         }
 
         return [
@@ -80,6 +114,17 @@ final class MakeToolCommand extends Command
             'view_namespace' => "tools-{$slug}",
             'module_class' => "App\\Tools\\{$class}\\Tool",
             'config_group' => $this->configGroup($category),
+            'nature_case' => $natureEnum->name,
+            'normative_case' => $normativeEnum->name,
+            'personal_data_case' => $personalDataEnum->name,
+            'integration_case' => $integrationEnum->name,
+            'persistence_case' => $persistenceEnum->name,
+            'processing_case' => $processingEnum->name,
+            'result_risk_case' => $resultRiskEnum->name,
+            'update_frequency_case' => $updateFrequencyEnum->name,
+            'exports_php' => $this->exportsPhp($exports),
+            'exports_markdown' => $exports === [] ? 'Nenhum.' : implode(', ', $exports),
+            'normative_value' => $normativeEnum->value,
         ];
     }
 
@@ -163,6 +208,10 @@ final class MakeToolCommand extends Command
             'UnitTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolManifestTest.php",
             'FeatureTest.stub' => "app/Tools/{$context['class']}/Tests/Feature/ToolPageTest.php",
             'README.stub' => "app/Tools/{$context['class']}/README.md",
+            'RiskProfile.stub' => "app/Tools/{$context['class']}/Quality/RiskProfile.php",
+            'GoldenCases.stub' => "app/Tools/{$context['class']}/Tests/Fixtures/GoldenCases.php",
+            'QualityContractTest.stub' => "app/Tools/{$context['class']}/Tests/Unit/ToolQualityContractTest.php",
+            'QUALITY.stub' => "app/Tools/{$context['class']}/QUALITY.md",
         ];
     }
 
@@ -212,6 +261,17 @@ final class MakeToolCommand extends Command
             '{{ status_case }}' => $context['status_case'],
             '{{ route_prefix }}' => $context['route_prefix'],
             '{{ view_namespace }}' => $context['view_namespace'],
+            '{{ nature_case }}' => $context['nature_case'],
+            '{{ normative_case }}' => $context['normative_case'],
+            '{{ personal_data_case }}' => $context['personal_data_case'],
+            '{{ integration_case }}' => $context['integration_case'],
+            '{{ persistence_case }}' => $context['persistence_case'],
+            '{{ processing_case }}' => $context['processing_case'],
+            '{{ result_risk_case }}' => $context['result_risk_case'],
+            '{{ update_frequency_case }}' => $context['update_frequency_case'],
+            '{{ exports_php }}' => $context['exports_php'],
+            '{{ exports_markdown }}' => $context['exports_markdown'],
+            '{{ normative_value }}' => $context['normative_value'],
         ];
 
         return str_replace(array_keys($replacements), array_values($replacements), $contents);
@@ -238,6 +298,41 @@ final class MakeToolCommand extends Command
         $value = preg_replace('/(?<!^)[A-Z]/', ' $0', $value) ?? $value;
 
         return ucwords(strtolower(trim($value)));
+    }
+
+    /** @return list<string> */
+    private function parseExports(string $value): array
+    {
+        if (trim($value) === '') {
+            return [];
+        }
+
+        $exports = array_values(array_filter(array_map(
+            static fn (string $format): string => strtolower(trim($format)),
+            explode(',', $value),
+        )));
+
+        foreach ($exports as $format) {
+            if (! preg_match('/^[a-z0-9]+$/', $format)) {
+                throw new RuntimeException('Os formatos de exportação devem usar identificadores simples em letras minúsculas.');
+            }
+        }
+
+        if (count($exports) !== count(array_unique($exports))) {
+            throw new RuntimeException('Os formatos de exportação não podem se repetir.');
+        }
+
+        return $exports;
+    }
+
+    /** @param list<string> $exports */
+    private function exportsPhp(array $exports): string
+    {
+        if ($exports === []) {
+            return '[]';
+        }
+
+        return "['".implode("', '", $exports)."']";
     }
 
     private function configGroup(string $category): string

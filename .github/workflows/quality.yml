@@ -39,14 +39,5 @@ jobs:
           php artisan key:generate
           touch database/database.sqlite
 
-      - name: Validar qualidade PHP
-        run: composer quality
-
-      - name: Compilar assets
-        run: npm run build
-
-      - name: Validar caches de produção
-        run: |
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
+      - name: Executar gate oficial de entrega
+        run: composer release:check

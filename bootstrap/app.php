@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ApplySecurityHeaders;
 use App\Http\Middleware\CaptureAnalyticsContext;
 use App\Http\Middleware\EnsureAuthenticatedForPersistence;
 use App\Http\Middleware\EnsureInternalAdministrator;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
+            ApplySecurityHeaders::class,
             CaptureAnalyticsContext::class,
         ]);
 

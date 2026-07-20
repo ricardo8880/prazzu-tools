@@ -1749,3 +1749,47 @@ Regras obrigatórias para alterações futuras:
 - nomes internos dos arquivos do pacote são contratos de integração e não devem ser alterados sem justificativa e documentação;
 - os pacotes não substituem as exportações brutas CSV, Excel e PDF já existentes;
 - qualquer correção posterior deve revisar os quatro lotes anteriores antes de modificar o fluxo de relatórios.
+
+## Governança normativa obrigatória
+
+Ferramentas sujeitas a legislação, tabelas oficiais, atos normativos ou decisões judiciais devem utilizar o contrato central de governança localizado em `app/Core/Normative`.
+
+Cada regra normativa deve declarar obrigatoriamente:
+
+- identificador estável;
+- versão semântica;
+- período de vigência;
+- ao menos uma fonte oficial;
+- data da última verificação;
+- responsável pela verificação.
+
+Cálculos novos devem resolver a regra pela data de referência do fato analisado. Cálculos históricos devem recuperar a combinação exata de identificador, versão e data de referência originalmente registrada.
+
+É proibido:
+
+- alterar silenciosamente uma versão já utilizada;
+- manter versões duplicadas;
+- permitir vigências sobrepostas para a mesma regra;
+- selecionar a regra pela data atual quando o domínio fornece competência ou data do fato;
+- utilizar material de terceiros como única referência normativa;
+- recalcular ou sobrescrever resultados históricos após atualização legal.
+
+O procedimento completo está definido em `docs/NORMATIVE_RULES.md` e deve ser revisado antes da implementação ou alteração de qualquer ferramenta com dependência normativa.
+
+------------------------------------------------------------------------
+
+# Qualidade proporcional ao risco
+
+Toda nova ferramenta deve ser classificada antes da implementação por meio do contrato compartilhado de risco e deve possuir casos dourados compatíveis com os requisitos derivados dessa classificação.
+
+A classificação existe apenas para definir rigor técnico, normativo, de privacidade e de testes. Ela não altera a filosofia de acesso da plataforma, não cria dependência entre ferramentas e não substitui a análise do domínio.
+
+As regras operacionais, tipos de casos e critérios obrigatórios estão documentados em [`docs/TOOL_QUALITY.md`](docs/TOOL_QUALITY.md).
+
+O gerador oficial `make:tool` deve criar o perfil de risco, os casos dourados provisórios, o contrato automatizado de qualidade e o checklist específico. Ele nunca inventa fontes ou resultados; uma ferramenta só pode sair de `draft` depois que os placeholders forem substituídos por evidências aprovadas.
+
+------------------------------------------------------------------------
+
+# Lote 5 — Endurecimento operacional
+
+A segurança HTTP, o mascaramento de logs, a retenção e os objetivos de recuperação são contratos transversais da plataforma. Ferramentas não podem redefinir esses comportamentos localmente. O procedimento operacional está documentado em `docs/OPERATIONS.md`.

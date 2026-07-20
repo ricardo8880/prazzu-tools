@@ -32,10 +32,9 @@ final class AnalyticsReportsTest extends TestCase
 
     public function test_an_analytics_report_can_be_scheduled(): void
     {
-        $this->withoutMiddleware(EnsureInternalAdministrator::class)
-            ->post(route('admin.analytics.reports.schedules.store'), [
-                'name' => 'Resumo semanal', 'frequency' => 'weekly', 'format' => 'pdf', 'period' => '30', 'device_type' => 'mobile',
-            ])->assertRedirect();
+        $this->withoutMiddleware(EnsureInternalAdministrator::class)->post(route('admin.analytics.reports.schedules.store'), [
+            'name' => 'Resumo semanal', 'frequency' => 'weekly', 'format' => 'pdf', 'period' => '30', 'device_type' => 'mobile',
+        ])->assertRedirect();
 
         $this->assertDatabaseHas('analytics_report_schedules', ['name' => 'Resumo semanal', 'frequency' => 'weekly', 'is_active' => true]);
     }

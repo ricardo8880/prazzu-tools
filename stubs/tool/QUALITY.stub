@@ -1,0 +1,55 @@
+# Qualidade de {{ name }}
+
+Este arquivo complementa o README da ferramenta. O README da raiz continua sendo a autoridade máxima.
+
+## Perfil de risco gerado
+
+- Natureza: `{{ nature_case }}`
+- Dependência normativa: `{{ normative_value }}`
+- Dados pessoais: `{{ personal_data_case }}`
+- Integração externa: `{{ integration_case }}`
+- Persistência: `{{ persistence_case }}`
+- Processamento: `{{ processing_case }}`
+- Risco do resultado: `{{ result_risk_case }}`
+- Frequência de atualização: `{{ update_frequency_case }}`
+- Exportações: {{ exports_markdown }}
+
+O perfil executável está em `Quality/RiskProfile.php`. Revise-o antes de implementar o domínio.
+
+## Casos dourados
+
+Substitua os placeholders de `Tests/Fixtures/GoldenCases.php` por casos aprovados. A ativação é bloqueada enquanto houver referências provisórias.
+
+Documente para cada caso:
+
+- entrada completa;
+- resultado esperado;
+- fonte ou revisão responsável;
+- versão normativa, quando aplicável;
+- política de arredondamento, quando aplicável.
+
+## Segurança e privacidade
+
+- [ ] Form Requests validam todas as entradas.
+- [ ] Nenhum dado pessoal é enviado para analytics.
+- [ ] Logs não armazenam documentos, salários ou conteúdo sensível sem mascaramento.
+- [ ] Uploads, quando existirem, validam tamanho, MIME e extensão.
+- [ ] Integrações, quando existirem, possuem timeout, retry e tratamento de indisponibilidade.
+- [ ] Persistência e exclusão seguem as políticas do Core.
+- [ ] Rotas protegidas usam gates e middlewares centrais.
+
+## Interface
+
+- [ ] Bootstrap e componentes compartilhados foram usados antes de CSS específico.
+- [ ] A interface funciona em mobile, tablet e desktop.
+- [ ] Estados de foco, erro, carregamento e vazio estão cobertos.
+- [ ] O fluxo principal funciona por teclado.
+
+## Verificação antes da ativação
+
+- [ ] Perfil de risco revisado.
+- [ ] Casos dourados completos e aprovados.
+- [ ] Fontes normativas registradas quando aplicável.
+- [ ] Testes Unit, Feature e Browser exigidos pelo classificador implementados.
+- [ ] Regras financeiras não usam `float`.
+- [ ] `composer release:check` está verde.

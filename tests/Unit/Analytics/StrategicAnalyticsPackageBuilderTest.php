@@ -17,16 +17,16 @@ final class StrategicAnalyticsPackageBuilderTest extends TestCase
     public function test_complete_package_contains_ai_context_and_specialized_files(): void
     {
         $builder = $this->builder();
-        $zip = $builder->build($this->payload(), new Collection());
+        $zip = $builder->build($this->payload(), new Collection);
 
-        foreach (['LEIA-ME.md','resumo-estrategico.md','metricas.json','dicionario-de-dados.md','insights.csv','eventos.csv','ferramentas.csv','canais.csv','origens.csv','dispositivos.csv'] as $name) {
+        foreach (['LEIA-ME.md', 'resumo-estrategico.md', 'metricas.json', 'dicionario-de-dados.md', 'insights.csv', 'eventos.csv', 'ferramentas.csv', 'canais.csv', 'origens.csv', 'dispositivos.csv'] as $name) {
             self::assertStringContainsString($name, $zip);
         }
     }
 
     public function test_summary_package_omits_raw_and_specialized_csv_files(): void
     {
-        $zip = $this->builder()->build($this->payload(), new Collection(), true);
+        $zip = $this->builder()->build($this->payload(), new Collection, true);
 
         self::assertStringContainsString('metricas.json', $zip);
         self::assertStringNotContainsString('eventos.csv', $zip);
@@ -35,21 +35,22 @@ final class StrategicAnalyticsPackageBuilderTest extends TestCase
 
     private function builder(): StrategicAnalyticsPackageBuilder
     {
-        $reports = new StrategicAnalyticsReportBuilder(new AnalyticsEventCatalog());
-        return new StrategicAnalyticsPackageBuilder($reports, new AnalyticsReportFileBuilder(), new SimpleZipArchiveBuilder());
+        $reports = new StrategicAnalyticsReportBuilder(new AnalyticsEventCatalog);
+
+        return new StrategicAnalyticsPackageBuilder($reports, new AnalyticsReportFileBuilder, new SimpleZipArchiveBuilder);
     }
 
     private function payload(): array
     {
         return [
-            'report' => ['schema_version'=>'1.1','generated_at'=>'2026-07-19T12:00:00-03:00','period'=>['label'=>'01/07/2026 a 10/07/2026'],'filters'=>[]],
-            'product_context' => ['description'=>'Plataforma de ferramentas.'],
+            'report' => ['schema_version' => '1.1', 'generated_at' => '2026-07-19T12:00:00-03:00', 'period' => ['label' => '01/07/2026 a 10/07/2026'], 'filters' => []],
+            'product_context' => ['description' => 'Plataforma de ferramentas.'],
             'executive_summary' => [],
-            'breakdowns' => ['events'=>[],'tools'=>[],'channels'=>[],'sources'=>[],'devices'=>[]],
-            'derived_metrics' => ['funnel'=>[],'tool_performance'=>[]],
+            'breakdowns' => ['events' => [], 'tools' => [], 'channels' => [], 'sources' => [], 'devices' => []],
+            'derived_metrics' => ['funnel' => [], 'tool_performance' => []],
             'strategic_insights' => [],
-            'data_dictionary' => ['events'=>[],'metrics'=>[]],
-            'ai_instructions' => ['role'=>'Atue como consultor.','rules'=>[],'suggested_questions'=>[]],
+            'data_dictionary' => ['events' => [], 'metrics' => []],
+            'ai_instructions' => ['role' => 'Atue como consultor.', 'rules' => [], 'suggested_questions' => []],
         ];
     }
 }

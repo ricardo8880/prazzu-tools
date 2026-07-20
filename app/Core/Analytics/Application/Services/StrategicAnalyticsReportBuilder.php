@@ -15,7 +15,7 @@ final class StrategicAnalyticsReportBuilder
 
     public function __construct(private readonly AnalyticsEventCatalog $catalog, ?StrategicAnalyticsInsightGenerator $insightGenerator = null)
     {
-        $this->insightGenerator = $insightGenerator ?? new StrategicAnalyticsInsightGenerator();
+        $this->insightGenerator = $insightGenerator ?? new StrategicAnalyticsInsightGenerator;
     }
 
     /** @param array<string,mixed> $report @param array<string,mixed> $filters */
@@ -23,6 +23,7 @@ final class StrategicAnalyticsReportBuilder
     {
         $events = collect($report['event_breakdown'] ?? [])->map(function (array $row): array {
             $definition = $this->catalog->describe((string) $row['event_name']);
+
             return $row + [
                 'label' => $definition['label'],
                 'category' => $definition['category'],
@@ -67,7 +68,7 @@ final class StrategicAnalyticsReportBuilder
             ],
             'strategic_insights' => $this->insightGenerator->generate($report),
             'data_dictionary' => [
-                'events' => collect($events)->map(fn (array $event) => collect($event)->only(['event_name','label','category','description','business_meaning'])->all())->all(),
+                'events' => collect($events)->map(fn (array $event) => collect($event)->only(['event_name', 'label', 'category', 'description', 'business_meaning'])->all())->all(),
                 'metrics' => [
                     'events' => 'Quantidade total de eventos registrados.',
                     'visitors' => 'Visitantes distintos identificados por visitor_id.',
@@ -110,13 +111,13 @@ final class StrategicAnalyticsReportBuilder
     public function markdown(array $payload): string
     {
         $period = $payload['report']['period'];
-        $comparison = $payload['report']['comparison_period'];
+        $comparison = $payload['report']['comparison_period'] ?? null;
         $lines = [
             '# Relatório Estratégico do Analytics', '',
             '## Contexto', '',
             $payload['product_context']['description'], '',
             '- Período: **'.$period['label'].'**',
-            '- Comparação: **'.$comparison['label'].'**',
+            '- Comparação: **'.(is_array($comparison) ? ($comparison['label'] ?? 'Não informada') : 'Não informada').'**',
             '- Gerado em: `'.$payload['report']['generated_at'].'`',
             '- Versão do formato: `'.$payload['report']['schema_version'].'`', '',
             '> As ferramentas podem ser usadas sem conta. Conclusões de cálculo representam valor entregue; criação de conta é uma etapa de continuidade.', '',
@@ -125,7 +126,7 @@ final class StrategicAnalyticsReportBuilder
             '|---|---:|---:|---:|',
         ];
         foreach ($payload['executive_summary'] as $key => $metric) {
-            $change = $metric['change'] === null ? 'Sem base' : number_format((float) $metric['change'], 1, ',', '.').'%' ;
+            $change = $metric['change'] === null ? 'Sem base' : number_format((float) $metric['change'], 1, ',', '.').'%';
             $lines[] = '| '.ucfirst((string) $key).' | '.number_format((float) $metric['value'], 0, ',', '.').' | '.number_format((float) $metric['previous'], 0, ',', '.').' | '.$change.' |';
         }
         $lines = array_merge($lines, ['', '## Eventos mais frequentes', '', '| Evento | Identificador | Categoria | Quantidade |', '|---|---|---|---:|']);
@@ -168,19 +169,27 @@ final class StrategicAnalyticsReportBuilder
             $lines[] = '**Confiança:** '.$insight['confidence'];
             $lines[] = '';
             $lines[] = '**Hipóteses a verificar:**';
-            foreach ($insight['hypotheses'] as $hypothesis) $lines[] = '- '.$hypothesis;
+            foreach ($insight['hypotheses'] as $hypothesis) {
+                $lines[] = '- '.$hypothesis;
+            }
             $lines[] = '';
             $lines[] = '**Próximas verificações recomendadas:**';
-            foreach ($insight['actions'] as $action) $lines[] = '- '.$action;
+            foreach ($insight['actions'] as $action) {
+                $lines[] = '- '.$action;
+            }
             $lines[] = '';
         }
 
         $lines = array_merge($lines, ['', '## Como analisar com IA', '', $payload['ai_instructions']['role'], '']);
-        foreach ($payload['ai_instructions']['rules'] as $rule) $lines[] = '- '.$rule;
+        foreach ($payload['ai_instructions']['rules'] as $rule) {
+            $lines[] = '- '.$rule;
+        }
         $lines[] = '';
         $lines[] = '### Perguntas sugeridas';
         $lines[] = '';
-        foreach ($payload['ai_instructions']['suggested_questions'] as $i => $question) $lines[] = ($i + 1).'. '.$question;
+        foreach ($payload['ai_instructions']['suggested_questions'] as $i => $question) {
+            $lines[] = ($i + 1).'. '.$question;
+        }
         $lines = array_merge($lines, ['', '## Dicionário de eventos', '']);
         foreach ($payload['data_dictionary']['events'] as $event) {
             $lines[] = '### '.$event['label'].' (`'.$event['event_name'].'`)';
@@ -188,6 +197,7 @@ final class StrategicAnalyticsReportBuilder
             $lines[] = $event['description'].' '.$event['business_meaning'];
             $lines[] = '';
         }
+
         return implode("\n", $lines)."\n";
     }
 

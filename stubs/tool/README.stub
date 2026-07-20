@@ -47,14 +47,21 @@ favoritos, analytics, acesso e persistência devem usar contratos do Core.
 | --- | --- | --- |
 | 0.1.0 | Draft | Estrutura inicial gerada. |
 
+## Qualidade e risco
+
+O perfil inicial está em `Quality/RiskProfile.php`, os casos de referência em
+`Tests/Fixtures/GoldenCases.php` e o checklist específico em `QUALITY.md`.
+Revise os três artefatos antes de implementar o domínio.
+
 ## Antes de ativar
 
 1. Renomeie as chaves provisórias `solve_problem` e `advanced_productivity`.
 2. Defina entradas e saídas do domínio e a divisão Essencial × Plus.
-3. Adicione casos de referência e fontes normativas quando aplicável.
-4. Use os value objects do Core para dinheiro, percentuais, datas, CPF e CNPJ.
-5. Faça regras temporais receberem a data de referência e declararem vigência.
-6. Implemente validação, regras e apresentação.
-7. Adicione testes Unit e Feature para todos os casos implementados.
-8. Revise acesso, persistência, dados sensíveis e histórico.
-9. Execute o checklist obrigatório do README raiz.
+3. Substitua todos os casos dourados provisórios por referências aprovadas.
+4. Revise o perfil de risco e cumpra os requisitos derivados pelo Core.
+5. Use os value objects do Core para dinheiro, percentuais, datas, CPF e CNPJ.
+6. Faça regras temporais receberem a data de referência e declararem vigência.
+7. Implemente validação, regras e apresentação.
+8. Adicione testes Unit e Feature para todos os casos implementados.
+9. Revise acesso, persistência, dados sensíveis e histórico.
+10. Execute o checklist obrigatório do README raiz.

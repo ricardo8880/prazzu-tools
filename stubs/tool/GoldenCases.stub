@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tools\{{ class }}\Tests\Fixtures;
+
+use App\Core\Quality\Data\GoldenCase;
+use App\Core\Quality\Data\GoldenCaseSuite;
+use App\Core\Quality\Enums\GoldenCaseKind;
+
+final class GoldenCases
+{
+    public const PLACEHOLDER_REFERENCE = 'TODO: substitua por fonte oficial, cálculo revisado ou caso aprovado.';
+
+    public static function suite(): GoldenCaseSuite
+    {
+        return new GoldenCaseSuite(
+            toolSlug: '{{ slug }}',
+            cases: [
+                self::placeholder('typical', 'Cenário comum', GoldenCaseKind::Typical),
+                self::placeholder('boundary', 'Cenário de fronteira', GoldenCaseKind::Boundary),
+                self::placeholder('invalid-input', 'Entrada inválida', GoldenCaseKind::InvalidInput),
+            ],
+        );
+    }
+
+    private static function placeholder(string $identifier, string $title, GoldenCaseKind $kind): GoldenCase
+    {
+        return new GoldenCase(
+            identifier: $identifier,
+            title: $title,
+            kind: $kind,
+            input: [],
+            expected: [],
+            reference: self::PLACEHOLDER_REFERENCE,
+        );
+    }
+}

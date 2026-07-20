@@ -73,6 +73,7 @@ final class AnalyticsEventCatalog
             ];
         }
         ksort($groups);
+
         return $groups;
     }
 

@@ -32,7 +32,6 @@ final class AnalyticsReportQuery
         ];
     }
 
-
     /** @param array<string, mixed> $filters */
     public function strategic(AnalyticsPeriod $period, array $filters): array
     {
@@ -69,7 +68,6 @@ final class AnalyticsReportQuery
             ->get()->map(fn ($row) => ['name' => (string) $row->name, 'events' => (int) $row->events, 'visitors' => (int) $row->visitors, 'conversions' => (int) $row->conversions])->all();
     }
 
-
     /** @param array<string, mixed> $filters */
     private function toolPerformance(AnalyticsPeriod $period, array $filters): array
     {
@@ -99,7 +97,7 @@ final class AnalyticsReportQuery
 
         return $query->where('platform_analytics_events.subject_type', 'tool')
             ->whereNotNull('platform_analytics_events.subject_slug')
-            ->selectRaw("platform_analytics_events.subject_slug as name")
+            ->selectRaw('platform_analytics_events.subject_slug as name')
             ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($opened).') THEN 1 ELSE 0 END) as opened', $opened)
             ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($started).') THEN 1 ELSE 0 END) as started', $started)
             ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($completed).') THEN 1 ELSE 0 END) as completed', $completed)

@@ -33,6 +33,10 @@ final class ToolGeneratorContractTest extends TestCase
             'unit test' => ['UnitTest.stub'],
             'feature test' => ['FeatureTest.stub'],
             'documentation' => ['README.stub'],
+            'risk profile' => ['RiskProfile.stub'],
+            'golden cases' => ['GoldenCases.stub'],
+            'quality contract test' => ['QualityContractTest.stub'],
+            'quality checklist' => ['QUALITY.stub'],
         ];
     }
 
@@ -74,6 +78,22 @@ final class ToolGeneratorContractTest extends TestCase
         self::assertStringContainsString('deve iniciar com o estado [draft]', Artisan::output());
     }
 
+    public function test_generator_rejects_invalid_quality_options_before_creating_files(): void
+    {
+        $modulePath = app_path('Tools/ArchitectureQualityProbe');
+
+        self::assertDirectoryDoesNotExist($modulePath);
+
+        $exitCode = Artisan::call('make:tool', [
+            'name' => 'ArchitectureQualityProbe',
+            '--normative' => 'unknown',
+        ]);
+
+        self::assertSame(Command::FAILURE, $exitCode);
+        self::assertDirectoryDoesNotExist($modulePath);
+        self::assertStringContainsString('Uma das opções informadas não é reconhecida', Artisan::output());
+    }
+
     public function test_generator_creates_a_loadable_and_valid_draft_module(): void
     {
         $files = new Filesystem;
@@ -93,6 +113,10 @@ final class ToolGeneratorContractTest extends TestCase
             self::assertSame(Command::SUCCESS, $exitCode, Artisan::output());
             self::assertFileExists($modulePath.'/Application/Actions/ShowToolPage.php');
             self::assertFileExists($modulePath.'/Tests/Unit/ToolManifestTest.php');
+            self::assertFileExists($modulePath.'/Tests/Unit/ToolQualityContractTest.php');
+            self::assertFileExists($modulePath.'/Tests/Fixtures/GoldenCases.php');
+            self::assertFileExists($modulePath.'/Quality/RiskProfile.php');
+            self::assertFileExists($modulePath.'/QUALITY.md');
             self::assertStringContainsString(
                 '\\App\\Tools\\ArchitectureGeneratorProbe\\Tool::class,',
                 $files->get($configurationPath),
