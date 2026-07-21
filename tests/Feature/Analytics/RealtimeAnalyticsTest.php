@@ -3,6 +3,7 @@
 namespace Tests\Feature\Analytics;
 
 use App\Core\Analytics\Models\AnalyticsSession;
+use App\Core\Analytics\Models\AnalyticsToolPresence;
 use App\Core\Analytics\Models\AnalyticsVisitor;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,6 +32,12 @@ final class RealtimeAnalyticsTest extends TestCase
             'analytics_session_id' => $sessionId, 'path' => '/ferramentas/simples-nacional',
             'source' => 'google', 'device_type' => 'mobile', 'occurred_at' => now(), 'metadata' => [],
         ]);
+        AnalyticsToolPresence::query()->create([
+            'id' => (string) Str::uuid(), 'tool_slug' => 'simples-nacional',
+            'visitor_id' => $visitorId, 'analytics_session_id' => $sessionId,
+            'path' => '/ferramentas/simples-nacional', 'source' => 'google',
+            'last_seen_at' => now(),
+        ]);
 
         $this->get(route('admin.analytics.realtime'))
             ->assertOk()->assertSee('Tempo real')->assertSee('simples-nacional');
@@ -40,6 +47,56 @@ final class RealtimeAnalyticsTest extends TestCase
             ->assertJsonPath('summary.online_users', 1)
             ->assertJsonPath('summary.open_tools', 1)
             ->assertJsonPath('tools.0.label', 'simples-nacional');
+    }
+
+    public function test_tool_presence_appears_on_heartbeat_and_disappears_on_leave(): void
+    {
+        $presenceId = (string) Str::uuid();
+
+        $this->postJson(route('analytics.tools.presence'), [
+            'presence_id' => $presenceId,
+            'tool' => 'calculadora-simples-nacional',
+            'action' => 'heartbeat',
+        ])->assertNoContent();
+
+        $this->assertDatabaseHas('analytics_tool_presences', [
+            'id' => $presenceId,
+            'tool_slug' => 'calculadora-simples-nacional',
+        ]);
+
+        $this->signInAsInternalAdministrator();
+        $this->getJson(route('admin.analytics.realtime.data'))
+            ->assertOk()
+            ->assertJsonPath('summary.open_tools', 1)
+            ->assertJsonPath('tools.0.label', 'calculadora-simples-nacional')
+            ->assertJsonPath('tools.0.total', 1);
+
+        $this->postJson(route('analytics.tools.presence'), [
+            'presence_id' => $presenceId,
+            'tool' => 'calculadora-simples-nacional',
+            'action' => 'leave',
+        ])->assertNoContent();
+
+        $this->assertDatabaseMissing('analytics_tool_presences', ['id' => $presenceId]);
+        $this->getJson(route('admin.analytics.realtime.data'))
+            ->assertOk()
+            ->assertJsonPath('summary.open_tools', 0)
+            ->assertJsonCount(0, 'tools');
+    }
+
+    public function test_stale_tool_presence_is_not_counted(): void
+    {
+        AnalyticsToolPresence::query()->create([
+            'id' => (string) Str::uuid(),
+            'tool_slug' => 'simples-nacional',
+            'last_seen_at' => now()->subSeconds(30),
+        ]);
+
+        $this->signInAsInternalAdministrator();
+        $this->getJson(route('admin.analytics.realtime.data'))
+            ->assertOk()
+            ->assertJsonPath('summary.open_tools', 0)
+            ->assertJsonCount(0, 'tools');
     }
 
     public function test_inactive_sessions_are_not_counted_as_online(): void

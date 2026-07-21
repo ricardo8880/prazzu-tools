@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
 use App\Http\Controllers\Admin\Blog\BlogPostController;
 use App\Http\Controllers\Analytics\CaptureAudienceContextController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
+use App\Http\Controllers\Analytics\TrackToolPresenceController;
 use App\Http\Controllers\Auth\AccountController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -112,6 +113,10 @@ Route::post('/analytics/audience', CaptureAudienceContextController::class)
 Route::post('/analytics/tools', TrackToolEventController::class)
     ->middleware('throttle:120,1')
     ->name('analytics.tools.track');
+
+Route::post('/analytics/tools/presence', TrackToolPresenceController::class)
+    ->middleware('throttle:240,1')
+    ->name('analytics.tools.presence');
 
 Route::post('/blog/analytics', [BlogAnalyticsController::class, 'store'])
     ->middleware('throttle:120,1')

@@ -83,7 +83,7 @@
         finally { loading = false; root.querySelector('[data-refresh]')?.removeAttribute('disabled'); }
     }
     root.querySelector('[data-refresh]')?.addEventListener('click', refresh);
-    setInterval(refresh, 15000);
+    setInterval(refresh, 5000);
 })();
 </script>
 @endpush

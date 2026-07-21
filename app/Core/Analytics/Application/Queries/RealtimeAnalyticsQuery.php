@@ -5,6 +5,7 @@ namespace App\Core\Analytics\Application\Queries;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Models\AnalyticsSession;
+use App\Core\Analytics\Models\AnalyticsToolPresence;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,25 +17,29 @@ final class RealtimeAnalyticsQuery
 
     private const ONLINE_WINDOW_MINUTES = 5;
 
+    private const TOOL_PRESENCE_SECONDS = 25;
+
     /** @return array<string, mixed> */
     public function execute(?CarbonImmutable $now = null): array
     {
         $now ??= now()->toImmutable();
         $onlineSince = $now->subMinutes(self::ONLINE_WINDOW_MINUTES);
         $activitySince = $now->subMinutes(30);
+        $toolPresenceSince = $now->subSeconds(self::TOOL_PRESENCE_SECONDS);
 
         $onlineSessions = AnalyticsSession::query()
             ->whereBetween('last_activity_at', [$onlineSince, $now]);
         $recentEvents = PlatformAnalyticsEvent::query()
             ->whereBetween('occurred_at', [$activitySince, $now]);
+        $activeToolPresences = AnalyticsToolPresence::query()
+            ->whereBetween('last_seen_at', [$toolPresenceSince, $now]);
 
         $summary = [
             'online_users' => (clone $onlineSessions)->count(),
             'online_visitors' => (clone $onlineSessions)->whereNotNull('visitor_id')->distinct()->count('visitor_id'),
             'identified_users' => (clone $onlineSessions)->whereNotNull('user_id')->distinct()->count('user_id'),
             'open_pages' => (clone $onlineSessions)->whereNotNull('landing_path')->distinct()->count('landing_path'),
-            'open_tools' => (clone $recentEvents)->where('channel', 'tool')->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
-                ->whereBetween('occurred_at', [$onlineSince, $now])->distinct()->count('subject_slug'),
+            'open_tools' => (clone $activeToolPresences)->count(),
             'events_30m' => (clone $recentEvents)->count(),
             'conversions_30m' => $this->conversions(clone $recentEvents)->count(),
             'registrations_30m' => (clone $recentEvents)->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::AccountCreated]))->count(),
@@ -47,7 +52,7 @@ final class RealtimeAnalyticsQuery
             'activity_window_minutes' => 30,
             'summary' => $summary,
             'pages' => $this->onlinePages($onlineSessions),
-            'tools' => $this->activeTools($recentEvents, $onlineSince, $now),
+            'tools' => $this->activeTools($activeToolPresences),
             'sources' => $this->sources($onlineSessions),
             'locations' => $this->locations($onlineSessions),
             'events' => (clone $recentEvents)->latest('occurred_at')->limit(50)->get([
@@ -77,12 +82,11 @@ final class RealtimeAnalyticsQuery
             ->groupBy('landing_path')->orderByDesc('total')->limit(15)->get();
     }
 
-    private function activeTools(Builder $events, CarbonImmutable $start, CarbonImmutable $end): Collection
+    private function activeTools(Builder $presences): Collection
     {
-        return (clone $events)->where('channel', 'tool')->whereNotNull('subject_slug')
-            ->whereBetween('occurred_at', [$start, $end])
-            ->selectRaw('subject_slug as label, COUNT(*) as total, COUNT(DISTINCT visitor_id) as visitors')
-            ->groupBy('subject_slug')->orderByDesc('total')->limit(15)->get();
+        return (clone $presences)
+            ->selectRaw('tool_slug as label, COUNT(*) as total, COUNT(DISTINCT visitor_id) as visitors')
+            ->groupBy('tool_slug')->orderByDesc('total')->limit(15)->get();
     }
 
     private function sources(Builder $sessions): Collection

@@ -151,14 +151,39 @@
 <script>
 (() => {
     const endpoint = @json(route('analytics.tools.track'));
+    const presenceEndpoint = @json(route('analytics.tools.presence'));
     const tool = @json($analyticsToolSlug);
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
     const startedAt = Date.now();
+    const presenceId = crypto.randomUUID();
     const send = (event, properties = {}) => fetch(endpoint, {
         method: 'POST', credentials: 'same-origin', keepalive: true,
         headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json'},
         body: JSON.stringify({tool, event, ...properties})
     }).catch(() => {});
+
+    const sendPresence = (action, beacon = false) => {
+        const body = JSON.stringify({_token: csrf, presence_id: presenceId, tool, action});
+        if (beacon && navigator.sendBeacon) {
+            const payload = new Blob([body], {type: 'application/json'});
+            navigator.sendBeacon(presenceEndpoint, payload);
+            return;
+        }
+        fetch(presenceEndpoint, {
+            method: 'POST', credentials: 'same-origin', keepalive: true,
+            headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json'},
+            body
+        }).catch(() => {});
+    };
+
+    sendPresence('heartbeat');
+    const presenceTimer = window.setInterval(() => {
+        if (!document.hidden) sendPresence('heartbeat');
+    }, 10000);
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) sendPresence('heartbeat');
+    });
 
     document.querySelectorAll('form').forEach((form) => {
         if ((form.method || 'get').toLowerCase() !== 'get') {
@@ -166,6 +191,8 @@
         }
     });
     window.addEventListener('pagehide', () => {
+        window.clearInterval(presenceTimer);
+        sendPresence('leave', true);
         const seconds = Math.min(86400, Math.max(0, Math.round((Date.now() - startedAt) / 1000)));
         if (seconds >= 3) send('tool.time.spent', {seconds});
     }, {once: true});
