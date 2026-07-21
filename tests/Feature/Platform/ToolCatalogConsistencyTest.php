@@ -75,13 +75,34 @@ final class ToolCatalogConsistencyTest extends TestCase
         }
     }
 
+    public function test_home_lists_only_the_eight_latest_visible_tools(): void
+    {
+        $catalog = $this->app->make(ToolCatalog::class);
+        $latest = $catalog->latest(8);
+
+        $this->assertCount(min(8, $catalog->all()->count()), $latest);
+        $this->assertSame(
+            $catalog->all()->sortByDesc('position')->take(8)->pluck('slug')->values()->all(),
+            $latest->pluck('slug')->all(),
+        );
+        $this->assertContains('calculadora-ferias', $latest->pluck('slug')->all());
+        $this->assertContains('conversor-fiscal-xml', $latest->pluck('slug')->all());
+        $this->assertContains('gerador-darf-gps', $latest->pluck('slug')->all());
+
+        $response = $this->get('/')->assertOk();
+
+        foreach ($latest as $tool) {
+            $response->assertSee($tool['name']);
+        }
+    }
+
     public function test_home_and_catalog_use_the_same_tool_source(): void
     {
         $catalog = $this->app->make(ToolCatalog::class);
 
         $this->get('/')
             ->assertOk()
-            ->assertSee($catalog->featured()->first()['name']);
+            ->assertSee($catalog->latest(8)->first()['name']);
 
         $this->get('/ferramentas')
             ->assertOk()

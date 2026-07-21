@@ -13,7 +13,7 @@ final class HomeController extends Controller
         return view('welcome', [
             'home' => config('home'),
             'categories' => $catalog->categories(),
-            'featuredTools' => $catalog->featured(),
+            'featuredTools' => $catalog->latest(8),
         ]);
     }
 }

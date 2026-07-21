@@ -12,10 +12,13 @@ return [
         App\Tools\SimplesNacionalCalculator\Tool::class,
         App\Tools\TaxRegimeComparator\Tool::class,
         App\Tools\ProLaboreProfitDistributionCalculator\Tool::class,
+        \App\Tools\FiscalXmlConverter\Tool::class,
+        \App\Tools\FederalPaymentGuideGenerator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [
         App\Tools\LaborTerminationCalculator\Tool::class,
+        \App\Tools\VacationCalculator\Tool::class,
         // <tools:labor>
     ],
     'corporate' => [

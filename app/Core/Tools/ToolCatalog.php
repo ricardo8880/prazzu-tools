@@ -58,6 +58,15 @@ final class ToolCatalog
             ->values();
     }
 
+    /** @return Collection<int, array<string, mixed>> */
+    public function latest(int $limit = 8): Collection
+    {
+        return $this->all()
+            ->sortByDesc('position')
+            ->take(max(0, $limit))
+            ->values();
+    }
+
     /** @return array<string, mixed>|null */
     public function find(string $slug): ?array
     {
