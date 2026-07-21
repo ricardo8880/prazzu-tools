@@ -3,8 +3,8 @@
 return [
     'hero' => [
         'title_before' => 'Ferramentas que facilitam',
-        'title_line' => 'a rotina do',
-        'title_highlight' => 'contador',
+        'title_line' => 'o seu',
+        'title_highlight' => 'dia a dia',
         'description' => 'Tudo que você precisa em um só lugar. Agilidade, precisão e praticidade para o seu dia a dia contábil.',
         'search_placeholder' => 'Buscar ferramentas...',
         'benefits' => [
