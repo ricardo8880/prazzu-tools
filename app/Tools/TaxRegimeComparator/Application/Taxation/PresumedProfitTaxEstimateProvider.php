@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tools\TaxRegimeComparator\Application\Taxation;
 
 use App\Core\Money\Money;
+use App\Core\Money\Percentage;
 use App\Core\Taxation\Contracts\TaxEstimateProvider;
 use App\Core\Taxation\Data\TaxEstimateItem;
 use App\Core\Taxation\Data\TaxEstimateRequest;
@@ -91,7 +92,7 @@ final readonly class PresumedProfitTaxEstimateProvider implements TaxEstimatePro
         );
     }
 
-    private function item(string $code, string $label, Money $monthly, \App\Core\Money\Percentage $rate): TaxEstimateItem
+    private function item(string $code, string $label, Money $monthly, Percentage $rate): TaxEstimateItem
     {
         return new TaxEstimateItem($code, $label, $monthly, $monthly->multiply(12), $rate);
     }

@@ -15,6 +15,7 @@ final class ToolPageTest extends TestCase
 
         $this->withoutMiddleware(EnsureToolFeatureAccess::class);
     }
+
     public function test_tool_page_is_available_with_complete_form(): void
     {
         $this->get(route('tools.comparador-tributario.index'))

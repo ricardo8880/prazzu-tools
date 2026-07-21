@@ -58,7 +58,8 @@ final class CompareTaxRegimesTest extends TestCase
 
     private function provider(TaxRegime $regime, string $monthly): TaxEstimateProvider
     {
-        return new class($regime, Money::fromDecimal($monthly)) implements TaxEstimateProvider {
+        return new class($regime, Money::fromDecimal($monthly)) implements TaxEstimateProvider
+        {
             public function __construct(
                 private readonly TaxRegime $taxRegime,
                 private readonly Money $monthly,

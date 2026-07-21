@@ -11,6 +11,7 @@ return [
     'fiscal' => [
         App\Tools\SimplesNacionalCalculator\Tool::class,
         App\Tools\TaxRegimeComparator\Tool::class,
+        App\Tools\ProLaboreProfitDistributionCalculator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [

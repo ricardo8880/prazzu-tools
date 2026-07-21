@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tools\TaxRegimeComparator\Domain\Services;
 
-use App\Core\Money\Money;
 use App\Tools\TaxRegimeComparator\Domain\Data\RankedTaxRegimeEstimate;
 use App\Tools\TaxRegimeComparator\Domain\Data\TaxComparisonResult;
 use App\Tools\TaxRegimeComparator\Domain\Data\TaxRegimeEstimate;
@@ -24,8 +23,7 @@ final class TaxComparisonRanker
 
         usort(
             $comparable,
-            static fn (TaxRegimeEstimate $left, TaxRegimeEstimate $right): int =>
-                $left->estimatedAnnualTax->minorAmount() <=> $right->estimatedAnnualTax->minorAmount(),
+            static fn (TaxRegimeEstimate $left, TaxRegimeEstimate $right): int => $left->estimatedAnnualTax->minorAmount() <=> $right->estimatedAnnualTax->minorAmount(),
         );
 
         $ranking = $this->buildRanking($comparable);

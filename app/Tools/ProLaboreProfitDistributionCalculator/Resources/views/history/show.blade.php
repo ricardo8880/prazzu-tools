@@ -1,0 +1,7 @@
+@extends('layouts.app')
+@section('title', 'Simulação salva — Pró-Labore e Lucros')
+@section('content')
+<div class="container py-4"><h1 class="h3">Simulação salva</h1><p class="text-body-secondary">Competência {{ $run->input['competence'] ?? '—' }} · {{ $run->finishedAt->format('d/m/Y H:i') }}</p>
+<div class="row g-3 mb-4">@foreach(($run->result['summary'] ?? []) as $item)<div class="col-md-4"><div class="card h-100"><div class="card-body"><div class="small text-body-secondary">{{ $item['label'] ?? '' }}</div><div class="h5 mb-0">{{ $item['value'] ?? '—' }}</div></div></div></div>@endforeach</div>
+<div class="d-flex flex-wrap gap-2"><form method="post" action="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.history.repeat', $run->id) }}">@csrf<button class="btn btn-primary">Repetir cálculo</button></form>@foreach(['pdf'=>'PDF','csv'=>'CSV','json'=>'JSON'] as $format=>$label)<a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.history.export', [$run->id, $format]) }}" @if($format==='pdf') target="_blank" @endif>{{ $label }}</a>@endforeach<form method="post" action="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir esta simulação?')">@csrf @method('DELETE')<button class="btn btn-outline-danger">Excluir</button></form><a class="btn btn-link" href="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.history.index') }}">Voltar</a></div></div>
+@endsection

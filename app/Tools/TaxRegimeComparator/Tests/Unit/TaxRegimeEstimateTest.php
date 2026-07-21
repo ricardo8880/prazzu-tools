@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\TaxRegimeComparator\Tests\Unit;
 
+use App\Core\Exceptions\InvalidValue;
 use App\Core\Money\Money;
 use App\Tools\TaxRegimeComparator\Domain\Data\TaxRegimeEstimate;
 use App\Tools\TaxRegimeComparator\Domain\Enums\EstimateStatus;
@@ -26,7 +27,7 @@ final class TaxRegimeEstimateTest extends TestCase
 
     public function test_available_estimate_requires_monthly_and_annual_totals(): void
     {
-        $this->expectException(\App\Core\Exceptions\InvalidValue::class);
+        $this->expectException(InvalidValue::class);
         $this->expectExceptionMessage('Uma estimativa disponível deve informar os totais mensal e anual.');
 
         new TaxRegimeEstimate(
@@ -39,7 +40,7 @@ final class TaxRegimeEstimateTest extends TestCase
 
     public function test_unavailable_estimate_rejects_totals(): void
     {
-        $this->expectException(\App\Core\Exceptions\InvalidValue::class);
+        $this->expectException(InvalidValue::class);
         $this->expectExceptionMessage('Uma estimativa indisponível não pode informar totais tributários.');
 
         new TaxRegimeEstimate(

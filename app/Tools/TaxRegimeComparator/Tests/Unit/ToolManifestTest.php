@@ -13,7 +13,7 @@ final class ToolManifestTest extends TestCase
 {
     public function test_active_manifest_has_the_expected_identity(): void
     {
-        $manifest = (new Tool())->manifest();
+        $manifest = (new Tool)->manifest();
 
         self::assertSame('comparador-tributario', $manifest->slug);
         self::assertSame('tools.comparador-tributario.index', $manifest->routeName);

@@ -17,7 +17,7 @@ final class CurrentToolsFinalArchitectureTest extends TestCase
     {
         $tools = app(ToolRegistry::class)->all();
 
-        $this->assertCount(6, $tools);
+        $this->assertCount(7, $tools);
 
         foreach ($tools as $tool) {
             $manifest = $tool->manifest();

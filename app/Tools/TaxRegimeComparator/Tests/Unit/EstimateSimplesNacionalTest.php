@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tools\TaxRegimeComparator\Tests\Unit;
 
 use App\Core\Money\Money;
-use App\Core\Taxation\Services\InMemoryTaxEstimateProviderRegistry;
+use App\Core\Money\Percentage;
 use App\Core\Taxation\Contracts\TaxEstimateProvider;
 use App\Core\Taxation\Data\TaxEstimateItem;
 use App\Core\Taxation\Data\TaxEstimateRequest;
 use App\Core\Taxation\Data\TaxEstimateResult;
-use App\Core\Money\Percentage;
+use App\Core\Taxation\Services\InMemoryTaxEstimateProviderRegistry;
 use App\Tools\TaxRegimeComparator\Application\Estimators\EstimateSimplesNacional;
 use App\Tools\TaxRegimeComparator\Domain\Data\TaxComparisonScenario;
 use App\Tools\TaxRegimeComparator\Domain\Enums\BusinessActivity;
@@ -23,12 +23,22 @@ final class EstimateSimplesNacionalTest extends TestCase
     public function test_estimates_commerce_without_importing_simples_classes_in_comparator(): void
     {
         $registry = new InMemoryTaxEstimateProviderRegistry;
-        $registry->register(new class implements TaxEstimateProvider {
-            public function regime(): string { return 'simples_nacional'; }
-            public function supports(TaxEstimateRequest $request): bool { return $request->activity === 'commerce'; }
+        $registry->register(new class implements TaxEstimateProvider
+        {
+            public function regime(): string
+            {
+                return 'simples_nacional';
+            }
+
+            public function supports(TaxEstimateRequest $request): bool
+            {
+                return $request->activity === 'commerce';
+            }
+
             public function estimate(TaxEstimateRequest $request): TaxEstimateResult
             {
                 $monthly = Money::fromDecimal('4000');
+
                 return new TaxEstimateResult(
                     regime: 'simples_nacional',
                     monthlyTotal: $monthly,

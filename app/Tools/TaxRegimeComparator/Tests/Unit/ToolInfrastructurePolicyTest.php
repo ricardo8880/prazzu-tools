@@ -12,7 +12,7 @@ final class ToolInfrastructurePolicyTest extends TestCase
 {
     public function test_manifest_declares_versioned_history_and_core_exports(): void
     {
-        $tool = new Tool();
+        $tool = new Tool;
         $manifest = $tool->manifest();
 
         self::assertTrue($manifest->supportsHistory);
@@ -27,7 +27,7 @@ final class ToolInfrastructurePolicyTest extends TestCase
 
     public function test_history_policy_projects_only_declared_fields(): void
     {
-        $policy = (new Tool())->historyPolicy();
+        $policy = (new Tool)->historyPolicy();
 
         self::assertTrue($policy->enabled);
         self::assertSame(365, $policy->retentionDays);

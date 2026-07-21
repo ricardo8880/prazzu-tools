@@ -14,7 +14,7 @@ final class ModuleArchitectureTest extends TestCase
     public function test_module_matches_the_final_architecture(): void
     {
         self::assertSame([], ToolModuleStructure::missingPaths(dirname(__DIR__, 2)));
-        (new ToolModuleValidator())->validate(new Tool());
+        (new ToolModuleValidator)->validate(new Tool);
         self::addToAssertionCount(1);
     }
 }

@@ -16,7 +16,7 @@ final class ToolQualityContractTest extends TestCase
 {
     public function test_risk_profile_matches_the_tool_identity(): void
     {
-        self::assertSame((new Tool())->manifest()->slug, RiskProfile::define()->toolSlug);
+        self::assertSame((new Tool)->manifest()->slug, RiskProfile::define()->toolSlug);
     }
 
     public function test_active_tool_has_complete_and_approved_golden_cases(): void
