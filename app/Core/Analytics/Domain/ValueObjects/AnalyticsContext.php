@@ -2,6 +2,8 @@
 
 namespace App\Core\Analytics\Domain\ValueObjects;
 
+use App\Core\Acquisition\Domain\Data\AcquisitionAnalyticsSnapshot;
+
 final readonly class AnalyticsContext
 {
     /** @param array<string, string|null> $utm */
@@ -16,6 +18,7 @@ final readonly class AnalyticsContext
         public ?string $source = null,
         public ?string $medium = null,
         public ?string $campaign = null,
+        public ?AcquisitionAnalyticsSnapshot $acquisition = null,
         public array $utm = [],
         public ?string $deviceType = null,
         public ?string $browser = null,

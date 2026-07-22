@@ -15,7 +15,8 @@ final class AnalyticsSession extends Model
     protected $fillable = [
         'id', 'visitor_id', 'user_id', 'started_at', 'last_activity_at',
         'ended_at', 'landing_url', 'landing_path', 'referrer', 'source',
-        'medium', 'campaign', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term',
+        'medium', 'campaign', 'acquisition_context_id', 'acquisition_keyword',
+        'acquisition_campaign_identifier', 'acquisition_primary_tool_slug', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term',
         'utm_content', 'device_type', 'browser', 'operating_system',
         'language', 'timezone', 'screen_resolution', 'country_code', 'region', 'city', 'properties',
     ];

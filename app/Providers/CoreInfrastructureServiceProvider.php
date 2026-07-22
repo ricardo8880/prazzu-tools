@@ -10,10 +10,14 @@ use App\Core\Access\Services\ConfigCommercialAccessPolicy;
 use App\Core\Access\Services\DefaultToolAccessContextResolver;
 use App\Core\Access\Services\DefaultToolAccessGate;
 use App\Core\Access\Services\DefaultToolFeatureAccessGate;
+use App\Core\Acquisition\Contracts\AcquisitionAnalyticsContextResolver;
 use App\Core\Acquisition\Contracts\AcquisitionContextRepository;
 use App\Core\Acquisition\Contracts\AcquisitionContextAdministration;
+use App\Core\Acquisition\Contracts\AcquisitionCampaignInvestmentProvider;
+use App\Core\Acquisition\Infrastructure\Http\RequestAcquisitionAnalyticsContextResolver;
 use App\Core\Acquisition\Infrastructure\Persistence\EloquentAcquisitionContextRepository;
 use App\Core\Acquisition\Infrastructure\Persistence\EloquentAcquisitionContextAdministration;
+use App\Core\Acquisition\Infrastructure\Persistence\EloquentAcquisitionCampaignInvestmentProvider;
 use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
@@ -60,7 +64,9 @@ final class CoreInfrastructureServiceProvider extends ServiceProvider
     {
         $this->app->singleton(FeatureFlagRepository::class, ConfigFeatureFlagRepository::class);
         $this->app->singleton(AcquisitionContextRepository::class, EloquentAcquisitionContextRepository::class);
+        $this->app->singleton(AcquisitionAnalyticsContextResolver::class, RequestAcquisitionAnalyticsContextResolver::class);
         $this->app->singleton(AcquisitionContextAdministration::class, EloquentAcquisitionContextAdministration::class);
+        $this->app->singleton(AcquisitionCampaignInvestmentProvider::class, EloquentAcquisitionCampaignInvestmentProvider::class);
         $this->app->singleton(CommercialAccessPolicy::class, ConfigCommercialAccessPolicy::class);
         $this->app->singleton(ToolAccessGate::class, DefaultToolAccessGate::class);
         $this->app->singleton(ToolFeatureAccessGate::class, DefaultToolFeatureAccessGate::class);

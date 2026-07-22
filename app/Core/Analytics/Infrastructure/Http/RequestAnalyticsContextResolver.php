@@ -2,6 +2,8 @@
 
 namespace App\Core\Analytics\Infrastructure\Http;
 
+use App\Core\Acquisition\Contracts\AcquisitionAnalyticsContextResolver;
+use App\Core\Acquisition\Domain\Data\AcquisitionAnalyticsSnapshot;
 use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Domain\ValueObjects\Acquisition;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsContext;
@@ -18,6 +20,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         private readonly UserAgentParser $userAgentParser,
         private readonly AcquisitionResolver $acquisitionResolver,
         private readonly AnalyticsSchema $schema,
+        private readonly AcquisitionAnalyticsContextResolver $acquisitionContextResolver,
     ) {}
 
     public function resolve(?Request $request = null): AnalyticsContext
@@ -33,6 +36,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
 
         $visitorId = $this->visitorId($request);
         $acquisition = $this->acquisitionResolver->resolve($request);
+        $acquisitionContext = $this->acquisitionContextResolver->resolve($request);
         $agent = $this->userAgentParser->parse($request->userAgent());
         $userId = $request->user()?->getAuthIdentifier();
         $now = now();
@@ -42,6 +46,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             $visitorId,
             $userId,
             $acquisition,
+            $acquisitionContext,
             $agent,
             $now,
         ): string {
@@ -58,6 +63,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
                 visitorId: $visitorId,
                 userId: $userId,
                 acquisition: $acquisition,
+                acquisitionContext: $acquisitionContext,
                 agent: $agent,
                 now: $now,
             );
@@ -76,6 +82,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             source: $acquisition->source,
             medium: $acquisition->medium,
             campaign: $acquisition->campaign,
+            acquisition: $acquisitionContext,
             utm: $utm,
             deviceType: $agent['device_type'],
             browser: $agent['browser'],
@@ -144,6 +151,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         string $visitorId,
         int|string|null $userId,
         Acquisition $acquisition,
+        ?AcquisitionAnalyticsSnapshot $acquisitionContext,
         array $agent,
         mixed $now,
     ): string {
@@ -155,7 +163,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
                 ->first();
 
             if ($existingSession !== null) {
-                $this->touchSession($existingSession, $request, $userId, $now);
+                $this->touchSession($existingSession, $request, $userId, $acquisitionContext, $now);
 
                 return $attribute;
             }
@@ -169,7 +177,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             ->first();
 
         if ($session !== null) {
-            $this->touchSession($session, $request, $userId, $now);
+            $this->touchSession($session, $request, $userId, $acquisitionContext, $now);
 
             return (string) $session->getKey();
         }
@@ -187,6 +195,10 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             'source' => $acquisition->source,
             'medium' => $acquisition->medium,
             'campaign' => $acquisition->campaign,
+            'acquisition_context_id' => $acquisitionContext?->contextId,
+            'acquisition_keyword' => $acquisitionContext?->keyword,
+            'acquisition_campaign_identifier' => $acquisitionContext?->campaignIdentifier,
+            'acquisition_primary_tool_slug' => $acquisitionContext?->primaryToolSlug,
             'utm_source' => $acquisition->utm['source'] ?? null,
             'utm_medium' => $acquisition->utm['medium'] ?? null,
             'utm_campaign' => $acquisition->utm['campaign'] ?? null,
@@ -210,6 +222,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         AnalyticsSession $session,
         Request $request,
         int|string|null $userId,
+        ?AcquisitionAnalyticsSnapshot $acquisitionContext,
         mixed $now,
     ): void {
         if ($userId !== null) {
@@ -217,6 +230,13 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         }
 
         $session->last_activity_at = $now;
+
+        if ($acquisitionContext !== null) {
+            $session->acquisition_context_id = $acquisitionContext->contextId;
+            $session->acquisition_keyword = $acquisitionContext->keyword;
+            $session->acquisition_campaign_identifier = $acquisitionContext->campaignIdentifier;
+            $session->acquisition_primary_tool_slug = $acquisitionContext->primaryToolSlug;
+        }
         $session->language = $request->header('X-Analytics-Language') ?: $request->getPreferredLanguage();
 
         if ($request->headers->has('X-Timezone')) {

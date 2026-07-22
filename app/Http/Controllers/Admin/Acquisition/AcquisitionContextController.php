@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Acquisition;
 
 use App\Core\Acquisition\Application\Admin\DeleteAcquisitionContext;
+use App\Core\Acquisition\Application\Admin\DuplicateAcquisitionContext;
 use App\Core\Acquisition\Application\Admin\GetAcquisitionContextForm;
 use App\Core\Acquisition\Application\Admin\ListAcquisitionContexts;
 use App\Core\Acquisition\Application\Admin\SaveAcquisitionContext;
@@ -65,6 +66,15 @@ final class AcquisitionContextController extends Controller
         return redirect()
             ->route('admin.acquisition.contexts.edit', $context)
             ->with('status', 'Contexto de aquisição atualizado com sucesso.');
+    }
+
+    public function duplicate(int $context, DuplicateAcquisitionContext $action): RedirectResponse
+    {
+        $copyId = $action->execute($context);
+
+        return redirect()
+            ->route('admin.acquisition.contexts.edit', $copyId)
+            ->with('status', 'Contexto duplicado como inativo. Revise a palavra-chave antes de ativar.');
     }
 
     public function toggle(int $context, ToggleAcquisitionContext $action): RedirectResponse

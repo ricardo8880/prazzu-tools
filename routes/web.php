@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Analytics\AcquisitionAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\AnalyticsDashboardController;
 use App\Http\Controllers\Admin\Analytics\AnalyticsReportController;
 use App\Http\Controllers\Admin\Analytics\AudienceAnalyticsController;
+use App\Http\Controllers\Admin\Analytics\CampaignAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\FunnelAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\InsightsAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\RealtimeAnalyticsController;
@@ -17,7 +18,10 @@ use App\Http\Controllers\Admin\Blog\BlogCategoryController;
 use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
 use App\Http\Controllers\Admin\Blog\BlogPostController;
 use App\Http\Controllers\Admin\Acquisition\AcquisitionContextController;
+use App\Http\Controllers\Acquisition\ClearAcquisitionContextController;
+use App\Http\Controllers\Acquisition\ContinueAcquisitionContextController;
 use App\Http\Controllers\Analytics\CaptureAudienceContextController;
+use App\Http\Controllers\Analytics\TrackAcquisitionEventController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
 use App\Http\Controllers\Analytics\TrackToolPresenceController;
 use App\Http\Controllers\Auth\AccountController;
@@ -46,6 +50,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
+Route::post('/acquisition/context/clear', ClearAcquisitionContextController::class)
+    ->name('acquisition.context.clear');
+
+Route::post('/acquisition/context/continue', ContinueAcquisitionContextController::class)
+    ->name('acquisition.context.continue');
+
 Route::get('/ferramentas', [ToolCatalogController::class, 'index'])->name('tools.index');
 
 Route::get('/ferramentas/{category}', [ToolCatalogController::class, 'index'])
@@ -64,6 +74,7 @@ Route::prefix('admin/analytics')
     ->group(function (): void {
         Route::get('/', AnalyticsDashboardController::class)->name('index');
         Route::get('/acquisition', AcquisitionAnalyticsController::class)->name('acquisition');
+        Route::get('/campaigns', CampaignAnalyticsController::class)->name('campaigns');
         Route::get('/audience', AudienceAnalyticsController::class)->name('audience');
         Route::get('/funnels', [FunnelAnalyticsController::class, 'index'])->name('funnels');
         Route::post('/funnels', [FunnelAnalyticsController::class, 'store'])->name('funnels.store');
@@ -92,6 +103,8 @@ Route::prefix('admin/acquisition')
     ->group(function (): void {
         Route::patch('/contexts/{context}/toggle', [AcquisitionContextController::class, 'toggle'])
             ->name('contexts.toggle');
+        Route::post('/contexts/{context}/duplicate', [AcquisitionContextController::class, 'duplicate'])
+            ->name('contexts.duplicate');
         Route::resource('contexts', AcquisitionContextController::class)
             ->except('show');
     });
@@ -125,6 +138,10 @@ Route::get('/sitemap-blog.xml', BlogSitemapController::class)
 Route::post('/analytics/audience', CaptureAudienceContextController::class)
     ->middleware('throttle:30,1')
     ->name('analytics.audience.capture');
+
+Route::post('/analytics/acquisition', TrackAcquisitionEventController::class)
+    ->middleware('throttle:120,1')
+    ->name('analytics.acquisition.track');
 
 Route::post('/analytics/tools', TrackToolEventController::class)
     ->middleware('throttle:120,1')

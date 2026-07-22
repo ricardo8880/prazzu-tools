@@ -47,7 +47,7 @@ final class ContextualHomeTest extends TestCase
             'position' => 1,
         ]);
 
-        $response = $this->get('/?context=rescisao-video-01');
+        $response = $this->followingRedirects()->get('/?context=rescisao-video-01');
 
         $response->assertOk()
             ->assertSee('Calcule agora')
@@ -70,7 +70,7 @@ final class ContextualHomeTest extends TestCase
             'tools_section_title' => 'Ferramentas para sua rescisão',
         ]);
 
-        $this->get('/?context=titulo-ferramentas')
+        $this->followingRedirects()->get('/?context=titulo-ferramentas')
             ->assertOk()
             ->assertSee('Ferramentas para sua rescisão')
             ->assertDontSee('Ferramentas mais recentes');
@@ -85,7 +85,7 @@ final class ContextualHomeTest extends TestCase
             'tools_section_title' => null,
         ]);
 
-        $this->get('/?context=sem-titulo-ferramentas')
+        $this->followingRedirects()->get('/?context=sem-titulo-ferramentas')
             ->assertOk()
             ->assertSee(config('home.tools_section_title'));
     }
@@ -99,12 +99,12 @@ final class ContextualHomeTest extends TestCase
             'hero_title_before' => 'Não deve aparecer',
         ]);
 
-        $this->get('/?context=campanha-inativa')
+        $this->followingRedirects()->get('/?context=campanha-inativa')
             ->assertOk()
             ->assertSee(config('home.hero.title_before'))
             ->assertDontSee('Não deve aparecer');
 
-        $this->get('/?context=nao-existe')
+        $this->followingRedirects()->get('/?context=nao-existe')
             ->assertOk()
             ->assertSee(config('home.hero.title_before'));
     }
@@ -125,7 +125,7 @@ final class ContextualHomeTest extends TestCase
             'hero_title_highlight' => 'personalizado',
         ]);
 
-        $this->get('/?context=contexto-parcial')
+        $this->followingRedirects()->get('/?context=contexto-parcial')
             ->assertOk()
             ->assertSee(config('home.hero.title_before'))
             ->assertSee(config('home.hero.title_line'))
@@ -142,7 +142,7 @@ final class ContextualHomeTest extends TestCase
             'hero_title_before' => 'Conteúdo antigo',
         ]);
 
-        $this->get('/?context=contexto-cache')->assertSee('Conteúdo antigo');
+        $this->followingRedirects()->get('/?context=contexto-cache')->assertSee('Conteúdo antigo');
 
         $admin = \App\Models\User::factory()->create([
             'role' => \App\Core\Access\Enums\AccountRole::Administrator,
@@ -155,7 +155,7 @@ final class ContextualHomeTest extends TestCase
             'hero_title_before' => 'Conteúdo atualizado',
         ])->assertRedirect();
 
-        $this->get('/?context=contexto-cache')
+        $this->followingRedirects()->get('/?context=contexto-cache')
             ->assertSee('Conteúdo atualizado')
             ->assertDontSee('Conteúdo antigo');
     }
@@ -169,7 +169,7 @@ final class ContextualHomeTest extends TestCase
             'hero_title_before' => 'Conteúdo contextual',
         ]);
 
-        $this->get('/?context=contexto-toggle-cache')->assertSee('Conteúdo contextual');
+        $this->followingRedirects()->get('/?context=contexto-toggle-cache')->assertSee('Conteúdo contextual');
 
         $admin = \App\Models\User::factory()->create([
             'role' => \App\Core\Access\Enums\AccountRole::Administrator,
@@ -179,14 +179,14 @@ final class ContextualHomeTest extends TestCase
             ->patch(route('admin.acquisition.contexts.toggle', $context->getKey()))
             ->assertRedirect();
 
-        $this->get('/?context=contexto-toggle-cache')
+        $this->followingRedirects()->get('/?context=contexto-toggle-cache')
             ->assertSee(config('home.hero.title_before'))
             ->assertDontSee('Conteúdo contextual');
     }
 
     public function test_negative_cache_is_invalidated_when_context_is_created(): void
     {
-        $this->get('/?context=contexto-novo')
+        $this->followingRedirects()->get('/?context=contexto-novo')
             ->assertSee(config('home.hero.title_before'));
 
         $admin = \App\Models\User::factory()->create([
@@ -200,7 +200,7 @@ final class ContextualHomeTest extends TestCase
             'hero_title_before' => 'Contexto recém-criado',
         ])->assertRedirect();
 
-        $this->get('/?context=contexto-novo')->assertSee('Contexto recém-criado');
+        $this->followingRedirects()->get('/?context=contexto-novo')->assertSee('Contexto recém-criado');
     }
 
     public function test_invalid_referenced_tools_are_ignored_without_breaking_home(): void
@@ -218,7 +218,7 @@ final class ContextualHomeTest extends TestCase
             'position' => 0,
         ]);
 
-        $this->get('/?context=referencia-invalida')
+        $this->followingRedirects()->get('/?context=referencia-invalida')
             ->assertOk()
             ->assertDontSee('ferramenta-removida');
     }

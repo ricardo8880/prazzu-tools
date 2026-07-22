@@ -5,6 +5,7 @@ use App\Http\Middleware\CaptureAnalyticsContext;
 use App\Http\Middleware\EnsureAuthenticatedForPersistence;
 use App\Http\Middleware\EnsureInternalAdministrator;
 use App\Http\Middleware\EnsureToolFeatureAccess;
+use App\Http\Middleware\ShareActiveAcquisitionContext;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             ApplySecurityHeaders::class,
+            ShareActiveAcquisitionContext::class,
             CaptureAnalyticsContext::class,
         ]);
 

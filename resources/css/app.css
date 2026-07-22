@@ -6938,3 +6938,88 @@ body.tox-dialog__disable-scroll {
   display: flex;
   flex: 1;
 }
+
+.prazzu-context-bar {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+    background: var(--bs-tertiary-bg);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+.prazzu-context-bar__content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+}
+
+.prazzu-context-bar__message {
+    display: grid;
+    min-width: 0;
+    gap: .25rem;
+}
+
+.prazzu-context-bar__message strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+}
+
+.prazzu-context-bar__eyebrow {
+    color: var(--bs-primary);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.prazzu-context-bar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .5rem;
+}
+
+.prazzu-context-bar__actions form {
+    display: flex;
+    margin: 0;
+}
+
+.prazzu-context-bar__actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    min-height: 2.375rem;
+    max-width: 19rem;
+    padding: .45rem .75rem;
+    line-height: 1.25;
+    text-align: center;
+    white-space: normal;
+}
+
+@media (max-width: 991.98px) {
+    .prazzu-context-bar__content {
+        grid-template-columns: 1fr;
+    }
+
+    .prazzu-context-bar__actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .prazzu-context-bar {
+        padding: .85rem;
+    }
+
+    .prazzu-context-bar__actions,
+    .prazzu-context-bar__actions form,
+    .prazzu-context-bar__actions .btn {
+        width: 100%;
+        max-width: none;
+    }
+}

@@ -16,7 +16,7 @@
     </div>
 
     <div class="alert alert-info" role="note">
-        Neste lote, o cadastro fica pronto no admin. A aplicação dos dados na Home será feita no próximo lote.
+        Gerencie campanhas, palavras-chave, banners, CTAs, conteúdos, vídeos e recomendações sem editar código. Contextos duplicados são criados inativos para revisão segura.
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
@@ -64,7 +64,7 @@
                                 <div class="fw-semibold">{{ $context['name'] }}</div>
                                 <small class="text-body-secondary">?context={{ $context['keyword'] }}</small>
                             </td>
-                            <td>{{ $context['campaign_identifier'] ?: '—' }}</td>
+                            <td><div>{{ $context['campaign_identifier'] ?: '—' }}</div><small class="text-body-secondary">{{ collect([$context['campaign_source'], $context['campaign_medium']])->filter()->join(' / ') ?: 'Origem não informada' }}</small></td>
                             <td>{{ $context['primary_tool_slug'] ?: '—' }}</td>
                             <td class="text-center">
                                 <span class="badge text-bg-light border">{{ $context['tools_count'] }} ferramentas</span>
@@ -83,6 +83,10 @@
                                         <button class="btn btn-sm {{ $context['status'] === 'active' ? 'btn-outline-secondary' : 'btn-outline-success' }}" type="submit">
                                             {{ $context['status'] === 'active' ? 'Desativar' : 'Ativar' }}
                                         </button>
+                                    </form>
+                                    <form method="post" action="{{ route('admin.acquisition.contexts.duplicate', $context['id']) }}">
+                                        @csrf
+                                        <button class="btn btn-sm btn-outline-secondary" type="submit">Duplicar</button>
                                     </form>
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.acquisition.contexts.edit', $context['id']) }}">Editar</a>
                                     <form method="post" action="{{ route('admin.acquisition.contexts.destroy', $context['id']) }}" onsubmit="return confirm('Excluir este contexto permanentemente?')">

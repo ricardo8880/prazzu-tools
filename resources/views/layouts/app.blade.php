@@ -85,6 +85,9 @@
             @if (request()->routeIs('admin.*'))
                 <x-admin.navigation />
             @endif
+            @if (! request()->routeIs('admin.*') && isset($activeAcquisitionContext) && $activeAcquisitionContext !== null)
+                <x-acquisition.context-bar :context="$activeAcquisitionContext" :mode="$activeAcquisitionContextMode" />
+            @endif
             @if (session('status'))
                 <div
                     class="alert alert-success prazzu-flash-alert alert-dismissible fade show"

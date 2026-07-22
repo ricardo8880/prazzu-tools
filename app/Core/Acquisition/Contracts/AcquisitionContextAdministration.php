@@ -17,6 +17,8 @@ interface AcquisitionContextAdministration
 
     public function toggle(int $id): bool;
 
+    public function duplicate(int $id): int;
+
     public function delete(int $id): void;
 
     /** @return list<array{slug:string,name:string}> */

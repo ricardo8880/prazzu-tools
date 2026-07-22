@@ -14,6 +14,14 @@ final class AcquisitionContextRecord extends Model
         'name',
         'keyword',
         'campaign_identifier',
+        'campaign_source',
+        'campaign_medium',
+        'content_identifier',
+        'video_identifier',
+        'banner_identifier',
+        'cta_identifier',
+        'monthly_investment_cents',
+        'investment_currency',
         'status',
         'hero_title_before',
         'hero_title_line',
@@ -26,6 +34,10 @@ final class AcquisitionContextRecord extends Model
         'cta_label',
         'cta_url',
         'cta_tool_slug',
+        'contextual_message',
+        'contextual_continue_label',
+        'contextual_continue_url',
+        'contextual_continue_tool_slug',
         'primary_tool_slug',
     ];
 
@@ -47,6 +59,7 @@ final class AcquisitionContextRecord extends Model
     {
         return [
             'status' => AcquisitionContextStatus::class,
+            'monthly_investment_cents' => 'integer',
         ];
     }
 }

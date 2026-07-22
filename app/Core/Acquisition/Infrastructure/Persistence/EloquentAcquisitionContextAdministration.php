@@ -38,11 +38,19 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
             ->paginate($perPage)
             ->withQueryString();
 
-        $paginator->through(static fn (AcquisitionContextRecord $record): array => [
+        $paginator->through(fn (AcquisitionContextRecord $record): array => [
             'id' => (int) $record->getKey(),
             'name' => $record->name,
             'keyword' => $record->keyword,
             'campaign_identifier' => $record->campaign_identifier,
+            'campaign_source' => $record->campaign_source,
+            'campaign_medium' => $record->campaign_medium,
+            'content_identifier' => $record->content_identifier,
+            'video_identifier' => $record->video_identifier,
+            'banner_identifier' => $record->banner_identifier,
+            'cta_identifier' => $record->cta_identifier,
+            'monthly_investment' => $this->moneyInput($record->monthly_investment_cents),
+            'investment_currency' => $record->investment_currency ?: 'BRL',
             'status' => $record->status->value,
             'primary_tool_slug' => $record->primary_tool_slug,
             'tools_count' => (int) $record->tools_count,
@@ -66,6 +74,14 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
             'name' => $record->name,
             'keyword' => $record->keyword,
             'campaign_identifier' => $record->campaign_identifier,
+            'campaign_source' => $record->campaign_source,
+            'campaign_medium' => $record->campaign_medium,
+            'content_identifier' => $record->content_identifier,
+            'video_identifier' => $record->video_identifier,
+            'banner_identifier' => $record->banner_identifier,
+            'cta_identifier' => $record->cta_identifier,
+            'monthly_investment' => $this->moneyInput($record->monthly_investment_cents),
+            'investment_currency' => $record->investment_currency ?: 'BRL',
             'status' => $record->status->value,
             'hero_title_before' => $record->hero_title_before,
             'hero_title_line' => $record->hero_title_line,
@@ -78,6 +94,10 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
             'cta_label' => $record->cta_label,
             'cta_url' => $record->cta_url,
             'cta_tool_slug' => $record->cta_tool_slug,
+            'contextual_message' => $record->contextual_message,
+            'contextual_continue_label' => $record->contextual_continue_label,
+            'contextual_continue_url' => $record->contextual_continue_url,
+            'contextual_continue_tool_slug' => $record->contextual_continue_tool_slug,
             'primary_tool_slug' => $record->primary_tool_slug,
             'featured_tools' => $this->orderedTools($record, AcquisitionContextToolPlacement::Featured),
             'recommended_tools' => $this->orderedTools($record, AcquisitionContextToolPlacement::Recommended),
@@ -100,6 +120,14 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
                 'name' => trim($data['name']),
                 'keyword' => trim($data['keyword']),
                 'campaign_identifier' => $this->nullable($data['campaign_identifier'] ?? null),
+                'campaign_source' => $this->nullable($data['campaign_source'] ?? null),
+                'campaign_medium' => $this->nullable($data['campaign_medium'] ?? null),
+                'content_identifier' => $this->nullable($data['content_identifier'] ?? null),
+                'video_identifier' => $this->nullable($data['video_identifier'] ?? null),
+                'banner_identifier' => $this->nullable($data['banner_identifier'] ?? null),
+                'cta_identifier' => $this->nullable($data['cta_identifier'] ?? null),
+                'monthly_investment_cents' => $this->moneyToCents($data['monthly_investment'] ?? null),
+                'investment_currency' => strtoupper((string) ($data['investment_currency'] ?? 'BRL')),
                 'status' => $data['status'],
                 'hero_title_before' => $this->nullable($data['hero_title_before'] ?? null),
                 'hero_title_line' => $this->nullable($data['hero_title_line'] ?? null),
@@ -112,6 +140,10 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
                 'cta_label' => $this->nullable($data['cta_label'] ?? null),
                 'cta_url' => $this->nullable($data['cta_url'] ?? null),
                 'cta_tool_slug' => $this->nullable($data['cta_tool_slug'] ?? null),
+                'contextual_message' => $this->nullable($data['contextual_message'] ?? null),
+                'contextual_continue_label' => $this->nullable($data['contextual_continue_label'] ?? null),
+                'contextual_continue_url' => $this->nullable($data['contextual_continue_url'] ?? null),
+                'contextual_continue_tool_slug' => $this->nullable($data['contextual_continue_tool_slug'] ?? null),
                 'primary_tool_slug' => $this->nullable($data['primary_tool_slug'] ?? null),
             ])->save();
 
@@ -132,6 +164,36 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
         $this->cache->forget((string) $data['keyword']);
 
         return $savedId;
+    }
+
+    public function duplicate(int $id): int
+    {
+        $source = AcquisitionContextRecord::query()->with(['tools', 'articles'])->findOrFail($id);
+
+        return DB::transaction(function () use ($source): int {
+            $copy = $source->replicate();
+            $copy->name = $source->name.' (cópia)';
+            $copy->keyword = $this->availableCopyKeyword($source->keyword);
+            $copy->status = AcquisitionContextStatus::Inactive;
+            $copy->save();
+
+            foreach ($source->tools as $tool) {
+                $copy->tools()->create([
+                    'tool_slug' => $tool->tool_slug,
+                    'placement' => $tool->placement,
+                    'position' => $tool->position,
+                ]);
+            }
+
+            foreach ($source->articles as $article) {
+                $copy->articles()->create([
+                    'article_slug' => $article->article_slug,
+                    'position' => $article->position,
+                ]);
+            }
+
+            return (int) $copy->getKey();
+        });
     }
 
     public function toggle(int $id): bool
@@ -206,6 +268,42 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
             ->unique()
             ->values()
             ->all();
+    }
+
+    private function moneyToCents(mixed $value): ?int
+    {
+        $normalized = trim((string) $value);
+        if ($normalized === '') {
+            return null;
+        }
+
+        if (str_contains($normalized, ',') && str_contains($normalized, '.')) {
+            $normalized = str_replace('.', '', $normalized);
+            $normalized = str_replace(',', '.', $normalized);
+        } else {
+            $normalized = str_replace(',', '.', $normalized);
+        }
+
+        return max(0, (int) round(((float) $normalized) * 100));
+    }
+
+    private function moneyInput(mixed $cents): string
+    {
+        return $cents === null ? '' : number_format(((int) $cents) / 100, 2, ',', '.');
+    }
+
+    private function availableCopyKeyword(string $keyword): string
+    {
+        $base = mb_substr($keyword.'-copy', 0, 240);
+        $candidate = $base;
+        $suffix = 2;
+
+        while (AcquisitionContextRecord::query()->where('keyword', $candidate)->exists()) {
+            $candidate = mb_substr($base, 0, 240 - strlen((string) $suffix)).'-'.$suffix;
+            $suffix++;
+        }
+
+        return $candidate;
     }
 
     private function nullable(mixed $value): ?string

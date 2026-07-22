@@ -4,8 +4,8 @@
 @section('meta_description', 'Ferramentas contábeis gratuitas e profissionais para facilitar a rotina de contadores e empresas.')
 
 @section('content')
-    <div class="prazzu-home">
-        <section class="prazzu-hero" aria-labelledby="home-hero-title">
+    <div class="prazzu-home" @if($acquisitionContext) data-acquisition-endpoint="{{ route('analytics.acquisition.track') }}" @endif>
+        <section class="prazzu-hero" aria-labelledby="home-hero-title" @if($acquisitionContext) data-acquisition-impression="hero" @endif>
             <div class="row align-items-center g-4">
                 <div class="col-12 col-lg-7">
                     <h1 id="home-hero-title" class="prazzu-hero__title mb-3">
@@ -72,8 +72,15 @@
             <div class="row g-3">
                 @foreach ($featuredTools as $tool)
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <article class="prazzu-tool-card h-100">
-                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ route($tool['route_name']) }}" aria-label="Abrir {{ $tool['name'] }}"></a>
+                        <article class="prazzu-tool-card h-100"
+                            @if($acquisitionContext)
+                                data-acquisition-impression="tool"
+                                data-tool-slug="{{ $tool['slug'] }}"
+                                data-tool-placement="{{ $tool['slug'] === $acquisitionContext->primaryToolSlug ? 'primary' : 'featured' }}"
+                                data-tool-position="{{ $loop->iteration }}"
+                            @endif
+                        >
+                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ route($tool['route_name']) }}" aria-label="Abrir {{ $tool['name'] }}" @if($acquisitionContext) data-acquisition-click="tool" @endif></a>
                             <span class="prazzu-icon-tile prazzu-icon-tile--{{ $tool['tone'] }} mb-3">
                                 <i class="bi {{ $tool['icon'] }}" aria-hidden="true"></i>
                             </span>
@@ -86,7 +93,7 @@
             </div>
         </section>
 
-        <aside class="prazzu-home-cta" aria-label="Conheça todas as ferramentas">
+        <aside class="prazzu-home-cta" aria-label="Conheça todas as ferramentas" @if($acquisitionContext) data-acquisition-impression="cta" @endif>
             <div class="d-flex align-items-center gap-3 min-w-0">
                 <span class="prazzu-home-cta__icon"><i class="bi bi-rocket-takeoff" aria-hidden="true"></i></span>
                 <span class="min-w-0">
@@ -94,7 +101,76 @@
                     <small>{{ $home['cta']['description'] }}</small>
                 </span>
             </div>
-            <a class="btn btn-primary prazzu-btn-primary" href="{{ url($home['cta']['url']) }}">{{ $home['cta']['label'] }}</a>
+            <a class="btn btn-primary prazzu-btn-primary" href="{{ url($home['cta']['url']) }}" @if($acquisitionContext) data-acquisition-click="cta" @endif>{{ $home['cta']['label'] }}</a>
         </aside>
     </div>
 @endsection
+
+
+@push('scripts')
+@if($acquisitionContext)
+<script>
+(() => {
+    const endpoint = document.querySelector('.prazzu-home')?.dataset.acquisitionEndpoint;
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+    const sent = new Set();
+
+    const track = (event, properties = {}, uniqueKey = null) => {
+        const key = uniqueKey ?? `${event}:${JSON.stringify(properties)}`;
+        if (sent.has(key)) return;
+        sent.add(key);
+
+        fetch(endpoint, {
+            method: 'POST',
+            keepalive: true,
+            headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf},
+            body: JSON.stringify({...properties, event}),
+        }).catch(() => sent.delete(key));
+    };
+
+    track('acquisition.context.resolved', {}, 'context');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+
+            const element = entry.target;
+            const kind = element.dataset.acquisitionImpression;
+            if (kind === 'hero') {
+                track('acquisition.hero.viewed', {}, 'hero');
+            } else if (kind === 'cta') {
+                track('acquisition.cta.viewed', {destination: element.querySelector('a')?.href}, 'cta');
+            } else if (kind === 'tool') {
+                track('acquisition.tool.impression', {
+                    tool_slug: element.dataset.toolSlug,
+                    placement: element.dataset.toolPlacement,
+                    position: Number(element.dataset.toolPosition || 0) || null,
+                }, `tool-impression:${element.dataset.toolSlug}:${element.dataset.toolPlacement}`);
+            }
+
+            observer.unobserve(element);
+        });
+    }, {threshold: 0.35});
+
+    document.querySelectorAll('[data-acquisition-impression]').forEach((element) => observer.observe(element));
+
+    document.querySelectorAll('[data-acquisition-click="tool"]').forEach((link) => {
+        link.addEventListener('click', () => {
+            const card = link.closest('[data-acquisition-impression="tool"]');
+            if (!card) return;
+            track('acquisition.tool.clicked', {
+                tool_slug: card.dataset.toolSlug,
+                placement: card.dataset.toolPlacement,
+                position: Number(card.dataset.toolPosition || 0) || null,
+                destination: link.href,
+            });
+        });
+    });
+
+    document.querySelectorAll('[data-acquisition-click="cta"]').forEach((link) => {
+        link.addEventListener('click', () => track('acquisition.cta.clicked', {destination: link.href}));
+    });
+})();
+</script>
+@endif
+@endpush

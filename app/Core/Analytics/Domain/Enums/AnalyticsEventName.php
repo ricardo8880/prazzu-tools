@@ -8,6 +8,16 @@ enum AnalyticsEventName: string
 {
     case PageViewed = 'page.viewed';
 
+    case AcquisitionContextEntered = 'acquisition.context.entered';
+    case AcquisitionContextExited = 'acquisition.context.exited';
+    case AcquisitionContextContinued = 'acquisition.context.continued';
+    case AcquisitionContextResolved = 'acquisition.context.resolved';
+    case AcquisitionHeroViewed = 'acquisition.hero.viewed';
+    case AcquisitionCtaViewed = 'acquisition.cta.viewed';
+    case AcquisitionCtaClicked = 'acquisition.cta.clicked';
+    case AcquisitionToolImpression = 'acquisition.tool.impression';
+    case AcquisitionToolClicked = 'acquisition.tool.clicked';
+
     case BlogPostViewed = 'blog.post.viewed';
     case BlogReadingStarted = 'blog.reading.started';
     case BlogReadingCompleted = 'blog.reading.completed';
