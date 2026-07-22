@@ -6,6 +6,7 @@ use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
+use App\Core\Feedback\Models\PageFeedback;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,7 @@ final class ExecutiveDashboardQuery
             'daily' => $this->dailySeries($period),
             'top_sources' => $this->topSources($period),
             'top_pages' => $this->topPages($period),
+            'feedback' => $this->feedbackSummary($period),
             'recent_events' => PlatformAnalyticsEvent::query()
                 ->whereBetween('occurred_at', [$period->start, $period->end])
                 ->latest('occurred_at')
@@ -175,6 +177,43 @@ final class ExecutiveDashboardQuery
             ->orderByDesc('views')
             ->limit(8)
             ->get();
+    }
+
+    /** @return array<string, mixed> */
+    private function feedbackSummary(AnalyticsPeriod $period): array
+    {
+        $feedback = PageFeedback::query()->whereBetween('created_at', [$period->start, $period->end]);
+        $total = (clone $feedback)->count();
+        $average = $total > 0 ? round((float) (clone $feedback)->avg('rating'), 2) : 0.0;
+
+        $distributionRows = (clone $feedback)
+            ->selectRaw('rating, COUNT(*) as total')
+            ->groupBy('rating')
+            ->pluck('total', 'rating');
+
+        $distribution = collect(range(5, 1))->mapWithKeys(fn (int $rating): array => [
+            $rating => (int) ($distributionRows[$rating] ?? 0),
+        ]);
+
+        return [
+            'total' => $total,
+            'average' => $average,
+            'positive_rate' => $total > 0
+                ? round((((int) ($distribution[5] ?? 0) + (int) ($distribution[4] ?? 0)) / $total) * 100, 1)
+                : 0.0,
+            'with_comment' => (clone $feedback)->whereNotNull('comment')->where('comment', '!=', '')->count(),
+            'distribution' => $distribution,
+            'top_pages' => (clone $feedback)
+                ->selectRaw('path, COUNT(*) as total, AVG(rating) as average_rating')
+                ->groupBy('path')
+                ->orderByDesc('total')
+                ->limit(8)
+                ->get(),
+            'recent' => (clone $feedback)
+                ->latest('created_at')
+                ->limit(10)
+                ->get(['path', 'page_title', 'rating', 'comment', 'created_at']),
+        ];
     }
 
     private function averageSessionSeconds(Builder $sessions): float

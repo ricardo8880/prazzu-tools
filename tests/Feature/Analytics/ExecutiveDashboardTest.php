@@ -5,6 +5,7 @@ namespace Tests\Feature\Analytics;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
+use App\Core\Feedback\Models\PageFeedback;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,6 +48,38 @@ final class ExecutiveDashboardTest extends TestCase
             ->assertSee('R$ 49,90')
             ->assertSee('Principais origens')
             ->assertSee('Páginas mais visitadas');
+    }
+
+    public function test_dashboard_displays_page_feedback_for_selected_period(): void
+    {
+        $this->signInAsInternalAdministrator();
+        CarbonImmutable::setTestNow('2026-07-15 12:00:00');
+
+        PageFeedback::query()->create([
+            'path' => '/ferramentas',
+            'url' => 'http://localhost/ferramentas',
+            'page_title' => 'Ferramentas',
+            'rating' => 5,
+            'comment' => 'Página clara e útil.',
+            'created_at' => '2026-07-15 10:00:00',
+            'updated_at' => '2026-07-15 10:00:00',
+        ]);
+
+        PageFeedback::query()->create([
+            'path' => '/ferramentas',
+            'url' => 'http://localhost/ferramentas',
+            'page_title' => 'Ferramentas',
+            'rating' => 3,
+            'created_at' => '2026-07-15 11:00:00',
+            'updated_at' => '2026-07-15 11:00:00',
+        ]);
+
+        $this->get(route('admin.analytics.index', ['period' => 'today']))
+            ->assertOk()
+            ->assertSee('Avaliações das páginas')
+            ->assertSee('4,00 de 5')
+            ->assertSee('Página clara e útil.')
+            ->assertSee('/ferramentas');
     }
 
     public function test_dashboard_accepts_a_custom_period(): void

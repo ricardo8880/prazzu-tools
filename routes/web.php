@@ -43,6 +43,7 @@ use App\Http\Controllers\Organizations\OrganizationSeatController;
 use App\Http\Controllers\Platform\ContentPageController;
 use App\Http\Controllers\Platform\HomeController;
 use App\Http\Controllers\Platform\NewsletterController;
+use App\Http\Controllers\Platform\PageFeedbackController;
 use App\Http\Controllers\Platform\SuggestToolController;
 use App\Http\Controllers\Platform\ToolCatalogController;
 use App\Http\Controllers\Seo\BlogSitemapController;
@@ -239,3 +240,7 @@ Route::post('/sugerir-ferramenta', [SuggestToolController::class, 'store'])
 
 Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->name('newsletter.store');
+
+Route::post('/feedback/pagina', [PageFeedbackController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('feedback.page.store');

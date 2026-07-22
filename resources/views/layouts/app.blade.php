@@ -123,6 +123,9 @@
 </div>
 
 <x-layout.mobile-navigation />
+@unless (request()->routeIs('admin.*'))
+    <x-feedback.page-rating />
+@endunless
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
