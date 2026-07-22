@@ -82,6 +82,9 @@
         <x-layout.left-sidebar />
 
         <main id="main-content" class="prazzu-main" tabindex="-1">
+            @if (request()->routeIs('admin.*'))
+                <x-admin.navigation />
+            @endif
             @if (session('status'))
                 <div
                     class="alert alert-success prazzu-flash-alert alert-dismissible fade show"

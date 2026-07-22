@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'tools_section_title' => 'Ferramentas mais recentes',
+
     'hero' => [
         'title_before' => 'Ferramentas que facilitam',
         'title_line' => 'o seu',

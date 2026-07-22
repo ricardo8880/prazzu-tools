@@ -10,6 +10,10 @@ use App\Core\Access\Services\ConfigCommercialAccessPolicy;
 use App\Core\Access\Services\DefaultToolAccessContextResolver;
 use App\Core\Access\Services\DefaultToolAccessGate;
 use App\Core\Access\Services\DefaultToolFeatureAccessGate;
+use App\Core\Acquisition\Contracts\AcquisitionContextRepository;
+use App\Core\Acquisition\Contracts\AcquisitionContextAdministration;
+use App\Core\Acquisition\Infrastructure\Persistence\EloquentAcquisitionContextRepository;
+use App\Core\Acquisition\Infrastructure\Persistence\EloquentAcquisitionContextAdministration;
 use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
@@ -55,6 +59,8 @@ final class CoreInfrastructureServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(FeatureFlagRepository::class, ConfigFeatureFlagRepository::class);
+        $this->app->singleton(AcquisitionContextRepository::class, EloquentAcquisitionContextRepository::class);
+        $this->app->singleton(AcquisitionContextAdministration::class, EloquentAcquisitionContextAdministration::class);
         $this->app->singleton(CommercialAccessPolicy::class, ConfigCommercialAccessPolicy::class);
         $this->app->singleton(ToolAccessGate::class, DefaultToolAccessGate::class);
         $this->app->singleton(ToolFeatureAccessGate::class, DefaultToolFeatureAccessGate::class);

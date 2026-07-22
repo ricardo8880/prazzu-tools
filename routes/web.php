@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\Analytics\AcquisitionAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\AnalyticsDashboardController;
 use App\Http\Controllers\Admin\Analytics\AnalyticsReportController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Admin\Blog\BlogAnalyticsController as AdminBlogAnalytic
 use App\Http\Controllers\Admin\Blog\BlogCategoryController;
 use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
 use App\Http\Controllers\Admin\Blog\BlogPostController;
+use App\Http\Controllers\Admin\Acquisition\AcquisitionContextController;
 use App\Http\Controllers\Analytics\CaptureAudienceContextController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
 use App\Http\Controllers\Analytics\TrackToolPresenceController;
@@ -52,6 +54,10 @@ Route::get('/ferramentas/{category}', [ToolCatalogController::class, 'index'])
 
 require __DIR__.'/tools.php';
 
+Route::get('/admin', AdminDashboardController::class)
+    ->middleware('internal.admin')
+    ->name('admin.index');
+
 Route::prefix('admin/analytics')
     ->name('admin.analytics.')
     ->middleware('internal.admin')
@@ -78,6 +84,16 @@ Route::prefix('admin/analytics')
         Route::get('/tools/{tool}', ToolDetailAnalyticsController::class)->name('tools.show');
         Route::get('/seo/posts/{post}', [SeoPostAnalyticsController::class, 'show'])->name('seo.posts.show');
         Route::post('/seo/posts/{post}/metrics', [SeoPostAnalyticsController::class, 'store'])->name('seo.posts.metrics.store');
+    });
+
+Route::prefix('admin/acquisition')
+    ->name('admin.acquisition.')
+    ->middleware('internal.admin')
+    ->group(function (): void {
+        Route::patch('/contexts/{context}/toggle', [AcquisitionContextController::class, 'toggle'])
+            ->name('contexts.toggle');
+        Route::resource('contexts', AcquisitionContextController::class)
+            ->except('show');
     });
 
 Route::prefix('admin/blog')

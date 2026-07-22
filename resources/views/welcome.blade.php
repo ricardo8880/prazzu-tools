@@ -63,7 +63,7 @@
 
         <section class="prazzu-featured-tools" aria-labelledby="featured-tools-title">
             <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
-                <h2 id="featured-tools-title" class="prazzu-section-title mb-0">Ferramentas mais recentes</h2>
+                <h2 id="featured-tools-title" class="prazzu-section-title mb-0">{{ $home['tools_section_title'] }}</h2>
                 <a class="prazzu-section-link text-decoration-none" href="{{ url('/ferramentas') }}">
                     Ver todas <i class="bi bi-arrow-right" aria-hidden="true"></i>
                 </a>
