@@ -26,6 +26,7 @@ return [
         // <tools:corporate>
     ],
     'documents' => [
+        \App\Tools\ReceiptIssuer\Tool::class,
         // <tools:documents>
     ],
 ];

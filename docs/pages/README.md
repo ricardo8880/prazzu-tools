@@ -17,6 +17,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 ### Documento de saída/ impressão
 
+- [Recibo para impressão e PDF](app/Tools/ReceiptIssuer/pages/pdf/receipt.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/pdf/receipt.blade.php`
+
 - [Batch Report.Blade](app/Tools/BusinessDocumentValidator/pages/print/batch-report.blade.md) — `app/Tools/BusinessDocumentValidator/Resources/views/print/batch-report.blade.php`
 - [Resumo orientativo](app/Tools/FederalPaymentGuideGenerator/pages/pdf/report.blade.md) — `app/Tools/FederalPaymentGuideGenerator/Resources/views/pdf/report.blade.php`
 - [Dados considerados](app/Tools/LaborTerminationCalculator/pages/pdf/report.blade.md) — `app/Tools/LaborTerminationCalculator/Resources/views/pdf/report.blade.php`
@@ -83,6 +85,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 ### Página de ferramenta
 
+- [Emissor de Recibos — Prazzu Tools](app/Tools/ReceiptIssuer/pages/index.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/index.blade.php`
+
 - [Reajuste de Honorários Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/adjustments/index.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/adjustments/index.blade.php`
 - [Contrato de Prestação de Serviços Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/contract.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/contract.blade.php`
 - [Calculadora de Honorários Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/index.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/index.blade.php`
@@ -100,6 +104,7 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 ### Página de histórico
 
+- [Histórico de recibos — Prazzu Tools](app/Tools/ReceiptIssuer/pages/history/index.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/history/index.blade.php`
 - [Histórico de Honorários Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/history/index.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/history/index.blade.php`
 - [Histórico do Validador — Prazzu Tools](app/Tools/BusinessDocumentValidator/pages/history/index.blade.md) — `app/Tools/BusinessDocumentValidator/Resources/views/history/index.blade.php`
 - [Histórico de DARF/GPS](app/Tools/FederalPaymentGuideGenerator/pages/history/index.blade.md) — `app/Tools/FederalPaymentGuideGenerator/Resources/views/history/index.blade.php`

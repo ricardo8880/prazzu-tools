@@ -49,6 +49,14 @@ existem.
 
 Esta seção é destinada aos assistentes de IA que auxiliam no desenvolvimento deste projeto.
 
+## Leitura obrigatória dos candidatos ao Core técnico
+
+Antes de iniciar qualquer tarefa, lote, nova ferramenta, refatoração ou extração de componente compartilhado, leia também o arquivo [`CORE_CANDIDATES.md`](CORE_CANDIDATES.md) localizado na raiz do projeto.
+
+Esse arquivo registra capacidades que podem precisar ser promovidas para o Core técnico quando surgir reutilização concreta em duas ou mais ferramentas. Durante o trabalho, verifique se a tarefa atual ativa o gatilho de algum candidato, atualize seu status quando necessário e registre novos candidatos sem criar abstrações prematuras.
+
+A consulta ao `CORE_CANDIDATES.md` é obrigatória e faz parte da análise inicial do projeto, assim como a leitura deste README.
+
 Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
 
 Sempre que identificar uma melhoria que:
