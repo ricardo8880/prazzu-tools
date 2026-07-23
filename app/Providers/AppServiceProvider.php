@@ -22,8 +22,13 @@ use App\Core\Tools\History\Contracts\ToolRunHistory;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Services\DatabaseToolRunFavorites;
 use App\Core\Tools\History\Services\DatabaseToolRunHistory;
+use App\Core\Tools\Api\Auth\ApiClient;
+use App\Core\Tools\Api\Http\Middleware\AuthenticateApiClient;
 use App\Core\Tools\History\Services\DatabaseToolRunRecorder;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -54,6 +59,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+
+        RateLimiter::for('tools-api', function (Request $request): Limit {
+            $client = $request->attributes->get(AuthenticateApiClient::REQUEST_ATTRIBUTE);
+            $key = $client instanceof ApiClient ? 'client:'.$client->id : 'ip:'.$request->ip();
+
+            return Limit::perMinute(max(1, (int) config('tools-api.rate_limit', 120)))->by($key);
+        });
 
         View::composer('components.layout.right-sidebar', function ($view): void {
             $recentBlogPosts = Schema::hasTable('blog_posts')

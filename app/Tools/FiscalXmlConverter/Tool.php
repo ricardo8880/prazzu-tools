@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\FiscalXmlConverter;
 
+use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
@@ -24,8 +25,15 @@ use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
-final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+use App\Tools\FiscalXmlConverter\Api\Actions\ConvertApiAction;
+
+final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
+    public function apiActions(): array
+    {
+        return [ConvertApiAction::class];
+    }
+
     public const SLUG = 'conversor-fiscal-xml';
 
     public function integrations(): ToolIntegrationManifest

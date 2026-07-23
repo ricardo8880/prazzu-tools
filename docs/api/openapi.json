@@ -1,0 +1,365 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Prazzu Tools API privada",
+    "version": "1.0.0",
+    "description": "Motor privado das ferramentas do Prazzu Tools para plataformas autorizadas."
+  },
+  "servers": [
+    {
+      "url": "https://tools.prazzu.com.br",
+      "description": "Produção"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Desenvolvimento"
+    }
+  ],
+  "paths": {
+    "/api/v1": {
+      "get": {
+        "summary": "Status autenticado da API",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "API disponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/tools/{tool}/{action}": {
+      "post": {
+        "summary": "Executa uma ação publicada por uma ferramenta",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tool",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "examples": {
+                "calculadora-de-honorarios-contabeis_calculate": {
+                  "summary": "calculadora-de-honorarios-contabeis/calculate",
+                  "value": {
+                    "monthly_revenue": "100.000,00",
+                    "employees": 5,
+                    "partners": 2,
+                    "monthly_invoices": 150,
+                    "monthly_bank_transactions": 300,
+                    "tax_regime": "simples_nacional",
+                    "business_segment": "services",
+                    "complexity": "medium"
+                  }
+                },
+                "validador-de-cnpj_validate": {
+                  "summary": "validador-de-cnpj/validate",
+                  "value": {
+                    "document_type": "cnpj",
+                    "document_number": "12.345.678/0001-95"
+                  }
+                },
+                "gerador-darf-gps_calculate": {
+                  "summary": "gerador-darf-gps/calculate",
+                  "value": {
+                    "guide_type": "darf",
+                    "revenue_code": "0561",
+                    "principal": "1.000,00",
+                    "due_date": "2026-07-20",
+                    "payment_date": "2026-07-23",
+                    "selic_accumulated_percent": "1,00",
+                    "confirm_official_check": true
+                  }
+                },
+                "calculadora-de-rescisao_calculate": {
+                  "summary": "calculadora-de-rescisao/calculate",
+                  "value": {
+                    "monthly_salary": "5.000,00",
+                    "admission_date": "2024-01-10",
+                    "termination_date": "2026-07-23",
+                    "termination_type": "dismissal_without_cause",
+                    "contract_type": "indefinite",
+                    "notice_type": "indemnified",
+                    "days_worked_in_month": 23
+                  }
+                },
+                "calculadora-margem-markup_calculate": {
+                  "summary": "calculadora-margem-markup/calculate",
+                  "value": {
+                    "reference_date": "2026-07-23",
+                    "product_name": "Produto exemplo",
+                    "base_cost": "100,00",
+                    "desired_margin": 30
+                  }
+                },
+                "calculadora-pro-labore-distribuicao-lucros_calculate": {
+                  "summary": "calculadora-pro-labore-distribuicao-lucros/calculate",
+                  "value": {
+                    "competence": "2026-07",
+                    "company_regime": "simples_outside_annex_iv",
+                    "partner_label": "Sócio 1",
+                    "gross_pro_labore": "5.000,00",
+                    "dependents": 0,
+                    "ownership_percentage": 100,
+                    "accounting_profit": "20.000,00",
+                    "intended_distribution": "10.000,00",
+                    "confirm_assumptions": true
+                  }
+                },
+                "calculadora-simples-nacional_calculate": {
+                  "summary": "calculadora-simples-nacional/calculate",
+                  "value": {
+                    "annex": "III",
+                    "use_factor_r": false,
+                    "rbt12": "600.000,00",
+                    "monthly_revenue": "50.000,00"
+                  }
+                },
+                "comparador-tributario_compare": {
+                  "summary": "comparador-tributario/compare",
+                  "value": {
+                    "reference_date": "2026-07-23",
+                    "business_activity": "services",
+                    "monthly_revenue": "100.000,00",
+                    "revenue_last_twelve_months": "1.200.000,00",
+                    "payroll_last_twelve_months": "360.000,00",
+                    "monthly_operating_costs": "30.000,00",
+                    "monthly_deductible_expenses": "20.000,00",
+                    "state": "SP",
+                    "municipality": "São Paulo"
+                  }
+                },
+                "calculadora-ferias_calculate": {
+                  "summary": "calculadora-ferias/calculate",
+                  "value": {
+                    "monthly_salary": "5.000,00",
+                    "acquisition_start_date": "2025-01-01",
+                    "vacation_start_date": "2026-08-01",
+                    "unjustified_absences": 0,
+                    "convert_one_third_to_cash": false
+                  }
+                }
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "xml_file"
+                ],
+                "properties": {
+                  "xml_file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resultado normalizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "description": "Cliente sem a ability necessária"
+          },
+          "404": {
+            "description": "Ferramenta ou ação não publicada"
+          },
+          "422": {
+            "description": "Falha de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "SuccessEnvelope": {
+        "type": "object",
+        "required": [
+          "success",
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "request_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "required": [
+          "success",
+          "error",
+          "meta"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": false
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "request_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Token ausente ou inválido",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-prazzu-actions": [
+    {
+      "tool": "calculadora-de-honorarios-contabeis",
+      "action": "calculate"
+    },
+    {
+      "tool": "validador-de-cnpj",
+      "action": "validate"
+    },
+    {
+      "tool": "gerador-darf-gps",
+      "action": "calculate"
+    },
+    {
+      "tool": "conversor-fiscal-xml",
+      "action": "convert"
+    },
+    {
+      "tool": "calculadora-de-rescisao",
+      "action": "calculate"
+    },
+    {
+      "tool": "calculadora-margem-markup",
+      "action": "calculate"
+    },
+    {
+      "tool": "calculadora-pro-labore-distribuicao-lucros",
+      "action": "calculate"
+    },
+    {
+      "tool": "calculadora-simples-nacional",
+      "action": "calculate"
+    },
+    {
+      "tool": "comparador-tributario",
+      "action": "compare"
+    },
+    {
+      "tool": "calculadora-ferias",
+      "action": "calculate"
+    }
+  ]
+}

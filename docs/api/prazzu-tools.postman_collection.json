@@ -1,0 +1,427 @@
+{
+  "info": {
+    "name": "Prazzu Tools API privada",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{api_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "api_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Status da API",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "calculadora-de-honorarios-contabeis/calculate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"monthly_revenue\": \"100.000,00\",\n  \"employees\": 5,\n  \"partners\": 2,\n  \"monthly_invoices\": 150,\n  \"monthly_bank_transactions\": 300,\n  \"tax_regime\": \"simples_nacional\",\n  \"business_segment\": \"services\",\n  \"complexity\": \"medium\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/calculadora-de-honorarios-contabeis/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "calculadora-de-honorarios-contabeis",
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "validador-de-cnpj/validate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"document_type\": \"cnpj\",\n  \"document_number\": \"12.345.678/0001-95\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/validador-de-cnpj/validate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "validador-de-cnpj",
+            "validate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "gerador-darf-gps/calculate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"guide_type\": \"darf\",\n  \"revenue_code\": \"0561\",\n  \"principal\": \"1.000,00\",\n  \"due_date\": \"2026-07-20\",\n  \"payment_date\": \"2026-07-23\",\n  \"selic_accumulated_percent\": \"1,00\",\n  \"confirm_official_check\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/gerador-darf-gps/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "gerador-darf-gps",
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "calculadora-de-rescisao/calculate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"monthly_salary\": \"5.000,00\",\n  \"admission_date\": \"2024-01-10\",\n  \"termination_date\": \"2026-07-23\",\n  \"termination_type\": \"dismissal_without_cause\",\n  \"contract_type\": \"indefinite\",\n  \"notice_type\": \"indemnified\",\n  \"days_worked_in_month\": 23\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/calculadora-de-rescisao/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "calculadora-de-rescisao",
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "calculadora-margem-markup/calculate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reference_date\": \"2026-07-23\",\n  \"product_name\": \"Produto exemplo\",\n  \"base_cost\": \"100,00\",\n  \"desired_margin\": 30\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/calculadora-margem-markup/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "calculadora-margem-markup",
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "calculadora-pro-labore-distribuicao-lucros/calculate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"competence\": \"2026-07\",\n  \"company_regime\": \"simples_outside_annex_iv\",\n  \"partner_label\": \"Sócio 1\",\n  \"gross_pro_labore\": \"5.000,00\",\n  \"dependents\": 0,\n  \"ownership_percentage\": 100,\n  \"accounting_profit\": \"20.000,00\",\n  \"intended_distribution\": \"10.000,00\",\n  \"confirm_assumptions\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/calculadora-pro-labore-distribuicao-lucros/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "calculadora-pro-labore-distribuicao-lucros",
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "calculadora-simples-nacional/calculate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"annex\": \"III\",\n  \"use_factor_r\": false,\n  \"rbt12\": \"600.000,00\",\n  \"monthly_revenue\": \"50.000,00\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/calculadora-simples-nacional/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "calculadora-simples-nacional",
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "comparador-tributario/compare",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reference_date\": \"2026-07-23\",\n  \"business_activity\": \"services\",\n  \"monthly_revenue\": \"100.000,00\",\n  \"revenue_last_twelve_months\": \"1.200.000,00\",\n  \"payroll_last_twelve_months\": \"360.000,00\",\n  \"monthly_operating_costs\": \"30.000,00\",\n  \"monthly_deductible_expenses\": \"20.000,00\",\n  \"state\": \"SP\",\n  \"municipality\": \"São Paulo\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/comparador-tributario/compare",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "comparador-tributario",
+            "compare"
+          ]
+        }
+      }
+    },
+    {
+      "name": "calculadora-ferias/calculate",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"monthly_salary\": \"5.000,00\",\n  \"acquisition_start_date\": \"2025-01-01\",\n  \"vacation_start_date\": \"2026-08-01\",\n  \"unjustified_absences\": 0,\n  \"convert_one_third_to_cash\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/calculadora-ferias/calculate",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "calculadora-ferias",
+            "calculate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "conversor-fiscal-xml/convert",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "xml_file",
+              "type": "file",
+              "src": []
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/tools/conversor-fiscal-xml/convert",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tools",
+            "conversor-fiscal-xml",
+            "convert"
+          ]
+        }
+      }
+    }
+  ]
+}

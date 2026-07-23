@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\TaxRegimeComparator;
 
+use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasServiceProviders;
@@ -26,8 +27,15 @@ use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Tools\TaxRegimeComparator\Infrastructure\Providers\TaxRegimeComparatorServiceProvider;
 
-final class Tool implements HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+use App\Tools\TaxRegimeComparator\Api\Actions\CompareApiAction;
+
+final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
+    public function apiActions(): array
+    {
+        return [CompareApiAction::class];
+    }
+
     public const SLUG = 'comparador-tributario';
 
     public function integrations(): ToolIntegrationManifest

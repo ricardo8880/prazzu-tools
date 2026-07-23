@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\MarginMarkupCalculator;
 
+use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasToolIntegrations;
@@ -24,8 +25,15 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
-final class Tool implements HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+use App\Tools\MarginMarkupCalculator\Api\Actions\CalculateApiAction;
+
+final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
+    public function apiActions(): array
+    {
+        return [CalculateApiAction::class];
+    }
+
     public function integrations(): ToolIntegrationManifest
     {
         return new ToolIntegrationManifest(

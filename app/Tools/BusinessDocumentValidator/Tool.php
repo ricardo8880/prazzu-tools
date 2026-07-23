@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\BusinessDocumentValidator;
 
+use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasToolIntegrations;
@@ -26,8 +27,15 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
 
-final class Tool implements HasHistoryPolicy, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+use App\Tools\BusinessDocumentValidator\Api\Actions\ValidateApiAction;
+
+final class Tool implements HasApiActions, HasHistoryPolicy, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
+    public function apiActions(): array
+    {
+        return [ValidateApiAction::class];
+    }
+
     public function integrations(): ToolIntegrationManifest
     {
         return new ToolIntegrationManifest(

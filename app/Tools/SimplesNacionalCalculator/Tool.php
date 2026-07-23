@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\SimplesNacionalCalculator;
 
+use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasServiceProviders;
@@ -27,8 +28,15 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 use App\Tools\SimplesNacionalCalculator\Infrastructure\Providers\SimplesNacionalServiceProvider;
 
-final class Tool implements HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+use App\Tools\SimplesNacionalCalculator\Api\Actions\CalculateApiAction;
+
+final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
+    public function apiActions(): array
+    {
+        return [CalculateApiAction::class];
+    }
+
     public const SLUG = 'calculadora-simples-nacional';
 
     public const HISTORY_RULE_VERSION = '1.0.0';
