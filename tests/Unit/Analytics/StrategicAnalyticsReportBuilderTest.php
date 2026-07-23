@@ -20,7 +20,7 @@ final class StrategicAnalyticsReportBuilderTest extends TestCase
 
         $payload = $builder->payload($period, ['tool' => 'simples-nacional'], $this->report());
 
-        self::assertSame('1.1', $payload['report']['schema_version']);
+        self::assertSame('2.1', $payload['report']['schema_version']);
         self::assertFalse($payload['product_context']['account_required_to_use_tools']);
         self::assertSame('tool.calculation.completed', $payload['product_context']['primary_value_event']);
         self::assertSame('Cálculo concluído', $payload['breakdowns']['events'][0]['label']);
@@ -28,6 +28,9 @@ final class StrategicAnalyticsReportBuilderTest extends TestCase
         self::assertNotEmpty($payload['ai_instructions']['rules']);
         self::assertSame(80.0, $payload['derived_metrics']['funnel']['rates']['start_to_complete']);
         self::assertNotEmpty($payload['strategic_insights']);
+        self::assertArrayHasKey('decision_support', $payload);
+        self::assertSame('directional', $payload['decision_support']['sample_assessment']['level']);
+        self::assertNotEmpty($payload['decision_support']['decisions']);
     }
 
     public function test_markdown_and_json_include_context_metrics_and_dictionary(): void
@@ -42,13 +45,20 @@ final class StrategicAnalyticsReportBuilderTest extends TestCase
         self::assertStringContainsString('Cálculo concluído', $markdown);
         self::assertStringContainsString('Não trate correlação como causalidade', $markdown);
         self::assertStringContainsString('Insights estratégicos automáticos', $markdown);
-        self::assertSame('1.1', json_decode($json, true, flags: JSON_THROW_ON_ERROR)['report']['schema_version']);
+        self::assertStringContainsString('Decisões priorizadas', $markdown);
+        self::assertStringContainsString('Analytics Health Score', $markdown);
+        self::assertSame('2.1', json_decode($json, true, flags: JSON_THROW_ON_ERROR)['report']['schema_version']);
     }
 
     private function report(): array
     {
         return [
-            'summary' => ['events' => ['value' => 10, 'previous' => 8, 'change' => 25.0]],
+            'summary' => [
+                'events' => ['value' => 100, 'previous' => 80, 'change' => 25.0],
+                'visitors' => ['value' => 40, 'previous' => 30, 'change' => 33.3],
+                'sessions' => ['value' => 35, 'previous' => 30, 'change' => 16.7],
+                'conversions' => ['value' => 10, 'previous' => 8, 'change' => 25.0],
+            ],
             'event_breakdown' => [['event_name' => 'tool.calculation.completed', 'total' => 5]],
             'tool_breakdown' => [['name' => 'simples-nacional', 'events' => 8, 'visitors' => 4, 'conversions' => 5]],
             'channel_breakdown' => [['name' => 'organic', 'events' => 7, 'visitors' => 4, 'conversions' => 4]],

@@ -9,13 +9,19 @@ use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 
 final class StrategicAnalyticsReportBuilder
 {
-    public const SCHEMA_VERSION = '1.1';
+    public const SCHEMA_VERSION = '2.1';
 
     private readonly StrategicAnalyticsInsightGenerator $insightGenerator;
 
-    public function __construct(private readonly AnalyticsEventCatalog $catalog, ?StrategicAnalyticsInsightGenerator $insightGenerator = null)
-    {
+    private readonly StrategicAnalyticsDecisionEngine $decisionEngine;
+
+    public function __construct(
+        private readonly AnalyticsEventCatalog $catalog,
+        ?StrategicAnalyticsInsightGenerator $insightGenerator = null,
+        ?StrategicAnalyticsDecisionEngine $decisionEngine = null,
+    ) {
         $this->insightGenerator = $insightGenerator ?? new StrategicAnalyticsInsightGenerator;
+        $this->decisionEngine = $decisionEngine ?? new StrategicAnalyticsDecisionEngine;
     }
 
     /** @param array<string,mixed> $report @param array<string,mixed> $filters */
@@ -32,6 +38,8 @@ final class StrategicAnalyticsReportBuilder
             ];
         })->values()->all();
 
+        $decisionSupport = $this->decisionEngine->build($report);
+
         return [
             'report' => [
                 'schema_version' => self::SCHEMA_VERSION,
@@ -46,7 +54,8 @@ final class StrategicAnalyticsReportBuilder
                 'description' => 'Plataforma de ferramentas pontuais para profissionais contábeis.',
                 'account_required_to_use_tools' => false,
                 'primary_value_event' => 'tool.calculation.completed',
-                'commercial_conversion_events' => ['subscription.started', 'subscription.created'],
+                'commercial_intent_event' => 'subscription.started',
+                'commercial_conversion_events' => ['subscription.created'],
                 'interpretation_notes' => [
                     'Uso sem conta é comportamento esperado e não representa abandono.',
                     'Conclusão de cálculo representa entrega de valor do produto.',
@@ -61,12 +70,30 @@ final class StrategicAnalyticsReportBuilder
                 'channels' => $report['channel_breakdown'] ?? [],
                 'sources' => $report['source_breakdown'] ?? [],
                 'devices' => $report['device_breakdown'] ?? [],
+                'mediums' => $report['medium_breakdown'] ?? [],
+                'campaigns' => $report['campaign_breakdown'] ?? [],
+                'browsers' => $report['browser_breakdown'] ?? [],
+                'operating_systems' => $report['os_breakdown'] ?? [],
+                'languages' => $report['language_breakdown'] ?? [],
+                'countries' => $report['country_breakdown'] ?? [],
+                'regions' => $report['region_breakdown'] ?? [],
+                'cities' => $report['city_breakdown'] ?? [],
+                'pages' => $report['path_breakdown'] ?? [],
+                'referrers' => $report['referrer_breakdown'] ?? [],
+                'subject_types' => $report['subject_type_breakdown'] ?? [],
+                'acquisition_contexts' => $report['acquisition_context_breakdown'] ?? [],
             ],
+            'time_series' => [
+                'daily' => $report['daily_series'] ?? [],
+                'hourly' => $report['hourly_series'] ?? [],
+            ],
+            'data_quality' => $report['data_quality'] ?? [],
             'derived_metrics' => [
                 'funnel' => $report['funnel'] ?? [],
                 'tool_performance' => $report['tool_performance'] ?? [],
             ],
             'strategic_insights' => $this->insightGenerator->generate($report),
+            'decision_support' => $decisionSupport,
             'data_dictionary' => [
                 'events' => collect($events)->map(fn (array $event) => collect($event)->only(['event_name', 'label', 'category', 'description', 'business_meaning'])->all())->all(),
                 'metrics' => [
@@ -80,6 +107,11 @@ final class StrategicAnalyticsReportBuilder
                     'completion_rate' => 'Percentual de conclusões em relação aos inícios.',
                     'export_rate' => 'Percentual de exportações em relação às conclusões.',
                     'delta_percentage_points' => 'Diferença absoluta entre duas taxas, expressa em pontos percentuais.',
+                    'data_quality_coverage' => 'Percentual de eventos com o campo analítico preenchido no recorte.',
+                    'raw_event' => 'Registro granular com identificadores, aquisição, tecnologia, geografia, página e metadados.',
+                    'analytics_health_score' => 'Índice de observabilidade e confiabilidade do analytics; não mede desempenho comercial.',
+                    'sample_assessment' => 'Classificação da capacidade estatística do recorte para sustentar hipóteses ou decisões.',
+                    'linear_run_rate_projection' => 'Extrapolação matemática do ritmo observado; não representa previsão causal.',
                 ],
             ],
             'ai_instructions' => [
@@ -96,6 +128,7 @@ final class StrategicAnalyticsReportBuilder
                     'Quais ferramentas e canais merecem maior investimento?',
                     'Que mudanças exigem investigação antes de uma decisão?',
                     'Monte um plano de ação priorizado por impacto e esforço.',
+                    'Revise as decisões sugeridas e indique quais precisam de experimento antes da execução.',
                 ],
             ],
         ];
@@ -154,6 +187,57 @@ final class StrategicAnalyticsReportBuilder
         $lines = array_merge($lines, ['', '## Desempenho derivado por ferramenta', '', '| Ferramenta | Aberturas | Inícios | Conclusões | Taxa de início | Taxa de conclusão | Exportações |', '|---|---:|---:|---:|---:|---:|---:|']);
         foreach (array_slice($payload['derived_metrics']['tool_performance'] ?? [], 0, 25) as $row) {
             $lines[] = '| '.$row['name'].' | '.number_format((int) $row['opened'], 0, ',', '.').' | '.number_format((int) $row['started'], 0, ',', '.').' | '.number_format((int) $row['completed'], 0, ',', '.').' | '.number_format((float) $row['start_rate'], 1, ',', '.').'% | '.number_format((float) $row['completion_rate'], 1, ',', '.').'% | '.number_format((int) $row['exported'], 0, ',', '.').' |';
+        }
+
+        $support = $payload['decision_support'] ?? [];
+        if ($support !== []) {
+            $sample = $support['sample_assessment'] ?? [];
+            $health = $support['analytics_health'] ?? [];
+            $lines = array_merge($lines, [
+                '', '## Capacidade de decisão do recorte', '',
+                '- Nível da amostra: **'.strtoupper((string) ($sample['level'] ?? 'unknown')).'**',
+                '- Sustenta decisões: **'.(($sample['supports_decisions'] ?? false) ? 'sim' : 'não').'**',
+                '- Avaliação: '.($sample['message'] ?? 'Não disponível'),
+                '- Analytics Health Score: **'.($health['score'] ?? 0).'/100** ('.($health['status'] ?? 'unknown').')',
+                '', '> O Health Score mede observabilidade e confiabilidade dos dados, não sucesso comercial.',
+                '', '## Decisões priorizadas', '',
+            ]);
+            if (($support['decisions'] ?? []) === []) {
+                $lines[] = 'Nenhuma decisão automática foi recomendada com os dados disponíveis.';
+                $lines[] = '';
+            }
+            foreach ($support['decisions'] ?? [] as $decision) {
+                $lines[] = '### ['.strtoupper((string) $decision['priority']).'] '.$decision['title'];
+                $lines[] = '';
+                $lines[] = '- Decisão: '.$decision['decision'];
+                $lines[] = '- Motivo: '.$decision['reason'];
+                $lines[] = '- Confiança: '.$decision['confidence'];
+                $lines[] = '- Esforço: '.$decision['effort'];
+                $lines[] = '- Métrica de sucesso: `'.$decision['success_metric'].'`';
+                $lines[] = '- Impacto esperado: '.$decision['expected_impact'];
+                $lines[] = '';
+                foreach ($decision['recommended_actions'] as $action) {
+                    $lines[] = '- [ ] '.$action;
+                }
+                $lines[] = '';
+            }
+            $lines = array_merge($lines, ['## Alertas', '']);
+            if (($support['alerts'] ?? []) === []) {
+                $lines[] = 'Nenhum alerta automático relevante foi detectado.';
+                $lines[] = '';
+            }
+            foreach ($support['alerts'] ?? [] as $alert) {
+                $lines[] = '- **'.strtoupper((string) $alert['severity']).'** — '.$alert['title'];
+            }
+            $projection = $support['projections'] ?? [];
+            $lines = array_merge($lines, ['', '## Projeção de ritmo observado', '', '> '.($projection['warning'] ?? ''), '', '| Métrica | Observado | Ritmo diário | Extrapolação 30 dias |', '|---|---:|---:|---:|']);
+            foreach ($projection['metrics'] ?? [] as $metric => $values) {
+                $lines[] = '| '.ucfirst((string) $metric).' | '.($values['observed'] ?? 0).' | '.number_format((float) ($values['daily_run_rate'] ?? 0), 2, ',', '.').' | '.($values['projected_30_days'] ?? 0).' |';
+            }
+            $lines = array_merge($lines, ['', '## Limitações explícitas', '']);
+            foreach ($support['limitations'] ?? [] as $limitation) {
+                $lines[] = '- '.$limitation;
+            }
         }
 
         $lines = array_merge($lines, ['', '## Insights estratégicos automáticos', '']);

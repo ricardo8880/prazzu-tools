@@ -31,6 +31,32 @@ final class ToolAnalyticsTest extends TestCase
         ]);
     }
 
+
+    public function test_repeated_tool_events_in_the_same_session_are_deduplicated(): void
+    {
+        $payload = [
+            'tool' => 'calculadora-margem-markup',
+            'event' => AnalyticsEventName::ToolCalculationStarted->value,
+        ];
+
+        $this->postJson(route('analytics.tools.track'), $payload)->assertNoContent();
+        $this->postJson(route('analytics.tools.track'), $payload)->assertNoContent();
+
+        self::assertSame(1, PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::ToolCalculationStarted->value)
+            ->where('subject_slug', 'calculadora-margem-markup')
+            ->count());
+    }
+
+    public function test_prefetch_requests_do_not_create_page_views_or_tool_opens(): void
+    {
+        $this->withHeader('Purpose', 'prefetch')
+            ->get(route('tools.calculadora-margem-markup.index'))
+            ->assertOk();
+
+        self::assertSame(0, PlatformAnalyticsEvent::query()->count());
+    }
+
     public function test_administrator_can_open_tools_dashboard(): void
     {
         $this->signInAsInternalAdministrator();

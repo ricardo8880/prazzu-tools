@@ -23,11 +23,12 @@ final class AnalyticsReportsTest extends TestCase
 
         $this->withoutMiddleware(EnsureInternalAdministrator::class)
             ->get(route('admin.analytics.reports', ['period' => '7', 'source' => 'google']))
-            ->assertOk()->assertSee('Relatórios do Analytics')->assertSee('page.viewed');
+            ->assertOk()->assertSee('Relatórios do Analytics')->assertSee('Cobertura completa do relatório')->assertSee('Qualidade e completude dos dados')->assertSee('page.viewed');
 
         $this->withoutMiddleware(EnsureInternalAdministrator::class)
             ->get(route('admin.analytics.reports.export', ['period' => '7', 'source' => 'google', 'format' => 'csv']))
-            ->assertOk()->assertHeader('content-type', 'text/csv; charset=UTF-8');
+            ->assertOk()->assertHeader('content-type', 'text/csv; charset=UTF-8')
+            ->assertSee('Event ID')->assertSee('Metadados JSON');
     }
 
     public function test_an_analytics_report_can_be_scheduled(): void

@@ -59,10 +59,23 @@ final readonly class ToolAnalyticsQuery
             'tool' => $tool,
             'metrics' => $this->row($tool, $metric),
             'daily' => $this->daily($period, $slug),
-            'devices' => $this->base($period, $slug)->selectRaw("COALESCE(device_type, 'unknown') as label, COUNT(*) as total")->groupBy('device_type')->orderByDesc('total')->get(),
-            'sources' => $this->base($period, $slug)->selectRaw("COALESCE(source, 'direct') as label, COUNT(*) as total")->groupBy('source')->orderByDesc('total')->limit(10)->get(),
+            'devices' => $this->audienceBreakdown($period, $slug, 'device_type', 'unknown'),
+            'sources' => $this->audienceBreakdown($period, $slug, 'source', 'direct')->take(10),
             'recent_events' => $this->base($period, $slug)->latest('occurred_at')->limit(30)->get(['event_name', 'device_type', 'source', 'occurred_at']),
         ];
+    }
+
+    private function audienceBreakdown(AnalyticsPeriod $period, string $slug, string $column, string $fallback): Collection
+    {
+        $events = $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]);
+
+        return $this->base($period, $slug)
+            ->whereIn('event_name', $events)
+            ->selectRaw("COALESCE($column, ?) as label", [$fallback])
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($events, "COALESCE(subject_slug, '')").' as total', $events)
+            ->groupBy($column)
+            ->orderByDesc('total')
+            ->get();
     }
 
     private function row(array $tool, ?object $metric): object
@@ -86,13 +99,13 @@ final readonly class ToolAnalyticsQuery
     private function metrics(AnalyticsPeriod $period, ?string $slug = null): Collection
     {
         return $this->base($period, $slug)->whereNotNull('subject_slug')->selectRaw('subject_slug as tool_slug')
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]).' as exports', $this->names([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolHistoryViewed]).' as history', $this->names([AnalyticsEventName::ToolHistoryViewed]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]).' as plus', $this->names([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]).' as exports', $this->names([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolHistoryViewed]).' as history', $this->names([AnalyticsEventName::ToolHistoryViewed]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]).' as plus', $this->names([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]))
             ->selectRaw('COUNT(DISTINCT visitor_id) as unique_visitors')
             ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::ToolTimeSpent])).') THEN '.$this->jsonNumber('seconds').' END) as average_time_seconds', $this->names([AnalyticsEventName::ToolTimeSpent]))
             ->groupBy('subject_slug')->get();
@@ -101,9 +114,9 @@ final readonly class ToolAnalyticsQuery
     private function daily(AnalyticsPeriod $period, ?string $slug = null): Collection
     {
         return $this->base($period, $slug)->selectRaw($this->dateExpression().' as day')
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
             ->groupBy('day')->orderBy('day')->get();
     }
 
@@ -117,6 +130,12 @@ final readonly class ToolAnalyticsQuery
     private function names(array $events): array
     {
         return $this->eventNames->expand($events);
+    }
+
+    /** @param list<AnalyticsEventName> $events */
+    private function distinctMetric(array $events): string
+    {
+        return AnalyticsMetricSql::countDistinctCase($this->names($events), "COALESCE(subject_slug, '')");
     }
 
     /** @param list<AnalyticsEventName> $events */

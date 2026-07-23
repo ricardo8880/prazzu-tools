@@ -18,7 +18,7 @@ final class FunnelAnalyticsTest extends TestCase
         $this->signInAsInternalAdministrator();
         $visitor = AnalyticsVisitor::query()->create(['id' => fake()->uuid(), 'first_seen_at' => now(), 'last_seen_at' => now()]);
 
-        foreach (['page.viewed', 'blog.reading.started', 'tool.opened', 'tool.calculation.completed', 'account.created', 'subscription.started'] as $index => $event) {
+        foreach (['page.viewed', 'blog.reading.started', 'tool.opened', 'tool.calculation.completed', 'account.created', 'subscription.created'] as $index => $event) {
             PlatformAnalyticsEvent::query()->create([
                 'event_id' => fake()->uuid(), 'event_name' => $event, 'schema_version' => 1,
                 'channel' => 'platform', 'visitor_id' => $visitor->id, 'metadata' => [],

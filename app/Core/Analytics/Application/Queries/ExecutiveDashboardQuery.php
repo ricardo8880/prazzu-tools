@@ -71,7 +71,7 @@ final class ExecutiveDashboardQuery
 
         $sessions = AnalyticsSession::query()->whereBetween('started_at', [$period->start, $period->end]);
         $sessionCount = (clone $sessions)->count();
-        $pageViews = (clone $events)->whereIn('event_name', $pageViewEvents)->count();
+        $pageViews = $this->logicalEventCount(clone $events, $pageViewEvents, "COALESCE(path, subject_slug, subject_id, '')");
 
         return [
             'visitors' => (clone $events)->whereNotNull('visitor_id')->distinct()->count('visitor_id'),
@@ -80,9 +80,9 @@ final class ExecutiveDashboardQuery
             'page_views' => $pageViews,
             'average_session_seconds' => $this->averageSessionSeconds($sessions),
             'bounce_rate' => $this->bounceRate($period, $sessionCount, $pageViewEvents),
-            'conversions' => (clone $events)->whereIn('event_name', $conversionEvents)->count(),
-            'registrations' => (clone $events)->whereIn('event_name', $registrationEvents)->count(),
-            'subscriptions' => (clone $events)->whereIn('event_name', $subscriptionEvents)->count(),
+            'conversions' => $this->logicalEventCount(clone $events, $conversionEvents, "COALESCE(subject_slug, subject_id, path, '')"),
+            'registrations' => $this->logicalEventCount(clone $events, $registrationEvents),
+            'subscriptions' => $this->logicalEventCount(clone $events, $subscriptionEvents),
             'estimated_revenue_cents' => $this->estimatedRevenueCents($period, $subscriptionEvents),
         ];
     }
@@ -127,8 +127,8 @@ final class ExecutiveDashboardQuery
             ->whereBetween('occurred_at', [$period->start, $period->end])
             ->selectRaw('DATE(occurred_at) as metric_date')
             ->selectRaw('COUNT(DISTINCT visitor_id) as visitors')
-            ->selectRaw('SUM(CASE WHEN event_name IN ('.$this->placeholders($pageViewEvents).') THEN 1 ELSE 0 END) as page_views', $pageViewEvents)
-            ->selectRaw('SUM(CASE WHEN event_name IN ('.$this->placeholders($conversionEvents).') THEN 1 ELSE 0 END) as conversions', $conversionEvents)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($pageViewEvents, "COALESCE(path, subject_slug, subject_id, '')").' as page_views', $pageViewEvents)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($conversionEvents, "COALESCE(subject_slug, subject_id, path, '')").' as conversions', $conversionEvents)
             ->groupBy('metric_date')
             ->get()
             ->keyBy('metric_date');
@@ -172,7 +172,7 @@ final class ExecutiveDashboardQuery
         return $this->eventsIn($period)
             ->whereIn('event_name', $this->eventNames('page_view_events'))
             ->whereNotNull('path')
-            ->selectRaw('path, COUNT(*) as views, COUNT(DISTINCT visitor_id) as visitors')
+            ->selectRaw('path, '.AnalyticsMetricSql::countDistinctCase($this->eventNames('page_view_events'), "COALESCE(path, '')").' as views, COUNT(DISTINCT visitor_id) as visitors', $this->eventNames('page_view_events'))
             ->groupBy('path')
             ->orderByDesc('views')
             ->limit(8)
@@ -245,9 +245,9 @@ final class ExecutiveDashboardQuery
                     ->whereBetween('occurred_at', [$period->start, $period->end])
                     ->whereIn('event_name', $pageViewEvents)
                     ->whereIn('analytics_session_id', $periodSessionIds)
-                    ->selectRaw('analytics_session_id, COUNT(*) as page_views')
+                    ->selectRaw('analytics_session_id, COUNT(DISTINCT path) as page_views')
                     ->groupBy('analytics_session_id')
-                    ->havingRaw('COUNT(*) > 1'),
+                    ->havingRaw('COUNT(DISTINCT path) > 1'),
                 'engaged_sessions'
             )
             ->count();
@@ -278,6 +278,13 @@ final class ExecutiveDashboardQuery
 
                 return 0;
             });
+    }
+
+
+    /** @param list<string> $events */
+    private function logicalEventCount(Builder $query, array $events, string $scope = "''"): int
+    {
+        return (int) ($query->selectRaw(AnalyticsMetricSql::countDistinctCase($events, $scope).' as total', $events)->value('total') ?? 0);
     }
 
     private function eventsIn(AnalyticsPeriod $period): Builder

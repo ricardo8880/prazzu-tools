@@ -49,7 +49,7 @@ final class CampaignAnalyticsQuery
     private function summary(Collection $sessions, Collection $events): array
     {
         $visitors = $sessions->pluck('visitor_id')->filter()->unique()->count();
-        $conversions = $events->whereIn('event_name', $this->conversionEvents())->count();
+        $conversions = $this->actionCount($events, $this->conversionEvents());
 
         return [
             'sessions' => $sessions->count(),
@@ -69,17 +69,17 @@ final class CampaignAnalyticsQuery
             ->map(function (Collection $group, string $label) use ($events, $field): object {
                 $value = $group->first()?->{$field};
                 $related = $events->filter(fn (PlatformAnalyticsEvent $event): bool => $event->{$field} == $value);
-                $conversions = $related->whereIn('event_name', $this->conversionEvents())->count();
+                $conversions = $this->actionCount($related, $this->conversionEvents());
 
                 return (object) [
                     'label' => $label,
                     'sessions' => $group->count(),
                     'visitors' => $group->pluck('visitor_id')->filter()->unique()->count(),
-                    'tool_clicks' => $related->where('event_name', AnalyticsEventName::AcquisitionToolClicked->value)->count(),
-                    'calculations_started' => $related->where('event_name', AnalyticsEventName::ToolCalculationStarted->value)->count(),
-                    'calculations_completed' => $related->where('event_name', AnalyticsEventName::ToolCalculationCompleted->value)->count(),
-                    'accounts' => $related->where('event_name', AnalyticsEventName::AccountCreated->value)->count(),
-                    'subscriptions' => $related->whereIn('event_name', [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value])->count(),
+                    'tool_clicks' => $this->actionCount($related, [AnalyticsEventName::AcquisitionToolClicked->value]),
+                    'calculations_started' => $this->actionCount($related, [AnalyticsEventName::ToolCalculationStarted->value]),
+                    'calculations_completed' => $this->actionCount($related, [AnalyticsEventName::ToolCalculationCompleted->value]),
+                    'accounts' => $this->actionCount($related, [AnalyticsEventName::AccountCreated->value]),
+                    'subscriptions' => $this->actionCount($related, [AnalyticsEventName::SubscriptionCreated->value]),
                     'conversions' => $conversions,
                     'conversion_rate' => $group->isEmpty() ? 0.0 : round(($conversions / $group->count()) * 100, 1),
                 ];
@@ -97,10 +97,10 @@ final class CampaignAnalyticsQuery
 
                 return (object) [
                     'tool' => $tool,
-                    'clicks' => $clicks->count(),
+                    'clicks' => $this->actionCount($clicks, [AnalyticsEventName::AcquisitionToolClicked->value]),
                     'visitors' => $visitorIds->count(),
-                    'calculations_started' => $downstream->where('event_name', AnalyticsEventName::ToolCalculationStarted->value)->count(),
-                    'calculations_completed' => $downstream->where('event_name', AnalyticsEventName::ToolCalculationCompleted->value)->count(),
+                    'calculations_started' => $this->actionCount($downstream, [AnalyticsEventName::ToolCalculationStarted->value]),
+                    'calculations_completed' => $this->actionCount($downstream, [AnalyticsEventName::ToolCalculationCompleted->value]),
                 ];
             })->sortByDesc('clicks')->values()->take(30);
     }
@@ -115,13 +115,13 @@ final class CampaignAnalyticsQuery
         return $views->groupBy(fn (PlatformAnalyticsEvent $event): string => (string) (data_get($event->metadata, 'cta_identifier') ?: data_get($event->metadata, 'cta_label') ?: 'CTA contextual'))
             ->map(function (Collection $group, string $label) use ($clicks): object {
                 $contextIds = $group->pluck('acquisition_context_id')->filter()->unique();
-                $relatedClicks = $clicks->whereIn('acquisition_context_id', $contextIds)->count();
+                $relatedClicks = $this->actionCount($clicks->whereIn('acquisition_context_id', $contextIds), [AnalyticsEventName::AcquisitionCtaClicked->value], 'cta');
 
                 return (object) [
                     'label' => $label,
-                    'views' => $group->count(),
+                    'views' => $this->actionCount($group, [AnalyticsEventName::AcquisitionCtaViewed->value], 'cta'),
                     'clicks' => $relatedClicks,
-                    'ctr' => $group->isEmpty() ? 0.0 : round(($relatedClicks / $group->count()) * 100, 1),
+                    'ctr' => ($views = $this->actionCount($group, [AnalyticsEventName::AcquisitionCtaViewed->value], 'cta')) === 0 ? 0.0 : round(($relatedClicks / $views) * 100, 1),
                 ];
             })->sortByDesc('clicks')->values()->take(30);
     }
@@ -153,7 +153,7 @@ final class CampaignAnalyticsQuery
             ['label' => 'Cálculo iniciado', 'event' => AnalyticsEventName::ToolCalculationStarted->value],
             ['label' => 'Cálculo concluído', 'event' => AnalyticsEventName::ToolCalculationCompleted->value],
             ['label' => 'Conta criada', 'event' => AnalyticsEventName::AccountCreated->value],
-            ['label' => 'Assinatura', 'event' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
+            ['label' => 'Assinatura', 'event' => [AnalyticsEventName::SubscriptionCreated->value]],
         ];
 
         return $sessions->groupBy(fn (AnalyticsSession $session): string => (string) ($session->acquisition_campaign_identifier ?: 'Sem campanha'))
@@ -190,7 +190,7 @@ final class CampaignAnalyticsQuery
             ->map(function (Collection $group, string $campaign) use ($events, $investments, $period, $revenueKeys): object {
                 $contextIds = $group->pluck('acquisition_context_id')->filter()->map(static fn ($id): int => (int) $id)->unique();
                 $related = $events->whereIn('acquisition_context_id', $contextIds);
-                $subscriptions = $related->whereIn('event_name', [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]);
+                $subscriptions = $this->uniqueActions($related, [AnalyticsEventName::SubscriptionCreated->value]);
                 $monthlyCost = $contextIds->sum(static fn (int $id): int => (int) data_get($investments, $id.'.monthly_investment_cents', 0));
                 $cost = (int) round($monthlyCost * ($period->days() / 30));
                 $revenue = $subscriptions->sum(function (PlatformAnalyticsEvent $event) use ($revenueKeys): int {
@@ -202,7 +202,7 @@ final class CampaignAnalyticsQuery
                     }
                     return 0;
                 });
-                $accounts = $related->where('event_name', AnalyticsEventName::AccountCreated->value)->count();
+                $accounts = $this->actionCount($related, [AnalyticsEventName::AccountCreated->value]);
                 $subscriptionCount = $subscriptions->count();
 
                 return (object) [
@@ -263,6 +263,25 @@ final class CampaignAnalyticsQuery
                     'retention_30d' => $mature30->isEmpty() ? null : round(($retained30 / $mature30->count()) * 100, 1),
                 ];
             })->sortByDesc(fn (object $row): float => (float) ($row->retention_30d ?? $row->retention_7d ?? -1))->values();
+    }
+
+    /** @param Collection<int, PlatformAnalyticsEvent> $events @param list<string> $eventNames */
+    private function actionCount(Collection $events, array $eventNames, string $scope = 'subject'): int
+    {
+        return $this->uniqueActions($events, $eventNames, $scope)->count();
+    }
+
+    /** @param Collection<int, PlatformAnalyticsEvent> $events @param list<string> $eventNames */
+    private function uniqueActions(Collection $events, array $eventNames, string $scope = 'subject'): Collection
+    {
+        return $events->whereIn('event_name', $eventNames)->unique(function (PlatformAnalyticsEvent $event) use ($scope): string {
+            $identity = $event->analytics_session_id ?: $event->visitor_id ?: ($event->user_id ? 'user-'.$event->user_id : 'event-'.$event->event_id);
+            $subject = $scope === 'cta'
+                ? (string) (data_get($event->metadata, 'cta_identifier') ?: data_get($event->metadata, 'cta_label') ?: $event->path)
+                : (string) ($event->subject_slug ?: $event->subject_id ?: $event->path);
+
+            return $identity.'|'.$subject;
+        })->values();
     }
 
     /** @return list<string> */

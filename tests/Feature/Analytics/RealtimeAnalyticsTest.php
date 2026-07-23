@@ -49,6 +49,31 @@ final class RealtimeAnalyticsTest extends TestCase
             ->assertJsonPath('tools.0.label', 'simples-nacional');
     }
 
+    public function test_realtime_metrics_deduplicate_equivalent_actions_and_do_not_count_subscription_intent_as_conversion(): void
+    {
+        $this->signInAsInternalAdministrator();
+        $visitorId = (string) Str::uuid();
+        $sessionId = (string) Str::uuid();
+        AnalyticsVisitor::query()->create(['id' => $visitorId, 'first_seen_at' => now(), 'last_seen_at' => now()]);
+        AnalyticsSession::query()->create([
+            'id' => $sessionId, 'visitor_id' => $visitorId, 'started_at' => now()->subMinute(),
+            'last_activity_at' => now(), 'landing_path' => '/ferramentas/simples-nacional',
+        ]);
+
+        foreach (['tool.calculation.completed', 'tool.calculation.completed', 'subscription.started', 'subscription.created', 'subscription.created'] as $eventName) {
+            PlatformAnalyticsEvent::query()->create([
+                'event_id' => (string) Str::uuid(), 'event_name' => $eventName, 'schema_version' => 1,
+                'channel' => 'tool', 'subject_slug' => 'simples-nacional', 'visitor_id' => $visitorId,
+                'analytics_session_id' => $sessionId, 'path' => '/ferramentas/simples-nacional',
+                'occurred_at' => now(), 'metadata' => [],
+            ]);
+        }
+
+        $this->getJson(route('admin.analytics.realtime.data'))
+            ->assertOk()
+            ->assertJsonPath('summary.conversions_30m', 1);
+    }
+
     public function test_tool_presence_appears_on_heartbeat_and_disappears_on_leave(): void
     {
         $presenceId = (string) Str::uuid();

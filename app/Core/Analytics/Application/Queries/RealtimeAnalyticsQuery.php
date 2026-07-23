@@ -41,9 +41,9 @@ final class RealtimeAnalyticsQuery
             'open_pages' => (clone $onlineSessions)->whereNotNull('landing_path')->distinct()->count('landing_path'),
             'open_tools' => (clone $activeToolPresences)->count(),
             'events_30m' => (clone $recentEvents)->count(),
-            'conversions_30m' => $this->conversions(clone $recentEvents)->count(),
-            'registrations_30m' => (clone $recentEvents)->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::AccountCreated]))->count(),
-            'exports_30m' => (clone $recentEvents)->whereIn('event_name', [...$this->eventNames->expand([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]), 'file.downloaded'])->count(),
+            'conversions_30m' => $this->logicalCount(clone $recentEvents, $this->conversionEvents()),
+            'registrations_30m' => $this->logicalCount(clone $recentEvents, $this->eventNames->expand([AnalyticsEventName::AccountCreated])),
+            'exports_30m' => $this->logicalCount(clone $recentEvents, [...$this->eventNames->expand([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]), 'file.downloaded'], "COALESCE(subject_slug, path, '')"),
         ];
 
         return [
@@ -61,18 +61,26 @@ final class RealtimeAnalyticsQuery
         ];
     }
 
-    private function conversions(Builder $events): Builder
+    /** @return list<string> */
+    private function conversionEvents(): array
     {
-        return $events->whereIn('event_name', [
+        return [
             'conversion.completed',
             ...$this->eventNames->expand([
                 AnalyticsEventName::AccountCreated,
-                AnalyticsEventName::SubscriptionStarted,
                 AnalyticsEventName::SubscriptionCreated,
                 AnalyticsEventName::ToolCalculationCompleted,
                 AnalyticsEventName::BusinessDocumentValidatorBatchProcessed,
             ]),
-        ]);
+        ];
+    }
+
+    /** @param list<string> $events */
+    private function logicalCount(Builder $query, array $events, string $scope = "''"): int
+    {
+        return (int) ($query
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($events, $scope).' as aggregate', $events)
+            ->value('aggregate') ?? 0);
     }
 
     private function onlinePages(Builder $sessions): Collection

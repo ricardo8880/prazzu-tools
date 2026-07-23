@@ -34,6 +34,31 @@ final class BlogAnalyticsTest extends TestCase
         ]);
     }
 
+
+    public function test_repeated_blog_engagement_event_is_deduplicated_per_session_and_milestone(): void
+    {
+        $post = BlogPost::query()->create([
+            'title' => 'Artigo sem duplicidade', 'slug' => 'artigo-sem-duplicidade', 'excerpt' => 'Resumo',
+            'content' => '<p>Conteúdo</p>', 'category' => 'Fiscal',
+            'status' => BlogPostStatus::Published->value, 'published_at' => now(),
+            'should_index' => true,
+        ]);
+        $payload = [
+            'event' => AnalyticsEventName::BlogScrollMeasured->value,
+            'post_id' => $post->getKey(),
+            'post_slug' => $post->slug,
+            'percentage' => 75,
+        ];
+
+        $this->postJson(route('blog.analytics'), $payload)->assertOk();
+        $this->postJson(route('blog.analytics'), $payload)->assertOk();
+
+        self::assertSame(1, PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::BlogScrollMeasured->value)
+            ->where('subject_id', $post->getKey())
+            ->count());
+    }
+
     public function test_blog_dashboard_has_overview_and_individual_post_panel(): void
     {
         $post = BlogPost::query()->create([

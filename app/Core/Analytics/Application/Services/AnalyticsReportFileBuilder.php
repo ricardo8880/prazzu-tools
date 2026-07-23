@@ -22,7 +22,15 @@ final class AnalyticsReportFileBuilder
     /** @return list<string> */
     public function headers(): array
     {
-        return ['Data/hora', 'Evento', 'Canal', 'Objeto', 'Origem', 'Dispositivo', 'Sistema', 'Estado', 'Cidade', 'Usuário', 'Página'];
+        return [
+            'ID interno', 'Event ID', 'Data/hora', 'Evento', 'Versão do schema', 'Canal',
+            'Tipo do objeto', 'ID do objeto', 'Slug do objeto', 'Visitor ID', 'Analytics Session ID',
+            'User ID', 'Session ID Laravel', 'URL', 'Página', 'Referrer', 'Origem', 'Mídia', 'Campanha',
+            'Contexto de aquisição', 'Palavra-chave de aquisição', 'Identificador da campanha',
+            'Ferramenta principal da aquisição', 'UTM Source', 'UTM Medium', 'UTM Campaign', 'UTM Term',
+            'UTM Content', 'Dispositivo', 'Navegador', 'Sistema operacional', 'Idioma', 'Fuso horário',
+            'Resolução', 'País', 'Estado/região', 'Cidade', 'IP hash', 'User agent', 'Metadados JSON',
+        ];
     }
 
     /** @param Collection<int, object> $rows */
@@ -109,9 +117,18 @@ final class AnalyticsReportFileBuilder
     private function values(object $row): array
     {
         return [
-            $row->occurred_at?->format('d/m/Y H:i:s') ?? '', $row->event_name ?? '', $row->channel ?? '',
-            $row->subject_slug ?? '', $row->source ?? '', $row->device_type ?? '', $row->operating_system ?? '',
-            $row->region ?? '', $row->city ?? '', $row->user_id ?? '', $row->path ?? '',
+            $row->id ?? '', $row->event_id ?? '', $row->occurred_at?->format('d/m/Y H:i:s') ?? '',
+            $row->event_name ?? '', $row->schema_version ?? '', $row->channel ?? '',
+            $row->subject_type ?? '', $row->subject_id ?? '', $row->subject_slug ?? '',
+            $row->visitor_id ?? '', $row->analytics_session_id ?? '', $row->user_id ?? '', $row->session_id ?? '',
+            $row->url ?? '', $row->path ?? '', $row->referrer ?? '', $row->source ?? '', $row->medium ?? '',
+            $row->campaign ?? '', $row->acquisition_context_id ?? '', $row->acquisition_keyword ?? '',
+            $row->acquisition_campaign_identifier ?? '', $row->acquisition_primary_tool_slug ?? '',
+            $row->utm_source ?? '', $row->utm_medium ?? '', $row->utm_campaign ?? '', $row->utm_term ?? '',
+            $row->utm_content ?? '', $row->device_type ?? '', $row->browser ?? '', $row->operating_system ?? '',
+            $row->language ?? '', $row->timezone ?? '', $row->screen_resolution ?? '', $row->country_code ?? '',
+            $row->region ?? '', $row->city ?? '', $row->ip_hash ?? '', $row->user_agent ?? '',
+            json_encode($row->metadata ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         ];
     }
 

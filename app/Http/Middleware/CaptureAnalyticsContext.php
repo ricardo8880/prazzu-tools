@@ -31,8 +31,8 @@ final readonly class CaptureAnalyticsContext
         $request->attributes->set('analytics.session_id', $context->analyticsSessionId);
         $response = $next($request);
 
-        if ($response->getStatusCode() < 400) {
-            if (config('analytics.capture_page_views', true) && $request->isMethod('GET')) {
+        if ($response->getStatusCode() < 400 && ! $this->isPrefetchRequest($request)) {
+            if (config('analytics.capture_page_views', true) && $this->isPageViewRequest($request)) {
                 $this->analytics->track(AnalyticsEvent::make(AnalyticsEventName::PageViewed->value, 'platform'), $request);
             }
             $this->captureToolEvent($request);
@@ -43,6 +43,28 @@ final readonly class CaptureAnalyticsContext
         }
 
         return $response;
+    }
+
+    private function isPageViewRequest(Request $request): bool
+    {
+        if (! $request->isMethod('GET') || $request->expectsJson() || $request->ajax()) {
+            return false;
+        }
+
+        if ($this->isPrefetchRequest($request)) {
+            return false;
+        }
+
+        $destination = strtolower((string) $request->header('Sec-Fetch-Dest'));
+
+        return $destination === '' || $destination === 'document';
+    }
+
+
+    private function isPrefetchRequest(Request $request): bool
+    {
+        return strtolower((string) $request->header('Purpose')) === 'prefetch'
+            || strtolower((string) $request->header('Sec-Purpose')) === 'prefetch';
     }
 
     private function captureToolEvent(Request $request): void

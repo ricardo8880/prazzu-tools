@@ -29,6 +29,7 @@ final class AnalyticsReportQuery
             'rows' => (clone $current)->latest('occurred_at')->limit($limit)->get(),
             'total_rows' => (clone $current)->count(),
             'dimensions' => $this->dimensions(),
+            'complete_report' => $this->strategic($period, $filters),
         ];
     }
 
@@ -46,8 +47,82 @@ final class AnalyticsReportQuery
             'channel_breakdown' => $this->breakdown(clone $current, 'channel', $conversionEvents),
             'source_breakdown' => $this->breakdown(clone $current, 'source', $conversionEvents),
             'device_breakdown' => $this->breakdown(clone $current, 'device_type', $conversionEvents),
+            'medium_breakdown' => $this->breakdown(clone $current, 'medium', $conversionEvents),
+            'campaign_breakdown' => $this->breakdown(clone $current, 'campaign', $conversionEvents),
+            'browser_breakdown' => $this->breakdown(clone $current, 'browser', $conversionEvents),
+            'os_breakdown' => $this->breakdown(clone $current, 'operating_system', $conversionEvents),
+            'language_breakdown' => $this->breakdown(clone $current, 'language', $conversionEvents),
+            'country_breakdown' => $this->breakdown(clone $current, 'country_code', $conversionEvents),
+            'region_breakdown' => $this->breakdown(clone $current, 'region', $conversionEvents),
+            'city_breakdown' => $this->breakdown(clone $current, 'city', $conversionEvents),
+            'path_breakdown' => $this->breakdown(clone $current, 'path', $conversionEvents),
+            'referrer_breakdown' => $this->breakdown(clone $current, 'referrer', $conversionEvents),
+            'subject_type_breakdown' => $this->breakdown(clone $current, 'subject_type', $conversionEvents),
+            'acquisition_context_breakdown' => $this->breakdown(clone $current, 'acquisition_context_id', $conversionEvents),
+            'daily_series' => $this->timeSeries(clone $current, 'date'),
+            'hourly_series' => $this->timeSeries(clone $current, 'hour'),
+            'data_quality' => $this->dataQuality(clone $current),
             'tool_performance' => $this->toolPerformance($period, $filters),
             'funnel' => $this->funnel($period, $filters),
+        ];
+    }
+
+    private function timeSeries(Builder $query, string $grain): array
+    {
+        $driver = DB::connection()->getDriverName();
+        $bucket = match ([$driver, $grain]) {
+            ['sqlite', 'hour'] => "strftime('%H', platform_analytics_events.occurred_at)",
+            ['sqlite', 'date'] => "date(platform_analytics_events.occurred_at)",
+            default => $grain === 'hour'
+                ? 'HOUR(platform_analytics_events.occurred_at)'
+                : 'DATE(platform_analytics_events.occurred_at)',
+        };
+
+        return $query->selectRaw($bucket.' as bucket')
+            ->selectRaw('COUNT(*) as events')
+            ->selectRaw('COUNT(DISTINCT platform_analytics_events.visitor_id) as visitors')
+            ->selectRaw('COUNT(DISTINCT platform_analytics_events.analytics_session_id) as sessions')
+            ->groupByRaw($bucket)
+            ->orderBy('bucket')
+            ->get()
+            ->map(fn ($row): array => [
+                'bucket' => (string) $row->bucket,
+                'events' => (int) $row->events,
+                'visitors' => (int) $row->visitors,
+                'sessions' => (int) $row->sessions,
+            ])->all();
+    }
+
+    private function dataQuality(Builder $query): array
+    {
+        $total = (clone $query)->count();
+        $fields = [
+            'visitor_id', 'analytics_session_id', 'channel', 'source', 'path', 'device_type',
+            'browser', 'operating_system', 'country_code', 'region', 'city', 'language',
+        ];
+        $coverage = [];
+        foreach ($fields as $field) {
+            $present = (clone $query)->whereNotNull("platform_analytics_events.$field")
+                ->where("platform_analytics_events.$field", '!=', '')
+                ->count();
+            $coverage[$field] = [
+                'present' => $present,
+                'missing' => max(0, $total - $present),
+                'coverage_rate' => $this->rate($present, $total),
+            ];
+        }
+
+        return [
+            'total_events' => $total,
+            'identified_events' => (clone $query)->where(function (Builder $q): void {
+                $q->whereNotNull('platform_analytics_events.visitor_id')
+                    ->orWhereNotNull('platform_analytics_events.analytics_session_id')
+                    ->orWhereNotNull('platform_analytics_events.user_id');
+            })->count(),
+            'anonymous_events' => (clone $query)->whereNull('platform_analytics_events.visitor_id')
+                ->whereNull('platform_analytics_events.analytics_session_id')
+                ->whereNull('platform_analytics_events.user_id')->count(),
+            'fields' => $coverage,
         ];
     }
 
@@ -61,7 +136,7 @@ final class AnalyticsReportQuery
         return $query->selectRaw("COALESCE(platform_analytics_events.$column, '') as name")
             ->selectRaw('COUNT(*) as events')
             ->selectRaw('COUNT(DISTINCT platform_analytics_events.visitor_id) as visitors')
-            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.collect($conversionEvents)->map(fn () => '?')->implode(',').') THEN 1 ELSE 0 END) as conversions', $conversionEvents)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($conversionEvents, "COALESCE(platform_analytics_events.$column, '')").' as conversions', $conversionEvents)
             ->groupBy("platform_analytics_events.$column")
             ->orderByDesc('events')
             ->limit(100)
@@ -98,10 +173,10 @@ final class AnalyticsReportQuery
         return $query->where('platform_analytics_events.subject_type', 'tool')
             ->whereNotNull('platform_analytics_events.subject_slug')
             ->selectRaw('platform_analytics_events.subject_slug as name')
-            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($opened).') THEN 1 ELSE 0 END) as opened', $opened)
-            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($started).') THEN 1 ELSE 0 END) as started', $started)
-            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($completed).') THEN 1 ELSE 0 END) as completed', $completed)
-            ->selectRaw('SUM(CASE WHEN platform_analytics_events.event_name IN ('.$this->placeholders($exported).') THEN 1 ELSE 0 END) as exported', $exported)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($opened, "COALESCE(platform_analytics_events.subject_slug, '')").' as opened', $opened)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($started, "COALESCE(platform_analytics_events.subject_slug, '')").' as started', $started)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($completed, "COALESCE(platform_analytics_events.subject_slug, '')").' as completed', $completed)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($exported, "COALESCE(platform_analytics_events.subject_slug, '')").' as exported', $exported)
             ->groupBy('platform_analytics_events.subject_slug')
             ->get()->map(function ($row): array {
                 $opened = (int) $row->opened;
@@ -155,10 +230,18 @@ final class AnalyticsReportQuery
 
         $result = [];
         foreach ($events as $key => $names) {
-            $result[$key] = (clone $query)->whereIn('platform_analytics_events.event_name', $names)->count();
+            $result[$key] = $this->logicalCount(clone $query, $names, "COALESCE(platform_analytics_events.subject_slug, '')");
         }
 
         return $result;
+    }
+
+    /** @param list<string> $events */
+    private function logicalCount(Builder $query, array $events, string $scope = "''"): int
+    {
+        return (int) ($query
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($events, $scope).' as aggregate', $events)
+            ->value('aggregate') ?? 0);
     }
 
     /** @param list<string> $values */
@@ -230,7 +313,7 @@ final class AnalyticsReportQuery
             'visitors' => (clone $query)->whereNotNull('platform_analytics_events.visitor_id')->distinct()->count('platform_analytics_events.visitor_id'),
             'sessions' => (clone $query)->whereNotNull('platform_analytics_events.analytics_session_id')->distinct()->count('platform_analytics_events.analytics_session_id'),
             'users' => (clone $query)->whereNotNull('platform_analytics_events.user_id')->distinct()->count('platform_analytics_events.user_id'),
-            'conversions' => (clone $query)->whereIn('platform_analytics_events.event_name', $this->eventNames->expand(config('analytics.dashboard.conversion_events', [])))->count(),
+            'conversions' => $this->logicalCount(clone $query, $this->eventNames->expand(config('analytics.dashboard.conversion_events', []))),
         ];
     }
 

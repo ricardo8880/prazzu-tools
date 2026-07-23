@@ -38,7 +38,7 @@ final class AcquisitionAnalyticsQuery
     {
         $sessions = $this->sessionsIn($period);
         $sessionCount = (clone $sessions)->count();
-        $conversions = $this->eventsIn($period)->whereIn('event_name', $this->events('conversion_events'))->count();
+        $conversions = $this->logicalCount($this->eventsIn($period), $this->events('conversion_events'));
 
         return [
             'sessions' => $sessionCount,
@@ -89,8 +89,8 @@ final class AcquisitionAnalyticsQuery
             ->map(function (object $row) use ($period): object {
                 $conversions = $this->eventsIn($period)
                     ->where('campaign', $row->campaign)
-                    ->whereIn('event_name', $this->events('conversion_events'))
-                    ->count();
+                    ->whereIn('event_name', $this->events('conversion_events'));
+                $conversions = $this->logicalCount($conversions, $this->events('conversion_events'));
                 $row->conversions = $conversions;
                 $row->conversion_rate = (int) $row->sessions === 0 ? 0.0 : round(($conversions / (int) $row->sessions) * 100, 1);
 
@@ -127,7 +127,7 @@ final class AcquisitionAnalyticsQuery
             ->whereIn('event_name', $eventNames)
             ->selectRaw("COALESCE(NULLIF(source, ''), 'unknown') as source")
             ->selectRaw("COALESCE(NULLIF(medium, ''), 'unknown') as medium")
-            ->selectRaw('COUNT(*) as total, COUNT(DISTINCT visitor_id) as visitors')
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($eventNames, "COALESCE(subject_slug, subject_id, path, '')").' as total, COUNT(DISTINCT visitor_id) as visitors', $eventNames)
             ->groupBy('source', 'medium')
             ->orderByDesc('total')
             ->limit(15)
@@ -169,12 +169,19 @@ final class AcquisitionAnalyticsQuery
         $value = $row->{$field};
         $conversions = $this->eventsIn($period)
             ->where($field, $value === 'unknown' ? null : $value)
-            ->whereIn('event_name', $this->events('conversion_events'))
-            ->count();
+            ->whereIn('event_name', $this->events('conversion_events'));
+        $conversions = $this->logicalCount($conversions, $this->events('conversion_events'));
         $row->conversions = $conversions;
         $row->conversion_rate = (int) $row->sessions === 0 ? 0.0 : round(($conversions / (int) $row->sessions) * 100, 1);
 
         return $row;
+    }
+
+
+    /** @param list<string> $events */
+    private function logicalCount(Builder $query, array $events): int
+    {
+        return (int) ($query->selectRaw(AnalyticsMetricSql::countDistinctCase($events, "COALESCE(subject_slug, subject_id, path, '')").' as total', $events)->value('total') ?? 0);
     }
 
     private function sessionsIn(AnalyticsPeriod $period): Builder

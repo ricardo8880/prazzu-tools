@@ -2,6 +2,7 @@
 
 namespace App\Core\Analytics\Application\Services;
 
+use App\Core\Analytics\Application\Queries\AnalyticsMetricSql;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
@@ -42,8 +43,8 @@ final class AnalyticsInsightGenerator
     private function traffic(AnalyticsPeriod $current, AnalyticsPeriod $previous): Collection
     {
         $events = $this->eventNames->expand(config('analytics.dashboard.page_view_events', [AnalyticsEventName::PageViewed->value]));
-        $now = $this->base($current)->whereIn('event_name', $events)->count();
-        $before = $this->base($previous)->whereIn('event_name', $events)->count();
+        $now = $this->logicalCount($this->base($current), $events, "COALESCE(path, '')");
+        $before = $this->logicalCount($this->base($previous), $events, "COALESCE(path, '')");
         if ($before < (int) config('analytics.insights.minimum_baseline', 10)) {
             return collect();
         }
@@ -65,8 +66,9 @@ final class AnalyticsInsightGenerator
     private function sources(AnalyticsPeriod $current, AnalyticsPeriod $previous): Collection
     {
         $ai = ['chatgpt', 'gemini', 'claude', 'perplexity', 'copilot', 'grok', 'deepseek', 'mistral'];
-        $now = $this->base($current)->whereIn('source', $ai)->count();
-        $before = $this->base($previous)->whereIn('source', $ai)->count();
+        $pageViews = $this->eventNames->expand(config('analytics.dashboard.page_view_events', [AnalyticsEventName::PageViewed->value]));
+        $now = $this->logicalCount($this->base($current)->whereIn('source', $ai), $pageViews, "COALESCE(path, '')");
+        $before = $this->logicalCount($this->base($previous)->whereIn('source', $ai), $pageViews, "COALESCE(path, '')");
         if ($before < 3 || $now <= $before) {
             return collect();
         }
@@ -77,9 +79,9 @@ final class AnalyticsInsightGenerator
 
         return collect([[
             'type' => 'opportunity', 'severity' => 'info', 'title' => 'Acessos vindos de IA estão crescendo',
-            'message' => sprintf('O tráfego de ferramentas de IA cresceu %.1f%%, de %d para %d eventos.', $change, $before, $now),
+            'message' => sprintf('O tráfego de ferramentas de IA cresceu %.1f%%, de %d para %d visualizações.', $change, $before, $now),
             'recommendation' => 'Fortaleça respostas diretas, dados estruturados e autoridade dos conteúdos mais citados por assistentes de IA.',
-            'subject_type' => 'channel', 'subject_slug' => 'ai', 'metric_name' => 'ai_events', 'current_value' => $now, 'previous_value' => $before, 'change_percent' => $change,
+            'subject_type' => 'channel', 'subject_slug' => 'ai', 'metric_name' => 'ai_page_views', 'current_value' => $now, 'previous_value' => $before, 'change_percent' => $change,
         ]]);
     }
 
@@ -111,10 +113,15 @@ final class AnalyticsInsightGenerator
 
     private function content(AnalyticsPeriod $period): Collection
     {
-        $views = $this->base($period)->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::BlogPostViewed, AnalyticsEventName::PageViewed]))->where('channel', 'blog')->whereNotNull('subject_slug')
-            ->selectRaw('subject_slug as slug, COUNT(*) as views')->groupBy('subject_slug')->get()->keyBy('slug');
+        $viewEvents = $this->eventNames->expand([AnalyticsEventName::BlogPostViewed]);
+        $views = $this->base($period)->whereIn('event_name', $viewEvents)->where('channel', 'blog')->whereNotNull('subject_slug')
+            ->selectRaw('subject_slug as slug')
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($viewEvents, "COALESCE(subject_slug, '')").' as views', $viewEvents)
+            ->groupBy('subject_slug')->get()->keyBy('slug');
         $clicks = $this->base($period)->whereIn('event_name', $this->eventNames->acceptedNamesFor(AnalyticsEventName::BlogToolClicked))->whereNotNull('subject_slug')
-            ->selectRaw('subject_slug as slug, COUNT(*) as clicks')->groupBy('subject_slug')->pluck('clicks', 'slug');
+            ->selectRaw('subject_slug as slug')
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($this->eventNames->acceptedNamesFor(AnalyticsEventName::BlogToolClicked), "COALESCE(subject_slug, '')").' as clicks', $this->eventNames->acceptedNamesFor(AnalyticsEventName::BlogToolClicked))
+            ->groupBy('subject_slug')->pluck('clicks', 'slug');
 
         return $views->filter(fn (object $r) => $r->views >= 20 && ((int) ($clicks[$r->slug] ?? 0) / max(1, $r->views) * 100) < 2)
             ->take(10)->map(fn (object $r) => [
@@ -134,9 +141,17 @@ final class AnalyticsInsightGenerator
         ]);
 
         return $this->base($period)->where('channel', 'tool')->whereNotNull('subject_slug')->selectRaw('subject_slug as slug')
-            ->selectRaw('SUM(CASE WHEN event_name IN ('.$this->placeholders($starts).') THEN 1 ELSE 0 END) as starts', $starts)
-            ->selectRaw('SUM(CASE WHEN event_name IN ('.$this->placeholders($completions).') THEN 1 ELSE 0 END) as completions', $completions)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($starts, "COALESCE(subject_slug, '')").' as starts', $starts)
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($completions, "COALESCE(subject_slug, '')").' as completions', $completions)
             ->groupBy('subject_slug')->get();
+    }
+
+    /** @param list<string> $events */
+    private function logicalCount(Builder $query, array $events, string $scope = "''"): int
+    {
+        return (int) ($query
+            ->selectRaw(AnalyticsMetricSql::countDistinctCase($events, $scope).' as aggregate', $events)
+            ->value('aggregate') ?? 0);
     }
 
     /** @param list<string> $values */

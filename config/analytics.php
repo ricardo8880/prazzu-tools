@@ -15,6 +15,50 @@ return [
     ],
     'retention_days' => (int) env('ANALYTICS_RETENTION_DAYS', 730),
 
+    'deduplication' => [
+        'enabled' => env('ANALYTICS_DEDUPLICATION_ENABLED', true),
+        'default_window_seconds' => (int) env('ANALYTICS_DEDUPLICATION_WINDOW_SECONDS', 5),
+        'event_windows' => [
+            AnalyticsEventName::PageViewed->value => 10,
+            AnalyticsEventName::BlogPostViewed->value => 10,
+            AnalyticsEventName::BlogReadingStarted->value => 30,
+            AnalyticsEventName::BlogReadingCompleted->value => 30,
+            AnalyticsEventName::BlogReadingAbandoned->value => 30,
+            AnalyticsEventName::BlogScrollMeasured->value => 30,
+            AnalyticsEventName::ToolOpened->value => 10,
+            AnalyticsEventName::ToolCalculationStarted->value => 5,
+            AnalyticsEventName::ToolCalculationCompleted->value => 5,
+            AnalyticsEventName::ToolResultExported->value => 5,
+            'audience.context_captured' => 300,
+        ],
+    ],
+
+    'history_repair' => [
+        // Deliberately conservative: only events that should be unique inside
+        // the same collection window are eligible for historical removal.
+        'event_windows' => [
+            AnalyticsEventName::PageViewed->value => 10,
+            AnalyticsEventName::BlogPostViewed->value => 10,
+            AnalyticsEventName::BlogReadingStarted->value => 30,
+            AnalyticsEventName::BlogReadingCompleted->value => 30,
+            AnalyticsEventName::BlogReadingAbandoned->value => 30,
+            AnalyticsEventName::BlogScrollMeasured->value => 30,
+            AnalyticsEventName::ToolOpened->value => 10,
+            AnalyticsEventName::ToolCalculationStarted->value => 5,
+            AnalyticsEventName::ToolCalculationCompleted->value => 5,
+            AnalyticsEventName::ToolResultExported->value => 5,
+            AnalyticsEventName::AccountCreated->value => 60,
+            AnalyticsEventName::SubscriptionCreated->value => 60,
+            AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value => 5,
+            AnalyticsEventName::BusinessDocumentValidatorBatchExported->value => 5,
+        ],
+        'identity_metadata_keys' => [
+            'percentage', 'tool_slug', 'placement', 'position', 'destination',
+            'method', 'file', 'calculation_id', 'result_id', 'batch_id',
+            'subscription_id', 'account_id',
+        ],
+    ],
+
     'performance' => [
         'dashboard_cache_seconds' => (int) env('ANALYTICS_DASHBOARD_CACHE_SECONDS', 60),
         'prune_chunk_size' => (int) env('ANALYTICS_PRUNE_CHUNK_SIZE', 1000),
@@ -30,15 +74,15 @@ return [
     ],
 
     'dashboard' => [
-        'page_view_events' => [AnalyticsEventName::PageViewed->value, AnalyticsEventName::BlogPostViewed->value],
+        'page_view_events' => [AnalyticsEventName::PageViewed->value],
         'conversion_events' => [
             AnalyticsEventName::AccountCreated->value,
-            AnalyticsEventName::SubscriptionStarted->value,
+            AnalyticsEventName::SubscriptionCreated->value,
             AnalyticsEventName::ToolCalculationCompleted->value,
             AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value,
         ],
         'registration_events' => [AnalyticsEventName::AccountCreated->value],
-        'subscription_events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value],
+        'subscription_events' => [AnalyticsEventName::SubscriptionCreated->value],
         'export_events' => [AnalyticsEventName::ToolResultExported->value, AnalyticsEventName::BusinessDocumentValidatorBatchExported->value],
         'revenue_metadata_keys' => ['revenue_cents', 'amount_cents', 'value_cents'],
     ],
@@ -79,7 +123,7 @@ return [
             'tool' => ['label' => 'Abriu ferramenta', 'events' => [AnalyticsEventName::ToolOpened->value, AnalyticsEventName::BlogToolClicked->value]],
             'result' => ['label' => 'Concluiu resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
             'registration' => ['label' => 'Criou conta', 'events' => [AnalyticsEventName::AccountCreated->value]],
-            'subscription' => ['label' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
+            'subscription' => ['label' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionCreated->value]],
         ],
     ],
 
@@ -95,7 +139,7 @@ return [
                     ['name' => 'Abriu ferramenta', 'events' => [AnalyticsEventName::ToolOpened->value, AnalyticsEventName::BlogToolClicked->value]],
                     ['name' => 'Concluiu resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
                     ['name' => 'Criou conta', 'events' => [AnalyticsEventName::AccountCreated->value]],
-                    ['name' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
+                    ['name' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionCreated->value]],
                 ],
             ],
             'tool_conversion' => [
@@ -107,7 +151,7 @@ return [
                     ['name' => 'Iniciou cálculo', 'events' => [AnalyticsEventName::ToolCalculationStarted->value]],
                     ['name' => 'Concluiu cálculo', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
                     ['name' => 'Exportou resultado', 'events' => [AnalyticsEventName::ToolResultExported->value, AnalyticsEventName::BusinessDocumentValidatorBatchExported->value]],
-                    ['name' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionStarted->value, AnalyticsEventName::SubscriptionCreated->value]],
+                    ['name' => 'Assinou Plus', 'events' => [AnalyticsEventName::SubscriptionCreated->value]],
                 ],
             ],
             'blog_to_tool' => [

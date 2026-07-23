@@ -24,7 +24,7 @@ final class BlogAnalyticsQuery
 
         return [
             'period' => $period,
-            'totals' => $this->totals($rows),
+            'totals' => $this->totals($rows, $period),
             'posts' => $rows->sortByDesc('views')->values(),
             'rankings' => [
                 'most_read' => $rows->sortByDesc('views')->take(10)->values(),
@@ -68,18 +68,18 @@ final class BlogAnalyticsQuery
         $query = $this->events($period, $postId)
             ->whereNotNull('subject_id')
             ->selectRaw('CAST(subject_id AS INTEGER) as post_id')
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'visitor_id').' as unique_visitors', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'analytics_session_id').' as sessions', $this->names([AnalyticsEventName::BlogPostViewed]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogReadingStarted]).' as reading_starts', $this->names([AnalyticsEventName::BlogReadingStarted]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogReadingCompleted]).' as reading_completions', $this->names([AnalyticsEventName::BlogReadingCompleted]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogReadingAbandoned]).' as abandonments', $this->names([AnalyticsEventName::BlogReadingAbandoned]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogShared]).' as shares', $this->names([AnalyticsEventName::BlogShared]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogDownloaded]).' as downloads', $this->names([AnalyticsEventName::BlogDownloaded]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogCommented]).' as comments', $this->names([AnalyticsEventName::BlogCommented]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogToolClicked]).' as tool_clicks', $this->names([AnalyticsEventName::BlogToolClicked]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]).' as subscriptions', $this->names([AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogReadingStarted]).' as reading_starts', $this->names([AnalyticsEventName::BlogReadingStarted]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogReadingCompleted]).' as reading_completions', $this->names([AnalyticsEventName::BlogReadingCompleted]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogReadingAbandoned]).' as abandonments', $this->names([AnalyticsEventName::BlogReadingAbandoned]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogShared]).' as shares', $this->names([AnalyticsEventName::BlogShared]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogDownloaded]).' as downloads', $this->names([AnalyticsEventName::BlogDownloaded]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogCommented]).' as comments', $this->names([AnalyticsEventName::BlogCommented]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogToolClicked]).' as tool_clicks', $this->names([AnalyticsEventName::BlogToolClicked]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::SubscriptionCreated]).' as subscriptions', $this->names([AnalyticsEventName::SubscriptionCreated]))
             ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogTimeSpent])).') THEN '.$seconds.' END) as average_time_seconds', $this->names([AnalyticsEventName::BlogTimeSpent]))
             ->selectRaw('MAX(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogTimeSpent])).') THEN '.$seconds.' END) as maximum_time_seconds', $this->names([AnalyticsEventName::BlogTimeSpent]))
             ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogScrollMeasured])).') THEN '.$percentage.' END) as average_scroll', $this->names([AnalyticsEventName::BlogScrollMeasured]))
@@ -129,14 +129,14 @@ final class BlogAnalyticsQuery
     }
 
     /** @param Collection<int, object> $rows @return array<string, int|float> */
-    private function totals(Collection $rows): array
+    private function totals(Collection $rows, AnalyticsPeriod $period): array
     {
         $views = (int) $rows->sum('views');
         $clicks = (int) $rows->sum('tool_clicks');
 
         return [
             'views' => $views,
-            'unique_visitors' => (int) $rows->sum('unique_visitors'),
+            'unique_visitors' => $this->events($period)->whereIn('event_name', $this->names([AnalyticsEventName::BlogPostViewed]))->whereNotNull('visitor_id')->distinct()->count('visitor_id'),
             'reading_completions' => (int) $rows->sum('reading_completions'),
             'shares' => (int) $rows->sum('shares'),
             'downloads' => (int) $rows->sum('downloads'),
@@ -181,9 +181,9 @@ final class BlogAnalyticsQuery
     {
         $rows = $this->events($period, $postId)
             ->selectRaw('DATE(occurred_at) as metric_date')
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'visitor_id').' as visitors', $this->names([AnalyticsEventName::BlogPostViewed]))
-            ->selectRaw($this->sumCase([AnalyticsEventName::BlogToolClicked]).' as tool_clicks', $this->names([AnalyticsEventName::BlogToolClicked]))
+            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogToolClicked]).' as tool_clicks', $this->names([AnalyticsEventName::BlogToolClicked]))
             ->groupBy('metric_date')->get()->keyBy('metric_date');
 
         return collect(range(0, $period->days() - 1))->map(function (int $offset) use ($period, $rows): object {
@@ -220,6 +220,12 @@ final class BlogAnalyticsQuery
     private function names(array $events): array
     {
         return $this->eventNames->expand($events);
+    }
+
+    /** @param list<AnalyticsEventName> $events */
+    private function distinctMetric(array $events): string
+    {
+        return AnalyticsMetricSql::countDistinctCase($this->names($events), "COALESCE(subject_id, '')");
     }
 
     /** @param list<AnalyticsEventName> $events */
