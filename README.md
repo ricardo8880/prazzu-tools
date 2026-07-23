@@ -1,4 +1,4 @@
-# Prazzu Tools
+~~# Prazzu Tools
 
 ## O que é o Prazzu Tools
 
@@ -702,3 +702,58 @@ aproximar a plataforma desse objetivo.
 ## Observação
 
 Os princípios arquiteturais e regras de desenvolvimento descritos acima constituem a referência oficial do projeto. Evite duplicar diretrizes; toda nova regra deve complementar este documento, não repetir conteúdos já estabelecidos.
+
+---
+
+# Regras obrigatórias para criação e modificação
+
+Estas regras são obrigatórias para qualquer pessoa ou assistente de IA que crie, altere, corrija ou refatore arquivos deste projeto.
+
+## Leveza e otimização
+
+Toda criação ou modificação deve manter o Prazzu Tools **leve, rápido e otimizado**.
+
+Antes de adicionar código, dependências, estilos, scripts, consultas, componentes ou abstrações, verifique se a necessidade pode ser atendida com o que já existe no projeto. Evite duplicações, dependências desnecessárias, carregamentos globais sem necessidade, JavaScript excessivo, CSS repetido, consultas ineficientes e qualquer implementação que aumente o custo de manutenção ou prejudique o desempenho.
+
+Uma alteração só é considerada concluída quando preserva ou melhora:
+
+- o tempo de carregamento e a responsividade da interface;
+- o tamanho dos recursos enviados ao navegador;
+- a simplicidade da arquitetura;
+- a reutilização das capacidades compartilhadas;
+- a eficiência das consultas e operações;
+- a facilidade de manutenção do código.
+
+Não implemente uma solução mais pesada quando existir uma alternativa simples, nativa ou já disponível no projeto.
+
+## Bootstrap antes de CSS próprio
+
+Bootstrap é a base visual obrigatória do projeto. Utilize ao máximo seus componentes, utilitários, grid, formulários, espaçamentos, responsividade, acessibilidade e comportamentos antes de criar CSS próprio.
+
+CSS personalizado só deve ser usado quando Bootstrap e os estilos compartilhados existentes não forem suficientes. Nesse caso:
+
+1. mantenha o CSS mínimo, reutilizável e claramente isolado;
+2. registre o código-fonte em `resources/css/app.css` ou no arquivo de estilo específico do módulo, quando existir uma entrada própria;
+3. garanta que o recurso esteja incluído no fluxo do Vite e carregado pela página correspondente;
+4. execute `npm run build` para que a alteração também seja refletida nos arquivos compilados servidos por Vite em `public/build`;
+5. nunca considere a alteração completa modificando somente `app.css` sem validar o bundle gerado pelo Vite;
+6. não edite manualmente arquivos versionados com hash dentro de `public/build/assets`, pois eles devem ser gerados pelo processo de build.
+
+Em resumo: o estilo deve existir no código-fonte e também estar presente no bundle compilado por Vite. Alterar apenas uma dessas etapas é insuficiente.
+
+## Documentação oficial das páginas
+
+A documentação oficial das páginas está em [`docs/pages`](docs/pages/README.md).
+
+Antes de criar, alterar ou remover qualquer página, rota visual ou fluxo de interface, é obrigatório:
+
+1. ler este README por completo;
+2. ler `docs/pages/README.md`;
+3. ler **todos os arquivos de documentação relacionados às páginas afetadas**;
+4. conferir se a implementação continua compatível com o objetivo, funcionamento, regras, estados e dependências documentados;
+5. atualizar a documentação junto com a alteração de código.
+
+Se existir uma página sem documentação, a pessoa ou assistente de IA responsável pela tarefa deve criar o arquivo correspondente em `docs/pages` antes de considerar o trabalho concluído.
+
+Toda nova página deve nascer com sua documentação oficial. Toda página removida deve ter sua documentação removida ou marcada como descontinuada na mesma alteração.~~
+

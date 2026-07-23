@@ -17,18 +17,18 @@ return [
         'recursos' => [
             'title' => 'Recursos para trabalhar melhor',
             'eyebrow' => 'Central de recursos',
-            'description' => 'Modelos, guias, novidades e materiais complementares para profissionais da contabilidade.',
+            'description' => 'Guias e modelos práticos que complementam as ferramentas da plataforma.',
             'icon' => 'bi-collection',
             'guias' => [
                 'title' => 'Guias práticos',
                 'eyebrow' => 'Recursos',
-                'description' => 'Conteúdos passo a passo para apoiar decisões e processos contábeis.',
+                'description' => 'Conteúdos aprofundados para executar tarefas, interpretar resultados e evitar erros.',
                 'icon' => 'bi-journal-text',
             ],
             'modelos' => [
                 'title' => 'Modelos profissionais',
                 'eyebrow' => 'Recursos',
-                'description' => 'Documentos e estruturas reutilizáveis que serão disponibilizados pela plataforma.',
+                'description' => 'Materiais reutilizáveis para levantar dados, conferir informações e documentar premissas.',
                 'icon' => 'bi-file-earmark-richtext',
             ],
             'novidades' => [

@@ -4,7 +4,7 @@
         ['label' => 'Ferramentas', 'url' => url('/ferramentas'), 'active' => request()->is('ferramentas*')],
         ['label' => 'Blog', 'url' => url('/blog'), 'active' => request()->is('blog*')],
         ['label' => 'Planos', 'url' => url('/planos'), 'active' => request()->is('planos*')],
-        ['label' => 'Recursos', 'url' => url('/recursos'), 'active' => request()->is('recursos*'), 'dropdown' => true],
+        ['label' => 'Recursos', 'url' => url('/recursos'), 'active' => request()->is('recursos*')],
         ['label' => 'Sobre', 'url' => url('/sobre'), 'active' => request()->is('sobre')],
     ];
 @endphp
@@ -32,28 +32,13 @@
 
             <nav class="prazzu-primary-nav d-none d-xl-flex align-items-stretch ms-5" aria-label="Navegação principal">
                 @foreach ($navigation as $item)
-                    @if (!empty($item['dropdown']))
-                        <div class="dropdown d-flex">
-                            <a
-                                class="prazzu-primary-nav__link dropdown-toggle {{ $item['active'] ? 'is-active' : '' }}"
-                                href="{{ $item['url'] }}"
-                                role="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
-                                {{ $item['label'] }}
-                            </a>
-                            <ul class="dropdown-menu prazzu-dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url('/recursos/guias') }}"><i class="bi bi-journal-text me-2"></i>Guias</a></li>
-                                <li><a class="dropdown-item" href="{{ url('/recursos/modelos') }}"><i class="bi bi-file-earmark-richtext me-2"></i>Modelos</a></li>
-                                <li><a class="dropdown-item" href="{{ url('/recursos/novidades') }}"><i class="bi bi-stars me-2"></i>Novidades</a></li>
-                            </ul>
-                        </div>
-                    @else
-                        <a class="prazzu-primary-nav__link {{ $item['active'] ? 'is-active' : '' }}" href="{{ $item['url'] }}">
-                            {{ $item['label'] }}
-                        </a>
-                    @endif
+                    <a
+                        class="prazzu-primary-nav__link {{ $item['active'] ? 'is-active' : '' }}"
+                        href="{{ $item['url'] }}"
+                        @if ($item['active']) aria-current="page" @endif
+                    >
+                        {{ $item['label'] }}
+                    </a>
                 @endforeach
             </nav>
 

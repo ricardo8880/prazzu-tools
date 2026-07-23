@@ -165,6 +165,10 @@ Route::get('/planos', [ContentPageController::class, 'plans'])
 Route::get('/recursos', [ContentPageController::class, 'resources'])
     ->name('resources.index');
 
+Route::get('/recursos/{resource}/{slug}', [ContentPageController::class, 'resourceItem'])
+    ->whereIn('resource', ['guias', 'modelos'])
+    ->name('resources.item');
+
 Route::get('/recursos/{resource}', [ContentPageController::class, 'resource'])
     ->whereIn('resource', ['guias', 'modelos', 'novidades'])
     ->name('resources.show');
