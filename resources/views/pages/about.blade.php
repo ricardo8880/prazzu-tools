@@ -20,10 +20,10 @@
             </p>
 
             <div class="d-flex flex-wrap justify-content-center gap-2">
-                <a class="btn btn-primary btn-lg" href="{{ route('tools.index') }}">
+                <a class="btn prazzu-btn-primary btn-lg" href="{{ route('tools.index') }}">
                     <i class="bi bi-grid-3x3-gap me-2" aria-hidden="true"></i>Explorar ferramentas
                 </a>
-                <a class="btn btn-outline-primary btn-lg" href="{{ route('plans') }}">
+                <a class="btn prazzu-btn-outline btn-lg" href="{{ route('plans') }}">
                     Conhecer o Prazzu Plus
                 </a>
             </div>
@@ -47,26 +47,26 @@
                 </div>
 
                 <div class="col-12 col-lg-6">
-                    <div class="card border-0 bg-body-tertiary shadow-sm prazzu-about__feature-panel">
+                    <div class="card shadow-sm prazzu-about__feature-panel">
                         <div class="card-body p-4 p-lg-5">
                             <div class="row g-4">
                                 <div class="col-6">
-                                    <i class="bi bi-calculator fs-2 text-primary" aria-hidden="true"></i>
+                                    <i class="bi bi-calculator fs-2 prazzu-about__icon" aria-hidden="true"></i>
                                     <h3 class="h5 mt-3">Cálculos</h3>
                                     <p class="small text-body-secondary mb-0">Resultados claros e memória de cálculo quando aplicável.</p>
                                 </div>
                                 <div class="col-6">
-                                    <i class="bi bi-sliders fs-2 text-primary" aria-hidden="true"></i>
+                                    <i class="bi bi-sliders fs-2 prazzu-about__icon" aria-hidden="true"></i>
                                     <h3 class="h5 mt-3">Simulações</h3>
                                     <p class="small text-body-secondary mb-0">Cenários que ajudam o profissional a decidir melhor.</p>
                                 </div>
                                 <div class="col-6">
-                                    <i class="bi bi-journal-check fs-2 text-primary" aria-hidden="true"></i>
+                                    <i class="bi bi-journal-check fs-2 prazzu-about__icon" aria-hidden="true"></i>
                                     <h3 class="h5 mt-3">Conteúdo</h3>
                                     <p class="small text-body-secondary mb-0">Informação contábil útil conectada às ferramentas.</p>
                                 </div>
                                 <div class="col-6">
-                                    <i class="bi bi-graph-up-arrow fs-2 text-primary" aria-hidden="true"></i>
+                                    <i class="bi bi-graph-up-arrow fs-2 prazzu-about__icon" aria-hidden="true"></i>
                                     <h3 class="h5 mt-3">Produtividade</h3>
                                     <p class="small text-body-secondary mb-0">Recursos avançados para quem usa a plataforma com frequência.</p>
                                 </div>
@@ -92,7 +92,7 @@
                 <div class="col-12 col-md-5 col-xl-3">
                     <div class="card h-100 shadow-sm prazzu-about__card">
                         <div class="card-body p-4">
-                            <i class="bi bi-boxes fs-1 text-primary" aria-hidden="true"></i>
+                            <i class="bi bi-boxes fs-1 prazzu-about__icon" aria-hidden="true"></i>
                             <h3 class="h5 mt-3">Plataforma compartilhada</h3>
                             <p class="text-body-secondary mb-0">Usuários, planos, analytics e serviços comuns em um único Core.</p>
                         </div>
@@ -106,7 +106,7 @@
                 <div class="col-12 col-md-5 col-xl-3">
                     <div class="card h-100 shadow-sm prazzu-about__card">
                         <div class="card-body p-4">
-                            <i class="bi bi-grid-3x3-gap fs-1 text-primary" aria-hidden="true"></i>
+                            <i class="bi bi-grid-3x3-gap fs-1 prazzu-about__icon" aria-hidden="true"></i>
                             <h3 class="h5 mt-3">Ferramentas independentes</h3>
                             <p class="text-body-secondary mb-0">Cada módulo concentra apenas as regras específicas do seu domínio.</p>
                         </div>
@@ -120,7 +120,7 @@
                 <div class="col-12 col-md-5 col-xl-3">
                     <div class="card h-100 shadow-sm border-primary prazzu-about__card prazzu-about__card--featured">
                         <div class="card-body p-4">
-                            <i class="bi bi-gem fs-1 text-primary" aria-hidden="true"></i>
+                            <i class="bi bi-gem fs-1 prazzu-about__icon" aria-hidden="true"></i>
                             <h3 class="h5 mt-3">Um único plano</h3>
                             <p class="text-body-secondary mb-0">Uma assinatura libera os recursos Plus de toda a plataforma.</p>
                         </div>
@@ -141,9 +141,9 @@
                                 limitações artificiais para forçar uma assinatura.
                             </p>
                             <ul class="list-unstyled d-grid gap-3 mb-0">
-                                <li class="d-flex gap-2"><i class="bi bi-check-circle-fill text-primary" aria-hidden="true"></i><span>Resultado completo e confiável</span></li>
-                                <li class="d-flex gap-2"><i class="bi bi-check-circle-fill text-primary" aria-hidden="true"></i><span>Uso ilimitado da experiência gratuita</span></li>
-                                <li class="d-flex gap-2"><i class="bi bi-check-circle-fill text-primary" aria-hidden="true"></i><span>Transparência para entender o cálculo</span></li>
+                                <li class="d-flex gap-2"><i class="bi bi-check-circle-fill prazzu-about__check" aria-hidden="true"></i><span>Resultado completo e confiável</span></li>
+                                <li class="d-flex gap-2"><i class="bi bi-check-circle-fill prazzu-about__check" aria-hidden="true"></i><span>Uso ilimitado da experiência gratuita</span></li>
+                                <li class="d-flex gap-2"><i class="bi bi-check-circle-fill prazzu-about__check" aria-hidden="true"></i><span>Transparência para entender o cálculo</span></li>
                             </ul>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
                     <div class="col-12 col-md-6 col-xl-4">
                         <article class="card h-100 shadow-sm prazzu-about__card">
                             <div class="card-body p-4">
-                                <i class="bi {{ $commitment['icon'] }} fs-2 text-primary" aria-hidden="true"></i>
+                                <i class="bi {{ $commitment['icon'] }} fs-2 prazzu-about__icon" aria-hidden="true"></i>
                                 <h3 class="h5 mt-3">{{ $commitment['title'] }}</h3>
                                 <p class="text-body-secondary mb-0">{{ $commitment['text'] }}</p>
                             </div>
@@ -239,7 +239,7 @@
                     Novas ferramentas, conteúdos e recursos serão adicionados continuamente. Nosso objetivo é transformar
                     o Prazzu Tools na plataforma de referência para quem trabalha com contabilidade.
                 </p>
-                <a class="btn btn-light btn-lg text-primary fw-semibold" href="{{ route('tools.index') }}">
+                <a class="btn btn-light btn-lg" href="{{ route('tools.index') }}">
                     Conhecer as ferramentas
                 </a>
             </div>

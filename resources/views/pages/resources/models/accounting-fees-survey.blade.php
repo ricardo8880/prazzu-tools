@@ -141,7 +141,7 @@
 
             <section class="prazzu-resource-cta">
                 <div><span class="prazzu-eyebrow">Depois do levantamento</span><h2>Transforme os dados em uma referência de honorários</h2><p>Use a calculadora para organizar os fatores e comparar a composição do cenário.</p></div>
-                <a class="btn btn-light" href="{{ route($item['tool']['route']) }}">Abrir calculadora <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i></a>
+                <a class="btn btn-light text-dark" href="{{ route($item['tool']['route']) }}">Abrir calculadora <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i></a>
             </section>
 
             <x-resources.journey :item="$item" :related-items="$relatedItems" />
