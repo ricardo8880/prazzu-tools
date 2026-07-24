@@ -13,6 +13,8 @@ use App\Core\Imports\Infrastructure\CacheImportDatasetStore;
 use App\Core\Imports\Services\CompositeTabularFileReader;
 use App\Core\Imports\Services\CsvTabularFileReader;
 use App\Core\Imports\Services\XlsxTabularFileReader;
+use App\Core\Temporary\Contracts\TemporaryPayloadStore;
+use App\Core\Temporary\Infrastructure\CacheTemporaryPayloadStore;
 use App\Core\Organizations\Contracts\EnterpriseAccessResolver;
 use App\Core\Organizations\Contracts\OrganizationSeatCounter;
 use App\Core\Organizations\Services\DatabaseEnterpriseAccessResolver;
@@ -46,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ToolRunHistory::class, DatabaseToolRunHistory::class);
         $this->app->bind(ToolRunFavorites::class, DatabaseToolRunFavorites::class);
         $this->app->bind(ImportDatasetStore::class, CacheImportDatasetStore::class);
+        $this->app->bind(TemporaryPayloadStore::class, CacheTemporaryPayloadStore::class);
         $this->app->bind(EnterpriseAccessResolver::class, DatabaseEnterpriseAccessResolver::class);
         $this->app->bind(OrganizationSeatCounter::class, DatabaseOrganizationSeatCounter::class);
         $this->app->singleton(CompositeTabularFileReader::class, static fn (): CompositeTabularFileReader => new CompositeTabularFileReader([

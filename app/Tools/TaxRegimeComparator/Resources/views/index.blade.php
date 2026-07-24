@@ -109,8 +109,8 @@
         </div>
     </form>
 
-    @if (session('comparison_result'))
-        @php($result = session('comparison_result'))
+    @php($result = $comparisonResult ?? session('comparison_result'))
+    @if ($result)
         <section class="mt-5" aria-labelledby="comparison-result-title">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
                 <div><h2 id="comparison-result-title" class="h3 mb-1">Resultado da comparação</h2><p class="text-body-secondary mb-0">Referência {{ $result['reference_date'] }} · regras {{ $result['rule_version'] }}</p></div>

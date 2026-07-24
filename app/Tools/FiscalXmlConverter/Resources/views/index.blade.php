@@ -18,7 +18,7 @@
     <x-tool-feature-tiers slug="conversor-fiscal-xml" />
     <x-tools.validation-summary />
 
-    @if (session('conversion_success'))
+    @if ($conversionSuccess ?? session('conversion_success', false))
         <div class="alert alert-success">XML processado com sucesso. Confira abaixo os dados extraídos.</div>
     @endif
 
@@ -98,8 +98,8 @@
         </form>
     </x-tools.form-panel>
 
-    @if (session('batch_success'))<div class="alert alert-success">Lote processado com sucesso.</div>@endif
-    @php($batch = session('fiscal_xml_batch_result'))
+    @if ($batchSuccess ?? session('batch_success', false))<div class="alert alert-success">Lote processado com sucesso.</div>@endif
+    @php($batch = $batchResult ?? session('fiscal_xml_batch_result'))
     @if ($batch)
         <x-tools.result-panel title="Resumo do lote">
             <div class="row g-3 mb-3">
@@ -110,11 +110,11 @@
             <p class="fw-semibold">Total dos documentos: R$ {{ number_format((float)data_get($batch, 'summary.document_total', 0), 2, ',', '.') }}</p>
             @if(!empty($batch['errors']))<div class="alert alert-warning"><ul class="mb-0">@foreach($batch['errors'] as $error)<li>{{ $error['file'] }}: {{ $error['message'] }}</li>@endforeach</ul></div>@endif
             <div class="d-flex flex-wrap gap-2">
-                @foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', $format) }}">Exportar {{ $label }}</a>@endforeach
+                @foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', ['format' => $format, 'result_token' => $currentResultToken ?? '']) }}">Exportar {{ $label }}</a>@endforeach
             </div>
         </x-tools.result-panel>
     @elseif ($result)
-        <div class="d-flex flex-wrap gap-2 mb-3">@foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', $format) }}">Exportar {{ $label }}</a>@endforeach</div>
+        <div class="d-flex flex-wrap gap-2 mb-3">@foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', ['format' => $format, 'result_token' => $currentResultToken ?? '']) }}">Exportar {{ $label }}</a>@endforeach</div>
     @endif
 
     @auth

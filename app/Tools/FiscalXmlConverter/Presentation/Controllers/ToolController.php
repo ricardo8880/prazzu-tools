@@ -11,6 +11,7 @@ use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
+use App\Core\Temporary\Contracts\TemporaryPayloadStore;
 use App\Http\Controllers\Controller;
 use App\Tools\FiscalXmlConverter\Application\Actions\ConvertUploadedXml;
 use App\Tools\FiscalXmlConverter\Application\Actions\ConvertUploadedXmlBatch;
@@ -38,7 +39,7 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function convert(ConvertFiscalXmlRequest $request, ConvertUploadedXml $action, PlatformAnalytics $analytics, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module): RedirectResponse
+    public function convert(ConvertFiscalXmlRequest $request, ConvertUploadedXml $action, PlatformAnalytics $analytics, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
     {
         try {
             $document = $action->execute($request->file('xml_file'));
@@ -50,7 +51,7 @@ final class ToolController extends Controller
         }
 
         $payload = $document->toArray();
-        $request->session()->put('fiscal_xml_result', $payload);
+        $resultToken = $temporary->put('fiscal-xml.current', $payload, $this->temporaryOwnerKey($request));
         if ($persistence->allowsHistory($module, $request->user())) {
             $run = $recorder->start($module, new RuleVersion('2026.1'), ReferenceDate::fromDateTime(now()), [
                 'mode' => 'single', 'model' => $payload['model'], 'access_key' => $payload['access_key'],
@@ -62,16 +63,21 @@ final class ToolController extends Controller
             'tool' => Tool::SLUG, 'mode' => 'single', 'model' => $payload['model'], 'items' => count($payload['items']),
         ]);
 
-        return back()->with('conversion_success', true);
+        return view('tools-conversor-fiscal-xml::index', [
+            ...$page->execute(),
+            'result' => $payload,
+            'currentResultToken' => $resultToken,
+            'conversionSuccess' => true,
+        ]);
     }
 
-    public function batch(ConvertFiscalXmlBatchRequest $request, ConvertUploadedXmlBatch $action, PlatformAnalytics $analytics, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module): RedirectResponse
+    public function batch(ConvertFiscalXmlBatchRequest $request, ConvertUploadedXmlBatch $action, PlatformAnalytics $analytics, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
     {
         $result = $action->execute($request->file('xml_files', []));
         if ($result['summary']['processed'] === 0) {
             return back()->withErrors(['xml_files' => 'Nenhum dos XMLs enviados pôde ser processado.'])->with('batch_errors', $result['errors']);
         }
-        $request->session()->put('fiscal_xml_batch_result', $result);
+        $resultToken = $temporary->put('fiscal-xml.current', $result, $this->temporaryOwnerKey($request));
         if ($persistence->allowsHistory($module, $request->user())) {
             $run = $recorder->start($module, new RuleVersion('2026.1'), ReferenceDate::fromDateTime(now()), [
                 'mode' => 'batch', 'received' => $result['summary']['received'],
@@ -81,12 +87,18 @@ final class ToolController extends Controller
         $analytics->record(AnalyticsEventName::ToolCalculationCompleted->value, 'tool', $request, [
             'tool' => Tool::SLUG, 'mode' => 'batch', 'documents' => $result['summary']['processed'], 'items' => $result['summary']['items'],
         ]);
-        return back()->with('batch_success', true);
+        return view('tools-conversor-fiscal-xml::index', [
+            ...$page->execute(),
+            'batchResult' => $result,
+            'currentResultToken' => $resultToken,
+            'batchSuccess' => true,
+        ]);
     }
 
-    public function exportCurrent(Request $request, string $format, TabularExportService $tabular): JsonResponse|Response|StreamedResponse
+    public function exportCurrent(Request $request, string $format, TabularExportService $tabular, TemporaryPayloadStore $temporary): JsonResponse|Response|StreamedResponse
     {
-        $result = $request->session()->get('fiscal_xml_batch_result') ?? $request->session()->get('fiscal_xml_result');
+        $token = (string) $request->query('result_token', '');
+        $result = $temporary->get('fiscal-xml.current', $token, $this->temporaryOwnerKey($request));
         abort_unless(is_array($result), 404);
         return $this->export($format, $result, $tabular);
     }
@@ -114,6 +126,15 @@ final class ToolController extends Controller
     public function exportHistory(Request $request, string $run, string $format, ManageFiscalXmlHistory $history, TabularExportService $tabular): JsonResponse|Response|StreamedResponse
     {
         return $this->export($format, $history->owned($run, (int) $request->user()->getAuthIdentifier())->result, $tabular);
+    }
+
+    private function temporaryOwnerKey(Request $request): string
+    {
+        if ($request->user() !== null) {
+            return 'user:'.$request->user()->getAuthIdentifier();
+        }
+
+        return 'guest:'.hash('sha256', ($request->ip() ?? 'unknown').'|'.($request->userAgent() ?? 'unknown'));
     }
 
     private function export(string $format, array $result, TabularExportService $tabular): JsonResponse|Response|StreamedResponse

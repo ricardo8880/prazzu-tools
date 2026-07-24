@@ -17,14 +17,14 @@
 
     @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
-    @if (session('success'))
+    @if ($successMessage ?? session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-1"></i>{{ session('success') }}
+            <i class="bi bi-check-circle me-1"></i>{{ $successMessage ?? session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
         </div>
     @endif
 
-    @php($result = session('adjustment_result'))
+    @php($result = $adjustmentResult ?? session('adjustment_result'))
     @if ($result)
         <x-tools.validation-summary class="mb-4" />
 

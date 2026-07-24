@@ -6,6 +6,8 @@ namespace Tests\Feature\Platform;
 
 use App\Core\Access\Enums\CommercialAccessMode;
 use App\Core\Access\Enums\SubscriptionPlan;
+use App\Core\Access\Contracts\ToolFeatureAccessGate;
+use App\Core\Tools\ToolRegistry;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
@@ -23,9 +25,7 @@ final class ToolFeatureAccessTest extends TestCase
             'annex' => 'I',
             'rbt12' => '180.000,00',
             'monthly_revenue' => '15.000,00',
-        ])->assertRedirect()
-            ->assertSessionHas('calculation_result')
-            ->assertHeaderMissing('X-Prazzu-Access-Reason');
+        ])->assertOk()->assertHeaderMissing('X-Prazzu-Access-Reason');
     }
 
     public function test_plus_feature_requires_a_plus_plan_when_monetized(): void
@@ -48,8 +48,7 @@ final class ToolFeatureAccessTest extends TestCase
         $this->actingAs($plusUser)
             ->from(route('tools.calculadora-simples-nacional.index'))
             ->post(route('tools.calculadora-simples-nacional.plus.alerts'), $this->alertPayload())
-            ->assertRedirect(route('tools.calculadora-simples-nacional.index'))
-            ->assertSessionHas('alerts_analysis')
+            ->assertOk()
             ->assertSessionMissing('access_warning');
     }
 
@@ -59,9 +58,24 @@ final class ToolFeatureAccessTest extends TestCase
 
         $this->from(route('tools.calculadora-simples-nacional.index'))
             ->post(route('tools.calculadora-simples-nacional.plus.alerts'), $this->alertPayload())
-            ->assertRedirect(route('tools.calculadora-simples-nacional.index'))
-            ->assertSessionHas('alerts_analysis')
+            ->assertOk()
             ->assertSessionMissing('access_warning');
+    }
+
+    public function test_launch_free_allows_every_declared_tool_feature_for_visitors(): void
+    {
+        config()->set('access.commercial_mode', CommercialAccessMode::LaunchFree->value);
+        $registry = app(ToolRegistry::class);
+        $gate = app(ToolFeatureAccessGate::class);
+
+        foreach ($registry->manifests(false) as $manifest) {
+            foreach ($manifest->features as $feature) {
+                self::assertTrue(
+                    $gate->decide($manifest, $feature->key, null)->allowed,
+                    "O recurso [{$manifest->slug}:{$feature->key}] deve permanecer público durante launch_free.",
+                );
+            }
+        }
     }
 
     public function test_disabled_feature_returns_service_unavailable_in_every_commercial_mode(): void
@@ -88,7 +102,7 @@ final class ToolFeatureAccessTest extends TestCase
 
         $this->actingAs($freeUser)
             ->post(route('tools.calculadora-margem-markup.calculate'), $this->marginPayload())
-            ->assertRedirect();
+            ->assertOk();
 
         $this->assertDatabaseMissing('tool_runs', [
             'user_id' => $freeUser->getAuthIdentifier(),
@@ -98,7 +112,7 @@ final class ToolFeatureAccessTest extends TestCase
         $plusUser = User::factory()->create(['subscription_plan' => SubscriptionPlan::Plus]);
         $this->actingAs($plusUser)
             ->post(route('tools.calculadora-margem-markup.calculate'), $this->marginPayload())
-            ->assertRedirect();
+            ->assertOk();
 
         $this->assertDatabaseHas('tool_runs', [
             'user_id' => $plusUser->getAuthIdentifier(),

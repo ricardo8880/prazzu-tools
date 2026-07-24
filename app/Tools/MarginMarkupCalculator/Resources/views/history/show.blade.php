@@ -1,8 +1,12 @@
 @extends('layouts.app')
 @section('title', 'Detalhes de Margem e Markup — Prazzu Tools')
 @section('content')
-@php($result = $run->result ?? [])
-@php($type = $result['calculation_type'] ?? $run->input['calculation_type'] ?? 'single')
+@php
+    $result = $run->result ?? [];
+@endphp
+@php
+    $type = $result['calculation_type'] ?? $run->input['calculation_type'] ?? 'single';
+@endphp
 <div class="prazzu-page tool-page">
     <nav aria-label="Breadcrumb" class="mb-3"><ol class="breadcrumb prazzu-breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li><li class="breadcrumb-item"><a href="{{ route('tools.calculadora-margem-markup.history.index') }}">Histórico</a></li><li class="breadcrumb-item active">Detalhes</li></ol></nav>
     <x-tools.intro icon="file-earmark-text" title="Detalhes do cálculo" :description="'Realizado em '.($run->finishedAt?->format('d/m/Y H:i') ?? '—').' — referência '.$run->referenceDate->format('d/m/Y').'.'" badge="Cálculo salvo" badge-class="badge text-bg-success mb-2" />

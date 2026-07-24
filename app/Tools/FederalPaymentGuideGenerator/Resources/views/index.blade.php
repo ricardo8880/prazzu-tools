@@ -4,7 +4,7 @@
 @section('meta_description', 'Calcule de forma orientativa multa e juros de DARF e GPS com memória transparente e conferência obrigatória nas fontes oficiais.')
 
 @section('content')
-    @php($result = session('guide_result', $result ?? null))
+    @php($result = $result ?? session('guide_result'))
     @php($recentHistory = $recentHistory ?? [])
     <div class="container py-5">
         <div class="row justify-content-center">
@@ -18,7 +18,7 @@
                 </div>
 
                 @if(session('history_message'))<div class="alert alert-info">{{ session('history_message') }}</div>@endif
-                @if(session('history_saved'))<div class="alert alert-success">Cálculo salvo no seu histórico.</div>@endif
+                @if(($historySaved ?? session('history_saved', false)))<div class="alert alert-success">Cálculo salvo no seu histórico.</div>@endif
 
                 @if ($errors->any())
                     <div class="alert alert-danger" role="alert">

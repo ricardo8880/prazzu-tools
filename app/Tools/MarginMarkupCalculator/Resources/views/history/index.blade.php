@@ -22,9 +22,15 @@
             <thead><tr><th>Realizado em</th><th>Tipo</th><th>Referência</th><th>Resumo</th><th>Regra</th><th class="text-end">Ações</th></tr></thead>
             <tbody>
             @forelse($runs as $run)
-                @php($type = $run->result['calculation_type'] ?? $run->input['calculation_type'] ?? 'single')
-                @php($labels = ['single'=>'Individual','batch'=>'Lote de produtos','scenarios'=>'Cenários'])
-                @php($summary = $type === 'single' ? ($run->result['sale_price'] ?? '—') : count($run->result['results'] ?? []).' item(ns)')
+                @php
+                    $type = $run->result['calculation_type'] ?? $run->input['calculation_type'] ?? 'single';
+                @endphp
+                @php
+                    $labels = ['single'=>'Individual','batch'=>'Lote de produtos','scenarios'=>'Cenários'];
+                @endphp
+                @php
+                    $summary = $type === 'single' ? ($run->result['sale_price'] ?? '—') : count($run->result['results'] ?? []).' item(ns)';
+                @endphp
                 <tr>
                     <td>{{ $run->finishedAt?->format('d/m/Y H:i') }}</td><td><span class="badge text-bg-light">{{ $labels[$type] ?? ucfirst($type) }}</span></td><td>{{ $run->referenceDate->format('d/m/Y') }}</td><td class="fw-semibold">{{ $summary }}</td><td>{{ $run->ruleVersion }}</td>
                     <td class="text-end"><x-tools.history-actions

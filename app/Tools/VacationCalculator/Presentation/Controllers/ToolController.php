@@ -38,7 +38,7 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function calculate(ExecuteToolRequest $request, CalculateTool $action, UsageMetrics $metrics, Tool $module, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence): RedirectResponse
+    public function calculate(ExecuteToolRequest $request, CalculateTool $action, UsageMetrics $metrics, Tool $module, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, ShowToolPage $page, ManageVacationHistory $history): View
     {
         $startedAt = hrtime(true);
         $input = $request->validated();
@@ -52,10 +52,14 @@ final class ToolController extends Controller
         }
         $metrics->record($module->manifest()->slug, 'calculated', $request->user()?->id, (int) ((hrtime(true) - $startedAt) / 1_000_000));
 
-        return redirect()->route('tools.calculadora-ferias.index')
-            ->withInput()
-            ->with('calculation_result', $result)
-            ->with('history_saved', $saved);
+        $request->flash();
+
+        return view('tools-calculadora-ferias::index', [
+            ...$page->execute(),
+            'calculationResult' => $result,
+            'historySaved' => $saved,
+            'recentHistory' => $request->user() ? $history->recent((int) $request->user()->getAuthIdentifier()) : [],
+        ]);
     }
 
     public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, string $format, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse

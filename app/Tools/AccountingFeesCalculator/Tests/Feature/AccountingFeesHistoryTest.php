@@ -22,7 +22,7 @@ final class AccountingFeesHistoryTest extends TestCase
             'monthly_revenue' => '100.000,00', 'employees' => 3, 'partners' => 2,
             'monthly_invoices' => 80, 'monthly_bank_transactions' => 150,
             'tax_regime' => 'simples_nacional', 'business_segment' => 'services', 'complexity' => 'medium',
-        ])->assertRedirect();
+        ])->assertOk();
 
         $this->assertDatabaseHas('tool_runs', ['tool_slug' => 'calculadora-de-honorarios-contabeis', 'user_id' => $user->id, 'status' => ToolRunStatus::Succeeded->value]);
         $this->actingAs($user)->get(route('tools.calculadora-de-honorarios-contabeis.history.index'))->assertOk()->assertSee('Histórico de cálculos');

@@ -22,10 +22,11 @@ final class PlusHandlersTest extends TestCase
                 'rbt12' => '175.000,00',
                 'monthly_revenue' => '15.000,00',
             ])
-            ->assertRedirect(route('tools.calculadora-simples-nacional.index'))
-            ->assertSessionHas('alerts_analysis', static fn (array $analysis): bool => count($analysis['alerts']) > 0
+            ->assertOk()
+            ->assertViewHas('alertsAnalysis', static fn (array $analysis): bool => count($analysis['alerts']) > 0
                 && array_key_exists('warning', $analysis['summary'])
-            );
+            )
+            ->assertSee('Mudança de faixa próxima');
     }
 
     public function test_authenticated_user_can_save_and_list_a_calculation(): void

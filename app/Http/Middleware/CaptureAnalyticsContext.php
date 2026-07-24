@@ -23,7 +23,7 @@ final readonly class CaptureAnalyticsContext
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (! config('analytics.enabled', true) || $this->excluded($request)) {
+        if (! config('analytics.enabled', true) || $this->excluded($request) || $this->isPrefetchRequest($request)) {
             return $next($request);
         }
         $context = $this->contextResolver->resolve($request);
@@ -31,7 +31,7 @@ final readonly class CaptureAnalyticsContext
         $request->attributes->set('analytics.session_id', $context->analyticsSessionId);
         $response = $next($request);
 
-        if ($response->getStatusCode() < 400 && ! $this->isPrefetchRequest($request)) {
+        if ($response->getStatusCode() < 400) {
             if (config('analytics.capture_page_views', true) && $this->isPageViewRequest($request)) {
                 $this->analytics->track(AnalyticsEvent::make(AnalyticsEventName::PageViewed->value, 'platform'), $request);
             }

@@ -31,12 +31,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class AccountingFeesController extends Controller
 {
-    public function index(ToolResultResolver $integrations): View
+    public function __construct(private readonly ToolResultResolver $resolver) {}
+
+    public function index(): View
     {
-        return view('tools-calculadora-de-honorarios-contabeis::index', ['taxSnapshotIntegration' => $integrations->latest('company-tax-snapshot', 1)]);
+        return view('tools-calculadora-de-honorarios-contabeis::index', ['taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1)]);
     }
 
-    public function calculate(CalculateAccountingFeesRequest $request, CalculateAndStoreAccountingFees $action, ToolPersistenceAuthorizer $persistence, Tool $module, ToolResultPublisher $integrations): RedirectResponse
+    public function calculate(CalculateAccountingFeesRequest $request, CalculateAndStoreAccountingFees $action, ToolPersistenceAuthorizer $persistence, Tool $module, ToolResultPublisher $integrations): View
     {
         try {
             $outcome = $action->execute($request->validated(), $this->userId($request), $persistence->allowsHistory($module, $request->user()));
@@ -50,7 +52,13 @@ final class AccountingFeesController extends Controller
             'tax_regime' => (string) $validated['tax_regime'], 'business_segment' => (string) $validated['business_segment'],
         ]));
 
-        return back()->withInput()->with('calculation_result', $outcome['result'])->with('success', $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Cálculo'));
+        $request->flash();
+
+        return view('tools-calculadora-de-honorarios-contabeis::index', [
+            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
+            'calculationResult' => $outcome['result'],
+            'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Cálculo'),
+        ]);
     }
 
     public function proposal(GenerateCommercialProposalRequest $request, BuildCommercialProposal $action): View
@@ -106,7 +114,7 @@ final class AccountingFeesController extends Controller
         return view('tools-calculadora-de-honorarios-contabeis::adjustments.index', compact('adjustments'));
     }
 
-    public function calculateAdjustment(CalculateFeeAdjustmentRequest $request, CalculateAndStoreFeeAdjustment $action, ToolPersistenceAuthorizer $persistence, Tool $module): RedirectResponse
+    public function calculateAdjustment(CalculateFeeAdjustmentRequest $request, CalculateAndStoreFeeAdjustment $action, ToolPersistenceAuthorizer $persistence, Tool $module, ManageAccountingFeesHistory $history): View
     {
         try {
             $outcome = $action->execute($request->validated(), $this->userId($request), $persistence->allowsHistory($module, $request->user()));
@@ -114,7 +122,15 @@ final class AccountingFeesController extends Controller
             throw ValidationException::withMessages(['percentage' => $exception->getMessage()]);
         }
 
-        return redirect()->route('tools.calculadora-de-honorarios-contabeis.adjustments.index')->with('success', $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Reajuste'))->with('adjustment_result', $outcome['result']);
+        $adjustments = $request->user() === null ? null : $this->paginator($history->paginate($this->requiredUserId($request), ManageAccountingFeesHistory::TYPE_ADJUSTMENT, max(1, $request->integer('page', 1))), $request);
+
+        $request->flash();
+
+        return view('tools-calculadora-de-honorarios-contabeis::adjustments.index', [
+            'adjustments' => $adjustments,
+            'adjustmentResult' => $outcome['result'],
+            'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Reajuste'),
+        ]);
     }
 
     public function deleteAdjustment(Request $request, string $run, ManageAccountingFeesHistory $history): RedirectResponse

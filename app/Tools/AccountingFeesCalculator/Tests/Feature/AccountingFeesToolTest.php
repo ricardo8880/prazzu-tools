@@ -32,13 +32,10 @@ final class AccountingFeesToolTest extends TestCase
                 'business_segment' => 'commerce',
                 'complexity' => 'medium',
             ])
-            ->assertRedirect(route('tools.calculadora-de-honorarios-contabeis.index'))
-            ->assertSessionHas('calculation_result', static fn (array $result): bool => $result['minimum_fee'] === 'R$ 1.678,43'
-                && $result['recommended_fee'] === 'R$ 1.930,19'
-                && $result['rule_version'] === '1.0.0'
-                && count($result['recommendations']) > 0
-                && isset($result['breakdown'][0]['percentage'])
-            );
+            ->assertOk()
+            ->assertSee('R$ 1.678,43')
+            ->assertSee('R$ 1.930,19')
+            ->assertSee('1.0.0');
     }
 
     public function test_generates_a_commercial_proposal(): void

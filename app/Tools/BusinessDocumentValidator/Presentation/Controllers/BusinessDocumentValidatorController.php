@@ -12,6 +12,7 @@ use App\Core\Export\Services\BrowserPrintExporter;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
+use App\Core\Temporary\Contracts\TemporaryPayloadStore;
 use App\Http\Controllers\Controller;
 use App\Tools\BusinessDocumentValidator\Application\Actions\AnalyzeCompanyConsistency;
 use App\Tools\BusinessDocumentValidator\Application\Actions\BuildBatchExportRows;
@@ -48,7 +49,7 @@ final class BusinessDocumentValidatorController extends Controller
         return view('tools-validador-de-cnpj::index', ['recentHistory' => $recentHistory]);
     }
 
-    public function previewBatchImport(PreviewBatchImportRequest $request, PreviewBatchImport $action): RedirectResponse
+    public function previewBatchImport(PreviewBatchImportRequest $request, PreviewBatchImport $action): RedirectResponse|View
     {
         try {
             $preview = $action->execute($request->file('batch_file'), $this->importOwnerKey($request));
@@ -58,10 +59,10 @@ final class BusinessDocumentValidatorController extends Controller
             return back()->withErrors(['batch_file' => $exception->getMessage()]);
         }
 
-        $request->session()->put('batch_import_preview', $preview);
-        $request->session()->forget('batch_validation_result');
-
-        return back();
+        return view('tools-validador-de-cnpj::index', [
+            'recentHistory' => [],
+            'batchImportPreview' => $preview,
+        ]);
     }
 
     public function processBatchImport(
@@ -70,13 +71,13 @@ final class BusinessDocumentValidatorController extends Controller
         ToolRunRecorder $recorder,
         PlatformAnalytics $analytics,
         Tool $module,
-    ): RedirectResponse {
+        TemporaryPayloadStore $temporary,
+    ): RedirectResponse|View {
         $run = null;
-        $preview = (array) $request->session()->get('batch_import_preview', []);
         $historyInput = [
-            'file_name' => $preview['file_name'] ?? 'Importação',
-            'format' => $preview['format'] ?? null,
-            'total_rows' => $preview['total_rows'] ?? 0,
+            'file_name' => 'Importação em lote',
+            'format' => null,
+            'total_rows' => 0,
             'consult_registry' => (bool) $request->boolean('consult_registry'),
         ];
 
@@ -97,15 +98,20 @@ final class BusinessDocumentValidatorController extends Controller
             return back()->withErrors(['batch_import' => $exception->getMessage()]);
         }
 
-        $request->session()->put('batch_validation_result', $payload);
+        $resultToken = $temporary->put('business-document-validator.batch', $payload, $this->temporaryOwnerKey($request));
         $analytics->record(AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value, 'tool', $request, $payload['summary'] ?? []);
 
-        return back()->with('history_saved', $run !== null);
+        return view('tools-validador-de-cnpj::index', [
+            'recentHistory' => [],
+            'batchValidationResult' => $payload,
+            'batchResultToken' => $resultToken,
+            'historySaved' => $run !== null,
+        ]);
     }
 
-    public function exportBatch(Request $request, BuildBatchExportRows $builder, TabularExportService $exporter, PlatformAnalytics $analytics): StreamedResponse|Response
+    public function exportBatch(Request $request, BuildBatchExportRows $builder, TabularExportService $exporter, PlatformAnalytics $analytics, TemporaryPayloadStore $temporary): StreamedResponse|Response
     {
-        $result = $this->batchResult($request);
+        $result = $this->batchResult($request, $temporary);
         $format = (string) $request->get('format', 'csv');
         $onlyIssues = $request->boolean('only_issues');
         $rows = $builder->execute($result, $onlyIssues);
@@ -118,9 +124,9 @@ final class BusinessDocumentValidatorController extends Controller
             : $exporter->csv('validacao-documentos'.$suffix.'.csv', $builder->headers(), $rows);
     }
 
-    public function printBatch(Request $request, BrowserPrintExporter $exporter): View
+    public function printBatch(Request $request, BrowserPrintExporter $exporter, TemporaryPayloadStore $temporary): View
     {
-        $result = $this->batchResult($request);
+        $result = $this->batchResult($request, $temporary);
 
         return $exporter->render(new PrintableDocument(
             title: 'Relatório de validação de documentos',
@@ -150,29 +156,34 @@ final class BusinessDocumentValidatorController extends Controller
         return back()->with('history_message', 'Registro removido do histórico.');
     }
 
-    public function analyzeConsistency(AnalyzeCompanyConsistencyRequest $request, AnalyzeCompanyConsistency $action): RedirectResponse
+    public function analyzeConsistency(AnalyzeCompanyConsistencyRequest $request, AnalyzeCompanyConsistency $action): View
     {
-        return back()->withInput()->with('consistency_analysis_result', $action->execute($request->validated())->toArray());
+        $request->flash();
+        return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'consistencyAnalysisResult' => $action->execute($request->validated())->toArray()]);
     }
 
-    public function lookupCompany(LookupCompanyRegistryRequest $request, LookupCompanyRegistry $action): RedirectResponse
+    public function lookupCompany(LookupCompanyRegistryRequest $request, LookupCompanyRegistry $action): View
     {
-        return back()->withInput()->with('registry_lookup_result', $action->execute((string) $request->validated('cnpj'))->toArray());
+        $request->flash();
+        return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'registryLookupResult' => $action->execute((string) $request->validated('cnpj'))->toArray()]);
     }
 
-    public function validateStateRegistration(ValidateStateRegistrationRequest $request, ValidateStateRegistration $action): RedirectResponse
+    public function validateStateRegistration(ValidateStateRegistrationRequest $request, ValidateStateRegistration $action): View
     {
-        return back()->withInput()->with('state_registration_result', $action->execute($request->validated())->toArray());
+        $request->flash();
+        return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'stateRegistrationResult' => $action->execute($request->validated())->toArray()]);
     }
 
-    public function validateDocument(ValidateBusinessDocumentRequest $request, ValidateBusinessDocument $action): RedirectResponse
+    public function validateDocument(ValidateBusinessDocumentRequest $request, ValidateBusinessDocument $action): View
     {
-        return back()->withInput()->with('validation_result', $action->execute($request->validated())->toArray());
+        $request->flash();
+        return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'validationResult' => $action->execute($request->validated())->toArray()]);
     }
 
-    private function batchResult(Request $request): array
+    private function batchResult(Request $request, TemporaryPayloadStore $temporary): array
     {
-        $result = $request->session()->get('batch_validation_result');
+        $token = (string) $request->query('result_token', '');
+        $result = $temporary->get('business-document-validator.batch', $token, $this->temporaryOwnerKey($request));
         abort_unless(is_array($result), 404, 'Nenhum resultado em lote disponível para exportação.');
 
         return $result;
@@ -180,6 +191,15 @@ final class BusinessDocumentValidatorController extends Controller
 
     private function importOwnerKey(Request $request): string
     {
-        return (string) ($request->user()?->getAuthIdentifier() ?? $request->session()->getId());
+        return $this->temporaryOwnerKey($request);
+    }
+
+    private function temporaryOwnerKey(Request $request): string
+    {
+        if ($request->user() !== null) {
+            return 'user:'.$request->user()->getAuthIdentifier();
+        }
+
+        return 'guest:'.hash('sha256', ($request->ip() ?? 'unknown').'|'.($request->userAgent() ?? 'unknown'));
     }
 }

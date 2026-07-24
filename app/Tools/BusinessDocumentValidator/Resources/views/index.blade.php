@@ -129,8 +129,8 @@
                 </form>
             </section>
 
-            @if (session('state_registration_result'))
-                @php($ie = session('state_registration_result'))
+            @php($ie = $stateRegistrationResult ?? session('state_registration_result'))
+            @if ($ie)
                 @php($ieClass = $ie['valid'] ? 'success' : ($ie['supported'] ? 'warning' : 'secondary'))
                 <section class="mt-4" aria-labelledby="state-registration-result-title">
                     <div class="card border-{{ $ieClass }} shadow-sm">
@@ -139,7 +139,7 @@
                                 <div>
                                     <h2 id="state-registration-result-title" class="h5 mb-1">
                                         <i class="bi bi-{{ $ie['valid'] ? 'check-circle-fill text-success' : 'exclamation-circle-fill text-warning' }} me-1" aria-hidden="true"></i>
-                                        {{ $ie['valid'] ? 'Inscrição Estadual válida' : 'Inscrição Estadual não confirmada' }}
+                                        {{ $ie['valid'] ? 'Inscrição Estadual Válida' : 'Inscrição Estadual não confirmada' }}
                                     </h2>
                                     <p class="mb-0 text-body-secondary">{{ $ie['message'] }}</p>
                                 </div>
@@ -204,8 +204,8 @@
                 </form>
             </section>
 
-            @if (session('registry_lookup_result'))
-                @php($lookup = session('registry_lookup_result'))
+            @php($lookup = $registryLookupResult ?? session('registry_lookup_result'))
+            @if ($lookup)
                 @php($lookupClass = $lookup['status'] === 'found' ? 'success' : ($lookup['status'] === 'not_found' ? 'warning' : 'secondary'))
                 <section class="mt-4" aria-labelledby="registry-result-title">
                     <div class="card border-{{ $lookupClass }} shadow-sm">
@@ -344,15 +344,15 @@
                 </form>
             </section>
 
-            @if (session('consistency_analysis_result'))
-                @php($analysis = session('consistency_analysis_result'))
+            @php($analysis = $consistencyAnalysisResult ?? session('consistency_analysis_result'))
+            @if ($analysis)
                 @php($analysisClass = $analysis['summary']['errors'] > 0 ? 'danger' : ($analysis['summary']['warnings'] > 0 ? 'warning' : 'success'))
                 <section class="mt-4" aria-labelledby="consistency-analysis-result-title">
                     <div class="card border-{{ $analysisClass }} shadow-sm">
                         <div class="card-header bg-{{ $analysisClass }}-subtle border-{{ $analysisClass }}-subtle">
                             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                                 <div>
-                                    <h2 id="consistency-analysis-result-title" class="h5 mb-1">Resultado da análise de inconsistências</h2>
+                                    <h2 id="consistency-analysis-result-title" class="h5 mb-1">Resultado da análise — Inconsistências</h2>
                                     <p class="mb-0 text-body-secondary">{{ $analysis['message'] }}</p>
                                 </div>
                                 <div class="d-flex flex-wrap gap-2 align-self-start">
@@ -391,8 +391,8 @@
                 </section>
             @endif
 
-            @if (session('validation_result'))
-                @php($result = session('validation_result'))
+            @php($result = $validationResult ?? session('validation_result'))
+            @if ($result)
                 <section class="mt-4" aria-labelledby="validation-result-title">
                     <div class="card border-{{ $result['valid'] ? 'success' : 'danger' }} shadow-sm">
                         <div class="card-header bg-{{ $result['valid'] ? 'success' : 'danger' }}-subtle border-{{ $result['valid'] ? 'success' : 'danger' }}-subtle">
@@ -400,7 +400,7 @@
                                 <div>
                                     <h2 id="validation-result-title" class="h5 mb-1">
                                         <i class="bi bi-{{ $result['valid'] ? 'check-circle-fill text-success' : 'x-circle-fill text-danger' }} me-1" aria-hidden="true"></i>
-                                        {{ $result['type_label'] }} {{ $result['valid'] ? 'válido' : 'inválido' }}
+                                        {{ $result['type_label'] }} {{ $result['valid'] ? 'Válido' : 'Inválido' }}
                                     </h2>
                                     <p class="mb-0 text-body-secondary">Resultado da verificação matemática do documento.</p>
                                 </div>
@@ -457,8 +457,8 @@
                     </div>
                 </form>
 
-                @if (session('batch_import_preview'))
-                    @php($preview = session('batch_import_preview'))
+                @php($preview = $batchImportPreview ?? session('batch_import_preview'))
+                @if ($preview)
                     <div class="card border-0 bg-body-tertiary mt-4">
                         <div class="card-body">
                             <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">
@@ -530,8 +530,8 @@
                 @endif
             </section>
 
-            @if (session('batch_validation_result'))
-                @php($batch = session('batch_validation_result'))
+            @php($batch = $batchValidationResult ?? session('batch_validation_result'))
+            @if ($batch)
                 <section class="mt-4" aria-labelledby="batch-result-title">
                     <div class="card shadow-sm">
                         <div class="card-header">
@@ -554,15 +554,15 @@
                                 <div class="alert alert-light border">{{ $batch['summary']['registry_consulted'] }} consulta(s) cadastral(is) realizada(s); {{ $batch['summary']['registry_unavailable'] }} indisponível(is).</div>
                             @endif
 
-                            @if (session('history_saved'))
+                            @if ($historySaved ?? session('history_saved', false))
                                 <div class="alert alert-success"><i class="bi bi-clock-history me-1" aria-hidden="true"></i>Resumo salvo no seu histórico, sem armazenar documentos ou dados cadastrais.</div>
                             @endif
 
                             <div class="d-flex flex-wrap gap-2 mb-3" aria-label="Exportações do resultado">
-                                <a class="btn btn-outline-success" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'excel']) }}"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
-                                <a class="btn btn-outline-primary" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'csv']) }}"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
-                                <a class="btn btn-outline-warning" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'excel', 'only_issues' => 1]) }}"><i class="bi bi-exclamation-triangle me-1"></i>Somente problemas</a>
-                                <a class="btn btn-outline-secondary" target="_blank" rel="noopener" href="{{ route('tools.validador-de-cnpj.batch.print') }}"><i class="bi bi-printer me-1"></i>Imprimir / PDF</a>
+                                <a class="btn btn-outline-success" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'excel', 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
+                                <a class="btn btn-outline-primary" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'csv', 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
+                                <a class="btn btn-outline-warning" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'excel', 'only_issues' => 1, 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-exclamation-triangle me-1"></i>Somente problemas</a>
+                                <a class="btn btn-outline-secondary" target="_blank" rel="noopener" href="{{ route('tools.validador-de-cnpj.batch.print', ['result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-printer me-1"></i>Imprimir / PDF</a>
                             </div>
 
                             <div class="table-responsive border rounded">
@@ -638,7 +638,7 @@
                             <h2 id="recent-history-title" class="h5 mb-0">Histórico recente</h2>
                             <a class="small" href="{{ route('tools.validador-de-cnpj.history.index') }}">Ver tudo</a>
                         </div>
-                        @forelse ($recentHistory as $run)
+                        @forelse (($recentHistory ?? []) as $run)
                             <div class="border-bottom pb-2 mb-2">
                                 <div class="fw-semibold">{{ data_get($run->input, 'file_name', 'Importação') }}</div>
                                 <div class="small text-body-secondary">{{ $run->finishedAt?->format('d/m/Y H:i') }} · {{ data_get($run->result, 'summary.total', 0) }} registros</div>

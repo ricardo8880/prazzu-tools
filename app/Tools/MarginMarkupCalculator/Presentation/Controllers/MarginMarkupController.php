@@ -44,10 +44,12 @@ use Throwable;
 
 final class MarginMarkupController extends Controller
 {
-    public function index(ToolResultResolver $integrations): View
+    public function __construct(private readonly ToolResultResolver $resolver) {}
+
+    public function index(): View
     {
         return view('tools-calculadora-margem-markup::index', [
-            'taxSnapshotIntegration' => $integrations->latest('company-tax-snapshot', 1),
+            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
         ]);
     }
 
@@ -59,7 +61,7 @@ final class MarginMarkupController extends Controller
         UsageMetrics $metrics,
         Tool $module,
         ToolResultPublisher $integrations,
-    ): RedirectResponse {
+    ): View {
         $user = $request->user();
         $input = $request->validated();
         $startedAt = hrtime(true);
@@ -102,9 +104,12 @@ final class MarginMarkupController extends Controller
                 durationMs: (int) ((hrtime(true) - $startedAt) / 1_000_000),
             );
 
-            return back()
-                ->withInput()
-                ->with('calculation_result', $resultData);
+            $request->flash();
+
+        return view('tools-calculadora-margem-markup::index', [
+                'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
+                'calculationResult' => $resultData,
+            ]);
         } catch (InvalidValue $exception) {
             $this->recordFailure($recorder, $run, 'calculation.invalid_input');
 
@@ -125,7 +130,7 @@ final class MarginMarkupController extends Controller
         ToolPersistenceAuthorizer $persistence,
         UsageMetrics $metrics,
         Tool $module,
-    ): RedirectResponse {
+    ): View {
         $input = $request->validated();
         $startedAt = hrtime(true);
         $run = $this->startRun($request, $recorder, $module, $persistence, $input, 'batch');
@@ -150,7 +155,12 @@ final class MarginMarkupController extends Controller
             durationMs: (int) ((hrtime(true) - $startedAt) / 1_000_000),
         );
 
-        return back()->withInput()->with('batch_calculation_results', $results);
+        $request->flash();
+
+        return view('tools-calculadora-margem-markup::index', [
+            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
+            'batchCalculationResults' => $results,
+        ]);
     }
 
     public function simulateScenarios(
@@ -160,7 +170,7 @@ final class MarginMarkupController extends Controller
         ToolPersistenceAuthorizer $persistence,
         UsageMetrics $metrics,
         Tool $module,
-    ): RedirectResponse {
+    ): View {
         $input = $request->validated();
         $startedAt = hrtime(true);
         $run = $this->startRun($request, $recorder, $module, $persistence, $input, 'scenarios');
@@ -185,7 +195,12 @@ final class MarginMarkupController extends Controller
             durationMs: (int) ((hrtime(true) - $startedAt) / 1_000_000),
         );
 
-        return back()->withInput()->with('scenario_simulation_results', $results);
+        $request->flash();
+
+        return view('tools-calculadora-margem-markup::index', [
+            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
+            'scenarioSimulationResults' => $results,
+        ]);
     }
 
     public function export(
@@ -337,7 +352,7 @@ final class MarginMarkupController extends Controller
             ->with('history_message', 'Registro removido do histórico.');
     }
 
-    public function previewImport(PreviewProductImportRequest $request, PreviewProductImport $action): RedirectResponse
+    public function previewImport(PreviewProductImportRequest $request, PreviewProductImport $action): View
     {
         try {
             $preview = $action->execute($request->file('import_file'), $this->importOwnerKey($request));
@@ -345,10 +360,13 @@ final class MarginMarkupController extends Controller
             throw ValidationException::withMessages(['import_file' => $exception->getMessage()]);
         }
 
-        return back()->with('product_import_preview', $preview);
+        return view('tools-calculadora-margem-markup::index', [
+            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
+            'productImportPreview' => $preview,
+        ]);
     }
 
-    public function processImport(ProcessProductImportRequest $request, ProcessProductImport $action): RedirectResponse
+    public function processImport(ProcessProductImportRequest $request, ProcessProductImport $action): View
     {
         try {
             $result = $action->execute($request->validated(), $this->importOwnerKey($request));
@@ -356,9 +374,12 @@ final class MarginMarkupController extends Controller
             throw ValidationException::withMessages(['import_token' => $exception->getMessage()]);
         }
 
-        return back()
-            ->withInput(['products' => $result['products']])
-            ->with('product_import_result', $result);
+        $request->session()->flashInput(['products' => $result['products']]);
+
+        return view('tools-calculadora-margem-markup::index', [
+            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
+            'productImportResult' => $result,
+        ]);
     }
 
     public function importTemplate(TabularExportService $exporter): StreamedResponse

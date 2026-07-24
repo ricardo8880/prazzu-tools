@@ -34,6 +34,7 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 | Construção de entrada tipada a partir de formulário validado | `BuildCalculationInput` dentro do Emissor de Recibos | Emissor de Recibos | **Manter no domínio** | Reavaliar somente se outras ferramentas repetirem a mesma estrutura de transformação, e não apenas o conceito genérico de Request → validação → DTO. |
 | Geração e download de modelos CSV | Modelo específico da importação em lote do Emissor de Recibos; leitura já usa o Core compartilhado | Emissor de Recibos | **Aguardando segunda ferramenta** | Reavaliar quando outra ferramenta também precisar disponibilizar um arquivo-modelo CSV com resposta, cabeçalhos e regras de download equivalentes. |
 | Exportação de documentos Word/DOCX | `ContractDocxExporter` dentro do Gerador de Contratos | Gerador de Contratos | **Aguardando segunda ferramenta** | Reavaliar quando outra ferramenta também precisar gerar DOCX; até lá, manter a composição OpenXML específica no módulo e reutilizar apenas o empacotamento ZIP compartilhado. |
+| Armazenamento temporário de payloads entre processamento e exportação | `App\Core\Temporary\Contracts\TemporaryPayloadStore` + implementação em cache | Validador de CNPJ/CPF/IE; Conversor Fiscal XML | **Extraído para o Core** | Reutilizar para resultados efêmeros que precisam sobreviver entre requisições sem transformar login/sessão autenticada em requisito. |
 
 ## Componentes já compartilhados relacionados
 
@@ -43,6 +44,7 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 | Exportação por impressão/PDF | Já utiliza a infraestrutura compartilhada do Core técnico. |
 | Empacotamento ZIP simples | Extraído para `App\Core\Export\Services\SimpleZipArchiveBuilder` após uso concreto por Analytics e Gerador de Contratos. |
 | Persistência e histórico | Devem utilizar os mecanismos compartilhados da plataforma, mantendo no módulo somente os dados e regras do domínio. |
+| Payloads temporários entre requisições | Extraído para `App\Core\Temporary` e deve ser usado quando processamento/exportação precisam compartilhar dados efêmeros sem depender de autenticação. |
 
 ## Procedimento obrigatório para assistentes de IA
 

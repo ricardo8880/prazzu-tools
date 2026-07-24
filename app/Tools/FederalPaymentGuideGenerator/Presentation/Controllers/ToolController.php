@@ -40,7 +40,7 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function calculate(CalculateGuideRequest $request, CalculateGuide $action, UsageMetrics $metrics, Tool $tool, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence): RedirectResponse
+    public function calculate(CalculateGuideRequest $request, CalculateGuide $action, UsageMetrics $metrics, Tool $tool, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, ShowToolPage $page, ManageGuideHistory $history): View
     {
         $startedAt = hrtime(true);
         $input = $request->validated();
@@ -66,7 +66,14 @@ final class ToolController extends Controller
 
         $metrics->record($tool->manifest()->slug, 'calculated', $request->user()?->id, null, (int) ((hrtime(true) - $startedAt) / 1_000_000));
 
-        return back()->withInput()->with('guide_result', $result)->with('history_saved', $saved);
+        $request->flash();
+
+        return view('tools-gerador-darf-gps::index', [
+            ...$page->execute(),
+            'result' => $result,
+            'historySaved' => $saved,
+            'recentHistory' => $request->user() ? $history->recent((int) $request->user()->getAuthIdentifier()) : [],
+        ]);
     }
 
     public function exportCurrent(CalculateGuideRequest $request, CalculateGuide $action, PrepareGuideExport $prepare, string $format, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse

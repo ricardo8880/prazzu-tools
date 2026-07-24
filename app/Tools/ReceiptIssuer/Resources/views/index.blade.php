@@ -4,7 +4,7 @@
 @section('meta_description', 'Preencha os dados do pagamento e gere um recibo completo, com valor por extenso e identificação verificável.')
 
 @section('content')
-    @php($result = session('receipt_result', $result ?? null))
+    @php($result = $result ?? session('receipt_result'))
     @php($receipt = is_array($result) ? ($result['details']['receipt'] ?? null) : null)
 
     <div class="container py-5">
@@ -22,7 +22,7 @@
                     <div class="alert alert-success">{{ session('history_message') }}</div>
                 @endif
 
-                @if(session('history_saved'))
+                @if($historySaved ?? session('history_saved', false))
                     <div class="alert alert-success">Recibo salvo no seu histórico.</div>
                 @endif
 

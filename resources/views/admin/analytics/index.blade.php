@@ -203,6 +203,35 @@
     </div>
 
 
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-transparent d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div>
+                <div class="fw-semibold">Avaliações das páginas</div>
+                <div class="small text-body-secondary">Feedback recebido no período selecionado.</div>
+            </div>
+            @if(($page_feedback['count'] ?? 0) > 0)
+                <span class="badge text-bg-light border align-self-start">{{ number_format($page_feedback['average'], 2, ',', '.') }} de 5 · {{ $page_feedback['count'] }} avaliação(ões)</span>
+            @endif
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>Página</th><th class="text-center">Nota</th><th>Comentário</th><th class="text-end">Horário</th></tr></thead>
+                <tbody>
+                @forelse(($page_feedback['recent'] ?? collect()) as $feedback)
+                    <tr>
+                        <td><div class="fw-semibold">{{ $feedback->page_title ?: $feedback->path }}</div><div class="small text-body-secondary">{{ $feedback->path }}</div></td>
+                        <td class="text-center"><span class="badge text-bg-primary">{{ $feedback->rating }}/5</span></td>
+                        <td>{{ $feedback->comment ?: '—' }}</td>
+                        <td class="text-end text-nowrap">{{ $feedback->created_at->format('d/m/Y H:i') }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-center text-body-secondary py-4">Nenhuma avaliação recebida no período.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-transparent fw-semibold">Eventos recentes do período</div>
         <div class="table-responsive">

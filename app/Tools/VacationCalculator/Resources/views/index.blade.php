@@ -22,7 +22,7 @@
         @auth<a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-ferias.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>@endauth
     </div>
     @if(session('history_message'))<div class="alert alert-success">{{ session('history_message') }}</div>@endif
-    @if(session('history_saved'))<div class="alert alert-success">Cálculo salvo no seu histórico Plus.</div>@endif
+    @if($historySaved ?? session('history_saved', false))<div class="alert alert-success">Cálculo salvo no seu histórico Plus.</div>@endif
 
     <div class="alert alert-info d-flex gap-2 align-items-start" role="alert">
         <i class="bi bi-info-circle-fill mt-1" aria-hidden="true"></i>
@@ -92,8 +92,8 @@
         </form>
     </section>
 
-    @if (session('calculation_result'))
-        @php($result = session('calculation_result'))
+    @php($result = $calculationResult ?? session('calculation_result'))
+    @if ($result)
         <div class="d-flex flex-wrap gap-2 mb-3">
             <form method="post" action="{{ route('tools.calculadora-ferias.export', 'csv') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Exportar CSV <span class="badge text-bg-primary">Plus</span></button></form>
             <form method="post" action="{{ route('tools.calculadora-ferias.export', 'json') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Exportar JSON</button></form>

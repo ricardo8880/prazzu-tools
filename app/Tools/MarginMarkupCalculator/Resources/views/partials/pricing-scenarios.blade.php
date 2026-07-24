@@ -78,8 +78,10 @@
     </form>
 </section>
 
-@if (session('scenario_simulation_results'))
-    @php($scenarioResults = session('scenario_simulation_results'))
+@php
+    $scenarioResults = $scenarioSimulationResults ?? session('scenario_simulation_results');
+@endphp
+@if ($scenarioResults)
     <section class="mt-4" aria-labelledby="scenario-results-title">
         <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
             <div><h2 id="scenario-results-title" class="prazzu-section-title mb-1">Comparação de cenários</h2><p class="text-body-secondary mb-0">Use a margem efetiva para avaliar o impacto real de custos e descontos.</p></div>

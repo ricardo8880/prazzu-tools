@@ -30,7 +30,7 @@
         </div>
     @endif
 
-    @if (session('history_saved'))
+    @if (($historySaved ?? false) || session('history_saved'))
         <div class="alert alert-success d-flex gap-2 align-items-start" role="status">
             <i class="bi bi-cloud-check-fill mt-1" aria-hidden="true"></i>
             <div>Este cálculo foi salvo automaticamente no seu histórico.</div>
@@ -257,8 +257,9 @@
         </form>
     </section>
 
-    @if (session('calculation_result'))
-        @php($result = session('calculation_result'))
+    @if (($calculationResult ?? null) || session('calculation_result'))
+        @php($result = $calculationResult ?? session('calculation_result'))
+        @php($exportInput = ! empty($calculationInput ?? []) ? $calculationInput : session('calculation_input', []))
         <section class="prazzu-form-panel mt-4" aria-labelledby="termination-result-title">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div>
@@ -269,10 +270,10 @@
                 <div class="text-lg-end">
                     <small class="text-body-secondary d-block">Valor líquido estimado</small>
                     <strong class="fs-3 text-success">{{ $result['net_total'] }}</strong>
-                    @if (session('calculation_input'))
+                    @if (! empty($exportInput))
                         <form method="post" action="{{ route('tools.calculadora-de-rescisao.export') }}" class="mt-2" target="_blank">
                             @csrf
-                            @foreach (session('calculation_input') as $field => $value)
+                            @foreach ($exportInput as $field => $value)
                                 @if (! is_array($value) && $value !== null)
                                     <input type="hidden" name="{{ $field }}" value="{{ $value }}">
                                 @endif

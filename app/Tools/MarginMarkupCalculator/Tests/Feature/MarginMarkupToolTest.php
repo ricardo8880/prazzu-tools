@@ -30,13 +30,10 @@ final class MarginMarkupToolTest extends TestCase
             ]);
 
         $response
-            ->assertRedirect(route('tools.calculadora-margem-markup.index'))
-            ->assertSessionHas('calculation_result', static function (array $result): bool {
-                return $result['sale_price'] === 'R$ 160,00'
-                    && $result['gross_profit'] === 'R$ 40,00'
-                    && $result['net_profit'] === 'R$ 40,00'
-                    && $result['rule_version'] === '2.0.0';
-            });
+            ->assertOk()
+            ->assertSee('R$ 160,00')
+            ->assertSee('R$ 40,00')
+            ->assertSee('2.0.0');
 
         $this->assertDatabaseCount('tool_runs', 0);
         $this->assertDatabaseHas('tool_usage_events', [
@@ -115,14 +112,11 @@ final class MarginMarkupToolTest extends TestCase
             ]);
 
         $response
-            ->assertRedirect(route('tools.calculadora-margem-markup.index'))
-            ->assertSessionHas('batch_calculation_results', static function (array $results): bool {
-                return count($results) === 2
-                    && $results[0]['name'] === 'Produto A'
-                    && $results[0]['sale_price'] === 'R$ 125,00'
-                    && $results[1]['name'] === 'Produto B'
-                    && $results[1]['sale_price'] === 'R$ 266,67';
-            });
+            ->assertOk()
+            ->assertSee('Produto A')
+            ->assertSee('R$ 125,00')
+            ->assertSee('Produto B')
+            ->assertSee('R$ 266,67');
 
         $this->assertDatabaseHas('tool_usage_events', [
             'tool_slug' => 'calculadora-margem-markup',
@@ -149,26 +143,27 @@ final class MarginMarkupToolTest extends TestCase
         $previewResponse = $this->from(route('tools.calculadora-margem-markup.index'))
             ->post(route('tools.calculadora-margem-markup.import.preview'), ['import_file' => $file]);
 
-        $previewResponse->assertRedirect(route('tools.calculadora-margem-markup.index'))
-            ->assertSessionHas('product_import_preview');
+        $previewResponse->assertOk()
+            ->assertSee('produtos.csv')
+            ->assertSee('2 linha(s)');
 
-        $preview = session('product_import_preview');
-        $this->assertSame(2, $preview['total_rows']);
-        $this->assertSame('Produto', $preview['suggested_mapping']['name_column']);
+        preg_match('/name="import_token" value="([^"]+)"/', $previewResponse->getContent(), $matches);
+        $this->assertNotEmpty($matches[1] ?? null);
+        $token = $matches[1];
 
         $this->from(route('tools.calculadora-margem-markup.index'))
             ->post(route('tools.calculadora-margem-markup.import.process'), [
-                'import_token' => $preview['token'],
-                'available_headers' => $preview['headers'],
+                'import_token' => $token,
+                'available_headers' => ['Produto', 'Código', 'Categoria', 'Custo base', 'Margem %'],
                 'name_column' => 'Produto',
                 'code_column' => 'Código',
                 'category_column' => 'Categoria',
                 'base_cost_column' => 'Custo base',
                 'desired_margin_column' => 'Margem %',
             ])
-            ->assertRedirect(route('tools.calculadora-margem-markup.index'))
-            ->assertSessionHas('product_import_result', fn (array $result): bool => $result['imported'] === 2)
-            ->assertSessionHasInput('products.0.name', 'Produto A');
+            ->assertOk()
+            ->assertSee('2 produto(s) importado(s)')
+            ->assertSee('Produto A');
     }
 
     public function test_import_template_is_downloadable(): void

@@ -24,12 +24,13 @@ use Illuminate\View\View;
 
 final class SimplesNacionalController extends Controller
 {
+    public function __construct(private readonly ToolResultResolver $resolver) {}
+
     public function index(
         Request $request,
         ToolFeatureAccessGate $featureGate,
         ToolRegistry $tools,
         ListSimplesNacionalCalculations $history,
-        ToolResultResolver $integrations,
     ): View {
         $manifest = $tools->findManifest('calculadora-simples-nacional');
         abort_if($manifest === null, 404);
@@ -41,7 +42,7 @@ final class SimplesNacionalController extends Controller
                     ? null
                     : (int) $request->user()->getAuthIdentifier(),
             ),
-            'operatingProfileIntegration' => $integrations->latest('company-operating-profile', 1),
+            'operatingProfileIntegration' => $this->resolver->latest('company-operating-profile', 1),
             'plusAccess' => collect([
                 SimplesNacionalFeature::CompareScenarios,
                 SimplesNacionalFeature::CompareAnnexes,
@@ -59,7 +60,10 @@ final class SimplesNacionalController extends Controller
         StandardSimplesNacionalCalculator $calculateSimples,
         CalculateFactorR $calculateFactorR,
         ToolResultPublisher $integrations,
-    ): RedirectResponse {
+        ToolFeatureAccessGate $featureGate,
+        ToolRegistry $tools,
+        ListSimplesNacionalCalculations $history,
+    ): View {
         $input = $request->validated();
         $factorRResult = null;
 
@@ -90,10 +94,25 @@ final class SimplesNacionalController extends Controller
             $integrations->publish($calculation->integrationPayload);
         }
 
-        return redirect()
-            ->route('tools.calculadora-simples-nacional.index')
-            ->withInput()
-            ->with('calculation_result', $resultData)
-            ->with('factor_r_result', $factorRResult?->toArray());
+        $manifest = $tools->findManifest('calculadora-simples-nacional');
+        abort_if($manifest === null, 404);
+        $request->flash();
+
+        return view('tools-calculadora-simples-nacional::index', [
+            'annexes' => TaxAnnex::cases(),
+            'history' => $history->recent($request->user() === null ? null : (int) $request->user()->getAuthIdentifier()),
+            'operatingProfileIntegration' => $this->resolver->latest('company-operating-profile', 1),
+            'plusAccess' => collect([
+                SimplesNacionalFeature::CompareScenarios,
+                SimplesNacionalFeature::CompareAnnexes,
+                SimplesNacionalFeature::MonthlyHistory,
+                SimplesNacionalFeature::AnnualProjection,
+                SimplesNacionalFeature::Alerts,
+            ])->mapWithKeys(fn (SimplesNacionalFeature $feature): array => [
+                $feature->value => $featureGate->decide($manifest, $feature->value, $request->user())->allowed,
+            ])->all(),
+            'calculationResult' => $resultData,
+            'factorRResult' => $factorRResult?->toArray(),
+        ]);
     }
 }

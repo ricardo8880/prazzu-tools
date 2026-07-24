@@ -36,12 +36,13 @@ final class LaborTerminationToolTest extends TestCase
             'fgts_balance' => '10.000,00',
             'other_discounts' => '0,00',
             'dependents' => 0,
-        ])->assertRedirect(route('tools.calculadora-de-rescisao.index'))
-            ->assertSessionHas('calculation_result', fn (array $result): bool => $result['notice_pay'] === 'R$ 3.600,00'
-                && $result['notice_days'] === 36
-                && $result['projected_termination_date'] === '19/08/2026'
-                && $result['termination_type_label'] === 'Dispensa sem justa causa'
-            )->assertSessionHasNoErrors();
+        ])->assertOk()
+            ->assertSee('Resultado da rescisão')
+            ->assertSee('R$ 3.600,00')
+            ->assertSee('19/08/2026')
+            ->assertSee('Dispensa sem justa causa')
+            ->assertSee('Exportar PDF')
+            ->assertSessionHasNoErrors();
     }
 
     public function test_incompatible_notice_is_returned_as_validation_error(): void
@@ -67,7 +68,7 @@ final class LaborTerminationToolTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)->post(route('tools.calculadora-de-rescisao.calculate'), [
+        $response = $this->actingAs($user)->post(route('tools.calculadora-de-rescisao.calculate'), [
             'monthly_salary' => '3.000,00',
             'admission_date' => '2024-01-10',
             'termination_date' => '2026-07-14',
@@ -86,7 +87,11 @@ final class LaborTerminationToolTest extends TestCase
             'recurring_additions' => '0,00',
             'article_480_discount' => '0,00',
             'extraordinary_indemnities' => '0,00',
-        ])->assertSessionHas('history_saved', true);
+        ]);
+
+        $response->assertOk()
+            ->assertSee('Este cálculo foi salvo automaticamente no seu histórico.')
+            ->assertSee('Resultado da rescisão');
 
         $run = ToolRun::query()->sole();
         $this->assertSame($user->id, $run->user_id);
@@ -107,9 +112,9 @@ final class LaborTerminationToolTest extends TestCase
         $this->assertDatabaseCount('tool_runs', 0);
     }
 
-    public function test_guest_calculation_is_not_saved_to_history(): void
+    public function test_guest_calculation_is_not_saved_to_history_and_keeps_result_exportable_without_login(): void
     {
-        $this->post(route('tools.calculadora-de-rescisao.calculate'), [
+        $response = $this->post(route('tools.calculadora-de-rescisao.calculate'), [
             'monthly_salary' => '3.000,00',
             'admission_date' => '2024-01-10',
             'termination_date' => '2026-07-14',
@@ -130,6 +135,12 @@ final class LaborTerminationToolTest extends TestCase
             'extraordinary_indemnities' => '0,00',
         ]);
 
+        $response->assertOk()
+            ->assertSee('Resultado da rescisão')
+            ->assertSee('Exportar PDF')
+            ->assertSee('name="monthly_salary" value="3.000,00"', false);
+
+        $this->assertGuest();
         $this->assertDatabaseCount('tool_runs', 0);
     }
 

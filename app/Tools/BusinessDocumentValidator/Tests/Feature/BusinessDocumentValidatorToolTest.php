@@ -28,12 +28,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
         $this->post(route('tools.validador-de-cnpj.validate'), [
             'document_type' => 'automatic',
             'document_number' => '529.982.247-25',
-        ])->assertRedirect()
-            ->assertSessionHas('validation_result', function (array $result): bool {
-                return $result['valid'] === true
-                    && $result['type'] === 'cpf'
-                    && $result['formatted'] === '529.982.247-25';
-            });
+        ])->assertOk()->assertSee('529.982.247-25')->assertSee('CPF');
     }
 
     public function test_it_validates_a_cnpj(): void
@@ -41,12 +36,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
         $this->post(route('tools.validador-de-cnpj.validate'), [
             'document_type' => 'cnpj',
             'document_number' => '04.252.011/0001-10',
-        ])->assertRedirect()
-            ->assertSessionHas('validation_result', function (array $result): bool {
-                return $result['valid'] === true
-                    && $result['type'] === 'cnpj'
-                    && $result['formatted'] === '04.252.011/0001-10';
-            });
+        ])->assertOk()->assertSee('04.252.011/0001-10')->assertSee('CNPJ');
     }
 
     public function test_it_reports_an_invalid_document(): void
@@ -54,8 +44,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
         $this->post(route('tools.validador-de-cnpj.validate'), [
             'document_type' => 'automatic',
             'document_number' => '111.111.111-11',
-        ])->assertRedirect()
-            ->assertSessionHas('validation_result', fn (array $result): bool => $result['valid'] === false);
+        ])->assertOk()->assertSee('Inválido');
     }
 
     public function test_it_rejects_unsupported_characters(): void
@@ -98,21 +87,14 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
         $this->post(route('tools.validador-de-cnpj.lookup-company'), [
             'cnpj' => '04.252.011/0001-10',
-        ])->assertRedirect()
-            ->assertSessionHas('registry_lookup_result', function (array $result): bool {
-                return $result['status'] === 'found'
-                    && $result['company']['legal_name'] === 'EMPRESA EXEMPLO LTDA';
-            });
+        ])->assertOk()->assertSee('EMPRESA EXEMPLO LTDA');
     }
 
     public function test_it_does_not_consult_invalid_cnpj(): void
     {
         $this->post(route('tools.validador-de-cnpj.lookup-company'), [
             'cnpj' => '11.111.111/1111-11',
-        ])->assertRedirect()
-            ->assertSessionHas('registry_lookup_result', fn (array $result): bool => $result['status'] === 'not_found'
-                && str_contains($result['message'], 'matematicamente inválido')
-            );
+        ])->assertOk()->assertSee('matematicamente inválido');
     }
 
     public function test_state_registration_validation_route_is_available(): void
@@ -122,8 +104,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             'state_registration' => '110042490114',
         ]);
 
-        $response->assertRedirect();
-        $response->assertSessionHas('state_registration_result.valid', true);
+        $response->assertOk()->assertSee('Válida');
     }
 
     public function test_it_analyzes_company_inconsistencies(): void
@@ -161,12 +142,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             'legal_name' => 'EMPRESA DIFERENTE LTDA',
             'analysis_state' => 'RJ',
             'city' => 'RIO DE JANEIRO',
-        ])->assertRedirect()
-            ->assertSessionHas('consistency_analysis_result', function (array $result): bool {
-                return $result['completed'] === true
-                    && $result['summary']['errors'] === 1
-                    && $result['summary']['warnings'] === 2;
-            });
+        ])->assertOk()->assertSee('EMPRESA DIFERENTE LTDA')->assertSee('Inconsistências');
     }
 
     public function test_it_previews_a_csv_batch_import(): void
@@ -179,11 +155,10 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
         $this->post(route('tools.validador-de-cnpj.batch.preview'), [
             'batch_file' => $file,
-        ])->assertRedirect()
-            ->assertSessionHas('batch_import_preview', function (array $preview): bool {
-                return $preview['total_rows'] === 1
-                    && $preview['suggested_mapping']['document_column'] === 'CNPJ';
-            });
+        ])->assertOk()
+            ->assertSee('empresas.csv')
+            ->assertSee('Processar 1 registro(s)')
+            ->assertSee('name="import_token"', false);
     }
 
     public function test_consistency_analysis_requires_state_when_ie_is_informed(): void

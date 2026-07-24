@@ -23,8 +23,10 @@
         </div>
     </form>
 
-    @if(session('product_import_result'))
-        @php($importResult = session('product_import_result'))
+    @php
+        $importResult = $productImportResult ?? session('product_import_result');
+    @endphp
+    @if($importResult)
         <div class="alert alert-success mt-3 mb-0" role="status">
             <strong>{{ $importResult['imported'] }} produto(s) importado(s).</strong>
             Os dados foram carregados na tabela de cálculo em lote abaixo.
@@ -39,8 +41,10 @@
         </div>
     @endif
 
-    @if(session('product_import_preview'))
-        @php($preview = session('product_import_preview'))
+    @php
+        $preview = $productImportPreview ?? session('product_import_preview');
+    @endphp
+    @if($preview)
         <div class="card border-0 shadow-sm mt-4">
             <div class="card-body">
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-3">

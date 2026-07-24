@@ -25,7 +25,7 @@ final class AccountingFeesAdjustmentTest extends TestCase
         $this->actingAs($user)->post(route('tools.calculadora-de-honorarios-contabeis.adjustments.calculate'), [
             'scenario_label' => 'Renovação anual — cenário A', 'index_type' => 'ipca', 'reference_period' => '2026-07',
             'current_value' => '1.500,00', 'percentage' => '4.62', 'notes' => 'Índice acumulado do contrato.',
-        ])->assertRedirect(route('tools.calculadora-de-honorarios-contabeis.adjustments.index'))->assertSessionHas('adjustment_result.difference_cents', 6930);
+        ])->assertOk()->assertSee('R$ 69,30')->assertSee('R$ 1.569,30');
 
         $run = ToolRun::query()->where('tool_slug', 'calculadora-de-honorarios-contabeis')->firstOrFail();
         self::assertSame('fee_adjustment', data_get($run->input_payload, 'run_type'));

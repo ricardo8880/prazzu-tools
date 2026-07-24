@@ -32,10 +32,11 @@ final class ToolPageTest extends TestCase
 
         $this->post(route('tools.conversor-fiscal-xml.calculate'), [
             'xml_file' => UploadedFile::fake()->createWithContent('nota.xml', $xml),
-        ])->assertRedirect();
-
-        $this->get(route('tools.conversor-fiscal-xml.index'))
-            ->assertOk()->assertSee('Emitente Teste')->assertSee('Produto Teste')->assertSee('123');
+        ])->assertOk()
+            ->assertSee('Emitente Teste')
+            ->assertSee('Produto Teste')
+            ->assertSee('123')
+            ->assertSee('result_token=');
     }
 
     public function test_invalid_xml_returns_validation_error(): void

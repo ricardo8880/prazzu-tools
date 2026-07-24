@@ -6,6 +6,7 @@ use App\Core\Analytics\Domain\Services\AnalyticsEventNameResolver;
 use App\Core\Analytics\Domain\ValueObjects\AnalyticsPeriod;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\PlatformAnalyticsEvent;
+use App\Core\Feedback\Models\PageFeedback;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +30,7 @@ final class ExecutiveDashboardQuery
             'daily' => $this->dailySeries($period),
             'top_sources' => $this->topSources($period),
             'top_pages' => $this->topPages($period),
+            'page_feedback' => $this->pageFeedback($period),
             'recent_events' => PlatformAnalyticsEvent::query()
                 ->whereBetween('occurred_at', [$period->start, $period->end])
                 ->latest('occurred_at')
@@ -162,6 +164,18 @@ final class ExecutiveDashboardQuery
             ->orderByDesc('sessions')
             ->limit(8)
             ->get();
+    }
+
+    /** @return array{count:int,average:float,recent:Collection<int, PageFeedback>} */
+    private function pageFeedback(AnalyticsPeriod $period): array
+    {
+        $query = PageFeedback::query()->whereBetween('created_at', [$period->start, $period->end]);
+
+        return [
+            'count' => (clone $query)->count(),
+            'average' => round((float) ((clone $query)->avg('rating') ?? 0), 2),
+            'recent' => (clone $query)->latest('created_at')->limit(8)->get(['path', 'page_title', 'rating', 'comment', 'created_at']),
+        ];
     }
 
     /** @return Collection<int, object> */

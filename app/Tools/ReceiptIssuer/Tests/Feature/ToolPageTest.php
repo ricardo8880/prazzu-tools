@@ -33,18 +33,7 @@ final class ToolPageTest extends TestCase
             'city' => 'São Paulo',
         ]);
 
-        $response->assertRedirect()
-            ->assertSessionHas('receipt_result', static function (array $result): bool {
-                $receipt = $result['details']['receipt'] ?? [];
-
-                return ($receipt['number'] ?? null) === 'REC-2026-001'
-                    && ($receipt['amount'] ?? null) === 'R$ 1.250,90'
-                    && ($receipt['payer']['document'] ?? null) === '04.252.011/0001-10'
-                    && ($receipt['payee']['document'] ?? null) === '529.982.247-25';
-            });
-
-        $this->followRedirects($response)
-            ->assertOk()
+        $response->assertOk()
             ->assertSee('Revisão do recibo')
             ->assertSee('Empresa Pagadora Ltda.')
             ->assertSee('R$ 1.250,90')
@@ -113,6 +102,6 @@ final class ToolPageTest extends TestCase
             'amount' => '100,00',
             'description' => 'Pagamento de serviço',
             'issued_at' => '2026-07-23',
-        ])->assertSessionHasNoErrors()->assertSessionHas('receipt_result');
+        ])->assertOk()->assertSee('Revisão do recibo');
     }
 }

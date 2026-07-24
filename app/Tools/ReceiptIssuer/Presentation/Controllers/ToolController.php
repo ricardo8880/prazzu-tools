@@ -62,7 +62,10 @@ final class ToolController extends Controller
         ToolRunRecorder $recorder,
         ToolPersistenceAuthorizer $persistence,
         Tool $module,
-    ): RedirectResponse {
+        ShowToolPage $page,
+        ManageReceiptHistory $history,
+        ManageReceiptPartyProfiles $profiles,
+    ): View {
         $input = $request->validated();
 
         try {
@@ -84,10 +87,15 @@ final class ToolController extends Controller
             $saved = true;
         }
 
-        return redirect()->route('tools.emissor-de-recibos.index')
-            ->withInput()
-            ->with('receipt_result', $result)
-            ->with('history_saved', $saved);
+        $request->flash();
+
+        return view('tools-emissor-de-recibos::index', [
+            ...$page->execute(),
+            'result' => $result,
+            'historySaved' => $saved,
+            'recentHistory' => $request->user() ? $history->recent((int) $request->user()->getAuthIdentifier()) : [],
+            'partyProfiles' => $request->user() ? $profiles->all((int) $request->user()->getAuthIdentifier()) : collect(),
+        ]);
     }
 
     public function history(Request $request, ManageReceiptHistory $history): View

@@ -42,11 +42,7 @@ final class ToolPageTest extends TestCase
             'other_deductions' => '0,00',
         ]);
 
-        $response->assertRedirect(route('tools.calculadora-ferias.index'));
-        $response->assertSessionHas('calculation_result');
-
-        $this->followRedirects($response)
-            ->assertOk()
+        $response->assertOk()
             ->assertSee('Resultado das férias')
             ->assertSee('R$ 4.000,00')
             ->assertSee('29/06/2026');

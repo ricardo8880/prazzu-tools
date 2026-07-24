@@ -19,8 +19,8 @@
 
     @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
-    @if (session('success'))
-        <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+    @if ($successMessage ?? session('success'))
+        <div class="alert alert-success" role="alert">{{ $successMessage ?? session('success') }}</div>
     @endif
 
     <x-tools.validation-summary class="mb-4" />
@@ -136,8 +136,8 @@
         </form>
     </section>
 
-    @if (session('calculation_result'))
-        @php($result = session('calculation_result'))
+    @php($result = $calculationResult ?? session('calculation_result'))
+    @if ($result)
         @php($complexityVariant = match ($result['complexity_level']) { 'Baixa' => 'success', 'Média' => 'warning', 'Alta', 'Muito alta' => 'danger', default => 'secondary' })
 
         <section class="mt-4" aria-labelledby="calculation-result-title">

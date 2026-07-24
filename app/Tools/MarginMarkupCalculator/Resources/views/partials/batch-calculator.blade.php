@@ -38,7 +38,9 @@
                     </tr>
                 </thead>
                 <tbody id="batch-products">
-                    @php($products = old('products', [['name'=>'','code'=>'','category'=>'','base_cost'=>'','additional_costs'=>'0,00','freight_cost'=>'0,00','packaging_cost'=>'0,00','fixed_expenses'=>'0,00','desired_margin'=>'30','taxes_percentage'=>'0','commission_percentage'=>'0','card_fees_percentage'=>'0','marketplace_fees_percentage'=>'0']]))
+                    @php
+                        $products = old('products', [['name'=>'','code'=>'','category'=>'','base_cost'=>'','additional_costs'=>'0,00','freight_cost'=>'0,00','packaging_cost'=>'0,00','fixed_expenses'=>'0,00','desired_margin'=>'30','taxes_percentage'=>'0','commission_percentage'=>'0','card_fees_percentage'=>'0','marketplace_fees_percentage'=>'0']]);
+                    @endphp
                     @foreach($products as $index => $product)
                         @include('tools-calculadora-margem-markup::partials.batch-row', ['index' => $index, 'product' => $product])
                     @endforeach
@@ -54,8 +56,10 @@
     </form>
 </section>
 
-@if(session('batch_calculation_results'))
-    @php($batchResults = session('batch_calculation_results'))
+@php
+    $batchResults = $batchCalculationResults ?? session('batch_calculation_results');
+@endphp
+@if($batchResults)
     <section class="mt-4" aria-labelledby="batch-results-title">
         <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
             <div><h2 id="batch-results-title" class="prazzu-section-title mb-1">Comparação dos produtos</h2><p class="text-body-secondary mb-0">Ordene a tabela para identificar preços, lucros e margens.</p></div>

@@ -49,7 +49,8 @@ final class ToolController extends Controller
         ToolRunRecorder $recorder,
         ToolPersistenceAuthorizer $persistence,
         Tool $module,
-    ): RedirectResponse {
+        ShowToolPage $page,
+    ): View {
         $data = $request->validated();
         $run = $this->startRun($request, $recorder, $persistence, $module, $data);
 
@@ -66,9 +67,12 @@ final class ToolController extends Controller
             throw $exception;
         }
 
-        return redirect()->route('tools.comparador-tributario.index')
-            ->withInput()
-            ->with('comparison_result', $result);
+        $request->flash();
+
+        return view('tools-comparador-tributario::index', [
+            ...$page->execute(),
+            'comparisonResult' => $result,
+        ]);
     }
 
     public function export(

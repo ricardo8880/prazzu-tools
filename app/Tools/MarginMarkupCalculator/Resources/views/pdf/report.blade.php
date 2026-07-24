@@ -1,4 +1,6 @@
-@php($result = $result ?? [])
+@php
+    $result = $result ?? [];
+@endphp
 <div class="row g-3 mb-4">
     @foreach(['Custo total'=>'total_cost','Preço de venda'=>'sale_price','Lucro bruto'=>'gross_profit','Lucro líquido'=>'net_profit','Margem líquida'=>'margin','Markup'=>'markup','Índice de markup'=>'markup_multiplier'] as $label=>$key)
         <div class="col-6"><div class="border rounded p-3 h-100"><small class="text-body-secondary d-block">{{ $label }}</small><strong>{{ $result[$key] ?? '—' }}</strong></div></div>

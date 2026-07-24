@@ -28,13 +28,10 @@ final class ToolPageTest extends TestCase
                 'rbt12' => '180.000,00',
                 'monthly_revenue' => '15.000,00',
             ])
-            ->assertRedirect(route('tools.calculadora-simples-nacional.index'))
-            ->assertSessionHas('calculation_result', static function (array $result): bool {
-                return $result['annex'] === 'I'
-                    && $result['bracket'] === 1
-                    && $result['effective_rate'] === '4%'
-                    && $result['estimated_das'] === 'R$ 600,00';
-            });
+            ->assertOk()
+            ->assertSee('Anexo I')
+            ->assertSee('4%')
+            ->assertSee('R$ 600,00');
     }
 
     public function test_factor_r_selects_annex_iii_and_calculates_das(): void
@@ -46,9 +43,9 @@ final class ToolPageTest extends TestCase
                 'monthly_revenue' => '15.000,00',
                 'payroll_12' => '50.400,00',
             ])
-            ->assertRedirect(route('tools.calculadora-simples-nacional.index'))
-            ->assertSessionHas('factor_r_result', static fn (array $result): bool => $result['applicable_annex'] === 'III')
-            ->assertSessionHas('calculation_result', static fn (array $result): bool => $result['annex'] === 'III');
+            ->assertOk()
+            ->assertSee('Fator R')
+            ->assertSee('Anexo III');
     }
 
     public function test_factor_r_requires_payroll(): void

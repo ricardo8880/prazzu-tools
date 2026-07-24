@@ -30,21 +30,7 @@ final class LaborTerminationController extends Controller
 {
     public function index(Request $request, ManageLaborTerminationHistory $history): View
     {
-        $recentHistory = $request->user() === null
-            ? collect()
-            : $history->recent((int) $request->user()->getAuthIdentifier());
-
-        return view('tools-calculadora-de-rescisao::index', [
-            'terminationTypes' => $this->enumOptions(TerminationType::cases()),
-            'contractTypes' => [
-                'indefinite' => 'Prazo indeterminado',
-                'fixed_term' => 'Prazo determinado',
-                'experience' => 'Contrato de experiência',
-                'domestic' => 'Empregado doméstico',
-            ],
-            'noticeTypes' => $this->enumOptions(NoticeType::cases()),
-            'recentHistory' => $recentHistory,
-        ]);
+        return view('tools-calculadora-de-rescisao::index', $this->pageData($request, $history));
     }
 
     public function calculate(
@@ -53,7 +39,8 @@ final class LaborTerminationController extends Controller
         ToolRunRecorder $recorder,
         Tool $module,
         ToolPersistenceAuthorizer $persistence,
-    ): RedirectResponse {
+        ManageLaborTerminationHistory $history,
+    ): View {
         $input = $request->validated();
         $run = null;
 
@@ -81,11 +68,13 @@ final class LaborTerminationController extends Controller
             throw $exception;
         }
 
-        return redirect()->route('tools.calculadora-de-rescisao.index')
-            ->withInput()
-            ->with('calculation_result', $result->toArray())
-            ->with('calculation_input', $input)
-            ->with('history_saved', $run !== null);
+        $request->flash();
+
+        return view('tools-calculadora-de-rescisao::index', $this->pageData($request, $history, [
+            'calculationResult' => $result->toArray(),
+            'calculationInput' => $input,
+            'historySaved' => $run !== null,
+        ]));
     }
 
     public function export(
@@ -149,6 +138,35 @@ final class LaborTerminationController extends Controller
 
         return redirect()->route('tools.calculadora-de-rescisao.history.index')
             ->with('history_message', 'Cálculo removido do histórico.');
+    }
+
+    /**
+     * @param array<string, mixed> $extra
+     * @return array<string, mixed>
+     */
+    private function pageData(
+        Request $request,
+        ManageLaborTerminationHistory $history,
+        array $extra = [],
+    ): array {
+        $recentHistory = $request->user() === null
+            ? collect()
+            : $history->recent((int) $request->user()->getAuthIdentifier());
+
+        return array_merge([
+            'terminationTypes' => $this->enumOptions(TerminationType::cases()),
+            'contractTypes' => [
+                'indefinite' => 'Prazo indeterminado',
+                'fixed_term' => 'Prazo determinado',
+                'experience' => 'Contrato de experiência',
+                'domestic' => 'Empregado doméstico',
+            ],
+            'noticeTypes' => $this->enumOptions(NoticeType::cases()),
+            'recentHistory' => $recentHistory,
+            'calculationResult' => null,
+            'calculationInput' => [],
+            'historySaved' => false,
+        ], $extra);
     }
 
     /** @param array<int, TerminationType|NoticeType> $cases

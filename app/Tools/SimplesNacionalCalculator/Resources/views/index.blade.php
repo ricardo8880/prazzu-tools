@@ -80,9 +80,13 @@
         </form>
     </x-tools.form-panel>
 
-    @if (session('calculation_result'))
-        @php($result = session('calculation_result'))
-        @php($factorR = session('factor_r_result'))
+    @php
+        $result = $calculationResult ?? session('calculation_result');
+    @endphp
+    @php
+        $factorR = $factorRResult ?? session('factor_r_result');
+    @endphp
+    @if ($result)
 
         <section class="mt-4" aria-labelledby="calculation-result-title">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
@@ -179,8 +183,11 @@
                             <div class="col-12"><button class="btn btn-primary" type="submit" @disabled(! ($plusAccess['compare_scenarios'] ?? false))><i class="bi bi-arrow-left-right me-1"></i> Comparar cenários</button></div>
                         </form>
 
-                        @if(session('scenario_comparison'))
-                            <div class="table-responsive mt-4"><table class="table table-striped align-middle mb-0"><thead><tr><th>Cenário</th><th>Anexo</th><th>Faixa</th><th>Alíquota efetiva</th><th>DAS</th></tr></thead><tbody>@foreach(session('scenario_comparison.scenarios') as $scenario)<tr class="{{ $scenario['best'] ? 'table-success' : '' }}"><td><strong>{{ $scenario['name'] }}</strong> @if($scenario['best'])<span class="badge text-bg-success ms-1">Menor DAS</span>@endif</td><td>{{ $scenario['annex_label'] }}</td><td>{{ $scenario['bracket'] }}</td><td>{{ $scenario['effective_rate'] }}</td><td>{{ $scenario['estimated_das'] }}</td></tr>@endforeach</tbody></table></div>
+                        @php
+                            $scenarioComparisonData = $scenarioComparison ?? session('scenario_comparison');
+                        @endphp
+                        @if($scenarioComparisonData)
+                            <div class="table-responsive mt-4"><table class="table table-striped align-middle mb-0"><thead><tr><th>Cenário</th><th>Anexo</th><th>Faixa</th><th>Alíquota efetiva</th><th>DAS</th></tr></thead><tbody>@foreach(data_get($scenarioComparisonData, 'scenarios', []) as $scenario)<tr class="{{ $scenario['best'] ? 'table-success' : '' }}"><td><strong>{{ $scenario['name'] }}</strong> @if($scenario['best'])<span class="badge text-bg-success ms-1">Menor DAS</span>@endif</td><td>{{ $scenario['annex_label'] }}</td><td>{{ $scenario['bracket'] }}</td><td>{{ $scenario['effective_rate'] }}</td><td>{{ $scenario['estimated_das'] }}</td></tr>@endforeach</tbody></table></div>
                         @endif
                     </div>
                 </div>
@@ -195,7 +202,10 @@
                         <div class="col-md-5"><label class="form-label">Faturamento do mês</label><input class="form-control" name="monthly_revenue" value="{{ old('monthly_revenue') }}" required></div>
                         <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit" @disabled(! ($plusAccess['compare_annexes'] ?? false))>Comparar</button></div>
                     </form>
-                    @if(session('annex_comparison'))<div class="table-responsive mt-4"><table class="table table-hover align-middle mb-0"><thead><tr><th>Anexo</th><th>Faixa</th><th>Alíquota efetiva</th><th>DAS</th></tr></thead><tbody>@foreach(session('annex_comparison.scenarios') as $scenario)<tr class="{{ $scenario['best'] ? 'table-success' : '' }}"><td><strong>{{ $scenario['annex_label'] }}</strong></td><td>{{ $scenario['bracket'] }}</td><td>{{ $scenario['effective_rate'] }}</td><td>{{ $scenario['estimated_das'] }} @if($scenario['best'])<span class="badge text-bg-success ms-1">Melhor resultado</span>@endif</td></tr>@endforeach</tbody></table></div>@endif
+                    @php
+                        $annexComparisonData = $annexComparison ?? session('annex_comparison');
+                    @endphp
+                    @if($annexComparisonData)<div class="table-responsive mt-4"><table class="table table-hover align-middle mb-0"><thead><tr><th>Anexo</th><th>Faixa</th><th>Alíquota efetiva</th><th>DAS</th></tr></thead><tbody>@foreach(data_get($annexComparisonData, 'scenarios', []) as $scenario)<tr class="{{ $scenario['best'] ? 'table-success' : '' }}"><td><strong>{{ $scenario['annex_label'] }}</strong></td><td>{{ $scenario['bracket'] }}</td><td>{{ $scenario['effective_rate'] }}</td><td>{{ $scenario['estimated_das'] }} @if($scenario['best'])<span class="badge text-bg-success ms-1">Melhor resultado</span>@endif</td></tr>@endforeach</tbody></table></div>@endif
                 </div></div>
             </div>
 
@@ -208,7 +218,10 @@
                         <div class="col-md-3"><label class="form-label">Crescimento mensal (%)</label><input class="form-control" type="number" step="0.01" name="monthly_growth" value="{{ old('monthly_growth', 0) }}" required></div>
                         <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit" @disabled(! ($plusAccess['annual_projection'] ?? false))>Projetar</button></div>
                     </form>
-                    @if(session('annual_projection'))@php($projection=session('annual_projection'))<div class="row g-3 mt-2"><div class="col-md-6"><div class="alert alert-primary mb-0"><small>Receita projetada</small><div class="fs-4 fw-bold">{{ $projection['total_revenue'] }}</div></div></div><div class="col-md-6"><div class="alert alert-warning mb-0"><small>DAS projetado</small><div class="fs-4 fw-bold">{{ $projection['total_das'] }}</div></div></div></div><div class="table-responsive mt-3"><table class="table table-sm table-striped"><thead><tr><th>Mês</th><th>Receita</th><th>RBT12 anualizado</th><th>Faixa</th><th>Alíquota</th><th>DAS</th></tr></thead><tbody>@foreach($projection['months'] as $month)<tr><td>{{ $month['month'] }}</td><td>{{ $month['monthly_revenue'] }}</td><td>{{ $month['rbt12'] }}</td><td>{{ $month['bracket'] }}</td><td>{{ $month['effective_rate'] }}</td><td>{{ $month['estimated_das'] }}</td></tr>@endforeach</tbody></table></div><div class="form-text">A projeção anualiza o faturamento de cada mês e aplica a taxa de crescimento informada.</div>@endif
+                    @php
+                        $projection = $annualProjection ?? session('annual_projection');
+                    @endphp
+                    @if($projection)<div class="row g-3 mt-2"><div class="col-md-6"><div class="alert alert-primary mb-0"><small>Receita projetada</small><div class="fs-4 fw-bold">{{ $projection['total_revenue'] }}</div></div></div><div class="col-md-6"><div class="alert alert-warning mb-0"><small>DAS projetado</small><div class="fs-4 fw-bold">{{ $projection['total_das'] }}</div></div></div></div><div class="table-responsive mt-3"><table class="table table-sm table-striped"><thead><tr><th>Mês</th><th>Receita</th><th>RBT12 anualizado</th><th>Faixa</th><th>Alíquota</th><th>DAS</th></tr></thead><tbody>@foreach($projection['months'] as $month)<tr><td>{{ $month['month'] }}</td><td>{{ $month['monthly_revenue'] }}</td><td>{{ $month['rbt12'] }}</td><td>{{ $month['bracket'] }}</td><td>{{ $month['effective_rate'] }}</td><td>{{ $month['estimated_das'] }}</td></tr>@endforeach</tbody></table></div><div class="form-text">A projeção anualiza o faturamento de cada mês e aplica a taxa de crescimento informada.</div>@endif
                 </div></div>
             </div>
 
@@ -223,8 +236,10 @@
                         <div class="col-md-2"><label class="form-label">Crescimento (%)</label><input class="form-control" type="number" min="0" max="100" step="0.01" name="monthly_growth" value="{{ old('monthly_growth', 0) }}"></div>
                         <div class="col-12"><button class="btn btn-primary" type="submit" @disabled(! ($plusAccess['alerts'] ?? false))><i class="bi bi-search me-1"></i> Analisar alertas</button></div>
                     </form>
-                    @if(session('alerts_analysis'))
-                        @php($analysis = session('alerts_analysis'))
+                    @php
+                        $analysis = $alertsAnalysis ?? session('alerts_analysis');
+                    @endphp
+                    @if($analysis)
                         <div class="row g-2 mt-3">
                             <div class="col-auto"><span class="badge text-bg-danger">Críticos: {{ $analysis['summary']['danger'] }}</span></div>
                             <div class="col-auto"><span class="badge text-bg-warning">Atenção: {{ $analysis['summary']['warning'] }}</span></div>

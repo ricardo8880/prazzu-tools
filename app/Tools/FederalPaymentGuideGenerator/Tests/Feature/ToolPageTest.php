@@ -19,7 +19,7 @@ final class ToolPageTest extends TestCase
             ->assertSee('0561');
     }
 
-    public function test_calculation_redirects_with_result(): void
+    public function test_calculation_displays_result_without_redirect(): void
     {
         $this->post(route('tools.gerador-darf-gps.calculate'), [
             'guide_type' => 'darf',
@@ -29,10 +29,9 @@ final class ToolPageTest extends TestCase
             'payment_date' => '2026-07-11',
             'selic_accumulated_percent' => '1',
             'confirm_official_check' => '1',
-        ])->assertRedirect()->assertSessionHas('guide_result', function (array $result): bool {
-            return $result['amounts']['total'] === 'R$ 1.043,00'
-                && $result['calculation']['calendar_days_late'] === 10;
-        });
+        ])->assertOk()
+            ->assertSee('R$ 1.043,00')
+            ->assertSee('10');
     }
 
     public function test_code_must_match_selected_guide_type(): void

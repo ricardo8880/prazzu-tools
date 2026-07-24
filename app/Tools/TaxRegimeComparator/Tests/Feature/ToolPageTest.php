@@ -42,7 +42,7 @@ final class ToolPageTest extends TestCase
             ]);
     }
 
-    public function test_valid_scenario_redirects_with_presented_result(): void
+    public function test_valid_scenario_displays_presented_result_without_redirect(): void
     {
         $this->post(route('tools.comparador-tributario.compare'), [
             'reference_date' => '2025-07-01',
@@ -56,7 +56,7 @@ final class ToolPageTest extends TestCase
             'indirect_tax_rate' => '5,00',
             'state' => 'sp',
             'municipality' => 'São Paulo',
-        ])->assertRedirect(route('tools.comparador-tributario.index'))
-            ->assertSessionHas('comparison_result');
+        ])->assertOk()
+            ->assertSee('Resultado da comparação');
     }
 }
