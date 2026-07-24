@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ReceiptIssuer\Domain\Services;
 
+use App\Core\Money\BrazilianMoneyInWords;
 use App\Core\Tools\Calculation\Data\ToolCalculationResult;
 use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
 use App\Core\Tools\Contracts\ToolCalculationInput;

@@ -741,13 +741,7 @@ Bootstrap é a base visual obrigatória do projeto. Utilize ao máximo seus comp
 CSS personalizado só deve ser usado quando Bootstrap e os estilos compartilhados existentes não forem suficientes. Nesse caso:
 
 1. mantenha o CSS mínimo, reutilizável e claramente isolado;
-2. registre o código-fonte em `resources/css/app.css` ou no arquivo de estilo específico do módulo, quando existir uma entrada própria;
-3. garanta que o recurso esteja incluído no fluxo do Vite e carregado pela página correspondente;
-4. execute `npm run build` para que a alteração também seja refletida nos arquivos compilados servidos por Vite em `public/build`;
-5. nunca considere a alteração completa modificando somente `app.css` sem validar o bundle gerado pelo Vite;
-6. não edite manualmente arquivos versionados com hash dentro de `public/build/assets`, pois eles devem ser gerados pelo processo de build.
-
-Em resumo: o estilo deve existir no código-fonte e também estar presente no bundle compilado por Vite. Alterar apenas uma dessas etapas é insuficiente.
+2. registre o código-fonte em `resources/css/app.css`;
 
 ## Documentação oficial das páginas
 

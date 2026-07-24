@@ -27,6 +27,7 @@ return [
     ],
     'documents' => [
         \App\Tools\ReceiptIssuer\Tool::class,
+        \App\Tools\ContractGenerator\Tool::class,
         // <tools:documents>
     ],
 ];

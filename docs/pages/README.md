@@ -85,6 +85,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 ### Página de ferramenta
 
+- [Gerador de Contratos — Prazzu Tools](app/Tools/ContractGenerator/pages/index.blade.md) — `app/Tools/ContractGenerator/Resources/views/index.blade.php`
+
 - [Emissor de Recibos — Prazzu Tools](app/Tools/ReceiptIssuer/pages/index.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/index.blade.php`
 
 - [Reajuste de Honorários Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/adjustments/index.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/adjustments/index.blade.php`

@@ -6,7 +6,7 @@ use InvalidArgumentException;
 
 final readonly class ToolExportPolicy
 {
-    private const ALLOWED_FORMATS = ['csv', 'xlsx', 'pdf', 'json', 'print'];
+    private const ALLOWED_FORMATS = ['csv', 'xlsx', 'pdf', 'docx', 'json', 'print'];
 
     /** @param list<string> $formats */
     public function __construct(

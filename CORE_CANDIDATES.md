@@ -30,9 +30,10 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 
 | Candidato | Implementação atual | Ferramentas que utilizam | Status | Gatilho para reavaliação |
 |---|---|---|---|---|
-| Conversão de valores monetários por extenso | Domínio do Emissor de Recibos | Emissor de Recibos | **Aguardando segunda ferramenta** | Reavaliar quando contratos, declarações ou outro gerador também precisar converter valores monetários por extenso. |
+| Conversão de valores monetários por extenso | `App\Core\Money\BrazilianMoneyInWords` | Emissor de Recibos; Gerador de Contratos | **Extraído para o Core** | Reutilizar o componente compartilhado sempre que outra ferramenta precisar converter valores positivos em BRL por extenso. |
 | Construção de entrada tipada a partir de formulário validado | `BuildCalculationInput` dentro do Emissor de Recibos | Emissor de Recibos | **Manter no domínio** | Reavaliar somente se outras ferramentas repetirem a mesma estrutura de transformação, e não apenas o conceito genérico de Request → validação → DTO. |
 | Geração e download de modelos CSV | Modelo específico da importação em lote do Emissor de Recibos; leitura já usa o Core compartilhado | Emissor de Recibos | **Aguardando segunda ferramenta** | Reavaliar quando outra ferramenta também precisar disponibilizar um arquivo-modelo CSV com resposta, cabeçalhos e regras de download equivalentes. |
+| Exportação de documentos Word/DOCX | `ContractDocxExporter` dentro do Gerador de Contratos | Gerador de Contratos | **Aguardando segunda ferramenta** | Reavaliar quando outra ferramenta também precisar gerar DOCX; até lá, manter a composição OpenXML específica no módulo e reutilizar apenas o empacotamento ZIP compartilhado. |
 
 ## Componentes já compartilhados relacionados
 
@@ -40,6 +41,7 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 |---|---|
 | Leitor de CSV | Já pertence ao Core técnico e deve ser reutilizado por importações em lote. |
 | Exportação por impressão/PDF | Já utiliza a infraestrutura compartilhada do Core técnico. |
+| Empacotamento ZIP simples | Extraído para `App\Core\Export\Services\SimpleZipArchiveBuilder` após uso concreto por Analytics e Gerador de Contratos. |
 | Persistência e histórico | Devem utilizar os mecanismos compartilhados da plataforma, mantendo no módulo somente os dados e regras do domínio. |
 
 ## Procedimento obrigatório para assistentes de IA

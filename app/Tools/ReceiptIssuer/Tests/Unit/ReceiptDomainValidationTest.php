@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tools\ReceiptIssuer\Tests\Unit;
 
 use App\Core\Exceptions\InvalidValue;
+use App\Core\Money\BrazilianMoneyInWords;
 use App\Core\Money\Money;
 use App\Tools\ReceiptIssuer\Domain\Data\ReceiptParty;
-use App\Tools\ReceiptIssuer\Domain\Services\BrazilianMoneyInWords;
 use App\Tools\ReceiptIssuer\Domain\Services\ReceiptIssuer;
 use App\Tools\ReceiptIssuer\Domain\ValueObjects\PartyDocument;
 use App\Tools\ReceiptIssuer\Domain\ValueObjects\ReceiptIdentifier;
