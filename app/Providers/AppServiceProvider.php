@@ -25,6 +25,7 @@ use App\Core\Tools\History\Services\DatabaseToolRunHistory;
 use App\Core\Tools\Api\Auth\ApiClient;
 use App\Core\Tools\Api\Http\Middleware\AuthenticateApiClient;
 use App\Core\Tools\History\Services\DatabaseToolRunRecorder;
+use App\Core\Tools\ToolRegistry;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -72,7 +73,17 @@ class AppServiceProvider extends ServiceProvider
                 ? BlogPost::query()->publiclyAvailable()->take(3)->get()
                 : collect();
 
-            $view->with('recentBlogPosts', $recentBlogPosts);
+            $routeName = request()->route()?->getName();
+            $segments = is_string($routeName) ? explode('.', $routeName) : [];
+            $toolSlug = ($segments[0] ?? null) === 'tools' ? ($segments[1] ?? null) : null;
+            $toolFeedbackManifest = is_string($toolSlug)
+                ? app(ToolRegistry::class)->findManifest($toolSlug)
+                : null;
+
+            $view->with([
+                'recentBlogPosts' => $recentBlogPosts,
+                'toolFeedbackManifest' => $toolFeedbackManifest,
+            ]);
         });
 
         if ($this->app->runningInConsole()) {

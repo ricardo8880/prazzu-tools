@@ -42,5 +42,9 @@
                 <button class="btn btn-primary prazzu-btn-primary" type="submit">Inscrever-se</button>
             </form>
         </section>
+
+        @if ($toolFeedbackManifest !== null)
+            <x-feedback.tool-feedback :tool="$toolFeedbackManifest" />
+        @endif
     </div>
 </aside>

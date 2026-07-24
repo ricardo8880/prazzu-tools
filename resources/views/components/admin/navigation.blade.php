@@ -4,6 +4,7 @@
         ['label' => 'Analytics', 'icon' => 'bi-graph-up-arrow', 'route' => 'admin.analytics.index', 'active' => 'admin.analytics.*'],
         ['label' => 'Aquisição', 'icon' => 'bi-signpost-split', 'route' => 'admin.acquisition.contexts.index', 'active' => 'admin.acquisition.*'],
         ['label' => 'Blog', 'icon' => 'bi-journal-text', 'route' => 'admin.blog.posts.index', 'active' => 'admin.blog.*'],
+        ['label' => 'Feedback', 'icon' => 'bi-chat-left-text', 'route' => 'admin.feedback.tools.index', 'active' => 'admin.feedback.*'],
     ];
 @endphp
 

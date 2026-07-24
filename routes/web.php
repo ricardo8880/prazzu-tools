@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Blog\BlogAnalyticsController as AdminBlogAnalytic
 use App\Http\Controllers\Admin\Blog\BlogCategoryController;
 use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
 use App\Http\Controllers\Admin\Blog\BlogPostController;
+use App\Http\Controllers\Admin\Feedback\ToolFeedbackController as AdminToolFeedbackController;
 use App\Http\Controllers\Admin\Acquisition\AcquisitionContextController;
 use App\Http\Controllers\Acquisition\ClearAcquisitionContextController;
 use App\Http\Controllers\Acquisition\ContinueAcquisitionContextController;
@@ -44,6 +45,7 @@ use App\Http\Controllers\Platform\ContentPageController;
 use App\Http\Controllers\Platform\HomeController;
 use App\Http\Controllers\Platform\NewsletterController;
 use App\Http\Controllers\Platform\PageFeedbackController;
+use App\Http\Controllers\Platform\ToolFeedbackController;
 use App\Http\Controllers\Platform\SuggestToolController;
 use App\Http\Controllers\Platform\ToolCatalogController;
 use App\Http\Controllers\Seo\BlogSitemapController;
@@ -108,6 +110,18 @@ Route::prefix('admin/acquisition')
             ->name('contexts.duplicate');
         Route::resource('contexts', AcquisitionContextController::class)
             ->except('show');
+    });
+
+Route::prefix('admin/feedback')
+    ->name('admin.feedback.')
+    ->middleware('internal.admin')
+    ->group(function (): void {
+        Route::get('/ferramentas', [AdminToolFeedbackController::class, 'index'])
+            ->name('tools.index');
+        Route::get('/ferramentas/{toolFeedback}', [AdminToolFeedbackController::class, 'show'])
+            ->name('tools.show');
+        Route::patch('/ferramentas/{toolFeedback}/status', [AdminToolFeedbackController::class, 'updateStatus'])
+            ->name('tools.status');
     });
 
 Route::prefix('admin/blog')
@@ -248,3 +262,7 @@ Route::post('/newsletter', [NewsletterController::class, 'store'])
 Route::post('/feedback/pagina', [PageFeedbackController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('feedback.page.store');
+
+Route::post('/feedback/ferramenta', [ToolFeedbackController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('feedback.tool.store');

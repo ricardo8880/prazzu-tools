@@ -39,6 +39,15 @@
                 </div>
             </a>
         </div>
+        <div class="col-md-6 col-xl-4">
+            <a class="card border-0 shadow-sm h-100 text-decoration-none" href="{{ route('admin.feedback.tools.index') }}">
+                <div class="card-body p-4">
+                    <i class="bi bi-chat-left-text fs-2" aria-hidden="true"></i>
+                    <h2 class="h4 mt-3">Feedback das ferramentas</h2>
+                    <p class="text-body-secondary mb-0">Leia problemas, sugestões e pedidos enviados pelos usuários das ferramentas.</p>
+                </div>
+            </a>
+        </div>
     </div>
 </div>
 @endsection
