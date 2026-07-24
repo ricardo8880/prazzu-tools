@@ -48,3 +48,17 @@
         @endif
     </div>
 </aside>
+
+@if ($toolFeedbackManifest !== null)
+    <button
+        class="prazzu-tool-feedback-trigger d-xxl-none"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#tool-feedback-modal"
+        aria-label="Enviar feedback sobre esta ferramenta"
+        title="Enviar feedback"
+    >
+        <i class="bi bi-chat-square-heart" aria-hidden="true"></i>
+        <span class="visually-hidden">Enviar feedback</span>
+    </button>
+@endif
