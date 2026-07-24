@@ -28,6 +28,8 @@
         <div class="alert alert-success" role="status">{{ session('status') }}</div>
     @endif
 
+    @include('admin.feedback._tabs')
+
     <div class="row g-4">
         <div class="col-xl-8">
             <div class="card border-0 shadow-sm mb-4">

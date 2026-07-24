@@ -17,7 +17,9 @@ use App\Http\Controllers\Admin\Blog\BlogAnalyticsController as AdminBlogAnalytic
 use App\Http\Controllers\Admin\Blog\BlogCategoryController;
 use App\Http\Controllers\Admin\Blog\BlogPostAnalyticsController;
 use App\Http\Controllers\Admin\Blog\BlogPostController;
+use App\Http\Controllers\Admin\Feedback\PageFeedbackController as AdminPageFeedbackController;
 use App\Http\Controllers\Admin\Feedback\ToolFeedbackController as AdminToolFeedbackController;
+use App\Http\Controllers\Admin\Feedback\ToolSuggestionController as AdminToolSuggestionController;
 use App\Http\Controllers\Admin\Acquisition\AcquisitionContextController;
 use App\Http\Controllers\Acquisition\ClearAcquisitionContextController;
 use App\Http\Controllers\Acquisition\ContinueAcquisitionContextController;
@@ -122,6 +124,14 @@ Route::prefix('admin/feedback')
             ->name('tools.show');
         Route::patch('/ferramentas/{toolFeedback}/status', [AdminToolFeedbackController::class, 'updateStatus'])
             ->name('tools.status');
+        Route::get('/sugestoes', [AdminToolSuggestionController::class, 'index'])
+            ->name('suggestions.index');
+        Route::get('/sugestoes/{toolSuggestion}', [AdminToolSuggestionController::class, 'show'])
+            ->name('suggestions.show');
+        Route::get('/paginas', [AdminPageFeedbackController::class, 'index'])
+            ->name('pages.index');
+        Route::get('/paginas/{pageFeedback}', [AdminPageFeedbackController::class, 'show'])
+            ->name('pages.show');
     });
 
 Route::prefix('admin/blog')
