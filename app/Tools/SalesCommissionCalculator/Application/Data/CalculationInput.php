@@ -15,6 +15,7 @@ final readonly class CalculationInput implements ToolCalculationInput
         public Percentage $rate,
         public Money $goal,
         public Percentage $goalBonusRate,
+        public ?Money $reversals = null,
     ) {}
 
     public function toArray(): array
@@ -24,6 +25,7 @@ final readonly class CalculationInput implements ToolCalculationInput
             'rate' => $this->rate->toDecimalString(),
             'goal' => $this->goal->minorAmount(),
             'goal_bonus_rate' => $this->goalBonusRate->toDecimalString(),
+            'reversals' => $this->reversals?->minorAmount() ?? 0,
         ];
     }
 }

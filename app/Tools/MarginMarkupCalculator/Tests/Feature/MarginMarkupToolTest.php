@@ -33,7 +33,7 @@ final class MarginMarkupToolTest extends TestCase
             ->assertOk()
             ->assertSee('R$ 160,00')
             ->assertSee('R$ 40,00')
-            ->assertSee('2.0.0');
+            ->assertSee('2.1.0');
 
         $this->assertDatabaseCount('tool_runs', 0);
         $this->assertDatabaseHas('tool_usage_events', [

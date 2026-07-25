@@ -300,3 +300,7 @@ O status permanece `draft`. Os casos dourados tributários ainda possuem referê
 provisórias e precisam de revisão profissional aprovada. A ferramenta somente poderá
 mudar para `active` após substituição dessas referências e aprovação integral do
 `composer release:check`.
+
+## Revisão transversal do Lote 6
+
+O resultado do comparador passou a publicar snapshot normativo, memória do ranking em valores monetários mínimos e marcador explícito de estimativa. O ranking somente considera regimes com estimativas comparáveis; atividade, créditos, presunções e transição tributária continuam visíveis nas premissas e alertas de cada cenário.

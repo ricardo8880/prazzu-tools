@@ -64,3 +64,8 @@ relatórios não estão disponíveis.
 - testar zero e limite de meses retroativos;
 - conferir impacto anual e arredondamento por cálculo manual;
 - rejeitar salário inválido e percentual fora de 0% a 100%.
+
+
+## Estado após o Lote 5
+
+A página deve apresentar resultados coerentes com a memória estruturada do domínio e deixar visíveis as premissas estimativas ou os valores informados manualmente pelo usuário.

@@ -19,6 +19,9 @@ final readonly class TaxComparisonResultPresenter
             'annual_savings' => $result->estimatedAnnualSavings?->formatPtBr(),
             'comparable_regime_count' => $result->comparableRegimeCount,
             'rule_version' => $result->ruleVersion,
+            'is_estimate' => $result->isEstimate,
+            'normative_rules' => array_map(static fn ($rule): array => $rule->toArray(), $result->normativeRules),
+            'calculation_memory' => $result->calculationMemory,
             'ranking' => array_map(fn ($ranked): array => [
                 'position' => $ranked->position,
                 'regime' => $ranked->estimate->regime->label(),

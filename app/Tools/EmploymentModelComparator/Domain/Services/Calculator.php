@@ -30,7 +30,7 @@ final class Calculator implements ToolCalculator
         $rows = [['CLT', $cltNet, $cltCost], ['PJ', $pjNet, $pjCost], ['Autônomo', $autoNet, $autoCost]];
         usort($rows, fn ($a, $b) => $b[1]->minorAmount() <=> $a[1]->minorAmount());
 
-        return new ToolCalculationResult('comparador-clt-pj-autonomo', '1.0.0', [
+        return new ToolCalculationResult('comparador-clt-pj-autonomo', '2.0.0', [
             new ToolCalculationSummaryItem('clt_net', 'Líquido CLT', $cltNet->formatPtBr(), 'Custo empresa: '.$cltCost->formatPtBr()),
             new ToolCalculationSummaryItem('pj_net', 'Líquido PJ', $pjNet->formatPtBr(), 'Custo empresa: '.$pjCost->formatPtBr()),
             new ToolCalculationSummaryItem('autonomous_net', 'Líquido autônomo', $autoNet->formatPtBr(), 'Custo empresa: '.$autoCost->formatPtBr()),
@@ -39,6 +39,11 @@ final class Calculator implements ToolCalculator
             'CLT' => ['gross' => $i->cltGross->formatPtBr(), 'deductions' => $cltDed->formatPtBr(), 'benefits' => $i->cltBenefits->formatPtBr(), 'net' => $cltNet->formatPtBr(), 'company_cost' => $cltCost->formatPtBr()],
             'PJ' => ['gross' => $i->pjInvoice->formatPtBr(), 'taxes' => $pjTax->formatPtBr(), 'expenses' => $i->pjExpenses->formatPtBr(), 'net' => $pjNet->formatPtBr(), 'company_cost' => $pjCost->formatPtBr()],
             'Autônomo' => ['gross' => $i->autonomousGross->formatPtBr(), 'deductions' => $autoDed->formatPtBr(), 'net' => $autoNet->formatPtBr(), 'company_cost' => $autoCost->formatPtBr()],
+        ], 'assumptions' => [
+            'Percentuais de descontos e encargos são informados pelo usuário e devem refletir o caso concreto.',
+            'A comparação é econômica e estimativa; não define vínculo jurídico nem substitui análise profissional.',
+        ], 'warnings' => [
+            'Benefícios, riscos trabalhistas, despesas operacionais e direitos não informados não são presumidos.',
         ]]);
     }
 }

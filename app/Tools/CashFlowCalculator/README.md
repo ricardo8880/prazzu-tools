@@ -24,9 +24,7 @@ correção do resultado Essencial.
 
 ## Regras
 
-Entradas principais: Saldo inicial e movimentações de um único período. O resultado é orientativo e casos normativos,
-contratuais ou cadastrais fora das premissas exibidas exigem revisão
-profissional.
+Saldo inicial e movimentações de um único período, todos sob regime de caixa. O saldo final é uma projeção baseada apenas nos recebimentos e pagamentos informados.
 
 ## Integração entre ferramentas
 
@@ -40,6 +38,7 @@ visuais compartilhados do Core técnico.
 
 ## Histórico de versões
 
+- `1.1.0`: memória financeira estruturada, período e regime de caixa explícitos, política de centavos e natureza estimativa do saldo final.
 - `1.0.0`: motor ou gerador funcional, validação, interface, memória,
   documentação e testes.
 

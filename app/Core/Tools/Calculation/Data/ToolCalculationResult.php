@@ -23,6 +23,7 @@ final readonly class ToolCalculationResult
         public array $warnings = [],
         public array $nextActions = [],
         public ?IntegrationPayload $integrationPayload = null,
+        public ?CalculationMemory $calculationMemory = null,
     ) {
         if (trim($this->toolSlug) === '') {
             throw new InvalidArgumentException('O slug da ferramenta não pode ser vazio.');
@@ -57,6 +58,7 @@ final readonly class ToolCalculationResult
                 static fn (ToolCalculationAction $action): array => $action->toArray(),
                 $this->nextActions,
             ),
+            'calculation_memory' => $this->calculationMemory?->toArray(),
             'integration_payload' => $this->integrationPayload === null ? null : [
                 'source_tool' => $this->integrationPayload->sourceTool,
                 'contract' => $this->integrationPayload->contractKey(),
@@ -97,6 +99,7 @@ final readonly class ToolCalculationResult
                 static fn (ToolCalculationAction $action): array => $action->toArray(),
                 $this->nextActions,
             ),
+            'calculation_memory' => $this->calculationMemory?->toArray(),
         ];
     }
 

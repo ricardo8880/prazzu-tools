@@ -15,7 +15,9 @@ return [
     'fiscal' => [
         App\Tools\SimplesNacionalCalculator\Tool::class,
         App\Tools\TaxRegimeComparator\Tool::class,
-        App\Tools\ProLaboreProfitDistributionCalculator\Tool::class,
+        App\Tools\ProLaboreSimulator\Tool::class,
+        App\Tools\ProfitDistributionCalculator\Tool::class,
+        App\Tools\ProLaboreProfitDistributionCalculator\Tool::class, // compatibilidade temporária
         App\Tools\FiscalXmlConverter\Tool::class,
         App\Tools\FederalPaymentGuideGenerator\Tool::class,
         App\Tools\FactorRSimulator\Tool::class,

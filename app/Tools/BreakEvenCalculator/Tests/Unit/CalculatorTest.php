@@ -20,10 +20,15 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('60'),
         ));
 
+        self::assertSame('1.1.0', $result->schemaVersion);
         self::assertSame('R$ 25.000,00', $result->summary[0]->value);
         self::assertSame('250 unidades', $result->summary[1]->value);
         self::assertSame('R$ 40,00', $result->summary[2]->value);
         self::assertSame('40,00 %', $result->summary[3]->value);
+        self::assertNotNull($result->calculationMemory);
+        self::assertTrue($result->calculationMemory->isEstimate);
+        self::assertNotEmpty($result->calculationMemory->steps);
+        self::assertNotEmpty($result->calculationMemory->assumptions);
     }
 
     public function test_it_rejects_a_non_positive_contribution_margin(): void

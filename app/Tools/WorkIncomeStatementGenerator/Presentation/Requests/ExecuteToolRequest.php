@@ -15,6 +15,6 @@ final class ExecuteToolRequest extends FormRequest
 
     public function rules(): array
     {
-        return ['name' => ['required', 'string', 'max:150'], 'document' => ['required', 'string', 'max:30'], 'employer' => ['required', 'string', 'max:150'], 'occupation' => ['required', 'string', 'max:100'], 'start_date' => ['required', 'date'], 'monthly_income' => ['required', 'brazilian_money', 'money_min:0.01'], 'city' => ['required', 'string', 'max:100'], 'issue_date' => ['required', 'date']];
+        return ['name' => ['required', 'string', 'max:150'], 'document' => ['required', 'string', 'max:30'], 'employer' => ['required', 'string', 'max:150'], 'occupation' => ['required', 'string', 'max:100'], 'start_date' => ['required', 'date'], 'monthly_income' => ['required', 'brazilian_money', 'money_min:0.01'], 'city' => ['required', 'string', 'max:100'], 'issue_date' => ['required', 'date', 'after_or_equal:start_date']];
     }
 }

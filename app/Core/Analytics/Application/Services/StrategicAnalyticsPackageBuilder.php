@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Analytics\Application\Services;
 
+use App\Core\Export\Services\SimpleZipArchiveBuilder;
 use Illuminate\Support\Collection;
 
 final class StrategicAnalyticsPackageBuilder

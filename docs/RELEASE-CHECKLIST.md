@@ -1,5 +1,7 @@
 # Checklist de release
 
+> O Lote 10 validou o que era executável localmente. A aprovação final exige o CI oficial com todas as extensões PHP requeridas. Não marque itens bloqueados como aprovados sem execução real.
+
 ## Código
 
 - [ ] `composer release:check` aprovado.

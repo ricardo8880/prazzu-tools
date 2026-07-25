@@ -56,7 +56,7 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 30,
-            featured: true,
+            featured: false,
             supportsHistory: true,
             storesSensitiveData: false,
             keywords: [

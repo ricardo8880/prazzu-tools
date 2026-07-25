@@ -24,9 +24,7 @@ correção do resultado Essencial.
 
 ## Regras
 
-Entradas principais: Saldos circulantes pertencentes à mesma data-base. O resultado é orientativo e casos normativos,
-contratuais ou cadastrais fora das premissas exibidas exigem revisão
-profissional.
+Saldos circulantes pertencentes à mesma data-base. A NCG e o CCL são calculados em centavos; a necessidade adicional é uma fotografia estimativa que depende da classificação informada e não incorpora sazonalidade automaticamente.
 
 ## Integração entre ferramentas
 
@@ -40,6 +38,7 @@ visuais compartilhados do Core técnico.
 
 ## Histórico de versões
 
+- `1.1.0`: memória financeira estruturada, data-base comum, política de centavos e premissas de classificação e sazonalidade explícitas.
 - `1.0.0`: motor ou gerador funcional, validação, interface, memória,
   documentação e testes.
 

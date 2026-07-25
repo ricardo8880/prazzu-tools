@@ -24,9 +24,7 @@ correção do resultado Essencial.
 
 ## Regras
 
-Entradas principais: Custos fixos, preço e custo variável unitário. O resultado é orientativo e casos normativos,
-contratuais ou cadastrais fora das premissas exibidas exigem revisão
-profissional.
+Custos fixos, preço e custo variável unitário do mesmo período. A quantidade é arredondada para cima até a primeira unidade inteira; tributos, comissões e perdas variáveis devem integrar o custo variável quando aplicáveis.
 
 ## Integração entre ferramentas
 
@@ -40,6 +38,7 @@ visuais compartilhados do Core técnico.
 
 ## Histórico de versões
 
+- `1.1.0`: memória financeira estruturada, proteção de intervalo monetário, arredondamento para unidade inteira e premissas temporais explícitas.
 - `1.0.0`: motor ou gerador funcional, validação, interface, memória,
   documentação e testes.
 

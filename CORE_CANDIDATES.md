@@ -42,7 +42,7 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 |---|---|
 | Leitor de CSV | Já pertence ao Core técnico e deve ser reutilizado por importações em lote. |
 | Exportação por impressão/PDF | Já utiliza a infraestrutura compartilhada do Core técnico. |
-| Empacotamento ZIP simples | Extraído para `App\Core\Export\Services\SimpleZipArchiveBuilder` após uso concreto por Analytics e Gerador de Contratos. |
+| Empacotamento ZIP simples | Extraído para `App\Core\Export\Services\SimpleZipArchiveBuilder` após uso concreto por Analytics e Gerador de Contratos. O wrapper obsoleto do Analytics foi removido no Lote 1; consumidores devem importar diretamente o serviço do Core. |
 | Persistência e histórico | Devem utilizar os mecanismos compartilhados da plataforma, mantendo no módulo somente os dados e regras do domínio. |
 | Payloads temporários entre requisições | Extraído para `App\Core\Temporary` e deve ser usado quando processamento/exportação precisam compartilhar dados efêmeros sem depender de autenticação. |
 | Perfis auxiliares reutilizáveis de empresa e funcionário | Extraído para `App\Core\ToolProfiles`; os perfis servem somente para reutilizar entradas nas ferramentas e não implementam CRM, folha ou gestão operacional. |
@@ -61,3 +61,39 @@ Ao iniciar qualquer lote ou tarefa:
 6. atualize este arquivo sempre que um candidato surgir, mudar de status, for descartado ou for extraído para o Core técnico.
 
 Quando uma nova oportunidade ainda não justificar extração, registre-a aqui em vez de criar antecipadamente um componente genérico.
+
+## Lote 2 — Core normativo e memória de cálculo
+
+Promovidos e consolidados no Core técnico:
+
+- `App\Core\Normative\Contracts\NormativeRuleCatalog` para acesso desacoplado a regras versionadas;
+- `App\Core\Normative\Services\InMemoryNormativeRuleCatalog` como implementação inicial validada;
+- `App\Core\Normative\NormativeRuleSnapshot` para reprodução histórica;
+- `App\Core\Tools\Calculation\Data\CalculationMemory` e `CalculationMemoryStep` para memória de cálculo transversal.
+
+A promoção não inclui alíquotas ou tabelas concretas. Elas continuam pertencendo aos domínios responsáveis e só podem ser compartilhadas quando houver reutilização comprovada, fonte oficial e casos dourados.
+
+## Lote 6 — capacidade tributária normativa confirmada
+
+As regras `FactorRRule`, `LateDasRule` e `TaxRegimeComparisonRule` foram promovidas para `app/Core/Tax/Normative` porque representam metadados normativos e parâmetros reutilizáveis, sem transportar orquestração ou domínio de qualquer ferramenta. Fator R, DAS em Atraso, Comparador de Regimes e o módulo complementar do Simples permanecem independentes.
+
+
+## Lote 7 — fórmulas financeiras mantidas nos domínios
+
+Capital de Giro, Fluxo de Caixa e Ponto de Equilíbrio usam a mesma infraestrutura transversal de `Money` e `CalculationMemory`, mas suas fórmulas, classificações e premissas não formam uma capacidade de domínio equivalente. Por isso, não foi criado um serviço financeiro genérico no Core. Reavaliar somente quando surgir repetição estrutural real em novas ferramentas, sem condicionais específicas por cálculo.
+
+
+## Lote 8 — Precificação e comissão
+
+O lote confirmou reutilização real apenas de `Money`, `Percentage`, `IntegerRounding` e `CalculationMemory`. As regras de formação de preço e comissão permaneceram nos seus domínios, pois margem/markup e base comissionável/estornos são políticas comerciais distintas e não justificam promoção ao Core.
+
+
+## Candidatos observados no Lote 9
+
+- `GeneratedDocumentNotice`: promovido ao Core técnico por uso real nos dois geradores documentais e sem conhecimento de domínio fiscal ou laboral.
+- Assinatura digital, verificação externa e selo de autenticidade permanecem fora do Core até existir integração concreta e política de confiança auditável.
+
+
+## Lote 10 — encerramento do ciclo
+
+A auditoria final não identificou nova duplicação transversal que justificasse extração. Rotas, histórico, exportação e privacidade já possuem infraestrutura ou políticas compartilhadas. A migração do módulo legado combinado é trabalho de compatibilidade e telemetria, não um novo componente de Core.

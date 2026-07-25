@@ -47,7 +47,7 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations
             slug: self::SLUG,
             name: 'Gerador Inteligente de DARF/GPS',
             description: 'Oriente código, vencimento e acréscimos legais de DARF e GPS com memória de cálculo auditável.',
-            category: ToolCategory::Fiscal,
+            category: ToolCategory::Generators,
             icon: 'bi-receipt-cutoff',
             routeName: 'tools.gerador-darf-gps.index',
             version: '1.1.0',

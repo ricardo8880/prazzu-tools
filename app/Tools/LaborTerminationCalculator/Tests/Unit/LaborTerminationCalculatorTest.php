@@ -149,6 +149,14 @@ final class LaborTerminationCalculatorTest extends TestCase
         self::assertSame(0, $result->estimatedFgtsAvailable->minorAmount());
     }
 
+    public function test_it_exposes_structured_calculation_memory(): void
+    {
+        $result = $this->calculate(TerminationType::DismissalWithoutCause, NoticeType::Indemnified);
+
+        self::assertNotEmpty($result->calculationMemory()->steps);
+        self::assertTrue($result->calculationMemory()->isEstimate);
+    }
+
     private function calculate(TerminationType $terminationType, NoticeType $noticeType)
     {
         return (new LaborTerminationCalculator)->calculate(

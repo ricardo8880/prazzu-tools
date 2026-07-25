@@ -53,7 +53,7 @@ final class CompareTaxRegimesTest extends TestCase
         self::assertCount(3, $result->ranking);
         self::assertSame(TaxRegime::SimplesNacional, $result->lowestEstimatedBurden);
         self::assertSame(750000, $result->estimatedMonthlySavings?->minorAmount());
-        self::assertSame('0.6.0', $result->ruleVersion);
+        self::assertSame('1.0.0', $result->ruleVersion);
     }
 
     private function provider(TaxRegime $regime, string $monthly): TaxEstimateProvider

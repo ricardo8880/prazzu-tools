@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tools\LaborTerminationCalculator\Domain\Data;
 
 use App\Core\Money\Money;
+use App\Core\Tools\Calculation\Data\CalculationMemory;
+use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Tools\LaborTerminationCalculator\Domain\Enums\NoticeType;
 use App\Tools\LaborTerminationCalculator\Domain\Enums\TerminationType;
 use DateTimeImmutable;
@@ -64,6 +66,27 @@ final readonly class LaborTerminationResult
                 'employer' => 'Empregador', 'employee' => 'Empregado', default => 'Não se aplica'
             },
             'warnings' => $this->warnings, 'rule_version' => $this->ruleVersion, 'tax_table_version' => $this->taxTableVersion,
+            'calculation_memory' => $this->calculationMemory()->toArray(),
         ];
     }
+
+    public function calculationMemory(): CalculationMemory
+    {
+        return new CalculationMemory(
+            schemaVersion: $this->ruleVersion,
+            steps: [
+                new CalculationMemoryStep('salary_base', 'Remuneração-base', 'salário + médias + adicionais recorrentes', ['monthly_salary' => $this->monthlySalary->minorAmount(), 'commission_average' => $this->commissionAverage->minorAmount(), 'overtime_average' => $this->overtimeAverage->minorAmount(), 'recurring_additions' => $this->recurringAdditions->minorAmount()], $this->salaryBase->minorAmount(), 'Valores monetários em centavos.'),
+                new CalculationMemoryStep('gross_total', 'Total bruto rescisório', 'soma das verbas rescisórias positivas', ['salary_balance' => $this->salaryBalance->minorAmount(), 'vacation' => $this->overdueVacation->minorAmount() + $this->overdueVacationThird->minorAmount() + $this->proportionalVacation->minorAmount() + $this->proportionalVacationThird->minorAmount(), 'thirteenth' => $this->proportionalThirteenthSalary->minorAmount(), 'notice' => $this->noticePay->minorAmount(), 'article_479' => $this->article479Indemnity->minorAmount(), 'extraordinary' => $this->extraordinaryIndemnities->minorAmount()], $this->grossTotal->minorAmount(), 'Valores monetários em centavos.'),
+                new CalculationMemoryStep('discounts', 'Total de descontos', 'aviso + tributos + outros descontos', ['notice_discount' => $this->noticeDiscount->minorAmount(), 'inss' => $this->inssSalary->minorAmount() + $this->inssThirteenth->minorAmount(), 'irrf' => $this->irrfSalary->minorAmount() + $this->irrfThirteenth->minorAmount(), 'other_discounts' => $this->otherDiscounts->minorAmount(), 'article_480' => $this->article480Discount->minorAmount()], $this->totalDiscounts->minorAmount(), 'Valores monetários em centavos.'),
+                new CalculationMemoryStep('net_total', 'Total líquido', 'total bruto - total de descontos', ['gross_total' => $this->grossTotal->minorAmount(), 'total_discounts' => $this->totalDiscounts->minorAmount()], $this->netTotal->minorAmount(), 'Valores monetários em centavos.'),
+                new CalculationMemoryStep('fgts', 'FGTS estimado disponível', 'saldo, depósito rescisório, saque e indenização conforme cenário', ['fgts_balance' => $this->fgtsBalance->minorAmount(), 'termination_deposit' => $this->fgtsTerminationDeposit->minorAmount(), 'penalty' => $this->fgtsPenalty->minorAmount(), 'withdrawal_percentage' => $this->fgtsWithdrawalPercentage], $this->estimatedFgtsAvailable->minorAmount(), 'Valores monetários em centavos.'),
+            ],
+            assumptions: array_merge([
+                'O cálculo é estimativo e depende da confirmação de datas, motivo da rescisão, médias, férias, FGTS e eventos transmitidos ao eSocial.',
+                'As tabelas tributárias aplicadas são identificadas pela versão '.$this->taxTableVersion.'.',
+            ], $this->warnings),
+            isEstimate: true,
+        );
+    }
+
 }

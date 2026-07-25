@@ -9,11 +9,13 @@ use App\Core\Math\IntegerRounding;
 use App\Core\Math\RoundingMode;
 use App\Core\Money\Money;
 use App\Core\Money\Percentage;
+use App\Core\Tools\Calculation\Data\CalculationMemory;
+use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Tools\MarginMarkupCalculator\Domain\Data\MarginMarkupResult;
 
 final class MarginMarkupCalculator
 {
-    public const RULE_VERSION = '2.0.0';
+    public const RULE_VERSION = '2.1.0';
 
     private const PERCENT_FACTOR = 100_000_000;
 
@@ -110,6 +112,71 @@ final class MarginMarkupCalculator
             markup: Percentage::fromString($this->formatPercentageUnits($markupUnits)),
             markupMultiplier: $this->formatMultiplier($multiplierScaled),
             ruleVersion: self::RULE_VERSION,
+            calculationMemory: new CalculationMemory(
+                schemaVersion: '1.0.0',
+                steps: [
+                    new CalculationMemoryStep(
+                        key: 'total_cost',
+                        label: 'Custo total do produto',
+                        formula: 'custo base + custos adicionais + frete + embalagem + despesas fixas rateadas',
+                        inputs: [
+                            'base_cost_minor' => $baseCost->minorAmount(),
+                            'additional_costs_minor' => $additionalCosts->minorAmount(),
+                            'freight_cost_minor' => $freightCost->minorAmount(),
+                            'packaging_cost_minor' => $packagingCost->minorAmount(),
+                            'fixed_expenses_minor' => $fixedExpenses->minorAmount(),
+                        ],
+                        result: $totalCost->minorAmount(),
+                    ),
+                    new CalculationMemoryStep(
+                        key: 'sale_price',
+                        label: 'Preço de venda sugerido',
+                        formula: 'custo total / (1 - margem líquida desejada - impostos - comissão - taxas)',
+                        inputs: [
+                            'total_cost_minor' => $totalCost->minorAmount(),
+                            'desired_margin' => $desiredMargin->toDecimalString(),
+                            'taxes' => $taxes->toDecimalString(),
+                            'commission' => $commission->toDecimalString(),
+                            'card_fees' => $cardFees->toDecimalString(),
+                            'marketplace_fees' => $marketplaceFees->toDecimalString(),
+                        ],
+                        result: $salePrice->minorAmount(),
+                        roundingPolicy: 'Divisão inteira com arredondamento HalfUp para centavos.',
+                    ),
+                    new CalculationMemoryStep(
+                        key: 'net_profit',
+                        label: 'Lucro líquido estimado',
+                        formula: 'preço de venda - custo total - impostos - comissão - taxas de cartão - taxas de marketplace',
+                        inputs: [
+                            'sale_price_minor' => $salePrice->minorAmount(),
+                            'total_cost_minor' => $totalCost->minorAmount(),
+                            'taxes_minor' => $taxesAmount->minorAmount(),
+                            'commission_minor' => $commissionAmount->minorAmount(),
+                            'card_fees_minor' => $cardFeesAmount->minorAmount(),
+                            'marketplace_fees_minor' => $marketplaceFeesAmount->minorAmount(),
+                        ],
+                        result: $netProfit->minorAmount(),
+                    ),
+                    new CalculationMemoryStep(
+                        key: 'markup',
+                        label: 'Markup sobre o custo',
+                        formula: '(preço de venda - custo total) / custo total',
+                        inputs: [
+                            'gross_profit_minor' => $grossProfit->minorAmount(),
+                            'total_cost_minor' => $totalCost->minorAmount(),
+                        ],
+                        result: $this->formatPercentageUnits($markupUnits),
+                        roundingPolicy: 'Percentual arredondado HalfUp a seis casas decimais.',
+                    ),
+                ],
+                assumptions: [
+                    'A margem desejada é líquida sobre o preço de venda, depois das deduções percentuais informadas.',
+                    'O markup exibido mede o acréscimo bruto sobre o custo; não é sinônimo de margem líquida.',
+                    'Custos fixos devem ser previamente rateados por unidade ou venda pelo usuário.',
+                    'Percentuais e custos são tratados como constantes no cenário calculado.',
+                ],
+                isEstimate: true,
+            ),
         );
     }
 

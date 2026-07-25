@@ -67,7 +67,7 @@ final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, Has
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['sales', 'rate', 'goal', 'goal_bonus_rate'], resultFields: ['total_commission', 'base_commission', 'goal_bonus', 'goal_achievement'], sensitiveFields: []);
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['sales', 'reversals', 'rate', 'goal', 'goal_bonus_rate'], resultFields: ['total_commission', 'commissionable_sales', 'base_commission', 'goal_bonus', 'goal_achievement'], sensitiveFields: []);
     }
 
     public function webRoutesPath(): string

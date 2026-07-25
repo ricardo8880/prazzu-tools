@@ -40,7 +40,7 @@ final readonly class BuildContextualHome
         return [
             'home' => $defaultHome,
             'categories' => $this->tools->categories(),
-            'featuredTools' => $this->tools->latest(8),
+            'featuredTools' => $this->homeTools(),
             'acquisitionContext' => null,
         ];
     }
@@ -87,7 +87,7 @@ final readonly class BuildContextualHome
             ->values();
 
         if ($slugs->isEmpty()) {
-            return $this->tools->latest(8);
+            return $this->homeTools();
         }
 
         $resolved = $slugs
@@ -95,7 +95,15 @@ final readonly class BuildContextualHome
             ->filter(static fn (?array $tool): bool => $tool !== null)
             ->values();
 
-        return $resolved->isEmpty() ? $this->tools->latest(8) : $resolved;
+        return $resolved->isEmpty() ? $this->homeTools() : $resolved;
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    private function homeTools(): Collection
+    {
+        $featured = $this->tools->featured()->take(8)->values();
+
+        return $featured->isNotEmpty() ? $featured : $this->tools->latest(8);
     }
 
     private function callToActionUrl(AcquisitionContext $context): ?string

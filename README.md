@@ -1,4 +1,4 @@
-~~# Prazzu Tools
+# Prazzu Tools
 
 ## O que é o Prazzu Tools
 
@@ -56,6 +56,14 @@ Antes de iniciar qualquer tarefa, lote, nova ferramenta, refatoração ou extra�
 Esse arquivo registra capacidades que podem precisar ser promovidas para o Core técnico quando surgir reutilização concreta em duas ou mais ferramentas. Durante o trabalho, verifique se a tarefa atual ativa o gatilho de algum candidato, atualize seu status quando necessário e registre novos candidatos sem criar abstrações prematuras.
 
 A consulta ao `CORE_CANDIDATES.md` é obrigatória e faz parte da análise inicial do projeto, assim como a leitura deste README.
+
+## Continuidade obrigatória entre lotes
+
+Antes de iniciar qualquer lote, também é obrigatório ler [`docs/IMPLEMENTATION-LOTS.md`](docs/IMPLEMENTATION-LOTS.md), os relatórios dos lotes já concluídos e o inventário executável em [`config/product_tools.php`](config/product_tools.php).
+
+Cada lote deve partir do estado real deixado pelos anteriores. Não se deve recriar decisões já consolidadas, alterar slugs públicos, remover módulos existentes ou mudar o escopo oficial sem registrar a decisão, preservar compatibilidade e atualizar as verificações automatizadas.
+
+O catálogo prioritário das 20 ferramentas está documentado em [`docs/PRODUCT-TOOLS-INVENTORY.md`](docs/PRODUCT-TOOLS-INVENTORY.md). Módulos adicionais podem continuar existindo, mas não entram automaticamente no escopo desses lotes.
 
 Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tools\CashFlowCalculator\Domain\Services;
 
+use App\Core\Tools\Calculation\Data\CalculationMemory;
+use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Core\Tools\Calculation\Data\ToolCalculationResult;
 use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
 use App\Core\Tools\Contracts\ToolCalculationInput;
@@ -16,7 +18,7 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível.');
+            throw new InvalidArgumentException('Entrada incompatível com a calculadora de fluxo de caixa.');
         }
 
         $inflows = $input->salesReceipts->add($input->otherInflows);
@@ -29,25 +31,32 @@ final class Calculator implements ToolCalculator
             ->subtract($input->taxPayments);
 
         return new ToolCalculationResult(
-            'fluxo-de-caixa',
-            '1.0.0',
-            [
+            toolSlug: 'fluxo-de-caixa',
+            schemaVersion: '1.1.0',
+            summary: [
                 new ToolCalculationSummaryItem('closing_balance', 'Saldo final previsto', $closingBalance->formatPtBr()),
                 new ToolCalculationSummaryItem('net_movement', 'Movimento líquido do período', $netMovement->formatPtBr()),
                 new ToolCalculationSummaryItem('total_inflows', 'Total de entradas', $inflows->formatPtBr()),
                 new ToolCalculationSummaryItem('total_outflows', 'Total de saídas', $outflows->formatPtBr()),
                 new ToolCalculationSummaryItem('operating_generation', 'Geração operacional de caixa', $operatingGeneration->formatPtBr()),
             ],
-            [
-                'input' => $input->toArray(),
-                'memory' => [
-                    'Entradas = recebimentos de vendas + outras entradas' => $inflows->formatPtBr(),
-                    'Saídas = pagamentos operacionais + tributos + investimentos + financiamentos + outras saídas' => $outflows->formatPtBr(),
-                    'Movimento líquido = entradas - saídas' => $netMovement->formatPtBr(),
-                    'Saldo final = saldo inicial + movimento líquido' => $closingBalance->formatPtBr(),
-                    'Geração operacional = vendas - pagamentos operacionais - tributos' => $operatingGeneration->formatPtBr(),
+            details: ['input' => $input->toArray()],
+            calculationMemory: new CalculationMemory(
+                schemaVersion: '1.0.0',
+                steps: [
+                    new CalculationMemoryStep('total_inflows', 'Total de entradas', 'recebimentos de vendas + outras entradas', ['sales_receipts' => $input->salesReceipts->minorAmount(), 'other_inflows' => $input->otherInflows->minorAmount()], $inflows->minorAmount(), 'Soma em centavos, sem ponto flutuante.'),
+                    new CalculationMemoryStep('total_outflows', 'Total de saídas', 'pagamentos operacionais + tributos + investimentos + financiamentos + outras saídas', ['operating_payments' => $input->operatingPayments->minorAmount(), 'tax_payments' => $input->taxPayments->minorAmount(), 'investments' => $input->investments->minorAmount(), 'financing_payments' => $input->financingPayments->minorAmount(), 'other_outflows' => $input->otherOutflows->minorAmount()], $outflows->minorAmount(), 'Soma em centavos, sem ponto flutuante.'),
+                    new CalculationMemoryStep('net_movement', 'Movimento líquido do período', 'total de entradas − total de saídas', ['total_inflows' => $inflows->minorAmount(), 'total_outflows' => $outflows->minorAmount()], $netMovement->minorAmount()),
+                    new CalculationMemoryStep('closing_balance', 'Saldo final previsto', 'saldo inicial + movimento líquido', ['opening_balance' => $input->openingBalance->minorAmount(), 'net_movement' => $netMovement->minorAmount()], $closingBalance->minorAmount()),
+                    new CalculationMemoryStep('operating_generation', 'Geração operacional de caixa', 'recebimentos de vendas − pagamentos operacionais − tributos', ['sales_receipts' => $input->salesReceipts->minorAmount(), 'operating_payments' => $input->operatingPayments->minorAmount(), 'tax_payments' => $input->taxPayments->minorAmount()], $operatingGeneration->minorAmount()),
                 ],
-            ],
+                assumptions: [
+                    'Saldo inicial e movimentações devem corresponder ao mesmo período de projeção.',
+                    'A ferramenta usa regime de caixa: considera datas de recebimento e pagamento, não competência contabilística.',
+                    'O saldo final é uma previsão baseada exclusivamente nos movimentos informados e não inclui eventos não lançados.',
+                ],
+                isEstimate: true,
+            ),
         );
     }
 }

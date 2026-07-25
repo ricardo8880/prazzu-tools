@@ -1,0 +1,23 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-BlRz-Agi.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/admin/blog-editor.js": {
+    "file": "assets/blog-editor-DY_dn1IE.js",
+    "name": "blog-editor",
+    "src": "resources/js/admin/blog-editor.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CF-vkD-p.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}

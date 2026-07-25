@@ -48,3 +48,7 @@ visuais compartilhados do Core técnico.
 O módulo é publicado como `beta`: permanece visível e executável no catálogo,
 na busca e nas superfícies da plataforma, com cenários de regressão registrados.
 Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
+
+## Lote 6 — acréscimos normativos e estimativa
+
+Multa diária, limite de multa e adicional do mês do pagamento passaram a ser fornecidos por `LateDasRule`. A Selic acumulada continua sendo uma entrada explícita, pois depende do período analisado. O resultado é identificado como estimativa e não substitui a guia oficial do Simples Nacional.

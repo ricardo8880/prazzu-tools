@@ -16,5 +16,10 @@ final class CalculatorTest extends TestCase
         $r = (new Calculator)->calculate(new CalculationInput('Ana', '000', 'Empresa', 2025, Money::fromDecimal('50000'), Money::fromDecimal('5000'), Money::fromDecimal('3000'), Money::fromDecimal('2000')));
         self::assertSame('R$ 40.000,00', $r->summary[2]->value);
         self::assertSame(2025, $r->details['document']['year']);
+        self::assertSame('1.1.0', $r->schemaVersion);
+        self::assertFalse($r->details['document']['notice']['authenticity_validated']);
+        self::assertNotNull($r->calculationMemory);
+        self::assertCount(2, $r->calculationMemory->steps);
+        self::assertCount(1, $r->warnings);
     }
 }

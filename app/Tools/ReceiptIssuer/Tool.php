@@ -43,7 +43,7 @@ final class Tool implements HasHistoryPolicy, HasMigrations, HasToolIntegrations
             slug: self::SLUG,
             name: 'Emissor de Recibos',
             description: 'Gere recibos completos, identificados e prontos para exportação, com validação de pagador, recebedor e valor por extenso.',
-            category: ToolCategory::Documents,
+            category: ToolCategory::Generators,
             icon: 'bi-receipt',
             routeName: 'tools.emissor-de-recibos.index',
             version: '0.6.0',

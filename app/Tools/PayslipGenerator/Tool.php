@@ -40,7 +40,7 @@ final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, Has
             slug: 'gerador-holerite',
             name: 'Gerador de Holerite',
             description: 'Gere holerite com proventos, descontos e líquido para impressão ou PDF.',
-            category: ToolCategory::Documents,
+            category: ToolCategory::Generators,
             icon: 'bi-file-earmark-person',
             routeName: 'tools.gerador-holerite.index',
             version: '1.0.0',

@@ -48,3 +48,8 @@ visuais compartilhados do Core técnico.
 O módulo é publicado como `beta`: permanece visível e executável no catálogo,
 na busca e nas superfícies da plataforma, com cenários de regressão registrados.
 Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
+
+
+## Conformidade do Lote 3
+
+A ferramenta **INSS Patronal** usa `App\Core\Labor\Normative\EmployerChargeRule` para resolver as alíquotas patronais por regime. O resultado inclui memória de cálculo versionada, snapshot das fontes oficiais e premissas explícitas para RAT/FAP e terceiros. Nenhum cálculo essencial depende de conta ou do Prazzu Plus.

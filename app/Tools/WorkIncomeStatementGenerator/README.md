@@ -2,49 +2,40 @@
 
 ## Descrição
 
-Gera declaração personalizada pronta para assinatura.
+Gera uma declaração particular de atividade e renda a partir dos dados fornecidos pelo declarante. O texto não cria nem reconhece vínculo empregatício e não autentica identidade, renda ou assinatura.
 
 ## Funcionalidades
 
-- entrada validada por `FormRequest`;
-- domínio independente e valores financeiros sem `float`;
-- resultado completo com memória reproduzível;
-- página responsiva com componentes compartilhados;
-- impressão/PDF quando o resultado for documental.
+- geração de declaração particular de atividade e renda;
+- validação da coerência entre início da atividade e emissão;
+- apresentação de renda mensal e texto revisável;
+- memória documental e avisos de limitação.
 
 ## Experiência Essencial
 
-O visitante resolve integralmente um caso individual sem autenticação. Fórmulas,
-premissas, valores intermediários e limitações permanecem visíveis.
+O visitante gera integralmente uma declaração individual sem autenticação e revê o conteúdo antes de imprimir ou exportar.
 
 ## Prazzu Plus
 
-Modelos, identidade visual, emissão em lote, assinatura e envio. Esses recursos representam produtividade e continuidade; não alteram a
-correção do resultado Essencial.
+Histórico, recuperação, duplicação e exportações profissionais representam produtividade e continuidade. Não alteram o conteúdo Essencial.
 
 ## Regras
 
-Entradas principais: Declarante, trabalhador, vínculo, renda, local e data. O resultado é orientativo e casos normativos,
-contratuais ou cadastrais fora das premissas exibidas exigem revisão
-profissional.
+- o início declarado não pode ser posterior à data de emissão;
+- renda e atividade são reproduzidas como declarações do utilizador;
+- a relação não recebe qualificação jurídica automática;
+- a aceitação depende da instituição destinatária e dos comprovativos exigidos;
+- o documento precisa ser revisto e assinado pelo declarante.
 
 ## Integração entre ferramentas
 
-Não publica nem aceita contratos. O módulo funciona isoladamente e não importa
-classes internas de outras ferramentas.
+Não publica nem aceita contratos e não importa domínio de outras ferramentas.
 
 ## Dependências
 
-Objetos financeiros, contratos de cálculo, histórico, exportação e componentes
-visuais compartilhados do Core técnico.
+Utiliza geração documental, políticas de dados sensíveis, histórico versionado, exportação e memória de cálculo do Core técnico.
 
 ## Histórico de versões
 
-- `1.0.0`: motor ou gerador funcional, validação, interface, memória,
-  documentação e testes.
-
-## Qualidade
-
-O módulo é publicado como `beta`: permanece visível e executável no catálogo,
-na busca e nas superfícies da plataforma, com cenários de regressão registrados.
-Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
+- `1.1.0`: memória documental, datas coerentes, avisos contra presunção de vínculo e limitações de autenticidade.
+- `1.0.0`: gerador funcional inicial.

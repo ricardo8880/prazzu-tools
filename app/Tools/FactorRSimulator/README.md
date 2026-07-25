@@ -48,3 +48,7 @@ visuais compartilhados do Core técnico.
 O módulo é publicado como `beta`: permanece visível e executável no catálogo,
 na busca e nas superfícies da plataforma, com cenários de regressão registrados.
 Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
+
+## Lote 6 — regra normativa e memória
+
+O cálculo passou a usar `App\Core\Tax\Normative\FactorRRule`, com limite de 28% versionado, fonte oficial, snapshot por data de referência e memória estruturada. A ferramenta continua limitada ao critério do Fator R e não presume automaticamente que toda atividade possa migrar entre os Anexos III e V.

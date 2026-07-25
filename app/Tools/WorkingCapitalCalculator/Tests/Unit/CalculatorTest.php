@@ -20,10 +20,14 @@ final class CalculatorTest extends TestCase
         ));
 
         self::assertSame('capital-de-giro', $result->toolSlug);
-        self::assertSame('1.0.0', $result->schemaVersion);
+        self::assertSame('1.1.0', $result->schemaVersion);
         self::assertSame('required_capital', $result->summary[0]->key);
         self::assertSame('R$ 55.000,00', $result->summary[0]->value);
         self::assertSame('R$ 50.000,00', $result->summary[2]->value);
         self::assertSame('R$ 5.000,00', $result->summary[3]->value);
+        self::assertNotNull($result->calculationMemory);
+        self::assertTrue($result->calculationMemory->isEstimate);
+        self::assertNotEmpty($result->calculationMemory->steps);
+        self::assertNotEmpty($result->calculationMemory->assumptions);
     }
 }

@@ -52,6 +52,29 @@ final class ToolDiscoveryTest extends TestCase
             ->assertSee($tool['category_name']);
     }
 
+    public function test_home_exposes_the_real_tool_counts_by_category(): void
+    {
+        $catalog = $this->app->make(ToolCatalog::class);
+        $counts = $catalog->categories()
+            ->mapWithKeys(static fn (array $category): array => [$category['slug'] => $category['count']])
+            ->all();
+
+        $this->assertSame([
+            'todas' => 29,
+            'geradores' => 6,
+            'calculadoras' => 6,
+            'validadores' => 1,
+            'fiscal' => 8,
+            'trabalhista' => 8,
+        ], $counts);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('Geradores')
+            ->assertSee('Fiscal e tributário')
+            ->assertDontSee('Documentos');
+    }
+
     public function test_public_categories_exclude_empty_taxonomy_entries(): void
     {
         $catalog = $this->app->make(ToolCatalog::class);

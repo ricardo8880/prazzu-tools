@@ -6,6 +6,7 @@ namespace App\Tools\MarginMarkupCalculator\Domain\Data;
 
 use App\Core\Money\Money;
 use App\Core\Money\Percentage;
+use App\Core\Tools\Calculation\Data\CalculationMemory;
 
 final readonly class MarginMarkupResult
 {
@@ -22,9 +23,10 @@ final readonly class MarginMarkupResult
         public Percentage $markup,
         public string $markupMultiplier,
         public string $ruleVersion,
+        public CalculationMemory $calculationMemory,
     ) {}
 
-    /** @return array<string, string> */
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [
@@ -40,6 +42,7 @@ final readonly class MarginMarkupResult
             'markup' => $this->markup->toDecimalString().'%',
             'markup_multiplier' => $this->markupMultiplier,
             'rule_version' => $this->ruleVersion,
+            'calculation_memory' => $this->calculationMemory->toArray(),
         ];
     }
 }

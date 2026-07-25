@@ -80,3 +80,8 @@ capacidades Essencial/Plus, contratos de cálculo e integração, componentes vi
 compartilhados e políticas transversais de histórico, persistência versionada,
 exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
 responsabilidades não devem ser introduzidas no módulo.
+
+
+## Lote 5 — memória e transparência
+
+O módulo foi revisado no Lote 5 para expor memória de cálculo estruturada, premissas e arredondamento sem depender do domínio de outras ferramentas. A responsabilidade permanece limitada ao escopo descrito neste documento.

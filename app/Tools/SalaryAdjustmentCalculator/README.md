@@ -48,3 +48,8 @@ visuais compartilhados do Core técnico.
 O módulo é publicado como `beta`: permanece visível e executável no catálogo,
 na busca e nas superfícies da plataforma, com cenários de regressão registrados.
 Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
+
+
+## Lote 5 — memória e transparência
+
+O módulo foi revisado no Lote 5 para expor memória de cálculo estruturada, premissas e arredondamento sem depender do domínio de outras ferramentas. A responsabilidade permanece limitada ao escopo descrito neste documento.

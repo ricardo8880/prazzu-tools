@@ -18,5 +18,7 @@ final class CalculatorTest extends TestCase
         self::assertSame('R$ 6.200,00', $r->summary[0]->value);
         self::assertSame('R$ 4.700,00', $r->summary[1]->value);
         self::assertCount(10, $r->details['checklist']);
+        self::assertNotNull($r->calculationMemory);
+        self::assertNotEmpty($r->calculationMemory->steps);
     }
 }

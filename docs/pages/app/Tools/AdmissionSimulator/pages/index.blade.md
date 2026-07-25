@@ -71,3 +71,8 @@ armazenamento, assinatura ou histórico como disponíveis antes da implementaç�
 - rejeitar salário nulo e percentuais fora do intervalo permitido;
 - conferir primeiro mês e primeiro ano contra cálculo manual;
 - validar responsividade, checklist e impressão sem perda de conteúdo.
+
+
+## Estado após o Lote 5
+
+A página deve apresentar resultados coerentes com a memória estruturada do domínio e deixar visíveis as premissas estimativas ou os valores informados manualmente pelo usuário.

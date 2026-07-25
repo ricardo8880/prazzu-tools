@@ -1,84 +1,45 @@
-# Calculadora de Margem e Markup
+# Calculadora de Precificação de Produtos
 
 ## Descrição
 
-Ferramenta de formação de preço para calcular custo total, preço de venda,
-lucro, margem e markup de produtos ou serviços. O módulo foi utilizado como
-piloto do padrão modular no Lote 8.
+Forma o preço de venda a partir do custo total, da margem líquida desejada e das deduções percentuais incidentes sobre a venda. O módulo permanece independente e não importa regras da ferramenta de comissão.
 
 ## Funcionalidades
 
-- cálculo individual de preço, margem, markup e composição de custos;
-- consideração de frete, embalagem, despesas fixas, impostos, comissão, cartão
-  e marketplace;
-- cálculo em lote de produtos;
-- pré-visualização e processamento de importação CSV;
-- modelo de arquivo para importação;
-- simulação e comparação de cenários de preço;
-- exportação do cálculo atual e dos resultados em lote;
-- relatório para impressão e salvamento como PDF pelo navegador;
-- histórico persistente para usuários autenticados;
-- repetição e exclusão de cálculos salvos;
-- métricas, auditoria e autorização integradas à plataforma.
-
-## Experiência Essencial
-
-A experiência gratuita realiza o cálculo individual completo de preço, custo,
-lucro, margem e markup, incluindo todas as despesas e deduções informadas. O
-resultado e sua composição não dependem do Plus.
-
-## Prazzu Plus
-
-O Plus acrescenta cenários, cálculo e importação em lote, exportações e
-histórico com repetição. Durante o lançamento, a política central libera esses
-recursos gratuitamente, sem espalhar condicionais comerciais pelo módulo.
+- formação do preço sugerido a partir do custo total;
+- detalhamento de margem, markup, deduções e lucro líquido;
+- memória reproduzível com política de arredondamento.
 
 ## Regras
 
-- `custo total = custo base + custos adicionais`;
-- `preço de venda = custo total / (1 - margem e deduções variáveis)`;
-- `lucro = preço de venda - custo total - deduções`;
-- `markup = lucro / custo total`;
-- custo total deve ser positivo;
-- a soma de margem e percentuais variáveis deve preservar um divisor válido;
-- dinheiro e percentuais usam `Money` e `Percentage`, nunca `float`;
-- a regra de cálculo é versionada e o resultado é uma estimativa gerencial;
-- visitantes acessam cálculo, lote, cenários e exportação atual durante a fase
-  gratuita;
-- autenticação é exigida somente para histórico e persistência;
-- limites, planos e acesso Plus são resolvidos pela política central do Core;
-- CSV, PDF, impressão e histórico devem utilizar os serviços compartilhados,
-  sem exportadores ou armazenamentos paralelos no módulo.
+- `custo total = custo base + custos adicionais + frete + embalagem + despesas fixas rateadas`;
+- `preço de venda = custo total / (1 - margem líquida - impostos - comissão - taxas)`;
+- `lucro líquido = preço de venda - custo total - deduções`;
+- `markup percentual = (preço de venda - custo total) / custo total`;
+- `multiplicador de markup = preço de venda / custo total`;
+- margem líquida é percentual sobre a venda; markup é acréscimo bruto sobre o custo e não é sinônimo de margem;
+- a soma dos percentuais deve ser menor que 100%;
+- dinheiro é preservado em centavos e divisões usam arredondamento HalfUp;
+- custos fixos devem ser previamente rateados por unidade ou venda;
+- o resultado é uma estimativa gerencial baseada no cenário informado.
+
+## Memória de cálculo
+
+O resultado inclui memória estruturada com custo total, preço sugerido, lucro líquido e markup, além das premissas e políticas de arredondamento. O schema da regra foi incrementado para `2.1.0` no Lote 8.
+
+## Experiência Essencial
+
+O cálculo individual completo permanece disponível sem autenticação, com fórmulas, valores intermediários e resultado visíveis.
+
+## Prazzu Plus
+
+Lotes, cenários, importação, exportações e histórico são capacidades de produtividade e continuidade, sem alterar a correção do cálculo individual.
 
 ## Dependências
 
-- value objects `Money` e `Percentage` e arredondamento do Core;
-- contratos do Core para acesso, uso, métricas, auditoria e histórico;
-- infraestrutura compartilhada de importação tabular;
-- sistema central de exportação e impressão;
-- Laravel para requests, responses e adaptadores de persistência;
-- JavaScript específico, quando necessário, isolado em `Resources/js` deste
-  módulo e limitado por `[data-tool="calculadora-margem-markup"]`.
+`Money`, `Percentage`, `IntegerRounding` e `CalculationMemory` do Core técnico. Não depende de outra ferramenta.
 
-O módulo não depende de outra ferramenta.
-
-## Dívida arquitetural formal
-
-A leitura e exclusão do histórico ainda conhecem o model Eloquent do Core por
-meio de adaptadores locais. O próximo passo é completar no Core o contrato de
-consulta e gestão de histórico e retirar essa dependência concreta.
 
 ## Histórico de versões
 
-- `1.0.0` — Lote 8: domínio e cálculo inicial, lote, importação, cenários,
-  histórico, métricas, autorização, CSV, impressão e testes.
-- ciclo atual — compartilhamento de cálculos removido para manter o módulo
-  alinhado ao escopo de ferramenta pontual definido pelo produto.
-
-## Conformidade arquitetural — Lote 9
-
-Esta ferramenta foi migrada para o padrão definitivo da plataforma: manifesto final,
-capacidades Essencial/Plus, contratos de cálculo e integração, componentes visuais
-compartilhados e políticas transversais de histórico, persistência versionada,
-exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
-responsabilidades não devem ser introduzidas no módulo.
+- `2.1.0`: separação formal entre margem, markup, multiplicador e lucro líquido, com memória estruturada.

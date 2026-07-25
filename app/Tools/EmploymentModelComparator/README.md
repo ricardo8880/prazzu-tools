@@ -48,3 +48,8 @@ visuais compartilhados do Core técnico.
 O módulo é publicado como `beta`: permanece visível e executável no catálogo,
 na busca e nas superfícies da plataforma, com cenários de regressão registrados.
 Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
+
+
+## Alinhamento do Lote 4
+
+O resultado agora explicita premissas e limitações. As alíquotas continuam entradas do usuário porque CLT, PJ e autônomo dependem de atividade, regime, retenções, benefícios e contratação concreta. A ferramenta não importa regras internas das calculadoras trabalhistas ou societárias.

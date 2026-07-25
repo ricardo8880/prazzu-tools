@@ -68,3 +68,8 @@ e-mail, assinatura, histórico e emissão em lote ainda não estão disponíveis
 - validar competência no formato `YYYY-MM`;
 - rejeitar descontos acima dos proventos como erro de formulário;
 - conferir escape dos dados pessoais, totais, impressão e responsividade.
+
+
+## Estado após o Lote 5
+
+A página deve apresentar resultados coerentes com a memória estruturada do domínio e deixar visíveis as premissas estimativas ou os valores informados manualmente pelo usuário.

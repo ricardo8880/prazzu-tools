@@ -33,7 +33,10 @@ final class MarginMarkupCalculatorTest extends TestCase
         self::assertSame('R$ 40,00', $result->netProfit->formatPtBr());
         self::assertSame('66.666667', $result->markup->toDecimalString());
         self::assertSame('1,6667', $result->markupMultiplier);
-        self::assertSame('2.0.0', $result->ruleVersion);
+        self::assertSame('2.1.0', $result->ruleVersion);
+        self::assertTrue($result->calculationMemory->isEstimate);
+        self::assertSame(4, count($result->calculationMemory->steps));
+        self::assertSame(20000, $result->calculationMemory->steps[1]->result);
     }
 
     public function test_rejects_zero_total_cost(): void

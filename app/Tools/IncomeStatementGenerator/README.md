@@ -2,49 +2,40 @@
 
 ## Descrição
 
-Gera declaração anual com rendimentos, deduções e líquido.
+Organiza valores anuais previamente apurados em uma declaração revisável de rendimentos. A ferramenta não apura tributos nem substitui informes oficiais, escriturações ou obrigações acessórias.
 
 ## Funcionalidades
 
-- entrada validada por `FormRequest`;
-- domínio independente e valores financeiros sem `float`;
-- resultado completo com memória reproduzível;
-- página responsiva com componentes compartilhados;
-- impressão/PDF quando o resultado for documental.
+- consolidação de rendimentos brutos e deduções informadas;
+- cálculo do valor líquido declarado;
+- geração de texto documental revisável;
+- memória dos valores utilizados e avisos de autenticidade.
 
 ## Experiência Essencial
 
-O visitante resolve integralmente um caso individual sem autenticação. Fórmulas,
-premissas, valores intermediários e limitações permanecem visíveis.
+O visitante gera integralmente uma declaração individual sem autenticação, com valores, texto e limitações visíveis antes da utilização.
 
 ## Prazzu Plus
 
-Modelos, emissão em lote, assinatura e armazenamento. Esses recursos representam produtividade e continuidade; não alteram a
-correção do resultado Essencial.
+Histórico, recuperação, duplicação e exportações profissionais representam continuidade e conveniência. Não alteram os valores ou o texto Essencial.
 
 ## Regras
 
-Entradas principais: Fonte, beneficiário, ano e valores previamente apurados. O resultado é orientativo e casos normativos,
-contratuais ou cadastrais fora das premissas exibidas exigem revisão
-profissional.
+- rendimentos, INSS, IRRF e outras deduções são entradas declaradas pelo utilizador;
+- o líquido corresponde apenas a rendimentos brutos menos deduções informadas;
+- deduções não podem superar os rendimentos brutos;
+- identidade, documento, poderes da fonte pagadora, assinatura e autenticidade não são validados;
+- o documento precisa ser conferido e assinado pela fonte pagadora antes do uso.
 
 ## Integração entre ferramentas
 
-Não publica nem aceita contratos. O módulo funciona isoladamente e não importa
-classes internas de outras ferramentas.
+Não publica nem aceita contratos e não importa domínio de outras ferramentas.
 
 ## Dependências
 
-Objetos financeiros, contratos de cálculo, histórico, exportação e componentes
-visuais compartilhados do Core técnico.
+Utiliza geração documental, políticas de dados sensíveis, histórico versionado, exportação e memória de cálculo do Core técnico.
 
 ## Histórico de versões
 
-- `1.0.0`: motor ou gerador funcional, validação, interface, memória,
-  documentação e testes.
-
-## Qualidade
-
-O módulo é publicado como `beta`: permanece visível e executável no catálogo,
-na busca e nas superfícies da plataforma, com cenários de regressão registrados.
-Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
+- `1.1.0`: memória documental, aviso de limitações e separação explícita entre organização de dados e apuração fiscal.
+- `1.0.0`: gerador funcional inicial.

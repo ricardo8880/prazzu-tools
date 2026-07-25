@@ -19,10 +19,15 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('2000'), Money::fromDecimal('1000'),
         ));
 
+        self::assertSame('1.1.0', $result->schemaVersion);
         self::assertSame('R$ 29.000,00', $result->summary[0]->value);
         self::assertSame('R$ 19.000,00', $result->summary[1]->value);
         self::assertSame('R$ 55.000,00', $result->summary[2]->value);
         self::assertSame('R$ 36.000,00', $result->summary[3]->value);
         self::assertSame('R$ 20.000,00', $result->summary[4]->value);
+        self::assertNotNull($result->calculationMemory);
+        self::assertTrue($result->calculationMemory->isEstimate);
+        self::assertNotEmpty($result->calculationMemory->steps);
+        self::assertNotEmpty($result->calculationMemory->assumptions);
     }
 }

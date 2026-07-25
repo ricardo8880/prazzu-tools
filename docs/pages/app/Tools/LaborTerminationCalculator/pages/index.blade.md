@@ -36,3 +36,8 @@ A página é renderizada pela view Blade indicada acima e utiliza o layout, os c
 - Validar estados vazio, carregando, sucesso, erro e permissão quando aplicáveis.
 - Confirmar navegação, formulários e ações disponíveis.
 - Executar os testes relacionados e o build do Vite quando houver mudança visual ou de JavaScript.
+
+
+## Estado após o Lote 5
+
+A página deve apresentar resultados coerentes com a memória estruturada do domínio e deixar visíveis as premissas estimativas ou os valores informados manualmente pelo usuário.

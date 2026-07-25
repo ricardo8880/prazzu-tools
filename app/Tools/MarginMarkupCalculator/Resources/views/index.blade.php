@@ -158,6 +158,27 @@
                 </div>
             </div>
 
+            @if (!empty($result['calculation_memory']['steps']))
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <h3 class="h5 card-title">Memória de cálculo</h3>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <tbody>
+                                    @foreach ($result['calculation_memory']['steps'] as $step)
+                                        <tr>
+                                            <th scope="row">{{ $step['label'] }}<div class="small fw-normal text-body-secondary">{{ $step['formula'] }}</div></th>
+                                            <td class="text-end">{{ is_int($step['result']) ? 'R$ '.number_format($step['result'] / 100, 2, ',', '.') : $step['result'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-info mt-3 mb-0">Margem líquida e markup são indicadores diferentes: a margem é calculada sobre a venda após deduções; o markup mede o acréscimo bruto sobre o custo.</div>
+                    </div>
+                </div>
+            @endif
+
             <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
                 <form method="post" action="{{ route('tools.calculadora-margem-markup.export') }}">
                     @csrf

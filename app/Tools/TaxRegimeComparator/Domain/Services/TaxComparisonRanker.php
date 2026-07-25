@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tools\TaxRegimeComparator\Domain\Services;
 
+use App\Core\Dates\ReferenceDate;
+use App\Core\Tax\Normative\TaxRegimeComparisonRule;
 use App\Tools\TaxRegimeComparator\Domain\Data\RankedTaxRegimeEstimate;
 use App\Tools\TaxRegimeComparator\Domain\Data\TaxComparisonResult;
 use App\Tools\TaxRegimeComparator\Domain\Data\TaxRegimeEstimate;
@@ -11,6 +13,7 @@ use DateTimeImmutable;
 
 final class TaxComparisonRanker
 {
+    public function __construct(private readonly TaxRegimeComparisonRule $rule = new TaxRegimeComparisonRule) {}
     /**
      * @param list<TaxRegimeEstimate> $estimates
      */
@@ -51,9 +54,18 @@ final class TaxComparisonRanker
                 : null,
             assumptions: $this->collectAssumptions($estimates),
             warnings: array_values(array_unique($warnings)),
-            ruleVersion: '0.6.0',
+            ruleVersion: '1.0.0',
             ranking: $ranking,
             comparableRegimeCount: count($comparable),
+            normativeRules: [$this->rule->snapshot(ReferenceDate::fromDateTime($referenceDate))],
+            calculationMemory: array_map(static fn (RankedTaxRegimeEstimate $item): array => [
+                'position' => $item->position,
+                'regime' => $item->estimate->regime->value,
+                'monthly_tax_minor' => $item->estimate->estimatedMonthlyTax->minorAmount(),
+                'annual_tax_minor' => $item->estimate->estimatedAnnualTax->minorAmount(),
+                'annual_difference_from_lowest_minor' => $item->annualDifferenceFromLowest->minorAmount(),
+            ], $ranking),
+            isEstimate: true,
         );
     }
 
