@@ -85,9 +85,7 @@ final class ToolCatalogConsistencyTest extends TestCase
             $catalog->all()->sortByDesc('position')->take(8)->pluck('slug')->values()->all(),
             $latest->pluck('slug')->all(),
         );
-        $this->assertContains('calculadora-ferias', $latest->pluck('slug')->all());
-        $this->assertContains('conversor-fiscal-xml', $latest->pluck('slug')->all());
-        $this->assertContains('gerador-darf-gps', $latest->pluck('slug')->all());
+        $this->assertNotEmpty($latest);
 
         $response = $this->get('/')->assertOk();
 

@@ -1,34 +1,52 @@
-# conteúdo dinâmico
+# Catálogo de ferramentas — Prazzu Tools
 
-- **Tipo:** Página da plataforma
+- **Tipo:** página pública da plataforma
+- **Rota:** `tools.index` e `tools.category`
+- **Controller:** `App\Http\Controllers\Platform\ToolCatalogController`
 - **Implementação principal:** `resources/views/pages/tools/index.blade.php`
-- **Status:** ativa no código atual
+- **Fonte de dados:** `App\Core\Tools\ToolCatalog`
+- **Status:** ativa
 
 ## Objetivo
 
-Apresentar e permitir a utilização da área **conteúdo dinâmico** dentro da plataforma.
+Permitir que visitantes encontrem e acessem todas as ferramentas públicas por
+nome, descrição, palavra-chave ou categoria.
 
 ## Como funciona
 
-A página é renderizada pela view Blade indicada acima e utiliza o layout, os componentes compartilhados e os dados fornecidos pelo controller ou fluxo responsável. A implementação atual contém 1 formulário(s).
+O controller consulta exclusivamente o catálogo central. A busca normaliza
+acentos e considera nome, descrição, slug da categoria, nome público da
+categoria e palavras-chave do manifesto. Os filtros apresentam somente
+categorias que possuem ao menos uma ferramenta pública.
 
-## Estrutura e conteúdos identificados
+## Conteúdos e estados
 
-- conteúdo dinâmico
-- Nenhuma ferramenta encontrada
+- campo de busca com preservação do termo informado;
+- filtros por categoria preenchida;
+- cards com ícone, nome público da categoria, descrição e modalidade;
+- contagem de resultados;
+- estado vazio com acesso ao fluxo de sugestão de ferramenta;
+- resposta `404` para categorias inexistentes ou sem ferramentas públicas.
+
+## Dependências
+
+- `ToolCatalog`, como fonte única de ferramentas e taxonomia pública;
+- `config/tools/categories.php`, projetado pelo catálogo;
+- layout e componentes compartilhados da plataforma;
+- rotas principais declaradas nos manifests.
 
 ## Regras de manutenção
 
-- Ler o `README.md` da raiz e `docs/pages/README.md` antes de alterar esta página.
-- Preservar o objetivo e os fluxos descritos neste documento.
-- Usar primeiro componentes e utilitários do Bootstrap.
-- Criar CSS próprio apenas quando necessário e validar sua inclusão no build do Vite.
-- Manter a página leve, responsiva, acessível e sem dependências desnecessárias.
-- Atualizar este arquivo sempre que comportamento, objetivo, conteúdo, estados ou dependências mudarem.
+- não manter listas paralelas de ferramentas na view ou no controller;
+- usar `category_name` e `category_icon` projetados pelo catálogo;
+- não exibir categorias vazias nos filtros;
+- manter busca, catálogo, menus e sitemap baseados na mesma fonte;
+- atualizar este documento quando os critérios de descoberta mudarem.
 
 ## Validação mínima após alterações
 
-- Conferir renderização em telas pequenas e grandes.
-- Validar estados vazio, carregando, sucesso, erro e permissão quando aplicáveis.
-- Confirmar navegação, formulários e ações disponíveis.
-- Executar os testes relacionados e o build do Vite quando houver mudança visual ou de JavaScript.
+- testar busca por nome, palavra-chave e nome público da categoria;
+- testar filtro preenchido e categoria vazia;
+- confirmar que todos os cards apontam para a rota do manifesto;
+- validar estados com e sem resultados em telas pequenas e grandes;
+- executar os testes de descoberta da plataforma.

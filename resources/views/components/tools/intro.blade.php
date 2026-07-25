@@ -7,9 +7,11 @@
     'description',
 ])
 
+@php($iconClass = str_starts_with($icon, 'bi-') ? $icon : 'bi-'.$icon)
+
 <header {{ $attributes->class(['prazzu-tool-intro']) }}>
     <span class="prazzu-icon-tile prazzu-icon-tile--{{ $tone }}" aria-hidden="true">
-        <i class="bi bi-{{ $icon }}"></i>
+        <i class="bi {{ $iconClass }}"></i>
     </span>
     <div class="flex-grow-1">
         @if ($badge)

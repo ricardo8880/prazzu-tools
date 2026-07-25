@@ -45,6 +45,9 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 | Empacotamento ZIP simples | Extraído para `App\Core\Export\Services\SimpleZipArchiveBuilder` após uso concreto por Analytics e Gerador de Contratos. |
 | Persistência e histórico | Devem utilizar os mecanismos compartilhados da plataforma, mantendo no módulo somente os dados e regras do domínio. |
 | Payloads temporários entre requisições | Extraído para `App\Core\Temporary` e deve ser usado quando processamento/exportação precisam compartilhar dados efêmeros sem depender de autenticação. |
+| Perfis auxiliares reutilizáveis de empresa e funcionário | Extraído para `App\Core\ToolProfiles`; os perfis servem somente para reutilizar entradas nas ferramentas e não implementam CRM, folha ou gestão operacional. |
+| Validação de valores monetários em formulários | Extraída para `App\Core\Validation\BrazilianMoneyValidator`; as regras Laravel `brazilian_money` e `money_min` reutilizam `Money` e não usam ponto flutuante. |
+| Validação de percentuais em formulários | Extraída para `App\Core\Validation\BrazilianPercentageValidator`; as regras Laravel `brazilian_percentage`, `percentage_min` e `percentage_max` reutilizam `Percentage`, aceitam ponto ou vírgula e rejeitam `float` e notação científica. |
 
 ## Procedimento obrigatório para assistentes de IA
 

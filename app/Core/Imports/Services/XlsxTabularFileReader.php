@@ -48,8 +48,13 @@ final class XlsxTabularFileReader implements TabularFileReader
                     $reference = (string) ($attributes['r'] ?? 'A1');
                     $column = $this->columnIndex($reference);
                     $type = (string) ($attributes['t'] ?? '');
-                    $value = (string) ($cell->v ?? '');
-                    $values[$column] = $type === 's' ? ($sharedStrings[(int) $value] ?? null) : ($value === '' ? null : $value);
+                    $value = $type === 'inlineStr'
+                        ? (string) ($cell->is->t ?? '')
+                        : (string) ($cell->v ?? '');
+                    $values[$column] = match ($type) {
+                        's' => $sharedStrings[(int) $value] ?? null,
+                        default => $value === '' ? null : $value,
+                    };
                 }
                 if ($values !== []) {
                     ksort($values);

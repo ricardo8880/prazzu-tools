@@ -66,6 +66,40 @@ final readonly class ToolCalculationResult
         ];
     }
 
+    /**
+     * Normaliza o resultado para persistência sem obrigar cada ferramenta a
+     * reconstruir o resumo. As chaves do resumo permanecem no nível raiz para
+     * compatibilidade com as políticas de histórico existentes, enquanto o
+     * envelope completo preserva rótulos, memória, alertas e ações.
+     *
+     * @return array<string, mixed>
+     */
+    public function toPersistenceArray(): array
+    {
+        $payload = [];
+
+        foreach ($this->summary as $item) {
+            $payload[$item->key] = $item->value;
+        }
+
+        return [
+            ...$payload,
+            'summary' => array_map(
+                static fn (ToolCalculationSummaryItem $item): array => $item->toArray(),
+                $this->summary,
+            ),
+            'details' => $this->details,
+            'warnings' => array_map(
+                static fn (ToolCalculationWarning $warning): array => $warning->toArray(),
+                $this->warnings,
+            ),
+            'next_actions' => array_map(
+                static fn (ToolCalculationAction $action): array => $action->toArray(),
+                $this->nextActions,
+            ),
+        ];
+    }
+
     /** @param array<mixed> $items */
     private function assertListOf(array $items, string $expectedClass, string $label): void
     {

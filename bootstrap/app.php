@@ -7,6 +7,7 @@ use App\Http\Middleware\ApplySecurityHeaders;
 use App\Http\Middleware\CaptureAnalyticsContext;
 use App\Http\Middleware\EnsureAuthenticatedForPersistence;
 use App\Http\Middleware\EnsureInternalAdministrator;
+use App\Http\Middleware\EnsureTabularImportFeatureAccess;
 use App\Http\Middleware\EnsureToolFeatureAccess;
 use App\Http\Middleware\ShareActiveAcquisitionContext;
 use Illuminate\Foundation\Application;
@@ -34,8 +35,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'internal.admin' => EnsureInternalAdministrator::class,
             'persistence.auth' => EnsureAuthenticatedForPersistence::class,
             'tool.feature' => EnsureToolFeatureAccess::class,
+            'tool.import-feature' => EnsureTabularImportFeatureAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(fn (\Throwable $exception, Request $request) => app(ApiExceptionRenderer::class)->render($exception, $request));
+        $exceptions->render(fn (Throwable $exception, Request $request) => app(ApiExceptionRenderer::class)->render($exception, $request));
     })->create();

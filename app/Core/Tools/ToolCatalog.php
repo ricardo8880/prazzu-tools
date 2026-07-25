@@ -74,6 +74,48 @@ final class ToolCatalog
     }
 
     /** @return Collection<int, array<string, mixed>> */
+    public function related(string $slug, int $limit = 4): Collection
+    {
+        $current = $this->find($slug);
+
+        if ($current === null || $limit < 1) {
+            return collect();
+        }
+
+        $keywords = collect($current['keywords'])
+            ->map(static fn (string $keyword): string => Str::lower(Str::ascii($keyword)))
+            ->all();
+
+        return $this->all()
+            ->reject(static fn (array $tool): bool => $tool['slug'] === $slug)
+            ->map(function (array $tool) use ($current, $keywords): array {
+                $candidateKeywords = array_map(
+                    static fn (string $keyword): string => Str::lower(Str::ascii($keyword)),
+                    $tool['keywords'],
+                );
+                $sharedKeywords = count(array_intersect($keywords, $candidateKeywords));
+                $sameCategory = $tool['category'] === $current['category'];
+
+                return [
+                    ...$tool,
+                    '_related_score' => ($sameCategory ? 100 : 0) + ($sharedKeywords * 10),
+                ];
+            })
+            ->filter(static fn (array $tool): bool => $tool['_related_score'] > 0)
+            ->sortBy([
+                ['_related_score', 'desc'],
+                ['position', 'asc'],
+            ])
+            ->take($limit)
+            ->map(static function (array $tool): array {
+                unset($tool['_related_score']);
+
+                return $tool;
+            })
+            ->values();
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
     public function search(?string $query = null, ?string $category = null): Collection
     {
         $tools = $this->all();
@@ -95,6 +137,7 @@ final class ToolCatalog
                 $tool['name'],
                 $tool['description'],
                 $tool['category'],
+                $tool['category_name'],
                 implode(' ', $tool['keywords']),
             ])));
 
@@ -105,7 +148,8 @@ final class ToolCatalog
     /** @return Collection<int, array<string, mixed>> */
     public function categories(bool $includeAll = true): Collection
     {
-        $counts = $this->all()->countBy('category');
+        $tools = $this->all();
+        $counts = $tools->countBy('category');
 
         $categories = collect(config('tools.categories', []))
             ->map(static fn (array $category, string $slug): array => [
@@ -115,6 +159,7 @@ final class ToolCatalog
                 'count' => (int) $counts->get($slug, 0),
                 'url' => route('tools.category', ['category' => $slug]),
             ])
+            ->filter(static fn (array $category): bool => $category['count'] > 0)
             ->values();
 
         if (! $includeAll) {
@@ -125,7 +170,7 @@ final class ToolCatalog
             'slug' => 'todas',
             'name' => 'Todos',
             'icon' => 'bi-grid',
-            'count' => $this->all()->count(),
+            'count' => $tools->count(),
             'url' => route('tools.index'),
         ])->values();
     }
@@ -142,9 +187,12 @@ final class ToolCatalog
             $manifest->featuresFor(ToolFeatureTier::Plus),
         );
         $hasPlusFeatures = $plusFeatures !== [];
+        $category = config("tools.categories.{$manifest->category->value}", []);
 
         return array_merge($manifest->toArray(), [
             'is_active' => $manifest->status->acceptsNewExecutions(),
+            'category_name' => (string) ($category['name'] ?? Str::headline($manifest->category->value)),
+            'category_icon' => (string) ($category['icon'] ?? 'bi-grid'),
             'essential_features' => $essentialFeatures,
             'plus_features' => $plusFeatures,
             'has_plus_features' => $hasPlusFeatures,

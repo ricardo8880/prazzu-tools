@@ -47,6 +47,15 @@ final class ToolGeneratorContractTest extends TestCase
         ];
     }
 
+    public function test_catalog_registration_stub_bootstraps_the_laravel_application(): void
+    {
+        $contents = file_get_contents(base_path('stubs/tool/CatalogTest.stub'));
+
+        self::assertIsString($contents);
+        self::assertStringContainsString('use Tests\\TestCase;', $contents);
+        self::assertStringNotContainsString('use PHPUnit\\Framework\\TestCase;', $contents);
+    }
+
     public function test_every_registration_group_keeps_its_generator_marker(): void
     {
         $contents = file_get_contents(config_path('tools/modules.php'));

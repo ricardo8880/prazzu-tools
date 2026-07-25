@@ -3,7 +3,7 @@
         'name' => 'prazzu/prazzu-tools',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '7ce4d860842ede15c40b59ed393b0e2f04ec843e',
+        'reference' => '78004525b1ff8ee049892476b85182f2ffc88fa3',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -685,7 +685,7 @@
         'prazzu/prazzu-tools' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '7ce4d860842ede15c40b59ed393b0e2f04ec843e',
+            'reference' => '78004525b1ff8ee049892476b85182f2ffc88fa3',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

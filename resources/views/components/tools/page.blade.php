@@ -30,4 +30,34 @@
     @endif
 
     {{ $slot }}
+
+    @php($relatedTools = app(\App\Core\Tools\ToolCatalog::class)->related($slug))
+    @if ($relatedTools->isNotEmpty())
+        <section class="mt-5" aria-labelledby="{{ $slug }}-related-title">
+            <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+                <div>
+                    <span class="prazzu-eyebrow">Continue sua análise</span>
+                    <h2 class="h4 mb-0" id="{{ $slug }}-related-title">Ferramentas relacionadas</h2>
+                </div>
+                <a class="small" href="{{ route('tools.index') }}">Ver catálogo completo</a>
+            </div>
+            <div class="row g-3">
+                @foreach ($relatedTools as $related)
+                    <div class="col-12 col-md-6 col-xl-3">
+                        <a class="card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ route($related['route_name']) }}">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start gap-3">
+                                    <span class="prazzu-tool-icon prazzu-tool-icon-sm" aria-hidden="true"><i class="bi {{ $related['icon'] }}"></i></span>
+                                    <div>
+                                        <h3 class="h6 mb-1">{{ $related['name'] }}</h3>
+                                        <p class="small text-body-secondary mb-0">{{ \Illuminate\Support\Str::limit($related['description'], 105) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
 </div>

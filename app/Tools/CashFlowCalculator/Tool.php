@@ -1,0 +1,87 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tools\CashFlowCalculator;
+
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
+use App\Core\Tools\Contracts\HasToolIntegrations;
+use App\Core\Tools\Contracts\HasViews;
+use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
+use App\Core\Tools\Data\ToolManifest;
+use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
+use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
+use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+
+final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+{
+    public function integrations(): ToolIntegrationManifest
+    {
+        return new ToolIntegrationManifest(
+            publishes: [],
+            accepts: [],
+        );
+    }
+
+    public function manifest(): ToolManifest
+    {
+        return new ToolManifest(
+            slug: 'fluxo-de-caixa',
+            name: 'Calculadora de Fluxo de Caixa',
+            description: 'Calcule entradas, saídas, geração operacional e saldo final previsto do período.',
+            category: ToolCategory::Calculators,
+            icon: 'bi-graph-up-arrow',
+            routeName: 'tools.fluxo-de-caixa.index',
+            version: '1.0.0',
+            access: ToolAccess::Free,
+            status: ToolStatus::Beta,
+            position: 180,
+            supportsHistory: true,
+            storesSensitiveData: false,
+            keywords: ['fluxo de caixa', 'entradas', 'saídas', 'saldo', 'previsão financeira', 'tesouraria'],
+            capabilities: [
+                ToolCapability::History,
+                ToolCapability::VersionedPersistence,
+                ToolCapability::Export,
+            ],
+            features: [
+                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
+                new ToolFeature('advanced_productivity', 'Produtividade avançada', ToolFeatureTier::Plus),
+            ],
+            persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
+            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),
+            sharing: ToolSharingPolicy::disabled(),
+            sensitiveData: ToolSensitiveDataPolicy::none(),
+        );
+    }
+
+    public function historyPolicy(): ToolHistoryPolicy
+    {
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['opening_balance', 'sales_receipts', 'other_inflows', 'operating_payments', 'tax_payments', 'investments', 'financing_payments', 'other_outflows'], resultFields: ['closing_balance', 'net_movement', 'total_inflows', 'total_outflows', 'operating_generation'], sensitiveFields: []);
+    }
+
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-fluxo-de-caixa';
+    }
+}

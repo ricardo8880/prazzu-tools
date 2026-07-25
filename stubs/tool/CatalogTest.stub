@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tools\{{ class }}\Tests\Architecture;
 
 use App\Core\Tools\ToolRegistry;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 final class CatalogRegistrationTest extends TestCase
 {

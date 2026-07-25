@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Acquisition\ClearAcquisitionContextController;
+use App\Http\Controllers\Acquisition\ContinueAcquisitionContextController;
+use App\Http\Controllers\Admin\Acquisition\AcquisitionContextController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\Analytics\AcquisitionAnalyticsController;
 use App\Http\Controllers\Admin\Analytics\AnalyticsDashboardController;
@@ -20,9 +23,6 @@ use App\Http\Controllers\Admin\Blog\BlogPostController;
 use App\Http\Controllers\Admin\Feedback\PageFeedbackController as AdminPageFeedbackController;
 use App\Http\Controllers\Admin\Feedback\ToolFeedbackController as AdminToolFeedbackController;
 use App\Http\Controllers\Admin\Feedback\ToolSuggestionController as AdminToolSuggestionController;
-use App\Http\Controllers\Admin\Acquisition\AcquisitionContextController;
-use App\Http\Controllers\Acquisition\ClearAcquisitionContextController;
-use App\Http\Controllers\Acquisition\ContinueAcquisitionContextController;
 use App\Http\Controllers\Analytics\CaptureAudienceContextController;
 use App\Http\Controllers\Analytics\TrackAcquisitionEventController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
@@ -47,10 +47,11 @@ use App\Http\Controllers\Platform\ContentPageController;
 use App\Http\Controllers\Platform\HomeController;
 use App\Http\Controllers\Platform\NewsletterController;
 use App\Http\Controllers\Platform\PageFeedbackController;
-use App\Http\Controllers\Platform\ToolFeedbackController;
 use App\Http\Controllers\Platform\SuggestToolController;
 use App\Http\Controllers\Platform\ToolCatalogController;
+use App\Http\Controllers\Platform\ToolFeedbackController;
 use App\Http\Controllers\Seo\BlogSitemapController;
+use App\Http\Controllers\Seo\ToolSitemapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -159,6 +160,9 @@ Route::get('/blog', [BlogController::class, 'index'])
 
 Route::get('/sitemap-blog.xml', BlogSitemapController::class)
     ->name('blog.sitemap');
+
+Route::get('/sitemap-tools.xml', ToolSitemapController::class)
+    ->name('tools.sitemap');
 
 Route::post('/analytics/audience', CaptureAudienceContextController::class)
     ->middleware('throttle:30,1')

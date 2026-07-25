@@ -17,6 +17,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 ### Documento de saída/ impressão
 
+- [Relatório individual de custo CLT](app/Tools/EmployeeCostCalculator/pages/report.blade.md) — `app/Tools/EmployeeCostCalculator/Resources/views/report.blade.php`
+- [Relatório consolidado de custos CLT](app/Tools/EmployeeCostCalculator/pages/report-batch.blade.md) — `app/Tools/EmployeeCostCalculator/Resources/views/report-batch.blade.php`
 - [Recibo para impressão e PDF](app/Tools/ReceiptIssuer/pages/pdf/receipt.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/pdf/receipt.blade.php`
 
 - [Batch Report.Blade](app/Tools/BusinessDocumentValidator/pages/print/batch-report.blade.md) — `app/Tools/BusinessDocumentValidator/Resources/views/print/batch-report.blade.php`
@@ -68,6 +70,7 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 - [Sugerir ferramenta — Prazzu Tools](pages/suggest-tool.blade.md) — `resources/views/pages/suggest-tool.blade.php`
 - [conteúdo dinâmico](pages/tools/index.blade.md) — `resources/views/pages/tools/index.blade.php`
 - [Blog Sitemap.Blade](seo/blog-sitemap.blade.md) — `resources/views/seo/blog-sitemap.blade.php`
+- [Sitemap de ferramentas](seo/tools-sitemap.blade.md) — `resources/views/seo/tools-sitemap.blade.php`
 - [Prazzu Tools — Ferramentas para contabilidade](welcome.blade.md) — `resources/views/welcome.blade.php`
 
 ### Página de autenticação
@@ -106,6 +109,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 ### Página de histórico
 
+- [Histórico de custos CLT](app/Tools/EmployeeCostCalculator/pages/history/index.blade.md) — `app/Tools/EmployeeCostCalculator/Resources/views/history/index.blade.php`
+- [Detalhes de custo CLT salvo](app/Tools/EmployeeCostCalculator/pages/history/show.blade.md) — `app/Tools/EmployeeCostCalculator/Resources/views/history/show.blade.php`
 - [Histórico de recibos — Prazzu Tools](app/Tools/ReceiptIssuer/pages/history/index.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/history/index.blade.php`
 - [Histórico de Honorários Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/history/index.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/history/index.blade.php`
 - [Histórico do Validador — Prazzu Tools](app/Tools/BusinessDocumentValidator/pages/history/index.blade.md) — `app/Tools/BusinessDocumentValidator/Resources/views/history/index.blade.php`
@@ -126,3 +131,23 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 - [Cadastrar empresa — Prazzu Tools](organizations/create.blade.md) — `resources/views/organizations/create.blade.php`
 - [Convite empresarial — Prazzu Tools](organizations/invitations/show.blade.md) — `resources/views/organizations/invitations/show.blade.php`
 - [conteúdo dinâmico](organizations/show.blade.md) — `resources/views/organizations/show.blade.php`
+
+
+## Ferramentas do lote solicitado
+
+<!-- requested-tools-pages -->
+- [Calculadora de Custo de Funcionário CLT](app/Tools/EmployeeCostCalculator/pages/index.blade.md) — `app/Tools/EmployeeCostCalculator/Resources/views/index.blade.php`
+- [Simulador de Fator R](app/Tools/FactorRSimulator/pages/index.blade.md) — `app/Tools/FactorRSimulator/Resources/views/index.blade.php`
+- [Calculadora de DAS em Atraso](app/Tools/LateDasCalculator/pages/index.blade.md) — `app/Tools/LateDasCalculator/Resources/views/index.blade.php`
+- [Calculadora de Encargos Trabalhistas](app/Tools/LaborChargesCalculator/pages/index.blade.md) — `app/Tools/LaborChargesCalculator/Resources/views/index.blade.php`
+- [Simulador CLT × PJ × Autônomo](app/Tools/EmploymentModelComparator/pages/index.blade.md) — `app/Tools/EmploymentModelComparator/Resources/views/index.blade.php`
+- [Calculadora de INSS Patronal](app/Tools/EmployerInssCalculator/pages/index.blade.md) — `app/Tools/EmployerInssCalculator/Resources/views/index.blade.php`
+- [Calculadora de Capital de Giro](app/Tools/WorkingCapitalCalculator/pages/index.blade.md) — `app/Tools/WorkingCapitalCalculator/Resources/views/index.blade.php`
+- [Calculadora de Fluxo de Caixa](app/Tools/CashFlowCalculator/pages/index.blade.md) — `app/Tools/CashFlowCalculator/Resources/views/index.blade.php`
+- [Calculadora de Ponto de Equilíbrio](app/Tools/BreakEvenCalculator/pages/index.blade.md) — `app/Tools/BreakEvenCalculator/Resources/views/index.blade.php`
+- [Calculadora de Comissão de Vendedores](app/Tools/SalesCommissionCalculator/pages/index.blade.md) — `app/Tools/SalesCommissionCalculator/Resources/views/index.blade.php`
+- [Gerador de Holerite](app/Tools/PayslipGenerator/pages/index.blade.md) — `app/Tools/PayslipGenerator/Resources/views/index.blade.php`
+- [Simulador de Admissão](app/Tools/AdmissionSimulator/pages/index.blade.md) — `app/Tools/AdmissionSimulator/Resources/views/index.blade.php`
+- [Calculadora de Reajuste Salarial](app/Tools/SalaryAdjustmentCalculator/pages/index.blade.md) — `app/Tools/SalaryAdjustmentCalculator/Resources/views/index.blade.php`
+- [Gerador de Declaração de Rendimentos](app/Tools/IncomeStatementGenerator/pages/index.blade.md) — `app/Tools/IncomeStatementGenerator/Resources/views/index.blade.php`
+- [Gerador de Declaração de Trabalho/Renda](app/Tools/WorkIncomeStatementGenerator/pages/index.blade.md) — `app/Tools/WorkIncomeStatementGenerator/Resources/views/index.blade.php`

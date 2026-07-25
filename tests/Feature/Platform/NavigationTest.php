@@ -17,14 +17,24 @@ final class NavigationTest extends TestCase
         }
     }
 
-    public function test_mobile_navigation_uses_all_catalog_categories(): void
+    public function test_public_navigation_uses_only_populated_catalog_categories(): void
     {
+        $catalog = $this->app->make(ToolCatalog::class);
         $response = $this->get('/');
 
         $response->assertOk();
 
-        foreach (config('tools.categories', []) as $category) {
+        foreach ($catalog->categories(false) as $category) {
+            $this->assertGreaterThan(0, $category['count']);
             $response->assertSee($category['name']);
+        }
+
+        $populatedSlugs = $catalog->categories(false)->pluck('slug');
+
+        foreach (array_keys(config('tools.categories', [])) as $category) {
+            if (! $populatedSlugs->contains($category)) {
+                $response->assertDontSee(route('tools.category', $category), false);
+            }
         }
     }
 
