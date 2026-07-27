@@ -18,6 +18,7 @@
                     <form class="prazzu-search" action="{{ url('/ferramentas') }}" method="get" role="search">
                         <label class="visually-hidden" for="home-tool-search">Buscar ferramentas</label>
                         <i class="bi bi-search" aria-hidden="true"></i>
+                        <input type="hidden" name="source" value="home_search">
                         <input
                             id="home-tool-search"
                             class="form-control"

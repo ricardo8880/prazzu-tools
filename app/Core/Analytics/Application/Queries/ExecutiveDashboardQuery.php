@@ -30,6 +30,7 @@ final class ExecutiveDashboardQuery
             'daily' => $this->dailySeries($period),
             'top_sources' => $this->topSources($period),
             'top_pages' => $this->topPages($period),
+            'search_demand' => $this->searchDemand($period),
             'page_feedback' => $this->pageFeedback($period),
             'recent_events' => PlatformAnalyticsEvent::query()
                 ->whereBetween('occurred_at', [$period->start, $period->end])
@@ -164,6 +165,52 @@ final class ExecutiveDashboardQuery
             ->orderByDesc('sessions')
             ->limit(8)
             ->get();
+    }
+
+    /** @return Collection<int, object> */
+    private function searchDemand(AnalyticsPeriod $period): Collection
+    {
+        return PlatformAnalyticsEvent::query()
+            ->whereBetween('occurred_at', [$period->start, $period->end])
+            ->where('event_name', 'home.search.submitted')
+            ->latest('occurred_at')
+            ->get(['metadata', 'occurred_at'])
+            ->map(function (PlatformAnalyticsEvent $event): ?array {
+                $query = trim((string) data_get($event->metadata, 'query', ''));
+
+                if ($query === '') {
+                    return null;
+                }
+
+                return [
+                    'query' => $query,
+                    'normalized' => mb_strtolower($query),
+                    'result_count' => max(0, (int) data_get($event->metadata, 'result_count', 0)),
+                    'has_results' => (bool) data_get($event->metadata, 'has_results', false),
+                    'occurred_at' => $event->occurred_at,
+                ];
+            })
+            ->filter()
+            ->groupBy('normalized')
+            ->map(function (Collection $rows): object {
+                $first = $rows->first();
+
+                return (object) [
+                    'query' => $first['query'],
+                    'searches' => $rows->count(),
+                    'zero_result_searches' => $rows->where('has_results', false)->count(),
+                    'last_result_count' => (int) $first['result_count'],
+                    'has_results' => (bool) $first['has_results'],
+                    'last_searched_at' => $first['occurred_at'],
+                ];
+            })
+            ->sortBy([
+                ['zero_result_searches', 'desc'],
+                ['searches', 'desc'],
+                ['last_searched_at', 'desc'],
+            ])
+            ->take(30)
+            ->values();
     }
 
     /** @return array{count:int,average:float,recent:Collection<int, PageFeedback>} */

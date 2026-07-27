@@ -206,6 +206,54 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-transparent d-flex flex-column flex-md-row justify-content-between gap-2">
             <div>
+                <div class="fw-semibold">Demandas de busca da página inicial</div>
+                <div class="small text-body-secondary">Termos enviados pelos visitantes. Buscas sem resultado indicam oportunidades de novas ferramentas ou conteúdos.</div>
+            </div>
+            <span class="badge text-bg-light border align-self-start">{{ $search_demand->sum('searches') }} busca(s)</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Termo pesquisado</th>
+                        <th class="text-center">Buscas</th>
+                        <th class="text-center">Sem resultado</th>
+                        <th class="text-center">Último resultado</th>
+                        <th class="text-end">Última busca</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @forelse($search_demand as $search)
+                    <tr class="{{ $search->zero_result_searches > 0 ? 'table-warning' : '' }}">
+                        <td class="fw-semibold">{{ $search->query }}</td>
+                        <td class="text-center">{{ number_format($search->searches, 0, ',', '.') }}</td>
+                        <td class="text-center">
+                            @if($search->zero_result_searches > 0)
+                                <span class="badge text-bg-warning">{{ $search->zero_result_searches }}</span>
+                            @else
+                                <span class="badge text-bg-success">0</span>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            @if($search->has_results)
+                                <span class="badge text-bg-success">{{ $search->last_result_count }} resultado(s)</span>
+                            @else
+                                <span class="badge text-bg-danger">Nenhum</span>
+                            @endif
+                        </td>
+                        <td class="text-end text-nowrap">{{ optional($search->last_searched_at)->format('d/m/Y H:i') ?: '—' }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="5" class="text-center text-body-secondary py-4">Ainda não há buscas registradas na página inicial neste período.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-transparent d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div>
                 <div class="fw-semibold">Avaliações das páginas</div>
                 <div class="small text-body-secondary">Feedback recebido no período selecionado.</div>
             </div>

@@ -8,6 +8,8 @@ enum AnalyticsEventName: string
 {
     case PageViewed = 'page.viewed';
 
+    case HomeSearchSubmitted = 'home.search.submitted';
+
     case AcquisitionContextEntered = 'acquisition.context.entered';
     case AcquisitionContextExited = 'acquisition.context.exited';
     case AcquisitionContextContinued = 'acquisition.context.continued';

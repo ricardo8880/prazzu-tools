@@ -8906,7 +8906,7 @@ body.tox-dialog__disable-scroll {
     margin-top: 1.8em;
     margin-bottom: 0.65em;
     color: var(--bs-emphasis-color);
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: -0.025em;
     line-height: 1.25;
 }
@@ -8922,10 +8922,9 @@ body.tox-dialog__disable-scroll {
 }
 
 .container-fluid:has(> nav[aria-label="breadcrumb"] + article) > article > .card a {
-    color: var(--prazzu-primary);
-    font-weight: 650;
     text-decoration-thickness: 0.08em;
     text-underline-offset: 0.18em;
+    color: darkblue;
 }
 
 .container-fluid:has(> nav[aria-label="breadcrumb"] + article) > article > .card strong {
