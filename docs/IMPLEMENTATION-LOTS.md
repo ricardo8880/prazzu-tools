@@ -188,3 +188,100 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - Novas alterações devem partir deste estado de release e continuar seguindo README, `CORE_CANDIDATES.md`, inventário e testes arquiteturais.
 - A remoção do módulo legado exige plano de migração próprio, telemetria ou evidência de uso, redirecionamentos e tratamento de histórico persistido.
 - Estados `implemented` indicam alinhamento do catálogo e conclusão do escopo dos lotes; não substituem a execução integral de `composer release:check` no ambiente oficial de CI.
+
+## Expansão — Lote 11 — Calculadora de Salário Líquido
+
+### Resultado do Lote 11
+
+- `NetSalaryCalculator` foi criado como módulo independente e público, sem dependência de outro namespace de ferramenta.
+- O escopo Essencial calcula salário mensal CLT regular com INSS progressivo do empregado, IRRF mensal de 2026, dependentes e salário líquido.
+- O escopo Plus adiciona proventos e descontos personalizados, histórico autenticado e exportações, sem esconder ou corrigir parte necessária da fórmula Essencial.
+- A regra mensal de IRRF, já existente no Pró-Labore e necessária no Salário Líquido, foi promovida para `App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule`; ambos os módulos passaram a usar a mesma regra compartilhada.
+- O INSS do empregado permaneceu no domínio do Salário Líquido porque difere estruturalmente da retenção previdenciária do contribuinte individual usada no Pró-Labore.
+- As regras de 2026 foram registradas com fontes oficiais do INSS e da Receita Federal, memória de cálculo e snapshot normativo.
+- O módulo foi classificado temporariamente em `additional_modules` como `expansion_lot_11`; a promoção do catálogo oficial e a consolidação das novas ferramentas ficam reservadas ao lote de integração da expansão, preservando os contratos do Lote 10.
+- Férias, 13º, rescisão, múltiplos vínculos e classificação jurídica automática de rubricas permanecem explicitamente fora do escopo desta ferramenta.
+
+### Continuidade para o próximo lote da expansão
+
+- Antes de iniciar o próximo lote, reler o ZIP original, este documento, `CORE_CANDIDATES.md`, `config/product_tools.php` e todos os pacotes de lotes da expansão já produzidos.
+- O próximo módulo não deve importar classes internas de `NetSalaryCalculator`; qualquer reutilização deve ocorrer somente via Core técnico quando houver equivalência real.
+- Preservar o slug público `calculadora-salario-liquido` e o schema de resultado `1.0.0`, evoluindo-os apenas de forma compatível e documentada.
+
+## Expansão — Lote 12 — Calculadora de Hora Extra, Adicional Noturno e DSR
+
+### Resultado do Lote 12
+
+- `OvertimeCalculator` foi criado como módulo trabalhista independente, sem importações de outros módulos de ferramenta.
+- O Essencial resolve valor da hora e horas extras de 50%, 100% e percentual informado.
+- O Plus adiciona adicional noturno urbano com hora reduzida de 52m30s, hora extra noturna, DSR parametrizado e projeções de reflexos, sem esconder a fórmula básica.
+- Regras normativas foram ancoradas nos arts. 59 e 73 da CLT, Lei 605/1949 e TST Tema 256/Súmula 172, com snapshot e memória de cálculo.
+- Divisor mensal, calendário e percentuais acima do mínimo são parâmetros do caso e não são inferidos pela ferramenta.
+- Nenhuma nova promoção ao Core foi necessária; capacidades transversais existentes foram reutilizadas.
+- O módulo foi classificado em `additional_modules` como `expansion_lot_12`, mantendo a consolidação do catálogo para o lote de integração.
+
+### Continuidade para o próximo lote da expansão
+
+- Antes do próximo lote, reler o ZIP original e reaplicar, em ordem, os lotes 11 e 12.
+- Preservar os slugs `calculadora-salario-liquido` e `calculadora-hora-extra`.
+- O próximo módulo não pode importar classes internas destes módulos; reutilização só via Core quando houver equivalência comprovada.
+
+
+## Expansão — Lote 13 — Calculadora DIFAL / ICMS Interestadual + FCP
+
+### Resultado do Lote 13
+
+- `DifalIcmsCalculator` foi criado como módulo fiscal independente, sem importações de outros módulos de ferramenta.
+- O Essencial calcula DIFAL a partir da base tributável e das alíquotas aplicáveis confirmadas pelo usuário, com memória fiscal completa.
+- O Plus adiciona assistência para alíquota interestadual de 7%/12% e 4% quando o enquadramento da Resolução do Senado nº 13/2012 for confirmado, FCP parametrizado e simulação de base dupla/por dentro quando aplicável.
+- Alíquota interna, FCP, NCM, benefícios e método de base não são inferidos apenas pela UF, evitando falsa precisão fiscal.
+- A responsabilidade pelo diferencial é apresentada conforme o destinatário seja contribuinte ou não contribuinte, sem substituir a análise da operação concreta.
+- As fontes normativas incluem EC 87/2015, LC 190/2022, Resolução do Senado nº 22/1989 e Resolução do Senado nº 13/2012.
+- Nenhuma nova promoção ao Core foi necessária; a determinação de alíquota interestadual permanece no domínio até existir segunda reutilização equivalente.
+- O módulo foi classificado em `additional_modules` como `expansion_lot_13`, mantendo a consolidação do catálogo para o lote de integração.
+
+### Continuidade para o próximo lote da expansão
+
+- Antes do próximo lote, reler o ZIP original e reaplicar, em ordem, os lotes 11, 12 e 13.
+- Preservar os slugs `calculadora-salario-liquido`, `calculadora-hora-extra` e `calculadora-difal-icms`.
+- O próximo lote deve consolidar as três novas ferramentas no produto sem alterar contratos públicos das 29 ferramentas preexistentes.
+
+
+## Expansão — Lote 14 — Integração das três novas ferramentas
+
+### Resultado do Lote 14
+
+- O estado foi reconstruído a partir do ZIP original com aplicação sequencial dos Lotes 11, 12 e 13 antes de qualquer alteração.
+- `NetSalaryCalculator`, `OvertimeCalculator` e `DifalIcmsCalculator` foram promovidos de módulos adicionais temporários para o catálogo oficial.
+- O inventário executável passou de 20 para 23 ferramentas oficiais, preservando 9 módulos adicionais e totalizando 32 módulos classificados exatamente uma vez.
+- Os IDs oficiais 1–20 foram preservados; as novas ferramentas receberam IDs 21–23, sem renomear slugs públicos.
+- Busca, categorias, relacionados e sitemap continuam derivados do `ToolCatalog`/`ToolRegistry`; nenhuma camada paralela de catálogo foi criada.
+- `release_readiness` foi atualizado para `expansion_lot_14_integrated`, indicando integração concluída e auditoria final ainda pendente.
+- Nenhuma nova promoção ao Core foi necessária.
+
+### Continuidade para o próximo lote da expansão
+
+- Antes do Lote 15, reler o ZIP original e reaplicar, em ordem, os Lotes 11, 12, 13 e 14.
+- Confirmar 32 módulos em `app/Tools`, 23 registros oficiais e 9 adicionais.
+- Preservar os slugs `calculadora-salario-liquido`, `calculadora-hora-extra` e `calculadora-difal-icms`.
+- O Lote 15 deve ser de auditoria/regressão final da expansão e não deve alterar escopo funcional sem necessidade comprovada.
+
+
+## Expansão — Lote 15 — Auditoria final da expansão
+
+### Resultado do Lote 15
+
+- O estado foi reconstruído a partir do ZIP original com aplicação sequencial dos Lotes 11, 12, 13 e 14.
+- Foram confirmados 32 módulos registrados, sendo 23 ferramentas oficiais e 9 módulos adicionais classificados exatamente uma vez.
+- A auditoria detectou que o ZIP original carregava `bootstrap/cache/routes-v7.php` antigo, ocultando as rotas dos três módulos novos; o cache foi regenerado para compatibilidade do patch e a distribuição futura passou a remover/rejeitar caches PHP em `bootstrap/cache`.
+- `OvertimeCalculator` e `DifalIcmsCalculator` receberam as suítes de casos dourados e gates de qualidade exigidos por `docs/TOOL_QUALITY.md`, sem alteração das fórmulas de domínio.
+- Lint, arquitetura, Analytics, registro/inventário, rotas e smoke tests diretos da expansão foram aprovados neste ambiente.
+- PHPUnit, Pint e `composer release:check` completo continuam bloqueados pela ausência de `dom`, `mbstring`, `pdo_sqlite`, `xml` e `xmlwriter` neste ambiente.
+- `release_readiness` foi atualizado para `expansion_lot_15_audited`.
+- Nenhuma nova promoção ao Core foi necessária.
+
+### Continuidade após a expansão
+
+- Preservar os 23 IDs oficiais, os 32 módulos atuais e os slugs públicos das três ferramentas adicionadas.
+- Novos lotes devem reler o ZIP original e todos os patches da expansão quando a base consolidada não estiver disponível.
+- A aprovação operacional de publicação continua condicionada ao `composer release:check` em CI compatível com `docs/INSTALLATION.md`.

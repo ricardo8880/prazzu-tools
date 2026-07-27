@@ -21,11 +21,11 @@ final class OfficialToolsReleaseReadinessTest extends TestCase
     public function test_all_official_tools_are_release_aligned(): void
     {
         self::assertSame('2.0.0', $this->inventory['schema_version']);
-        self::assertSame('lot_10_audited', $this->inventory['release_readiness']);
-        self::assertCount(20, $this->inventory['official']);
+        self::assertSame('expansion_lot_15_audited', $this->inventory['release_readiness']);
+        self::assertCount(23, $this->inventory['official']);
         self::assertSame(['implemented'], array_values(array_unique(array_column($this->inventory['official'], 'state'))));
-        self::assertCount(20, array_unique(array_column($this->inventory['official'], 'module')));
-        self::assertCount(20, array_unique(array_column($this->inventory['official'], 'slug')));
+        self::assertCount(23, array_unique(array_column($this->inventory['official'], 'module')));
+        self::assertCount(23, array_unique(array_column($this->inventory['official'], 'slug')));
     }
 
     public function test_official_modules_exist_and_are_registered(): void
@@ -60,6 +60,8 @@ final class OfficialToolsReleaseReadinessTest extends TestCase
         $root = dirname(__DIR__, 2);
 
         self::assertFileExists($root.'/docs/LOT-10-RELEASE-AUDIT.md');
+        self::assertFileExists($root.'/docs/LOT-14-EXPANSION-INTEGRATION.md');
+        self::assertFileExists($root.'/docs/LOT-15-EXPANSION-RELEASE-AUDIT.md');
         self::assertFileExists($root.'/docs/RELEASE-CHECKLIST.md');
         self::assertFileExists($root.'/scripts/verify-distribution.php');
     }

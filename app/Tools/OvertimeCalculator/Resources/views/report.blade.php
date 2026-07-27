@@ -1,0 +1,1 @@
+<h2>Resumo do cálculo</h2><table>@foreach($result->summary as $item)<tr><th>{{ $item->label }}</th><td>{{ $item->value }}</td></tr>@endforeach</table><h3>Premissas</h3><ul>@foreach($result->calculationMemory->assumptions as $assumption)<li>{{ $assumption }}</li>@endforeach</ul>

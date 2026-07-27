@@ -20,14 +20,34 @@ final class ProductToolsInventoryTest extends TestCase
         $this->inventory = $inventory;
     }
 
-    public function test_official_inventory_has_exactly_twenty_ordered_unique_tools(): void
+    public function test_official_inventory_has_exactly_twenty_three_ordered_unique_tools(): void
     {
         $tools = $this->inventory['official'];
 
-        self::assertCount(20, $tools);
-        self::assertSame(range(1, 20), array_column($tools, 'id'));
-        self::assertCount(20, array_unique(array_column($tools, 'key')));
-        self::assertCount(20, array_unique(array_column($tools, 'name')));
+        self::assertCount(23, $tools);
+        self::assertSame(range(1, 23), array_column($tools, 'id'));
+        self::assertCount(23, array_unique(array_column($tools, 'key')));
+        self::assertCount(23, array_unique(array_column($tools, 'name')));
+    }
+
+    public function test_expansion_tools_are_promoted_to_the_official_catalog(): void
+    {
+        $byKey = [];
+        foreach ($this->inventory['official'] as $tool) {
+            $byKey[$tool['key']] = $tool;
+        }
+
+        self::assertSame('NetSalaryCalculator', $byKey['net-salary']['module']);
+        self::assertSame('calculadora-salario-liquido', $byKey['net-salary']['slug']);
+        self::assertSame('OvertimeCalculator', $byKey['overtime']['module']);
+        self::assertSame('calculadora-hora-extra', $byKey['overtime']['slug']);
+        self::assertSame('DifalIcmsCalculator', $byKey['difal-icms']['module']);
+        self::assertSame('calculadora-difal-icms', $byKey['difal-icms']['slug']);
+
+        $additional = array_column($this->inventory['additional_modules'], 'module');
+        self::assertNotContains('NetSalaryCalculator', $additional);
+        self::assertNotContains('OvertimeCalculator', $additional);
+        self::assertNotContains('DifalIcmsCalculator', $additional);
     }
 
     public function test_every_current_module_is_classified_once(): void

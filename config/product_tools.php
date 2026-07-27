@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'schema_version' => '2.0.0',
-    'release_readiness' => 'lot_10_audited',
+    'release_readiness' => 'expansion_lot_15_audited',
     'source' => 'README.md',
     'continuity_log' => 'docs/IMPLEMENTATION-LOTS.md',
 
@@ -29,6 +29,9 @@ return [
         ['id' => 18, 'key' => 'income-statement', 'name' => 'Gerador de Declaração de Rendimentos', 'slug' => 'declaracao-rendimentos', 'module' => 'IncomeStatementGenerator', 'state' => 'implemented'],
         ['id' => 19, 'key' => 'work-income-statement', 'name' => 'Gerador de Declaração de Trabalho/Renda', 'slug' => 'declaracao-trabalho-renda', 'module' => 'WorkIncomeStatementGenerator', 'state' => 'implemented'],
         ['id' => 20, 'key' => 'tax-regime', 'name' => 'Simulador Tributário (Simples × Lucro Presumido × Lucro Real)', 'slug' => 'comparador-tributario', 'module' => 'TaxRegimeComparator', 'state' => 'implemented'],
+        ['id' => 21, 'key' => 'net-salary', 'name' => 'Calculadora de Salário Líquido', 'slug' => 'calculadora-salario-liquido', 'module' => 'NetSalaryCalculator', 'state' => 'implemented'],
+        ['id' => 22, 'key' => 'overtime', 'name' => 'Calculadora de Hora Extra, Adicional Noturno e DSR', 'slug' => 'calculadora-hora-extra', 'module' => 'OvertimeCalculator', 'state' => 'implemented'],
+        ['id' => 23, 'key' => 'difal-icms', 'name' => 'Calculadora DIFAL / ICMS Interestadual + FCP', 'slug' => 'calculadora-difal-icms', 'module' => 'DifalIcmsCalculator', 'state' => 'implemented'],
     ],
 
     'additional_modules' => [

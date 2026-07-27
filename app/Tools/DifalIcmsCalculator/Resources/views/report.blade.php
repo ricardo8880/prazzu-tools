@@ -1,0 +1,2 @@
+@php($money=static fn(int $v)=>\App\Core\Money\Money::fromMinor($v)->formatPtBr())
+<table><tbody><tr><th>Alíquota interestadual</th><td>{{ $result->details['interstate_rate'] }}%</td></tr><tr><th>Base destino</th><td>{{ $money($result->details['destination_base_minor']) }}</td></tr><tr><th>DIFAL</th><td>{{ $money($result->details['difal_minor']) }}</td></tr><tr><th>FCP</th><td>{{ $money($result->details['fcp_minor']) }}</td></tr><tr><th>Total destino</th><td>{{ $money($result->details['total_minor']) }}</td></tr></tbody></table>

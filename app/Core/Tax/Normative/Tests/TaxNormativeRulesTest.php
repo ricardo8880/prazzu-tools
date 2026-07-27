@@ -7,6 +7,7 @@ namespace Tests\Unit\Core\Tax\Normative;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Tax\Normative\FactorRRule;
 use App\Core\Tax\Normative\LateDasRule;
+use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Core\Tax\Normative\TaxRegimeComparisonRule;
 use PHPUnit\Framework\TestCase;
 
@@ -20,5 +21,7 @@ final class TaxNormativeRulesTest extends TestCase
         self::assertSame('0.33', (new LateDasRule)->dailyFine()->toDecimalString());
         self::assertSame('20', (new LateDasRule)->maximumFine()->toDecimalString());
         self::assertNotEmpty((new TaxRegimeComparisonRule)->snapshot($date)->references);
+        self::assertSame(60720, MonthlyPersonalIncomeTaxRule::for2026()->simplifiedDeduction->minorAmount);
+        self::assertSame('2026.1.0', MonthlyPersonalIncomeTaxRule::for2026()->snapshot($date)->version);
     }
 }

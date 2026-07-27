@@ -63,7 +63,7 @@ Antes de iniciar qualquer lote, também é obrigatório ler [`docs/IMPLEMENTATIO
 
 Cada lote deve partir do estado real deixado pelos anteriores. Não se deve recriar decisões já consolidadas, alterar slugs públicos, remover módulos existentes ou mudar o escopo oficial sem registrar a decisão, preservar compatibilidade e atualizar as verificações automatizadas.
 
-O catálogo prioritário das 20 ferramentas está documentado em [`docs/PRODUCT-TOOLS-INVENTORY.md`](docs/PRODUCT-TOOLS-INVENTORY.md). Módulos adicionais podem continuar existindo, mas não entram automaticamente no escopo desses lotes.
+O catálogo oficial atual está documentado em [`docs/PRODUCT-TOOLS-INVENTORY.md`](docs/PRODUCT-TOOLS-INVENTORY.md). O ciclo original auditado no Lote 10 possuía 20 ferramentas; expansões posteriores só entram no catálogo oficial após lote explícito de integração. Módulos adicionais podem continuar existindo, mas não entram automaticamente no escopo dos lotes oficiais.
 
 Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
 

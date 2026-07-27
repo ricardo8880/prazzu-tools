@@ -33,6 +33,13 @@ try {
         Get-ChildItem -LiteralPath $logsDirectory -File -Force | Where-Object { $_.Name -ne '.gitignore' } | Remove-Item -Force
     }
 
+    $bootstrapCacheDirectory = Join-Path $stagingRoot 'bootstrap\cache'
+    if (Test-Path -LiteralPath $bootstrapCacheDirectory) {
+        Get-ChildItem -LiteralPath $bootstrapCacheDirectory -File -Force |
+            Where-Object { $_.Name -ne '.gitignore' } |
+            Remove-Item -Force
+    }
+
     Get-ChildItem -LiteralPath $stagingRoot -Recurse -Force -File |
         Where-Object { $_.Name.StartsWith('~$') -or $_.Name -in @('.DS_Store', 'Thumbs.db') } |
         Remove-Item -Force

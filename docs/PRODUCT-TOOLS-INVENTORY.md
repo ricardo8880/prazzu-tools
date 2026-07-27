@@ -1,10 +1,16 @@
-# Inventário oficial das 20 ferramentas
+# Inventário oficial das 23 ferramentas
 
 A fonte executável deste inventário é `config/product_tools.php`. Este documento explica as decisões de produto; em caso de divergência, o README da raiz continua sendo a regra máxima.
 
 ## Estado atual
 
-O projeto possui 29 módulos em `app/Tools`. As 20 ferramentas oficiais agora correspondem a 20 módulos independentes. `ProLaboreSimulator` e `ProfitDistributionCalculator` substituem, no catálogo prioritário, o antigo módulo combinado.
+O projeto possui **32 módulos em `app/Tools`**. O catálogo oficial possui **23 ferramentas independentes**: as 20 ferramentas auditadas no ciclo original até o Lote 10 e as três ferramentas da expansão promovidas no Lote 14.
+
+As ferramentas promovidas na expansão são:
+
+- `NetSalaryCalculator` — Calculadora de Salário Líquido;
+- `OvertimeCalculator` — Calculadora de Hora Extra, Adicional Noturno e DSR;
+- `DifalIcmsCalculator` — Calculadora DIFAL / ICMS Interestadual + FCP.
 
 Os oito módulos complementares continuam preservados. `ProLaboreProfitDistributionCalculator` permanece como nono módulo adicional, classificado como compatibilidade legada preservada até auditoria específica de migração, para não quebrar URL, histórico ou integrações existentes.
 
@@ -22,9 +28,12 @@ Os oito módulos complementares continuam preservados. `ProLaboreProfitDistribut
 - Plus acrescenta produtividade, volume, automação, continuidade, cenários ou conveniência; nunca corrige um cálculo Essencial incompleto.
 - Ferramentas não podem depender diretamente de classes internas de outro módulo.
 - Slugs públicos não devem ser alterados sem redirecionamento e teste de compatibilidade.
-- Os módulos adicionais não entram automaticamente no escopo dos lotes das 20 ferramentas.
+- Módulos adicionais não entram automaticamente no catálogo oficial; a promoção exige decisão explícita em lote de integração.
 
+## Estado após o Lote 15 da expansão
 
-## Estado após o Lote 10
+As **23 ferramentas oficiais** estão marcadas como `implemented` no inventário executável. As três ferramentas da expansão preservam seus slugs e contratos públicos dos Lotes 11, 12 e 13.
 
-As 20 ferramentas oficiais estão marcadas como `implemented` no inventário executável. Essa marca confirma o alinhamento do catálogo e a conclusão dos lotes de implementação; a aprovação operacional de release continua condicionada ao `composer release:check` no CI oficial.
+O Lote 14 consolidou descoberta de produto, inventário executável e contratos arquiteturais. O Lote 15 auditou a expansão, completou os gates de qualidade dos módulos de Hora Extra e DIFAL e protegeu a distribuição contra caches Laravel gerados. O estado continua em 32 módulos, sendo 23 oficiais e 9 adicionais.
+
+O inventário executável registra `expansion_lot_15_audited`. A aprovação operacional de release continua condicionada ao `composer release:check` no CI oficial com todas as extensões requeridas.

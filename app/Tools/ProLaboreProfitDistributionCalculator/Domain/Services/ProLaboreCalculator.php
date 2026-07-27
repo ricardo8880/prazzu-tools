@@ -10,7 +10,7 @@ use App\Core\Money\Money;
 use App\Core\Normative\NormativeRuleResolver;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Data\ProLaboreInput;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Data\ProLaboreResult;
-use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Rules\MonthlyIrrfRule;
+use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Rules\RuleCatalog;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Rules\SocialSecurityRule;
 
@@ -23,8 +23,8 @@ final readonly class ProLaboreCalculator
         $resolver = $this->resolver ?? new NormativeRuleResolver;
         /** @var SocialSecurityRule $socialRule */
         $socialRule = $resolver->resolveCurrent(RuleCatalog::socialSecurity(), 'pro_labore.social_security', $input->competence->lastDay());
-        /** @var MonthlyIrrfRule $irrfRule */
-        $irrfRule = $resolver->resolveCurrent(RuleCatalog::monthlyIrrf(), 'pro_labore.monthly_irrf', $input->competence->lastDay());
+        /** @var MonthlyPersonalIncomeTaxRule $irrfRule */
+        $irrfRule = $resolver->resolveCurrent(RuleCatalog::monthlyIrrf(), 'tax.irrf.monthly', $input->competence->lastDay());
 
         $otherSocialSecurity = $input->otherOfficialSocialSecurity ?? Money::zero();
         $remainingCeiling = max(0, $socialRule->maximumContributionBase->minorAmount() - $otherSocialSecurity->minorAmount());

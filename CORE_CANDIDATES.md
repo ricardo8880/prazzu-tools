@@ -97,3 +97,27 @@ O lote confirmou reutilização real apenas de `Money`, `Percentage`, `IntegerRo
 ## Lote 10 — encerramento do ciclo
 
 A auditoria final não identificou nova duplicação transversal que justificasse extração. Rotas, histórico, exportação e privacidade já possuem infraestrutura ou políticas compartilhadas. A migração do módulo legado combinado é trabalho de compatibilidade e telemetria, não um novo componente de Core.
+
+## Expansão — Lote 11 — IRRF mensal compartilhado
+
+A criação da Calculadora de Salário Líquido confirmou uma segunda necessidade realmente equivalente para a tabela, deduções e redução mensal do IRRF já usadas pelo Simulador de Pró-Labore. A regra foi promovida para `App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule`, e os dois módulos passaram a consumi-la sem dependência entre ferramentas.
+
+O cálculo previdenciário não foi generalizado: empregado CLT usa faixas progressivas, enquanto pró-labore usa regra de contribuinte individual. Essas regras permanecem em seus domínios até surgir reutilização realmente equivalente.
+
+## Expansão — Lote 12 — Hora Extra, Adicional Noturno e DSR
+
+A análise não identificou capacidade equivalente em uma segunda ferramenta que justifique nova promoção ao Core. `Money`, `Percentage`, `IntegerRounding`, `CalculationMemory`, histórico e exportação já são capacidades compartilhadas e foram reutilizadas. Regras de jornada, adicional noturno e DSR permanecem no domínio `OvertimeCalculator`; reavaliar apenas se outro módulo passar a executar exatamente as mesmas regras.
+
+
+## Expansão — Lote 13 — DIFAL / ICMS / FCP
+
+A nova ferramenta reutiliza `Money`, `Percentage`, `IntegerRounding`, `CalculationMemory`, histórico e exportação já compartilhados. A regra de alíquota interestadual 7%/12%/4% permanece no domínio `DifalIcmsCalculator`: apesar de ser normativa, nenhuma segunda ferramenta executa hoje a mesma determinação por UF/origem da mercadoria. Alíquotas internas, FCP, benefícios e NCM não foram promovidos nem centralizados porque dependem da operação e da legislação estadual. Reavaliar a regra interestadual apenas quando uma segunda ferramenta precisar exatamente da mesma capacidade.
+
+
+## Expansão — Lote 14 — integração de catálogo
+
+A promoção das três ferramentas para o catálogo oficial não revelou nova duplicação de domínio ou capacidade transversal. Registro, busca, categorias, relacionados e sitemap já são derivados de `ToolRegistry`/`ToolCatalog`, portanto foram reutilizados sem criar abstrações ou serviços paralelos. Os candidatos dos Lotes 11–13 permanecem com o mesmo status.
+
+## Expansão — Lote 15 — auditoria final
+
+A auditoria final não identificou nova duplicação de domínio que justifique promoção ao Core. O achado de cache de rotas é responsabilidade de empacotamento/distribuição, não uma capacidade de ferramenta. Os casos dourados adicionados a `OvertimeCalculator` e `DifalIcmsCalculator` reutilizam corretamente `ToolRiskClassifier` e `GoldenCaseSuiteValidator`, já compartilhados no Core, sem criar nova abstração.

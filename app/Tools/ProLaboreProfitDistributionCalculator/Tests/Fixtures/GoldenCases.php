@@ -22,11 +22,11 @@ final class GoldenCases
                 new GoldenCase('typical', 'Pró-labore de R$ 5.000,00 no Lucro Real', GoldenCaseKind::Typical,
                     ['competence' => '2026-01', 'company_regime' => 'actual_profit', 'gross_minor' => 500000, 'dependents' => 0],
                     ['social_security_minor' => 55000, 'irrf_minor' => 0, 'net_minor' => 445000, 'employer_minor' => 100000, 'company_cost_minor' => 600000],
-                    $official, 'pro_labore.social_security:2026.1|pro_labore.monthly_irrf:2026.1', 'HalfUp por operação percentual'),
+                    $official, 'pro_labore.social_security:2026.1|tax.irrf.monthly:2026.1', 'HalfUp por operação percentual'),
                 new GoldenCase('boundary', 'Pró-labore exatamente no teto previdenciário de 2026', GoldenCaseKind::Boundary,
                     ['competence' => '2026-01', 'company_regime' => 'actual_profit', 'gross_minor' => 847555],
                     ['social_security_minor' => 93231, 'irrf_minor' => 116566, 'net_minor' => 637758, 'company_cost_minor' => 1017066],
-                    $official, 'pro_labore.social_security:2026.1|pro_labore.monthly_irrf:2026.1', 'HalfUp por operação percentual'),
+                    $official, 'pro_labore.social_security:2026.1|tax.irrf.monthly:2026.1', 'HalfUp por operação percentual'),
                 new GoldenCase('invalid-input', 'Distribuição superior ao lucro disponível', GoldenCaseKind::InvalidInput,
                     ['accounting_profit_minor' => 100000, 'intended_distribution_minor' => 100001, 'ownership_millionths' => 100000000],
                     ['exception' => 'InvalidValue', 'message' => 'A distribuição pretendida não pode superar o lucro máximo disponível.'],
@@ -46,7 +46,7 @@ final class GoldenCases
                 new GoldenCase('regression', 'Redução parcial mensal do IR em R$ 6.000,00', GoldenCaseKind::Regression,
                     ['competence' => '2026-01', 'company_regime' => 'actual_profit', 'gross_minor' => 600000],
                     ['social_security_minor' => 66000, 'irrf_before_reduction_minor' => 55977, 'irrf_reduction_minor' => 17975, 'irrf_minor' => 38002, 'net_minor' => 495998],
-                    $official, 'pro_labore.monthly_irrf:2026.1', 'HalfUp por operação percentual'),
+                    $official, 'tax.irrf.monthly:2026.1', 'HalfUp por operação percentual'),
             ],
         );
     }

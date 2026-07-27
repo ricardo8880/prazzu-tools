@@ -20,6 +20,7 @@ return [
         App\Tools\FederalPaymentGuideGenerator\Tool::class,
         App\Tools\FactorRSimulator\Tool::class,
         App\Tools\LateDasCalculator\Tool::class,
+        App\Tools\DifalIcmsCalculator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [
@@ -31,6 +32,8 @@ return [
         App\Tools\EmployerInssCalculator\Tool::class,
         App\Tools\AdmissionSimulator\Tool::class,
         App\Tools\SalaryAdjustmentCalculator\Tool::class,
+        App\Tools\NetSalaryCalculator\Tool::class,
+        App\Tools\OvertimeCalculator\Tool::class,
         // <tools:labor>
     ],
     'corporate' => [

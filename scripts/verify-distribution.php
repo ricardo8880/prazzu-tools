@@ -11,6 +11,13 @@ $forbiddenPaths = [
     'storage/logs/laravel.log',
 ];
 
+$bootstrapCache = $root.DIRECTORY_SEPARATOR.'bootstrap'.DIRECTORY_SEPARATOR.'cache';
+if (is_dir($bootstrapCache)) {
+    foreach (glob($bootstrapCache.DIRECTORY_SEPARATOR.'*.php') ?: [] as $cacheFile) {
+        $forbiddenPaths[] = str_replace('\\', '/', substr($cacheFile, strlen($root) + 1));
+    }
+}
+
 $violations = [];
 foreach ($forbiddenPaths as $relativePath) {
     if (file_exists($root.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativePath))) {
