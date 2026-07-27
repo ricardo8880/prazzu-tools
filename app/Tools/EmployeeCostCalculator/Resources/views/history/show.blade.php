@@ -43,8 +43,8 @@
                 <div class="table-responsive">
                     <table class="table table-sm">
                         <tbody>
-                        @foreach($singleResult['details']['memory'] ?? [] as $label => $value)
-                            <tr><th>{{ $label }}</th><td class="text-end">{{ $value }}</td></tr>
+                        @foreach($singleResult['calculation_memory']['steps'] ?? [] as $step)
+                            <tr><th>{{ $step['label'] }}<div class="small fw-normal text-body-secondary">{{ $step['formula'] }}</div></th><td class="text-end">{{ is_int($step['result']) ? 'R$ '.number_format($step['result'] / 100, 2, ',', '.') : $step['result'] }}</td></tr>
                         @endforeach
                         </tbody>
                     </table>

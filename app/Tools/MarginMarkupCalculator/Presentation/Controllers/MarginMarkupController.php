@@ -352,7 +352,7 @@ final class MarginMarkupController extends Controller
             ->with('history_message', 'Registro removido do histórico.');
     }
 
-    public function previewImport(PreviewProductImportRequest $request, PreviewProductImport $action): View
+    public function previewImport(PreviewProductImportRequest $request, PreviewProductImport $action): RedirectResponse
     {
         try {
             $preview = $action->execute($request->file('import_file'), $this->importOwnerKey($request));
@@ -360,13 +360,12 @@ final class MarginMarkupController extends Controller
             throw ValidationException::withMessages(['import_file' => $exception->getMessage()]);
         }
 
-        return view('tools-calculadora-margem-markup::index', [
-            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
-            'productImportPreview' => $preview,
-        ]);
+        $request->session()->flash('product_import_preview', $preview);
+
+        return redirect()->route('tools.calculadora-margem-markup.index');
     }
 
-    public function processImport(ProcessProductImportRequest $request, ProcessProductImport $action): View
+    public function processImport(ProcessProductImportRequest $request, ProcessProductImport $action): RedirectResponse
     {
         try {
             $result = $action->execute($request->validated(), $this->importOwnerKey($request));
@@ -375,11 +374,9 @@ final class MarginMarkupController extends Controller
         }
 
         $request->session()->flashInput(['products' => $result['products']]);
+        $request->session()->flash('product_import_result', $result);
 
-        return view('tools-calculadora-margem-markup::index', [
-            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
-            'productImportResult' => $result,
-        ]);
+        return redirect()->route('tools.calculadora-margem-markup.index');
     }
 
     public function importTemplate(TabularExportService $exporter): StreamedResponse

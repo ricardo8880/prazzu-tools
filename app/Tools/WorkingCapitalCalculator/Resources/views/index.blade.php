@@ -40,8 +40,8 @@
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <div class="table-responsive">
                 <table class="table table-sm mb-0"><tbody>
-                @foreach ($result->details['memory'] as $formula => $value)
-                    <tr><th scope="row">{{ $formula }}</th><td class="text-end text-nowrap">{{ $value }}</td></tr>
+                @foreach (($result->calculationMemory?->steps ?? []) as $step)
+                    <tr><th scope="row">{{ $step->label }}<div class="small fw-normal text-body-secondary">{{ $step->formula }}</div></th><td class="text-end text-nowrap">{{ is_int($step->result) ? 'R$ '.number_format($step->result / 100, 2, ',', '.') : $step->result }}</td></tr>
                 @endforeach
                 </tbody></table>
             </div>

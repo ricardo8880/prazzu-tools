@@ -140,7 +140,8 @@ final class MarginMarkupToolTest extends TestCase
         $csv = "Produto;Código;Categoria;Custo base;Margem %\nProduto A;A-01;Varejo;100,00;25\nProduto B;B-01;Atacado;200,00;30\n";
         $file = UploadedFile::fake()->createWithContent('produtos.csv', $csv);
 
-        $previewResponse = $this->from(route('tools.calculadora-margem-markup.index'))
+        $previewResponse = $this->followingRedirects()
+            ->from(route('tools.calculadora-margem-markup.index'))
             ->post(route('tools.calculadora-margem-markup.import.preview'), ['import_file' => $file]);
 
         $previewResponse->assertOk()
@@ -151,7 +152,8 @@ final class MarginMarkupToolTest extends TestCase
         $this->assertNotEmpty($matches[1] ?? null);
         $token = $matches[1];
 
-        $this->from(route('tools.calculadora-margem-markup.index'))
+        $this->followingRedirects()
+            ->from(route('tools.calculadora-margem-markup.index'))
             ->post(route('tools.calculadora-margem-markup.import.process'), [
                 'import_token' => $token,
                 'available_headers' => ['Produto', 'Código', 'Categoria', 'Custo base', 'Margem %'],

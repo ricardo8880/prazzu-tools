@@ -5,9 +5,7 @@
 @section('canonical_url', route('tools.distribuicao-de-lucros.index'))
 
 @section('content')
-    <div class="container py-4">
-        <h1>Calculadora de Distribuição de Lucros</h1>
-        <p>Apure o valor máximo disponível e a parcela do sócio. O resultado depende da escrituração e das premissas informadas.</p>
+    <x-tools.page title="Calculadora de Distribuição de Lucros" description="Calcule o lucro disponível, a distribuição por participação societária e o saldo remanescente." icon="bi-pie-chart" slug="distribuicao-de-lucros">
 
         <form method="post" action="{{ route('tools.distribuicao-de-lucros.calculate') }}" class="row g-3">
             @csrf
@@ -64,5 +62,5 @@
                 </div>
             </div>
         @endisset
-    </div>
+    </x-tools.page>
 @endsection

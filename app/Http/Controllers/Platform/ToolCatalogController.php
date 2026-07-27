@@ -17,6 +17,21 @@ final class ToolCatalogController extends Controller
         $categories = $this->catalog->categories(false);
         $activeCategory = $category === null ? null : $categories->firstWhere('slug', $category);
 
+        if ($category !== null && $activeCategory === null) {
+            $categoryTools = $this->catalog->byCategory($category);
+            $metadata = config("tools.categories.{$category}");
+
+            if ($categoryTools->isNotEmpty() && is_array($metadata)) {
+                $activeCategory = [
+                    'slug' => $category,
+                    'name' => $metadata['name'],
+                    'icon' => $metadata['icon'],
+                    'count' => $categoryTools->count(),
+                    'url' => route('tools.category', ['category' => $category]),
+                ];
+            }
+        }
+
         abort_if($category !== null && $activeCategory === null, 404);
 
         return view('pages.tools.index', [

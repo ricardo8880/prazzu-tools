@@ -1,10 +1,8 @@
 <?php
 
-use App\Tools\MarginMarkupCalculator\Tool;
-
 return [
     'general' => [
-        Tool::class,
+        App\Tools\MarginMarkupCalculator\Tool::class,
         App\Tools\BusinessDocumentValidator\Tool::class,
         App\Tools\WorkingCapitalCalculator\Tool::class,
         App\Tools\CashFlowCalculator\Tool::class,

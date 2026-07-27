@@ -40,7 +40,7 @@ final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, Has
             slug: 'declaracao-rendimentos',
             name: 'Gerador de Declaração de Rendimentos',
             description: 'Organize valores previamente apurados em uma declaração de rendimentos revisável e pronta para assinatura.',
-            category: ToolCategory::Generators,
+            category: ToolCategory::Documents,
             icon: 'bi-file-earmark-text',
             routeName: 'tools.declaracao-rendimentos.index',
             version: '1.1.0',

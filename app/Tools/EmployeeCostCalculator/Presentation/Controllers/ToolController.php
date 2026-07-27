@@ -482,8 +482,8 @@ final class ToolController extends Controller
         foreach ($result['summary'] ?? [] as $item) {
             $rows[] = [$item['label'], $item['value']];
         }
-        foreach ($result['details']['memory'] ?? [] as $label => $value) {
-            $rows[] = ['Memória — '.$label, $value];
+        foreach ($result['calculation_memory']['steps'] ?? [] as $step) {
+            $rows[] = ['Memória — '.($step['label'] ?? $step['key'] ?? 'Etapa'), $step['result'] ?? ''];
         }
 
         return $rows;

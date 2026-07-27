@@ -27,7 +27,9 @@ final class ToolCatalog
     /** @return Collection<int, array<string, mixed>> */
     public function byCategory(string $category): Collection
     {
-        return $this->all()->where('category', $category)->values();
+        $field = $category === 'documentos' ? 'declared_category' : 'category';
+
+        return $this->all()->where($field, $category)->values();
     }
 
     /** @return Collection<int, array<string, mixed>> */
@@ -137,6 +139,7 @@ final class ToolCatalog
                 $tool['name'],
                 $tool['description'],
                 $tool['category'],
+                $tool['declared_category'],
                 $tool['category_name'],
                 implode(' ', $tool['keywords']),
             ])));
@@ -187,11 +190,15 @@ final class ToolCatalog
             $manifest->featuresFor(ToolFeatureTier::Plus),
         );
         $hasPlusFeatures = $plusFeatures !== [];
-        $category = config("tools.categories.{$manifest->category->value}", []);
+        $declaredCategory = $manifest->category->value;
+        $publicCategory = $declaredCategory === 'documentos' ? 'geradores' : $declaredCategory;
+        $category = config("tools.categories.{$publicCategory}", []);
 
         return array_merge($manifest->toArray(), [
             'is_active' => $manifest->status->acceptsNewExecutions(),
-            'category_name' => (string) ($category['name'] ?? Str::headline($manifest->category->value)),
+            'declared_category' => $declaredCategory,
+            'category' => $publicCategory,
+            'category_name' => (string) ($category['name'] ?? Str::headline($publicCategory)),
             'category_icon' => (string) ($category['icon'] ?? 'bi-grid'),
             'essential_features' => $essentialFeatures,
             'plus_features' => $plusFeatures,

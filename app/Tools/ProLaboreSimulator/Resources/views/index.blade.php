@@ -5,9 +5,7 @@
 @section('canonical_url', route('tools.simulador-pro-labore-ideal.index'))
 
 @section('content')
-    <div class="container py-4">
-        <h1>Simulador de Pró-Labore Ideal</h1>
-        <p>Calcule retenções, valor líquido e custo empresarial. Revise as premissas antes de usar o resultado.</p>
+    <x-tools.page title="Simulador de Pró-Labore Ideal" description="Simule pró-labore, INSS, IRRF, valor líquido e custo empresarial com memória transparente." icon="bi-person-badge" slug="simulador-pro-labore-ideal">
 
         <form method="post" action="{{ route('tools.simulador-pro-labore-ideal.calculate') }}" class="row g-3">
             @csrf
@@ -57,5 +55,5 @@
                 </div>
             </div>
         @endisset
-    </div>
+    </x-tools.page>
 @endsection

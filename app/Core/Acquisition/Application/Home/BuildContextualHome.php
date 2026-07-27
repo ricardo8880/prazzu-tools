@@ -101,9 +101,10 @@ final readonly class BuildContextualHome
     /** @return Collection<int, array<string, mixed>> */
     private function homeTools(): Collection
     {
-        $featured = $this->tools->featured()->take(8)->values();
-
-        return $featured->isNotEmpty() ? $featured : $this->tools->latest(8);
+        return $this->tools->featured()
+            ->concat($this->tools->latest(8))
+            ->unique('slug')
+            ->values();
     }
 
     private function callToActionUrl(AcquisitionContext $context): ?string

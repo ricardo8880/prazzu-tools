@@ -40,7 +40,7 @@ final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, Has
             slug: 'declaracao-trabalho-renda',
             name: 'Gerador de Declaração de Trabalho/Renda',
             description: 'Gere declaração personalizada de trabalho e renda pronta para assinatura.',
-            category: ToolCategory::Generators,
+            category: ToolCategory::Documents,
             icon: 'bi-file-earmark-check',
             routeName: 'tools.declaracao-trabalho-renda.index',
             version: '1.1.0',

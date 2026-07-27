@@ -52,10 +52,10 @@
 <h2>Memória de cálculo</h2>
 <table>
     <tbody>
-    @foreach($result['details']['memory'] ?? [] as $label => $value)
+    @foreach($result['calculation_memory']['steps'] ?? [] as $step)
         <tr>
-            <th scope="row">{{ $label }}</th>
-            <td class="print-right">{{ $value }}</td>
+            <th scope="row">{{ $step['label'] }}<br><small>{{ $step['formula'] }}</small></th>
+            <td class="print-right">{{ is_int($step['result']) ? 'R$ '.number_format($step['result'] / 100, 2, ',', '.') : $step['result'] }}</td>
         </tr>
     @endforeach
     </tbody>
