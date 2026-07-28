@@ -285,3 +285,69 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - Preservar os 23 IDs oficiais, os 32 módulos atuais e os slugs públicos das três ferramentas adicionadas.
 - Novos lotes devem reler o ZIP original e todos os patches da expansão quando a base consolidada não estiver disponível.
 - A aprovação operacional de publicação continua condicionada ao `composer release:check` em CI compatível com `docs/INSTALLATION.md`.
+
+# Ciclo cirúrgico de saneamento do catálogo
+
+## Plano aprovado
+
+| Lote | Escopo | Estado |
+|---:|---|---|
+| 1 | Inventário e governança das 32 ferramentas | Concluído |
+| 2 | Home com exatamente 8 ferramentas mais recentes | Concluído |
+| 3 | Migração segura da ferramenta combinada | Concluído |
+| 4 | Substituição, limpeza final e regressão | Concluído |
+
+## Resultado do Lote Cirúrgico 1
+
+- O inventário executável foi consolidado em exatamente 32 ferramentas oficiais.
+- A classificação paralela de módulos adicionais foi removida.
+- Todas as 32 ferramentas devem permanecer visíveis na página Ferramentas.
+- `ProLaboreProfitDistributionCalculator` continua ativa com `migration_pending`, sem remoção prematura.
+- O contrato agora bloqueia módulos escondidos, omitidos ou classificados mais de uma vez.
+- Nenhuma URL pública, rota ou módulo foi alterado neste lote.
+
+## Continuidade obrigatória para o Lote Cirúrgico 2
+
+- Reler o ZIP original e este patch.
+- Preservar as 32 entradas oficiais e os slugs públicos.
+- Corrigir a Home para retornar exatamente 8 ferramentas.
+- Definir uma fonte inequívoca de recência, sem confundir `featured` ou `position` com data de publicação.
+- Não iniciar a remoção da ferramenta combinada antes do lote dedicado.
+
+## Resultado do Lote Cirúrgico 2
+
+- O estado foi reconstruído a partir do ZIP original com aplicação do Lote Cirúrgico 1 antes das alterações.
+- As 32 ferramentas receberam `release_order` único e completo no inventário executável.
+- A ordem de publicação foi separada de `position`, que permanece exclusivamente editorial.
+- `ToolCatalog::latest(8)` passou a usar `release_order`.
+- A Home padrão e contextual agora retornam exatamente oito ferramentas, sempre as mais recentes.
+- Destaques e contextos de aquisição não podem ampliar nem substituir a lista principal da Home.
+- Nenhum slug, rota, módulo ou entrada oficial foi removido.
+
+## Continuidade obrigatória para o Lote Cirúrgico 3
+
+- Reler o ZIP original e reaplicar os Lotes Cirúrgicos 1 e 2 em ordem.
+- Preservar os 32 `release_order` e a lista da Home limitada a oito.
+- Auditar rotas, redirecionamentos, histórico, favoritos, Analytics e integrações da ferramenta combinada.
+- Não apagar `ProLaboreProfitDistributionCalculator` sem estratégia de substituição que mantenha 32 ferramentas e compatibilidade pública.
+
+
+## Resultado do Lote Cirúrgico 3
+
+- A ferramenta combinada de Pró-Labore e Distribuição de Lucros deixou de oferecer um terceiro formulário público duplicado.
+- A URL antiga tornou-se uma ponte explícita para `ProLaboreSimulator` e `ProfitDistributionCalculator`.
+- O manifesto foi marcado como `Deprecated`; histórico e endpoints antigos permanecem temporariamente por compatibilidade.
+- O inventário continua com 32 entradas e classifica o módulo como `compatibility_bridge`.
+- A remoção física fica condicionada ao lote de substituição que preserve exatamente 32 ferramentas.
+
+
+## Resultado do Lote Cirúrgico 4
+
+- O estado foi reconstruído a partir do ZIP original e dos Lotes Cirúrgicos 1, 2 e 3, nesta ordem.
+- A ponte temporária foi substituída por um escopo público distinto: `Planejador de Retirada de Sócios`.
+- O slug histórico `calculadora-pro-labore-distribuicao-lucros` foi preservado para compatibilidade.
+- A ferramenta consolidada voltou a aceitar execuções, mas o seu propósito é planejamento conjunto e comparação de cenários, não repetição dos calculadores especializados.
+- As 32 ferramentas permanecem visíveis, implementadas e classificadas exatamente uma vez.
+- A Home permanece limitada às 8 ferramentas de maior `release_order`.
+- A revisão de sobreposição foi encerrada como `resolved_distinct_planning_scope`.
+- Gates de inventário, manifesto, página pública e prontidão de release foram atualizados.

@@ -82,12 +82,16 @@ final class ToolCatalogConsistencyTest extends TestCase
 
         $this->assertCount(min(8, $catalog->all()->count()), $latest);
         $this->assertSame(
-            $catalog->all()->sortByDesc('position')->take(8)->pluck('slug')->values()->all(),
+            $catalog->all()->sortByDesc('release_order')->take(8)->pluck('slug')->values()->all(),
             $latest->pluck('slug')->all(),
         );
         $this->assertNotEmpty($latest);
 
         $response = $this->get('/')->assertOk();
+        $homeTools = $response->viewData('featuredTools');
+
+        $this->assertCount(8, $homeTools);
+        $this->assertSame($latest->pluck('slug')->all(), $homeTools->pluck('slug')->all());
 
         foreach ($latest as $tool) {
             $response->assertSee($tool['name']);

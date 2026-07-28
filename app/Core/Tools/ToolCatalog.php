@@ -64,7 +64,7 @@ final class ToolCatalog
     public function latest(int $limit = 8): Collection
     {
         return $this->all()
-            ->sortByDesc('position')
+            ->sortByDesc('release_order')
             ->take(max(0, $limit))
             ->values();
     }
@@ -195,6 +195,7 @@ final class ToolCatalog
         $category = config("tools.categories.{$publicCategory}", []);
 
         return array_merge($manifest->toArray(), [
+            'release_order' => $this->releaseOrder($manifest->slug),
             'is_active' => $manifest->status->acceptsNewExecutions(),
             'declared_category' => $declaredCategory,
             'category' => $publicCategory,
@@ -211,5 +212,12 @@ final class ToolCatalog
             'badge' => $hasPlusFeatures ? 'Grátis + Plus' : 'Grátis',
             'badge_tone' => $hasPlusFeatures ? 'purple' : 'green',
         ]);
+    }
+
+    private function releaseOrder(string $slug): int
+    {
+        $entry = collect(config('product_tools.official', []))->firstWhere('slug', $slug);
+
+        return (int) ($entry['release_order'] ?? 0);
     }
 }

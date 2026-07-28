@@ -19,7 +19,7 @@ final class ContextualHomeTest extends TestCase
             ->assertSee(config('home.cta.label'));
     }
 
-    public function test_active_context_replaces_home_content_and_orders_tools(): void
+    public function test_active_context_replaces_content_but_keeps_the_latest_eight_tools(): void
     {
         $tools = app(\App\Core\Tools\ToolCatalog::class)->all(false)->take(3)->values();
         $context = AcquisitionContextRecord::query()->create([
@@ -52,12 +52,13 @@ final class ContextualHomeTest extends TestCase
         $response->assertOk()
             ->assertSee('Calcule agora')
             ->assertSee('Uma jornada preparada para rescisões.')
-            ->assertSee('Calcular rescisão')
-            ->assertSeeInOrder([
-                $tools[1]['name'],
-                $tools[2]['name'],
-                $tools[0]['name'],
-            ]);
+            ->assertSee('Calcular rescisão');
+
+        $latest = app(\App\Core\Tools\ToolCatalog::class)->latest(8);
+        $homeTools = $response->viewData('featuredTools');
+
+        self::assertCount(8, $homeTools);
+        self::assertSame($latest->pluck('slug')->all(), $homeTools->pluck('slug')->all());
     }
 
 

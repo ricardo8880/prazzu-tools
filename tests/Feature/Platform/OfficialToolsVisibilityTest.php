@@ -29,15 +29,16 @@ final class OfficialToolsVisibilityTest extends TestCase
         }
     }
 
-    public function test_separated_tools_are_featured_on_the_default_home(): void
+    public function test_default_home_uses_only_the_eight_latest_tools(): void
     {
+        $catalog = $this->app->make(ToolCatalog::class);
         $response = $this->get(route('home'))->assertOk();
-        $featuredTools = $response->viewData('featuredTools');
-        $featuredSlugs = $featuredTools->pluck('slug')->all();
+        $homeTools = $response->viewData('featuredTools');
 
-        foreach (self::SEPARATED_TOOLS as $slug => $name) {
-            self::assertContains($slug, $featuredSlugs);
-            $response->assertSee($name);
-        }
+        self::assertCount(8, $homeTools);
+        self::assertSame(
+            $catalog->latest(8)->pluck('slug')->all(),
+            $homeTools->pluck('slug')->all(),
+        );
     }
 }

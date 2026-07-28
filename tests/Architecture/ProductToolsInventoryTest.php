@@ -14,76 +14,76 @@ final class ProductToolsInventoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        /** @var array<string, mixed> $inventory */
-        $inventory = require dirname(__DIR__, 2).'/config/product_tools.php';
-        $this->inventory = $inventory;
+        $this->inventory = require dirname(__DIR__, 2).'/config/product_tools.php';
     }
 
-    public function test_official_inventory_has_exactly_twenty_three_ordered_unique_tools(): void
+    public function test_official_inventory_has_exactly_thirty_two_ordered_unique_tools(): void
     {
         $tools = $this->inventory['official'];
 
-        self::assertCount(23, $tools);
-        self::assertSame(range(1, 23), array_column($tools, 'id'));
-        self::assertCount(23, array_unique(array_column($tools, 'key')));
-        self::assertCount(23, array_unique(array_column($tools, 'name')));
-    }
+        self::assertSame(32, $this->inventory['expected_module_count']);
+        self::assertCount(32, $tools);
+        self::assertSame(range(1, 32), array_column($tools, 'id'));
 
-    public function test_expansion_tools_are_promoted_to_the_official_catalog(): void
-    {
-        $byKey = [];
-        foreach ($this->inventory['official'] as $tool) {
-            $byKey[$tool['key']] = $tool;
+        foreach (['key', 'name', 'slug', 'module'] as $field) {
+            self::assertCount(32, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
         }
-
-        self::assertSame('NetSalaryCalculator', $byKey['net-salary']['module']);
-        self::assertSame('calculadora-salario-liquido', $byKey['net-salary']['slug']);
-        self::assertSame('OvertimeCalculator', $byKey['overtime']['module']);
-        self::assertSame('calculadora-hora-extra', $byKey['overtime']['slug']);
-        self::assertSame('DifalIcmsCalculator', $byKey['difal-icms']['module']);
-        self::assertSame('calculadora-difal-icms', $byKey['difal-icms']['slug']);
-
-        $additional = array_column($this->inventory['additional_modules'], 'module');
-        self::assertNotContains('NetSalaryCalculator', $additional);
-        self::assertNotContains('OvertimeCalculator', $additional);
-        self::assertNotContains('DifalIcmsCalculator', $additional);
     }
 
-    public function test_every_current_module_is_classified_once(): void
+
+    public function test_release_order_is_complete_unique_and_independent_from_editorial_position(): void
+    {
+        $tools = $this->inventory['official'];
+        $releaseOrders = array_column($tools, 'release_order');
+
+        self::assertCount(32, array_unique($releaseOrders));
+        sort($releaseOrders);
+        self::assertSame(range(1, 32), $releaseOrders);
+
+        usort($tools, static fn (array $left, array $right): int => $right['release_order'] <=> $left['release_order']);
+        $latest = array_column(array_slice($tools, 0, 8), 'slug');
+
+        self::assertSame([
+            'calculadora-difal-icms',
+            'calculadora-hora-extra',
+            'calculadora-salario-liquido',
+            'declaracao-trabalho-renda',
+            'declaracao-rendimentos',
+            'comissao-vendedores',
+            'calculadora-margem-markup',
+            'ponto-de-equilibrio',
+        ], $latest);
+    }
+
+    public function test_every_current_module_is_official_and_classified_once(): void
     {
         $root = dirname(__DIR__, 2);
-        $actualModules = array_values(array_filter(
-            array_map('basename', glob($root.'/app/Tools/*', GLOB_ONLYDIR) ?: []),
-            static fn (string $module): bool => $module !== '',
-        ));
+        $actualModules = array_map('basename', glob($root.'/app/Tools/*', GLOB_ONLYDIR) ?: []);
         sort($actualModules);
 
-        $officialModules = array_values(array_unique(array_column($this->inventory['official'], 'module')));
-        $additionalModules = array_column($this->inventory['additional_modules'], 'module');
-        $classifiedModules = array_merge($officialModules, $additionalModules);
-        sort($classifiedModules);
+        $officialModules = array_column($this->inventory['official'], 'module');
+        sort($officialModules);
 
-        self::assertSame($actualModules, $classifiedModules);
-        self::assertCount(count($classifiedModules), array_unique($classifiedModules));
+        self::assertSame($actualModules, $officialModules);
+        self::assertCount(32, array_unique($officialModules));
+        self::assertArrayNotHasKey('additional_modules', $this->inventory);
     }
 
-    public function test_pro_labore_and_profit_distribution_are_independent_modules(): void
+    public function test_partner_withdrawal_planner_has_a_distinct_resolved_scope(): void
     {
-        $moduleCounts = array_count_values(array_column($this->inventory['official'], 'module'));
-        $duplicates = array_filter($moduleCounts, static fn (int $count): bool => $count > 1);
+        $reviews = array_values(array_filter(
+            $this->inventory['functional_overlap_reviews'],
+            static fn (array $review): bool => $review['module'] === 'ProLaboreProfitDistributionCalculator',
+        ));
 
-        self::assertSame([], $duplicates);
+        self::assertCount(1, $reviews);
+        self::assertSame('resolved_distinct_planning_scope', $reviews[0]['classification']);
+        self::assertSame('resolved', $reviews[0]['state']);
+        self::assertSame(['ProLaboreSimulator', 'ProfitDistributionCalculator'], $reviews[0]['related_modules']);
 
-        $byKey = [];
-        foreach ($this->inventory['official'] as $tool) {
-            $byKey[$tool['key']] = $tool;
-        }
-
-        self::assertSame('ProLaboreSimulator', $byKey['pro-labore']['module']);
-        self::assertSame('ProfitDistributionCalculator', $byKey['profit-distribution']['module']);
-        self::assertSame('implemented', $byKey['pro-labore']['state']);
-        self::assertSame('implemented', $byKey['profit-distribution']['state']);
+        $official = array_column($this->inventory['official'], null, 'module');
+        self::assertSame('implemented', $official['ProLaboreProfitDistributionCalculator']['state']);
+        self::assertSame('Planejador de Retirada de Sócios', $official['ProLaboreProfitDistributionCalculator']['name']);
     }
 
     public function test_governance_documents_exist(): void
@@ -92,7 +92,8 @@ final class ProductToolsInventoryTest extends TestCase
 
         self::assertFileExists($root.'/'.$this->inventory['source']);
         self::assertFileExists($root.'/'.$this->inventory['continuity_log']);
-        self::assertFileExists($root.'/docs/PRODUCT-TOOLS-INVENTORY.md');
+        self::assertFileExists($root.'/'.$this->inventory['inventory_document']);
         self::assertFileExists($root.'/CORE_CANDIDATES.md');
+        self::assertFileExists($root.'/docs/SURGICAL-LOT-1-INVENTORY-GOVERNANCE.md');
     }
 }

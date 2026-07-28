@@ -12,7 +12,7 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.calculadora-pro-labore-distribuicao-lucros.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Pró-Labore e Distribuição de Lucros')
+            ->assertSee('Planejador de Retirada de Sócios')
             ->assertSee('Pró-labore bruto')
             ->assertSee('Lucro contábil do período')
             ->assertSee('Distribuição pretendida');
@@ -36,7 +36,7 @@ final class ToolPageTest extends TestCase
             'intended_distribution' => '12000,00',
             'confirm_assumptions' => '1',
         ])->assertOk()
-            ->assertSee('Resultado consolidado')
+            ->assertSee('Plano consolidado de retirada')
             ->assertSee('R$ 12.000,00')
             ->assertSee('R$ 16.450,00');
     }

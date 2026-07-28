@@ -1,39 +1,46 @@
-# Inventário oficial das 23 ferramentas
+# Inventário oficial das 32 ferramentas
 
-A fonte executável deste inventário é `config/product_tools.php`. Este documento explica as decisões de produto; em caso de divergência, o README da raiz continua sendo a regra máxima.
+A fonte executável deste inventário é `config/product_tools.php`. O README da raiz continua sendo a regra máxima do projeto.
 
-## Estado atual
+## Estado consolidado no Lote Cirúrgico 1
 
-O projeto possui **32 módulos em `app/Tools`**. O catálogo oficial possui **23 ferramentas independentes**: as 20 ferramentas auditadas no ciclo original até o Lote 10 e as três ferramentas da expansão promovidas no Lote 14.
+O projeto possui **exatamente 32 módulos em `app/Tools`** e os 32 passam a integrar um único inventário oficial. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
 
-As ferramentas promovidas na expansão são:
+Este lote não remove módulos nem altera slugs públicos. A ferramenta combinada `ProLaboreProfitDistributionCalculator` permanece temporariamente no inventário com o estado `implemented`, porque apresenta sobreposição funcional com `ProLaboreSimulator` e `ProfitDistributionCalculator`. A sua retirada só pode ocorrer num lote de migração dedicado, com compatibilidade de rotas, histórico e métricas e sem reduzir o catálogo abaixo das 32 ferramentas definidas pelo produto.
 
-- `NetSalaryCalculator` — Calculadora de Salário Líquido;
-- `OvertimeCalculator` — Calculadora de Hora Extra, Adicional Noturno e DSR;
-- `DifalIcmsCalculator` — Calculadora DIFAL / ICMS Interestadual + FCP.
+## Regras obrigatórias do inventário
 
-Os oito módulos complementares continuam preservados. `ProLaboreProfitDistributionCalculator` permanece como nono módulo adicional, classificado como compatibilidade legada preservada até auditoria específica de migração, para não quebrar URL, histórico ou integrações existentes.
+- O diretório `app/Tools` deve conter exatamente 32 módulos enquanto não houver lote explícito de expansão ou substituição.
+- Cada módulo deve aparecer exatamente uma vez em `config/product_tools.php`.
+- IDs, chaves, nomes e slugs do inventário devem ser únicos.
+- Cada módulo deve possuir `Tool.php` e estar registado em `config/tools/modules.php`.
+- Todas as 32 ferramentas devem estar visíveis na página de ferramentas.
+- Nenhum módulo pode ficar escondido por classificação documental paralela.
+- Nenhuma ferramenta pode ser apagada apenas por semelhança de nome; remoções exigem auditoria funcional e estratégia de compatibilidade.
+- A Home é tratada separadamente: deve mostrar exatamente as 8 ferramentas mais recentes, sem alterar a visibilidade do catálogo completo.
 
-## Significado dos estados
+## Estado de implementação
 
-- `alignment_required`: o módulo existe, mas ainda precisa ser confrontado integralmente com o escopo Essencial e Plus.
-- `rename_and_scope_alignment`: além da conformidade funcional, nome público e escopo precisam ser alinhados com compatibilidade.
-- `implemented`: o alinhamento previsto no lote correspondente foi implementado.
-- `legacy_compatibility`: módulo fora do catálogo oficial mantido temporariamente para compatibilidade.
+- `implemented`: ferramenta ativa e incluída no inventário consolidado.
+- `migration_pending`: ferramenta ativa, mas com sobreposição funcional formalmente identificada e migração pendente.
 
-## Regras de alteração
+## Sobreposição funcional controlada
 
-- Toda mudança na lista oficial deve atualizar `config/product_tools.php`, este documento e os testes arquiteturais.
-- Uma ferramenta Essencial deve resolver completamente o problema básico sem autenticação.
-- Plus acrescenta produtividade, volume, automação, continuidade, cenários ou conveniência; nunca corrige um cálculo Essencial incompleto.
-- Ferramentas não podem depender diretamente de classes internas de outro módulo.
-- Slugs públicos não devem ser alterados sem redirecionamento e teste de compatibilidade.
-- Módulos adicionais não entram automaticamente no catálogo oficial; a promoção exige decisão explícita em lote de integração.
+`ProLaboreProfitDistributionCalculator` reúne cálculo de pró-labore e distribuição de lucros, capacidades que também existem nos módulos independentes `ProLaboreSimulator` e `ProfitDistributionCalculator`.
 
-## Estado após o Lote 15 da expansão
+Após o Lote Cirúrgico 3, a experiência pública foi convertida numa ponte para as duas ferramentas independentes. Ela **ainda não é apagada**, porque isso deixaria o projeto com 31 ferramentas e poderia quebrar URL, histórico, favoritos, Analytics ou integrações. O lote de migração deverá decidir e implementar uma substituição realmente distinta antes da remoção definitiva.
 
-As **23 ferramentas oficiais** estão marcadas como `implemented` no inventário executável. As três ferramentas da expansão preservam seus slugs e contratos públicos dos Lotes 11, 12 e 13.
+## Alteração do catálogo
 
-O Lote 14 consolidou descoberta de produto, inventário executável e contratos arquiteturais. O Lote 15 auditou a expansão, completou os gates de qualidade dos módulos de Hora Extra e DIFAL e protegeu a distribuição contra caches Laravel gerados. O estado continua em 32 módulos, sendo 23 oficiais e 9 adicionais.
+Toda alteração deve atualizar conjuntamente:
 
-O inventário executável registra `expansion_lot_15_audited`. A aprovação operacional de release continua condicionada ao `composer release:check` no CI oficial com todas as extensões requeridas.
+1. `config/product_tools.php`;
+2. este documento;
+3. `docs/IMPLEMENTATION-LOTS.md`;
+4. testes arquiteturais do inventário;
+5. qualquer estratégia de redirecionamento ou migração aplicável.
+
+
+## Resolução da sobreposição funcional — Lote Cirúrgico 4
+
+O módulo `ProLaboreProfitDistributionCalculator` foi mantido com o slug histórico, porém reposicionado como **Planejador de Retirada de Sócios**. O escopo público agora é a composição consolidada da retirada e a comparação de cenários; os módulos `ProLaboreSimulator` e `ProfitDistributionCalculator` continuam responsáveis pelos cálculos especializados isolados. Assim, as 32 entradas permanecem visíveis sem uma ferramenta escondida ou um terceiro formulário com propósito idêntico.

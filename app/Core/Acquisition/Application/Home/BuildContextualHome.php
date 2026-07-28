@@ -29,7 +29,7 @@ final readonly class BuildContextualHome
         return [
             'home' => $this->contextualHome($defaultHome, $context),
             'categories' => $this->tools->categories(),
-            'featuredTools' => $this->contextualTools($context),
+            'featuredTools' => $this->homeTools(),
             'acquisitionContext' => $context,
         ];
     }
@@ -78,33 +78,9 @@ final readonly class BuildContextualHome
     }
 
     /** @return Collection<int, array<string, mixed>> */
-    private function contextualTools(AcquisitionContext $context): Collection
-    {
-        $slugs = collect([$context->primaryToolSlug])
-            ->merge($context->featuredToolSlugs)
-            ->filter($this->hasContent(...))
-            ->unique()
-            ->values();
-
-        if ($slugs->isEmpty()) {
-            return $this->homeTools();
-        }
-
-        $resolved = $slugs
-            ->map(fn (string $slug): ?array => $this->tools->find($slug))
-            ->filter(static fn (?array $tool): bool => $tool !== null)
-            ->values();
-
-        return $resolved->isEmpty() ? $this->homeTools() : $resolved;
-    }
-
-    /** @return Collection<int, array<string, mixed>> */
     private function homeTools(): Collection
     {
-        return $this->tools->featured()
-            ->concat($this->tools->latest(8))
-            ->unique('slug')
-            ->values();
+        return $this->tools->latest(8);
     }
 
     private function callToActionUrl(AcquisitionContext $context): ?string

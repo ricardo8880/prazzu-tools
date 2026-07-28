@@ -12,11 +12,12 @@ use PHPUnit\Framework\TestCase;
 
 final class ToolManifestTest extends TestCase
 {
-    public function test_release_candidate_manifest_is_complete(): void
+    public function test_active_planner_manifest_is_complete(): void
     {
         $manifest = (new Tool)->manifest();
-        self::assertSame('1.0.0-rc.1', $manifest->version);
-        self::assertSame(ToolStatus::Beta, $manifest->status);
+        self::assertSame('3.1.0', $manifest->version);
+        self::assertSame(ToolStatus::Active, $manifest->status);
+        self::assertSame('Planejador de Retirada de Sócios', $manifest->name);
         self::assertTrue($manifest->supportsHistory);
         self::assertTrue($manifest->hasCapability(ToolCapability::History));
         self::assertTrue($manifest->hasCapability(ToolCapability::VersionedPersistence));

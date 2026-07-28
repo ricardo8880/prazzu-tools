@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Calculadora de Pró-Labore e Distribuição de Lucros — Prazzu Tools')
-@section('meta_description', 'Calcule pró-labore, INSS, IRRF, lucro disponível e distribuição de lucros com memória transparente.')
+@section('title', 'Planejador de Retirada de Sócios — Prazzu Tools')
+@section('meta_description', 'Planeje a composição da retirada de um sócio entre pró-labore e lucro disponível, com impacto pessoal e empresarial consolidado.')
 
 @section('content')
 @auth
@@ -14,9 +14,12 @@
     icon="cash-coin"
     :slug="$tool->slug"
 >
+    <div class="alert alert-info" role="note">
+        Esta ferramenta não substitui os dois calculadores especializados. O seu propósito é consolidar, num único planejamento, a composição da retirada do sócio, o total líquido recebido, o custo do pró-labore para a empresa e o saldo de lucro não distribuído.
+    </div>
     <x-tools.form-panel
-        title="Dados da simulação Essencial"
-        description="Este lote calcula um sócio, uma competência de 2026 e uma distribuição proporcional."
+        title="Dados do planejamento Essencial"
+        description="Planeje, numa única visão, quanto o sócio recebe via pró-labore e distribuição suportada pelo lucro contábil informado."
         heading-id="calculation-data-title"
     >
         <form id="essential-form" method="POST" action="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.calculate') }}" class="row g-3">
@@ -74,7 +77,7 @@
                 @error('confirm_assumptions')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>
 
-            <div class="col-12"><button class="btn btn-primary" type="submit">Calcular retirada</button></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit">Planejar composição da retirada</button></div>
         </form>
     </x-tools.form-panel>
 
@@ -85,7 +88,7 @@
             $profit = $result->details['profit_distribution'];
         @endphp
 
-        <x-tools.result-panel class="mt-4" title="Resultado consolidado" description="Valores da competência informada para o sócio simulado.">
+        <x-tools.result-panel class="mt-4" title="Plano consolidado de retirada" description="Composição estimada da retirada e respetivo impacto para o sócio e para a empresa na competência informada.">
             <div class="row g-3">
                 @foreach ($result->summary as $item)
                     <div class="col-12 col-md-6 col-xl-4"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="cash-stack" /></div>
@@ -126,7 +129,7 @@
                 </form>
             @endforeach
         </div>
-        @if(!empty($historySaved))<div class="alert alert-success mt-3">Simulação salva no histórico da sua conta.</div>@endif
+        @if(!empty($historySaved))<div class="alert alert-success mt-3">Planejamento salvo no histórico da sua conta.</div>@endif
 
         <x-tools.result-panel class="mt-4" title="Premissas e rastreabilidade">
             <p class="mb-2">Competência: <strong>{{ $result->details['input']['competence'] }}</strong>. Método de dedução do IRRF: <strong>{{ $pro['irrf_deduction_method'] === 'simplified' ? 'desconto simplificado' : 'deduções legais' }}</strong>.</p>
