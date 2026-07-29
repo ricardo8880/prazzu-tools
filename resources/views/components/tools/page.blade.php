@@ -8,6 +8,17 @@
     'showValidation' => true,
 ])
 
+@php
+    $analyticsJourney = app(\App\Core\Tools\Analytics\Services\ToolAnalyticsJourneyRegistry::class)->find($slug);
+    $analyticsConfig = $analyticsJourney === null ? null : array_merge(
+        $analyticsJourney->toFrontendArray(),
+        [
+            'endpoint' => route('analytics.tools.track'),
+            'csrf' => csrf_token(),
+        ],
+    );
+@endphp
+
 <div {{ $attributes->class(['prazzu-page', 'tool-page']) }} data-tool="{{ $slug }}">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
@@ -59,5 +70,9 @@
                 @endforeach
             </div>
         </section>
+    @endif
+
+    @if ($analyticsConfig !== null)
+        <script type="application/json" data-tool-analytics-config>{!! json_encode($analyticsConfig, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
     @endif
 </div>

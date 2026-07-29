@@ -73,6 +73,7 @@
     </form>
 
     @isset($result)
+    <span data-analytics-result="main" hidden></span>
         @php
             $money = static fn (int $minor): string => \App\Core\Money\Money::fromMinor($minor)->formatPtBr();
             $details = $result->details;

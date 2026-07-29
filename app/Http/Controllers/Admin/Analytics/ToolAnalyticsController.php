@@ -13,7 +13,8 @@ final class ToolAnalyticsController extends Controller
     public function __invoke(AnalyticsDashboardRequest $request, ToolAnalyticsQuery $query, AnalyticsQueryCache $cache): View
     {
         $period = $request->period();
-        $data = $cache->remember('tools', $period, [], fn (): array => $query->overview($period));
+        $filters = $request->safe()->only(['tool', 'category', 'source', 'device_type', 'browser', 'country_code', 'language']);
+        $data = $cache->remember('tools', $period, $filters, fn (): array => $query->overview($period, $filters));
 
         return view('admin.analytics.tools', $data + [
             'selected_period' => $request->validated('period', '7'),

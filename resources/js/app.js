@@ -33,3 +33,7 @@ themeButtons.forEach((button) => {
         applyTheme(theme);
     });
 });
+
+import { initializeToolJourneyAnalytics } from './analytics/tool-journey.js';
+
+initializeToolJourneyAnalytics();

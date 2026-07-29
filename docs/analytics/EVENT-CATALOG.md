@@ -57,7 +57,7 @@ app/Core/Analytics/Domain/Services/AnalyticsEventNameResolver.php
 | `tool.time_spent` | `tool.time.spent` |
 | `tool.history_viewed` | `tool.history.viewed` |
 | `tool.plus_used` | `tool.plus.used` |
-| `tool.exported` | `tool.result.exported` |
+| `tool.result.exported` | `tool.result.exported` |
 | `result.exported` | `tool.result.exported` |
 | `user.registered` | `account.created` |
 | `plus.subscribed` | `subscription.started` |
@@ -93,3 +93,23 @@ A aplicação grava somente nomes canônicos. Consultas continuam aceitando alia
 A migration `2026_07_15_001300_normalize_analytics_event_names.php` converte os nomes históricos conhecidos de forma idempotente. Ela não altera propriedades, datas, visitantes, sessões ou demais dimensões dos eventos.
 
 Eventos de negócio não são inferidos a partir de qualquer requisição `POST`. O middleware registra `tool.calculation.completed` somente para ações explicitamente classificadas como produtoras de resultado válido. Operações de CRM, propostas, importações preliminares, repetições de histórico e exclusões não contam como cálculos concluídos.
+
+## Jornada detalhada das ferramentas — contrato v1
+
+Eventos adicionados para reconstruir o funil sem capturar conteúdo informado pelo utilizador:
+
+| Evento | Uso |
+|---|---|
+| `tool.started` | Primeira interação válida com o formulário principal. |
+| `tool.step.changed` | Entrada ou mudança entre etapas declaradas. |
+| `tool.field.completed` | Campo identificado concluído, sem envio do valor. |
+| `tool.validation.error` | Código semântico da regra que bloqueou o avanço. |
+| `tool.calculation.executed` | Tentativa de cálculo, incluindo sucesso e duração. |
+| `tool.result.viewed` | Resultado principal efetivamente visualizado. |
+| `tool.result.exported` | Exportação de resultado ou documento. |
+| `tool.shared` | Ação de partilha. |
+| `tool.abandoned` | Encerramento antes da conclusão, com etapa e tempo agregados. |
+
+Metadados permitidos: `journey_id`, `form`, `step`, `field`, `action`, `completion_percentage`, `filled_fields`, `total_fields`, `validation_error`, `execution_time_ms`, `calculation_success`, `abandoned_after_seconds`, `export_format` e `share_method`.
+
+Nunca publicar valores de campos, documentos, nomes, e-mails, CPF, CNPJ ou conteúdo do resultado.

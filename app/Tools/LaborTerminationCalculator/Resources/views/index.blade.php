@@ -259,6 +259,7 @@
 
     @if (($calculationResult ?? null) || session('calculation_result'))
         @php($result = $calculationResult ?? session('calculation_result'))
+        <span data-analytics-result="main" hidden></span>
         @php($exportInput = ! empty($calculationInput ?? []) ? $calculationInput : session('calculation_input', []))
         <section class="prazzu-form-panel mt-4" aria-labelledby="termination-result-title">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">

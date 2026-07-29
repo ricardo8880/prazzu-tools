@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\NetSalaryCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
@@ -23,13 +27,42 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
-final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-salario-liquido';
 
     public function integrations(): ToolIntegrationManifest
     {
         return new ToolIntegrationManifest(publishes: [], accepts: []);
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'calculadora-salario-liquido',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'),
+                    new ToolAnalyticsField('base_salary', 'input', selector: '[name="base_salary"]'),
+                    new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
+                    new ToolAnalyticsField('taxable_additional_earnings', 'input', selector: '[name="taxable_additional_earnings"]'),
+                    new ToolAnalyticsField('non_taxable_earnings', 'input', selector: '[name="non_taxable_earnings"]'),
+                    new ToolAnalyticsField('judicial_pension', 'input', selector: '[name="judicial_pension"]'),
+                    new ToolAnalyticsField('transport_discount', 'input', selector: '[name="transport_discount"]'),
+                    new ToolAnalyticsField('meal_discount', 'input', selector: '[name="meal_discount"]'),
+                    new ToolAnalyticsField('health_plan_discount', 'input', selector: '[name="health_plan_discount"]'),
+                    new ToolAnalyticsField('other_discounts', 'input', selector: '[name="other_discounts"]'),
+                    new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
+        );
     }
 
     public function manifest(): ToolManifest

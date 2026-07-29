@@ -10,6 +10,10 @@ use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -27,7 +31,7 @@ use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 use App\Tools\FiscalXmlConverter\Api\Actions\ConvertApiAction;
 
-final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public function apiActions(): array
     {
@@ -39,6 +43,35 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations
     public function integrations(): ToolIntegrationManifest
     {
         return new ToolIntegrationManifest(publishes: [], accepts: []);
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: self::SLUG,
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'single',
+                    steps: ['upload'],
+                    fields: [
+                        new ToolAnalyticsField('xml_file', 'upload', required: true, selector: '[name="xml_file"]'),
+                    ],
+                    actions: ['calculate', 'export'],
+                    selector: '[data-analytics-form="single"]',
+                    resultSelector: '[data-analytics-result="single"]',
+                ),
+                new ToolAnalyticsForm(
+                    key: 'batch',
+                    steps: ['upload'],
+                    fields: [
+                        new ToolAnalyticsField('xml_files', 'upload', required: true, selector: '[name="xml_files[]"]'),
+                    ],
+                    actions: ['calculate', 'export'],
+                    selector: '[data-analytics-form="batch"]',
+                    resultSelector: '[data-analytics-result="batch"]',
+                ),
+            ],
+        );
     }
 
     public function manifest(): ToolManifest

@@ -6,6 +6,9 @@
 @section('content')
     @php($result = $result ?? session('receipt_result'))
     @php($receipt = is_array($result) ? ($result['details']['receipt'] ?? null) : null)
+    @if ($receipt)
+        <span data-analytics-result="main" hidden></span>
+    @endif
 
     <div class="container py-5">
         <div class="row justify-content-center">

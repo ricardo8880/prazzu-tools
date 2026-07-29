@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
@@ -27,7 +31,7 @@ use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 use App\Tools\LaborTerminationCalculator\Api\Actions\CalculateApiAction;
 
-final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public function apiActions(): array
     {
@@ -60,6 +64,41 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations
         return new ToolIntegrationManifest(
             publishes: [],
             accepts: [],
+        );
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'calculadora-de-rescisao',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('monthly_salary', 'input', selector: '[name="monthly_salary"]'),
+                    new ToolAnalyticsField('admission_date', 'input', selector: '[name="admission_date"]'),
+                    new ToolAnalyticsField('termination_date', 'input', selector: '[name="termination_date"]'),
+                    new ToolAnalyticsField('termination_type', 'input', selector: '[name="termination_type"]'),
+                    new ToolAnalyticsField('contract_type', 'input', selector: '[name="contract_type"]'),
+                    new ToolAnalyticsField('notice_type', 'input', selector: '[name="notice_type"]'),
+                    new ToolAnalyticsField('days_worked_in_month', 'input', selector: '[name="days_worked_in_month"]'),
+                    new ToolAnalyticsField('overdue_vacation_periods', 'input', selector: '[name="overdue_vacation_periods"]'),
+                    new ToolAnalyticsField('double_vacation_periods', 'input', selector: '[name="double_vacation_periods"]'),
+                    new ToolAnalyticsField('contract_end_date', 'input', selector: '[name="contract_end_date"]'),
+                    new ToolAnalyticsField('early_termination_initiative', 'input', selector: '[name="early_termination_initiative"]'),
+                    new ToolAnalyticsField('article_480_discount', 'input', selector: '[name="article_480_discount"]'),
+                    new ToolAnalyticsField('extraordinary_indemnities', 'input', selector: '[name="extraordinary_indemnities"]'),
+                    new ToolAnalyticsField('fgts_balance', 'input', selector: '[name="fgts_balance"]'),
+                    new ToolAnalyticsField('domestic_indemnity_reserve_balance', 'input', selector: '[name="domestic_indemnity_reserve_balance"]'),
+                    new ToolAnalyticsField('other_discounts', 'input', selector: '[name="other_discounts"]'),
+                    new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
         );
     }
 

@@ -26,6 +26,7 @@
 <div class="form-check"><input class="form-check-input" type="checkbox" name="confirm_assumptions" value="1" id="confirm_assumptions" required @checked(old('confirm_assumptions'))><label class="form-check-label" for="confirm_assumptions">Confirmo que o divisor, percentuais, calendário e enquadramento informados são aplicáveis ao caso.</label></div>
 <div><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-2"></i>Calcular</button></div></form>
 @isset($result)
+    <span data-analytics-result="main" hidden></span>
 @php($money=static fn(int $v)=>\App\Core\Money\Money::fromMinor($v)->formatPtBr())
 <div class="mt-5"><x-tools.result-panel title="Resultado" description="Estimativa baseada nos dados e parâmetros informados."><div class="row g-3 mb-4">@foreach($result->summary as $item)<div class="col-12 col-md-6 col-xl"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="clock-history" /></div>@endforeach</div>
 @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach

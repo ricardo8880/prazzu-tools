@@ -23,6 +23,7 @@
 <div class="form-check"><input class="form-check-input" type="checkbox" name="confirm_rates" value="1" id="confirm_rates" required @checked(old('confirm_rates'))><label class="form-check-label" for="confirm_rates">Confirmo que verifiquei a alíquota interna, FCP, benefícios, NCM/enquadramento e método de base aplicáveis à operação.</label></div>
 <div><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-2"></i>Calcular DIFAL</button></div></form>
 @isset($result)
+    <span data-analytics-result="main" hidden></span>
 @php($money=static fn(int $v)=>\App\Core\Money\Money::fromMinor($v)->formatPtBr())
 <div class="mt-5"><x-tools.result-panel title="Resultado" description="Estimativa baseada nas premissas e alíquotas confirmadas."><div class="row g-3 mb-4">@foreach($result->summary as $item)<div class="col-12 col-md-6 col-xl"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="receipt" /></div>@endforeach</div>
 @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach

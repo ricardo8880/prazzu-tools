@@ -351,3 +351,60 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - A Home permanece limitada às 8 ferramentas de maior `release_order`.
 - A revisão de sobreposição foi encerrada como `resolved_distinct_planning_scope`.
 - Gates de inventário, manifesto, página pública e prontidão de release foram atualizados.
+
+## Evolução do Analytics das Ferramentas — Lote 1 — contrato e infraestrutura
+
+### Resultado
+
+- O estado foi reconstruído a partir do ZIP original e conferido contra README, `CORE_CANDIDATES.md`, relatórios anteriores e inventário executável.
+- Foram adicionados os eventos canónicos de jornada: início, mudança de etapa, campo concluído, erro de validação, execução, visualização de resultado, exportação, partilha e abandono.
+- O endpoint público de ferramentas passou a aceitar o contrato v1 versionado, mantendo compatibilidade com `tool.calculation.started`, `tool.time.spent` e o campo legado `seconds`.
+- Metadados passaram a usar uma lista fechada, validação de tipo e limites; valores de campos e chaves sensíveis não são persistidos.
+- Foi criado no Core o contrato opcional `HasAnalyticsJourney`, com DTOs validados para formulários, etapas, campos e ações, além de um registry central.
+- Nenhuma ferramenta foi instrumentada neste lote; a declaração e captura concreta começam no lote piloto, após estabilização deste contrato.
+- Slugs, inventário, rotas públicas, cálculos e independência dos 32 módulos foram preservados.
+
+### Continuidade obrigatória para o próximo lote de Analytics
+
+- Reconstruir novamente o projeto usando o ZIP original e aplicar este patch antes de iniciar qualquer alteração.
+- Ler o README, `CORE_CANDIDATES.md`, este documento e o relatório específico do lote.
+- Criar a instrumentação transversal no frontend consumindo somente o contrato central.
+- Não tratar qualquer formulário POST como cálculo; cada formulário mensurável deve ser identificado explicitamente.
+- Não publicar valores digitados, resultados, documentos ou identificadores pessoais.
+
+## Evolução do Analytics das Ferramentas — Lote 2 — capturador frontend compartilhado
+
+### Resultado
+
+- O estado foi reconstruído a partir do ZIP original com aplicação do Lote 1 antes de qualquer alteração.
+- O listener genérico que classificava todo formulário `POST` como cálculo foi removido do layout.
+- Foi criado um capturador frontend único no Core, carregado pela entrada global e inativo quando o módulo não declara `HasAnalyticsJourney`.
+- O componente compartilhado de página expõe ao navegador somente a configuração validada da jornada correspondente ao slug atual.
+- O capturador suporta múltiplos formulários declarados na mesma página, deduplicação por campo/etapa/erro, abandono, envio, resultado, exportação e partilha.
+- Valores, ficheiros, resultados e `FormData` nunca são serializados; somente chaves semânticas e métricas agregadas são enviadas.
+- O contrato foi ampliado com seletores opcionais de formulário, campo e resultado, mantendo as convenções por `data-analytics-*`.
+- Nenhuma ferramenta foi ativada neste lote; a ativação concreta permanece reservada aos pilotos do Lote 3.
+
+### Continuidade obrigatória para o Lote 3 de Analytics
+
+- Reconstruir o projeto usando o ZIP original e aplicar, em ordem, os Lotes 1 e 2.
+- Reler README, `CORE_CANDIDATES.md`, inventário, relatórios dos dois lotes e `docs/analytics/FRONTEND-COLLECTOR.md`.
+- Escolher pilotos que cubram formulário simples, múltiplos formulários, upload/lote, exportação e jornada com resultado.
+- Implementar `HasAnalyticsJourney` somente nos pilotos e adicionar marcadores explícitos às respetivas views.
+- Tratar o piloto como gate: não expandir para as 32 ferramentas antes de validar eventos, privacidade e ausência de duplicidade.
+
+## Lote 5 — Inteligência de produto das ferramentas
+
+### Ajuste complementar aplicado
+
+- O dashboard de ferramentas passou a consumir prioritariamente os eventos da jornada declarada: `tool.opened`, `tool.started`, `tool.calculation.executed`, `tool.result.viewed`, `tool.abandoned`, `tool.validation.error`, `tool.field.completed`, `tool.result.exported` e `tool.shared`.
+- A taxa de conclusão agora segue o contrato do Lote 5: resultados visualizados divididos por aberturas.
+- Foram adicionados comparação com o período anterior, tendência de aberturas e conclusão, ranking de erros, campos problemáticos, etapas de abandono e alertas automáticos.
+- O tempo até cálculo passou a apresentar média, mediana e percentil 95, correlacionando eventos pelo `journey_id` e, na ausência dele, pelas identidades técnicas já existentes.
+- A tela permite segmentar por ferramenta, categoria, origem e dispositivo; a camada de consulta também suporta navegador, país e idioma.
+- Nenhum evento, slug, URL, cálculo de domínio, inventário ou dado digitado foi alterado.
+
+### Continuidade
+
+- Evoluções futuras podem expor a mesma consulta por endpoints JSON internos, caso um consumidor além do dashboard Blade seja criado.
+- Alertas persistentes e notificações externas devem reutilizar o sistema de Insights existente, evitando uma segunda infraestrutura paralela.

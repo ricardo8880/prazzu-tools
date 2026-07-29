@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\MarginMarkupCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
@@ -27,7 +31,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 use App\Tools\MarginMarkupCalculator\Api\Actions\CalculateApiAction;
 
-final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public function apiActions(): array
     {
@@ -39,6 +43,30 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasT
         return new ToolIntegrationManifest(
             publishes: ['pricing-scenario:v1'],
             accepts: ['company-tax-snapshot:v1'],
+        );
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'calculadora-margem-markup',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('reference_date', 'input', selector: '[name="reference_date"]'),
+                    new ToolAnalyticsField('base_cost', 'input', selector: '[name="base_cost"]'),
+                    new ToolAnalyticsField('additional_costs', 'input', selector: '[name="additional_costs"]'),
+                    new ToolAnalyticsField('freight_cost', 'input', selector: '[name="freight_cost"]'),
+                    new ToolAnalyticsField('packaging_cost', 'input', selector: '[name="packaging_cost"]'),
+                    new ToolAnalyticsField('fixed_expenses', 'input', selector: '[name="fixed_expenses"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
         );
     }
 

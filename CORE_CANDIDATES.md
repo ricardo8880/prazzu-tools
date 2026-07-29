@@ -121,3 +121,15 @@ A promoção das três ferramentas para o catálogo oficial não revelou nova du
 ## Expansão — Lote 15 — auditoria final
 
 A auditoria final não identificou nova duplicação de domínio que justifique promoção ao Core. O achado de cache de rotas é responsabilidade de empacotamento/distribuição, não uma capacidade de ferramenta. Os casos dourados adicionados a `OvertimeCalculator` e `DifalIcmsCalculator` reutilizam corretamente `ToolRiskClassifier` e `GoldenCaseSuiteValidator`, já compartilhados no Core, sem criar nova abstração.
+
+## Evolução do Analytics das Ferramentas — Lote 1
+
+A telemetria detalhada foi promovida diretamente ao Core técnico por ser uma capacidade transversal aplicável às 32 ferramentas oficiais. O contrato `App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney` permite que cada módulo declare formulários, etapas, campos e ações sem implementar captura ou persistência próprias. `ToolAnalyticsJourneyRegistry` centraliza a descoberta dessas declarações.
+
+O payload público é protegido por `ToolAnalyticsMetadata`, que mantém uma lista fechada de metadados sem valores digitados ou dados pessoais. Os módulos continuam responsáveis apenas pelos identificadores semânticos de sua jornada; captura, validação, normalização, privacidade e armazenamento permanecem no Core.
+
+## Evolução do Analytics — Lote 2 — capturador frontend compartilhado
+
+A captura de jornada foi consolidada em `resources/js/analytics/tool-journey.js`, consumindo exclusivamente o contrato `HasAnalyticsJourney`. A implementação pertence ao Core porque resolve uma necessidade transversal e não contém regras específicas de ferramenta.
+
+O capturador fica inativo para módulos sem declaração e usa seletores/atributos explícitos, evitando a abstração incorreta de que todo formulário `POST` representa um cálculo. Não surgiu novo candidato: adaptações específicas de campos dinâmicos devem ser observadas nos pilotos e só poderão gerar extensão do contrato após repetição concreta.

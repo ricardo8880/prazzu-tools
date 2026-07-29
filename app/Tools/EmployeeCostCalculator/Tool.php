@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\EmployeeCostCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
@@ -24,13 +28,41 @@ use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
-final class Tool implements HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'custo-funcionario-clt';
 
     public function integrations(): ToolIntegrationManifest
     {
         return new ToolIntegrationManifest(publishes: [], accepts: []);
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'custo-funcionario-clt',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('employee_name', 'input', selector: '[name="employee_name"]'),
+                    new ToolAnalyticsField('department', 'input', selector: '[name="department"]'),
+                    new ToolAnalyticsField('company_profile_id', 'input', selector: '[name="company_profile_id"]'),
+                    new ToolAnalyticsField('scenario_name', 'input', selector: '[name="scenario_name"]'),
+                    new ToolAnalyticsField('regime', 'input', selector: '[name="regime"]'),
+                    new ToolAnalyticsField('rat', 'input', selector: '[name="rat"]'),
+                    new ToolAnalyticsField('third_parties', 'input', selector: '[name="third_parties"]'),
+                    new ToolAnalyticsField('monthly_hours', 'input', selector: '[name="monthly_hours"]'),
+                    new ToolAnalyticsField('import_file', 'input', selector: '[name="import_file"]'),
+                    new ToolAnalyticsField('import_token', 'input', selector: '[name="import_token"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
+        );
     }
 
     public function manifest(): ToolManifest

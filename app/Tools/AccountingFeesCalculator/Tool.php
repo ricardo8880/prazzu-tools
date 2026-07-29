@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\AccountingFeesCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
@@ -28,7 +32,7 @@ use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 use App\Tools\AccountingFeesCalculator\Api\Actions\CalculateApiAction;
 
-final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public function apiActions(): array
     {
@@ -40,6 +44,53 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasT
         return new ToolIntegrationManifest(
             publishes: ['company-operating-profile:v1'],
             accepts: ['company-tax-snapshot:v1'],
+        );
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'calculadora-de-honorarios-contabeis',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('monthly_revenue', 'input', selector: '[name="monthly_revenue"]'),
+                    new ToolAnalyticsField('employees', 'input', selector: '[name="employees"]'),
+                    new ToolAnalyticsField('partners', 'input', selector: '[name="partners"]'),
+                    new ToolAnalyticsField('tax_regime', 'input', selector: '[name="tax_regime"]'),
+                    new ToolAnalyticsField('business_segment', 'input', selector: '[name="business_segment"]'),
+                    new ToolAnalyticsField('monthly_invoices', 'input', selector: '[name="monthly_invoices"]'),
+                    new ToolAnalyticsField('monthly_bank_transactions', 'input', selector: '[name="monthly_bank_transactions"]'),
+                    new ToolAnalyticsField('complexity', 'input', selector: '[name="complexity"]'),
+                    new ToolAnalyticsField('client_company', 'input', selector: '[name="client_company"]'),
+                    new ToolAnalyticsField('client_document', 'input', selector: '[name="client_document"]'),
+                    new ToolAnalyticsField('contact_name', 'input', selector: '[name="contact_name"]'),
+                    new ToolAnalyticsField('accounting_firm', 'input', selector: '[name="accounting_firm"]'),
+                    new ToolAnalyticsField('monthly_fee', 'input', selector: '[name="monthly_fee"]'),
+                    new ToolAnalyticsField('setup_fee', 'input', selector: '[name="setup_fee"]'),
+                    new ToolAnalyticsField('due_day', 'input', selector: '[name="due_day"]'),
+                    new ToolAnalyticsField('validity_days', 'input', selector: '[name="validity_days"]'),
+                    new ToolAnalyticsField('services', 'input', selector: '[name="services"]'),
+                    new ToolAnalyticsField('notes', 'input', selector: '[name="notes"]'),
+                    new ToolAnalyticsField('client_representative', 'input', selector: '[name="client_representative"]'),
+                    new ToolAnalyticsField('accounting_firm_document', 'input', selector: '[name="accounting_firm_document"]'),
+                    new ToolAnalyticsField('accounting_representative', 'input', selector: '[name="accounting_representative"]'),
+                    new ToolAnalyticsField('start_date', 'input', selector: '[name="start_date"]'),
+                    new ToolAnalyticsField('duration_months', 'input', selector: '[name="duration_months"]'),
+                    new ToolAnalyticsField('adjustment_index', 'input', selector: '[name="adjustment_index"]'),
+                    new ToolAnalyticsField('late_fee_percent', 'input', selector: '[name="late_fee_percent"]'),
+                    new ToolAnalyticsField('termination_notice_days', 'input', selector: '[name="termination_notice_days"]'),
+                    new ToolAnalyticsField('includes_lgpd', 'input', selector: '[name="includes_lgpd"]'),
+                    new ToolAnalyticsField('includes_confidentiality', 'input', selector: '[name="includes_confidentiality"]'),
+                    new ToolAnalyticsField('additional_terms', 'input', selector: '[name="additional_terms"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
         );
     }
 

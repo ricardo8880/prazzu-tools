@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\ProfitDistributionCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
@@ -21,9 +25,36 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
-final class Tool implements HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'distribuicao-de-lucros';
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'distribuicao-de-lucros',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('partner_label', 'input', selector: '[name="partner_label"]'),
+                    new ToolAnalyticsField('ownership_percentage', 'input', selector: '[name="ownership_percentage"]'),
+                    new ToolAnalyticsField('accounting_profit', 'input', selector: '[name="accounting_profit"]'),
+                    new ToolAnalyticsField('accumulated_losses', 'input', selector: '[name="accumulated_losses"]'),
+                    new ToolAnalyticsField('reserves_and_unavailable_amounts', 'input', selector: '[name="reserves_and_unavailable_amounts"]'),
+                    new ToolAnalyticsField('adjustments', 'input', selector: '[name="adjustments"]'),
+                    new ToolAnalyticsField('prior_distributions', 'input', selector: '[name="prior_distributions"]'),
+                    new ToolAnalyticsField('intended_distribution', 'input', selector: '[name="intended_distribution"]'),
+                    new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
+        );
+    }
 
     public function manifest(): ToolManifest
     {

@@ -7,6 +7,10 @@ namespace App\Tools\ContractGenerator;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -22,9 +26,51 @@ use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
-final class Tool implements HasHistoryPolicy, HasWebRoutes, HasViews, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasWebRoutes, HasViews, ToolModule
 {
     public const SLUG = 'gerador-de-contratos';
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        $partyFields = [];
+        foreach (['first', 'second'] as $party) {
+            foreach (['name', 'document_type', 'document', 'address', 'city', 'state'] as $field) {
+                $key = "{$party}_{$field}";
+                $partyFields[] = new ToolAnalyticsField($key, 'parties', selector: '[name="'.$key.'"]');
+            }
+        }
+
+        return new ToolAnalyticsJourney(
+            toolSlug: 'gerador-de-contratos',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'draft',
+                    steps: ['parties', 'object', 'commercial', 'legal'],
+                    fields: [
+                        ...$partyFields,
+                        new ToolAnalyticsField('service_description', 'object', selector: '[name="service_description"]'),
+                        new ToolAnalyticsField('asset_description', 'object', selector: '[name="asset_description"]'),
+                        new ToolAnalyticsField('amount', 'commercial', selector: '[name="amount"]'),
+                        new ToolAnalyticsField('payment_terms', 'commercial', selector: '[name="payment_terms"]'),
+                        new ToolAnalyticsField('jurisdiction_city', 'legal', selector: '[name="jurisdiction_city"]'),
+                        new ToolAnalyticsField('jurisdiction_state', 'legal', selector: '[name="jurisdiction_state"]'),
+                        new ToolAnalyticsField('signing_city', 'legal', selector: '[name="signing_city"]'),
+                        new ToolAnalyticsField('signing_date', 'legal', selector: '[name="signing_date"]'),
+                    ],
+                    selector: '[data-analytics-form="draft"]',
+                    resultSelector: '[data-analytics-result="draft"]',
+                ),
+                new ToolAnalyticsForm(
+                    key: 'editor',
+                    steps: ['review'],
+                    fields: [new ToolAnalyticsField('contract_text', 'review', selector: '[name="contract_text"]')],
+                    actions: ['calculate', 'export'],
+                    selector: '[data-analytics-form="editor"]',
+                    resultSelector: '[data-analytics-result="editor"]',
+                ),
+            ],
+        );
+    }
 
     public function manifest(): ToolManifest
     {

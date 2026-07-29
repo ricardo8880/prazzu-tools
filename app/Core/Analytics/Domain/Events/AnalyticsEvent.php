@@ -19,6 +19,7 @@ final readonly class AnalyticsEvent
         public ?string $subjectSlug = null,
         public ?DateTimeInterface $occurredAt = null,
         public ?string $eventId = null,
+        public int $schemaVersion = 1,
     ) {
         if (! preg_match('/^[a-z][a-z0-9_.-]{1,79}$/', $name)) {
             throw new InvalidArgumentException("Nome de evento inválido: {$name}");
@@ -26,6 +27,10 @@ final readonly class AnalyticsEvent
 
         if (! preg_match('/^[a-z][a-z0-9_-]{1,39}$/', $channel)) {
             throw new InvalidArgumentException("Canal de Analytics inválido: {$channel}");
+        }
+
+        if ($schemaVersion < 1) {
+            throw new InvalidArgumentException('A versão do schema do evento deve ser maior que zero.');
         }
     }
 

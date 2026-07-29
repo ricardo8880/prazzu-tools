@@ -61,7 +61,7 @@
             </x-tools.form-panel>
 
             @if ($selectedType !== null && $contractText === null)
-                <form method="POST" action="{{ route('tools.gerador-de-contratos.build') }}" aria-label="Questionário para gerar contrato">
+                <form method="POST" action="{{ route('tools.gerador-de-contratos.build') }}" aria-label="Questionário para gerar contrato" data-analytics-form="draft">
                     @csrf
                     <input type="hidden" name="contract_type" value="{{ $selectedType->value }}">
 
@@ -252,6 +252,7 @@
             @if ($draft !== null)
                 <x-tools.result-panel
                     title="Dados conferidos e contrato gerado"
+                    data-analytics-result="draft"
                     description="As respostas foram normalizadas e usadas para montar o texto contratual abaixo."
                     class="mb-4"
                 >
@@ -297,7 +298,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('tools.gerador-de-contratos.preview') }}" aria-label="Editor e exportação do contrato">
+                    <form method="POST" action="{{ route('tools.gerador-de-contratos.preview') }}" aria-label="Editor e exportação do contrato" data-analytics-form="editor">
                         @csrf
                         <input type="hidden" name="contract_type" value="{{ $selectedType?->value }}">
                         <label for="contract_text" class="form-label">Texto completo do contrato</label>
@@ -320,7 +321,7 @@
                             <button
                                 type="submit"
                                 class="btn btn-outline-primary"
-                                formaction="{{ route('tools.gerador-de-contratos.export.pdf') }}"
+                                formaction="{{ route('tools.gerador-de-contratos.export.pdf') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="pdf"
                                 formtarget="_blank"
                             >
                                 <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
@@ -329,7 +330,7 @@
                             <button
                                 type="submit"
                                 class="btn btn-outline-primary"
-                                formaction="{{ route('tools.gerador-de-contratos.export.docx') }}"
+                                formaction="{{ route('tools.gerador-de-contratos.export.docx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="docx"
                             >
                                 <i class="bi bi-file-earmark-word me-1" aria-hidden="true"></i>
                                 Baixar Word
@@ -341,6 +342,7 @@
 
                 <x-tools.result-panel
                     title="Visualização do contrato"
+                    data-analytics-result="editor"
                     description="Esta prévia usa exatamente o conteúdo atual do editor."
                 >
                     <pre class="border rounded bg-body-tertiary p-3 p-md-4 mb-0 text-wrap overflow-auto" tabindex="0" aria-label="Prévia textual do contrato">{{ $contractText['content'] }}</pre>

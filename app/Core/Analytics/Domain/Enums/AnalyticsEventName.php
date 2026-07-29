@@ -33,6 +33,14 @@ enum AnalyticsEventName: string
 
     case ToolOpened = 'tool.opened';
     case ToolViewed = 'tool.viewed';
+    case ToolStarted = 'tool.started';
+    case ToolStepChanged = 'tool.step.changed';
+    case ToolFieldCompleted = 'tool.field.completed';
+    case ToolValidationError = 'tool.validation.error';
+    case ToolCalculationExecuted = 'tool.calculation.executed';
+    case ToolResultViewed = 'tool.result.viewed';
+    case ToolShared = 'tool.shared';
+    case ToolAbandoned = 'tool.abandoned';
     case ToolCalculationStarted = 'tool.calculation.started';
     case ToolCalculationCompleted = 'tool.calculation.completed';
     case ToolTimeSpent = 'tool.time.spent';

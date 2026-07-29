@@ -393,6 +393,7 @@
 
             @php($result = $validationResult ?? session('validation_result'))
             @if ($result)
+                <span data-analytics-result="main" hidden></span>
                 <section class="mt-4" aria-labelledby="validation-result-title">
                     <div class="card border-{{ $result['valid'] ? 'success' : 'danger' }} shadow-sm">
                         <div class="card-header bg-{{ $result['valid'] ? 'success' : 'danger' }}-subtle border-{{ $result['valid'] ? 'success' : 'danger' }}-subtle">

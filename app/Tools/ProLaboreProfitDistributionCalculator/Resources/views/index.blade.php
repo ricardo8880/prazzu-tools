@@ -82,6 +82,7 @@
     </x-tools.form-panel>
 
     @isset($result)
+    <span data-analytics-result="main" hidden></span>
         @php
             $money = static fn (int $minor): string => 'R$ '.number_format($minor / 100, 2, ',', '.');
             $pro = $result->details['pro_labore'];

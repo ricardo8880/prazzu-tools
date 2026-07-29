@@ -88,6 +88,7 @@
                 </div>
 
                 @if (is_array($result))
+                    <span data-analytics-result="main" hidden></span>
                     <section aria-labelledby="resultado-guia" class="mb-4">
                         <h2 id="resultado-guia" class="h3">Resultado orientativo</h2>
                         <div class="row g-3 mb-3">

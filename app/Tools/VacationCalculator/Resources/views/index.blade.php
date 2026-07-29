@@ -94,6 +94,7 @@
 
     @php($result = $calculationResult ?? session('calculation_result'))
     @if ($result)
+        <span data-analytics-result="main" hidden></span>
         <div class="d-flex flex-wrap gap-2 mb-3">
             <form method="post" action="{{ route('tools.calculadora-ferias.export', 'csv') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Exportar CSV <span class="badge text-bg-primary">Plus</span></button></form>
             <form method="post" action="{{ route('tools.calculadora-ferias.export', 'json') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Exportar JSON</button></form>

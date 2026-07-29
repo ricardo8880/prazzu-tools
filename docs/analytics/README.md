@@ -89,3 +89,13 @@ php artisan route:list
 php artisan test
 php artisan migrate --pretend
 ```
+
+## Contrato de jornada das ferramentas
+
+Ferramentas que precisem declarar formulários, etapas, campos e ações mensuráveis devem implementar `App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney` e devolver um `ToolAnalyticsJourney`.
+
+O contrato declara apenas identificadores semânticos. Rótulos digitados, valores de campos, documentos, nomes, e-mails, CPF, CNPJ e qualquer conteúdo calculado não pertencem à telemetria.
+
+O endpoint `POST /analytics/tools` aceita os eventos públicos de jornada e somente os metadados definidos por `ToolAnalyticsMetadata`. Chaves desconhecidas são descartadas; tipos, limites e identificadores são validados antes da publicação.
+
+A implementação dos módulos deve reutilizar esse contrato em vez de criar listeners, payloads ou serviços de Analytics próprios.

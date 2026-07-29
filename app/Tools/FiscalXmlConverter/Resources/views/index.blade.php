@@ -4,26 +4,20 @@
 @section('meta_description', 'Extraia dados estruturados de NF-e e NFC-e com produtos, NCM, CFOP, impostos, totais e alertas de consistência.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="conversor-fiscal-xml">
-    <nav aria-label="Breadcrumb" class="mb-3">
-        <ol class="breadcrumb prazzu-breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.index') }}">Ferramentas</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Conversor Fiscal de XML</li>
-        </ol>
-    </nav>
-
-    <x-tools.intro icon="file-earmark-code" tone="green" title="Conversor Fiscal de XML" description="Extraia dados estruturados de NF-e e NFC-e com produtos, NCM, CFOP, impostos, totais e alertas de consistência." badge="Grátis" />
-
-    <x-tool-feature-tiers slug="conversor-fiscal-xml" />
-    <x-tools.validation-summary />
+<x-tools.page
+    title="Conversor Fiscal de XML"
+    description="Extraia dados estruturados de NF-e e NFC-e com produtos, NCM, CFOP, impostos, totais e alertas de consistência."
+    icon="file-earmark-code"
+    tone="green"
+    slug="conversor-fiscal-xml"
+>
 
     @if ($conversionSuccess ?? session('conversion_success', false))
         <div class="alert alert-success">XML processado com sucesso. Confira abaixo os dados extraídos.</div>
     @endif
 
     <x-tools.form-panel title="Enviar NF-e ou NFC-e">
-        <form method="POST" action="{{ route('tools.conversor-fiscal-xml.calculate') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('tools.conversor-fiscal-xml.calculate') }}" enctype="multipart/form-data" data-analytics-form="single">
             @csrf
             <div class="mb-3">
                 <label for="xml_file" class="form-label">Arquivo XML fiscal</label>
@@ -37,6 +31,7 @@
 
     @if ($result)
         @php($totals = $result['totals'] ?? [])
+        <div data-analytics-result="single">
         <x-tools.result-panel title="Documento fiscal">
             <div class="row g-3 mb-4">
                 <div class="col-md-3"><strong>Modelo</strong><div>{{ $result['model'] }}</div></div>
@@ -79,6 +74,7 @@
                 </tr>@endforeach</tbody>
             </table></div>
         </x-tools.result-panel>
+        </div>
     @endif
 
     <div class="alert alert-info mt-4">A leitura organiza os dados existentes no XML e não substitui a validação fiscal, a escrituração ou a conferência com os portais oficiais.</div>
@@ -86,7 +82,7 @@
     @if (session('history_message'))<div class="alert alert-success">{{ session('history_message') }}</div>@endif
 
     <x-tools.form-panel title="Processar XMLs em lote (Plus)">
-        <form method="POST" action="{{ route('tools.conversor-fiscal-xml.batch') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('tools.conversor-fiscal-xml.batch') }}" enctype="multipart/form-data" data-analytics-form="batch">
             @csrf
             <div class="mb-3">
                 <label for="xml_files" class="form-label">Arquivos XML</label>
@@ -101,6 +97,7 @@
     @if ($batchSuccess ?? session('batch_success', false))<div class="alert alert-success">Lote processado com sucesso.</div>@endif
     @php($batch = $batchResult ?? session('fiscal_xml_batch_result'))
     @if ($batch)
+        <div data-analytics-result="batch">
         <x-tools.result-panel title="Resumo do lote">
             <div class="row g-3 mb-3">
                 @foreach(['received'=>'Recebidos','processed'=>'Processados','failed'=>'Falhas','items'=>'Itens'] as $key=>$label)
@@ -110,16 +107,17 @@
             <p class="fw-semibold">Total dos documentos: R$ {{ number_format((float)data_get($batch, 'summary.document_total', 0), 2, ',', '.') }}</p>
             @if(!empty($batch['errors']))<div class="alert alert-warning"><ul class="mb-0">@foreach($batch['errors'] as $error)<li>{{ $error['file'] }}: {{ $error['message'] }}</li>@endforeach</ul></div>@endif
             <div class="d-flex flex-wrap gap-2">
-                @foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', ['format' => $format, 'result_token' => $currentResultToken ?? '']) }}">Exportar {{ $label }}</a>@endforeach
+                @foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', ['format' => $format, 'result_token' => $currentResultToken ?? '']) }}" data-analytics-action="export" data-analytics-form="batch" data-analytics-format="{{ $format }}">Exportar {{ $label }}</a>@endforeach
             </div>
         </x-tools.result-panel>
+        </div>
     @elseif ($result)
-        <div class="d-flex flex-wrap gap-2 mb-3">@foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', ['format' => $format, 'result_token' => $currentResultToken ?? '']) }}">Exportar {{ $label }}</a>@endforeach</div>
+        <div class="d-flex flex-wrap gap-2 mb-3">@foreach(['csv'=>'CSV','xlsx'=>'Excel','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', ['format' => $format, 'result_token' => $currentResultToken ?? '']) }}" data-analytics-action="export" data-analytics-form="single" data-analytics-format="{{ $format }}">Exportar {{ $label }}</a>@endforeach</div>
     @endif
 
     @auth
         <p><a href="{{ route('tools.conversor-fiscal-xml.history.index') }}">Ver histórico de processamentos</a></p>
     @endauth
 
-</div>
+</x-tools.page>
 @endsection

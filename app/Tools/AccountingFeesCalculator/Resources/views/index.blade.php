@@ -138,6 +138,7 @@
 
     @php($result = $calculationResult ?? session('calculation_result'))
     @if ($result)
+        <span data-analytics-result="main" hidden></span>
         @php($complexityVariant = match ($result['complexity_level']) { 'Baixa' => 'success', 'Média' => 'warning', 'Alta', 'Muito alta' => 'danger', default => 'secondary' })
 
         <section class="mt-4" aria-labelledby="calculation-result-title">

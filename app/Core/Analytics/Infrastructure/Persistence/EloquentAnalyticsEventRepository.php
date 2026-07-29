@@ -33,7 +33,7 @@ final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
             PlatformAnalyticsEvent::query()->create([
                 'event_id' => $eventId,
                 'event_name' => $canonicalName,
-                'schema_version' => 1,
+                'schema_version' => $event->schemaVersion,
                 'channel' => $event->channel,
                 'subject_type' => $event->subjectType,
                 'subject_id' => is_numeric($event->subjectId) ? (int) $event->subjectId : null,
@@ -132,7 +132,7 @@ final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
             $query->where('path', $context->path);
         }
 
-        foreach (['percentage', 'tool_slug', 'placement', 'position', 'destination', 'method', 'file'] as $key) {
+        foreach (['percentage', 'tool_slug', 'placement', 'position', 'destination', 'method', 'file', 'journey_id', 'form', 'step', 'field', 'action'] as $key) {
             if (array_key_exists($key, $event->properties)) {
                 $query->where("metadata->$key", $event->properties[$key]);
             }

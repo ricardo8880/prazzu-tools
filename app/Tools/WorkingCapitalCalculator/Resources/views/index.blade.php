@@ -7,7 +7,7 @@
 @section('content')
 <x-tools.page :title="$tool->name" :description="$tool->description" :icon="$tool->icon" :slug="$tool->slug">
     <x-tools.form-panel title="Posição financeira atual" description="Informe os saldos na mesma data-base. Use zero quando uma rubrica não existir.">
-        <form method="POST" action="{{ route('tools.capital-de-giro.calculate') }}" class="row g-3">
+        <form method="POST" action="{{ route('tools.capital-de-giro.calculate') }}" class="row g-3" data-analytics-form="main">
             @csrf
             @foreach ([
                 'cash' => ['Caixa e bancos', 'Disponibilidades imediatas.'],
@@ -31,7 +31,7 @@
     </x-tools.form-panel>
 
     @isset($result)
-        <x-tools.result-panel title="Diagnóstico do capital de giro">
+        <x-tools.result-panel title="Diagnóstico do capital de giro" data-analytics-result="main">
             <div class="row g-3">
                 @foreach ($result->summary as $item)
                     <div class="col-12 col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description" /></div>

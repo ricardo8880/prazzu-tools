@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\VacationCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
@@ -26,7 +30,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 use App\Tools\VacationCalculator\Api\Actions\CalculateApiAction;
 
-final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public function apiActions(): array
     {
@@ -38,6 +42,29 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations
     public function integrations(): ToolIntegrationManifest
     {
         return new ToolIntegrationManifest(publishes: [], accepts: []);
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'calculadora-ferias',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('monthly_salary', 'input', selector: '[name="monthly_salary"]'),
+                    new ToolAnalyticsField('acquisition_start_date', 'input', selector: '[name="acquisition_start_date"]'),
+                    new ToolAnalyticsField('vacation_start_date', 'input', selector: '[name="vacation_start_date"]'),
+                    new ToolAnalyticsField('unjustified_absences', 'input', selector: '[name="unjustified_absences"]'),
+                    new ToolAnalyticsField('convert_one_third_to_cash', 'input', selector: '[name="convert_one_third_to_cash"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
+        );
     }
 
     public function manifest(): ToolManifest

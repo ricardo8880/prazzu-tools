@@ -117,6 +117,7 @@
         $result = $calculationResult ?? session('calculation_result');
     @endphp
     @if ($result)
+        <span data-analytics-result="main" hidden></span>
         <section class="mt-4" aria-labelledby="calculation-result-title">
             <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-3">
                 <div>

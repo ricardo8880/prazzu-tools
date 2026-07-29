@@ -46,6 +46,7 @@
         @endif
 
         @isset($result)
+    <span data-analytics-result="main" hidden></span>
             <div class="card mt-4">
                 <div class="card-body">
                     <h2 class="h4">Resultado</h2>

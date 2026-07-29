@@ -22,6 +22,13 @@ class AnalyticsDashboardRequest extends FormRequest
             'period' => ['nullable', Rule::in(['today', 'yesterday', '7', '30', '90', 'custom'])],
             'start' => ['nullable', 'required_if:period,custom', 'date_format:Y-m-d'],
             'end' => ['nullable', 'required_if:period,custom', 'date_format:Y-m-d', 'after_or_equal:start'],
+            'tool' => ['nullable', 'string', 'max:160'],
+            'category' => ['nullable', 'string', 'max:160'],
+            'source' => ['nullable', 'string', 'max:120'],
+            'device_type' => ['nullable', 'string', 'max:30'],
+            'browser' => ['nullable', 'string', 'max:80'],
+            'country_code' => ['nullable', 'string', 'size:2'],
+            'language' => ['nullable', 'string', 'max:20'],
         ];
     }
 

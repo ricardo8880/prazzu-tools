@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\ProLaboreSimulator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
@@ -21,9 +25,33 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
-final class Tool implements HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'simulador-pro-labore-ideal';
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'simulador-pro-labore-ideal',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'),
+                    new ToolAnalyticsField('company_regime', 'input', selector: '[name="company_regime"]'),
+                    new ToolAnalyticsField('gross_pro_labore', 'input', selector: '[name="gross_pro_labore"]'),
+                    new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
+                    new ToolAnalyticsField('other_official_social_security', 'input', selector: '[name="other_official_social_security"]'),
+                    new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
+        );
+    }
 
     public function manifest(): ToolManifest
     {

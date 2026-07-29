@@ -87,6 +87,7 @@
         $factorR = $factorRResult ?? session('factor_r_result');
     @endphp
     @if ($result)
+        <span data-analytics-result="main" hidden></span>
 
         <section class="mt-4" aria-labelledby="calculation-result-title">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">

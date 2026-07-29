@@ -71,6 +71,7 @@
     </x-tools.form-panel>
 
     @isset($result)
+    <span data-analytics-result="main" hidden></span>
         @php($resultArray = $result->toArray())
         <x-tools.result-panel title="Custo do funcionário">
             <div class="row g-3">

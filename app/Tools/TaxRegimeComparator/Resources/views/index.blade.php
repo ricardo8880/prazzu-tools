@@ -32,7 +32,7 @@
         </div>
     @endif
 
-    <form method="post" action="{{ route('tools.comparador-tributario.compare') }}" class="card border-0 shadow-sm">
+    <form method="post" action="{{ route('tools.comparador-tributario.compare') }}" class="card border-0 shadow-sm" data-analytics-form="comparison">
         @csrf
         <div class="card-body p-4">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-2 mb-4">
@@ -111,7 +111,7 @@
 
     @php($result = $comparisonResult ?? session('comparison_result'))
     @if ($result)
-        <section class="mt-5" aria-labelledby="comparison-result-title">
+        <section class="mt-5" aria-labelledby="comparison-result-title" data-analytics-result="comparison">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
                 <div><h2 id="comparison-result-title" class="h3 mb-1">Resultado da comparação</h2><p class="text-body-secondary mb-0">Referência {{ $result['reference_date'] }} · regras {{ $result['rule_version'] }}</p></div>
                 <div class="d-flex flex-wrap gap-2 align-self-lg-start">
@@ -119,12 +119,12 @@
                     @foreach (['csv' => 'CSV', 'json' => 'JSON'] as $format => $label)
                         <form method="post" action="{{ route('tools.comparador-tributario.export', $format) }}">@csrf
                             @foreach(old() as $key => $value) @if(is_scalar($value))<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach
-                            <button class="btn btn-outline-primary btn-sm" type="submit">Exportar {{ $label }}</button>
+                            <button class="btn btn-outline-primary btn-sm" type="submit" data-analytics-action="export" data-analytics-form="comparison" data-analytics-format="{{ $format }}">Exportar {{ $label }}</button>
                         </form>
                     @endforeach
                     <form method="post" action="{{ route('tools.comparador-tributario.report') }}">@csrf
                         @foreach(old() as $key => $value) @if(is_scalar($value))<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach
-                        <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-file-earmark-pdf me-1"></i>Relatório</button>
+                        <button class="btn btn-primary btn-sm" type="submit" data-analytics-action="export" data-analytics-form="comparison" data-analytics-format="pdf"><i class="bi bi-file-earmark-pdf me-1"></i>Relatório</button>
                     </form>
                 </div>
             </div>

@@ -194,11 +194,6 @@
         if (!document.hidden) sendPresence('heartbeat');
     });
 
-    document.querySelectorAll('form').forEach((form) => {
-        if ((form.method || 'get').toLowerCase() !== 'get') {
-            form.addEventListener('submit', () => send('tool.calculation.started'), {once: true});
-        }
-    });
     window.addEventListener('pagehide', () => {
         window.clearInterval(presenceTimer);
         sendPresence('leave', true);

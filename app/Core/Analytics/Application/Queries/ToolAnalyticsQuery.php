@@ -17,33 +17,53 @@ final readonly class ToolAnalyticsQuery
         private AnalyticsEventNameResolver $eventNames,
     ) {}
 
-    /** @return array<string, mixed> */
-    public function overview(AnalyticsPeriod $period): array
+    /** @param array<string, string|null> $filters @return array<string, mixed> */
+    public function overview(AnalyticsPeriod $period, array $filters = []): array
     {
-        $metrics = $this->metrics($period)->keyBy('tool_slug');
-        $tools = $this->catalog->all(false)->map(function (array $tool) use ($metrics): object {
-            $row = $metrics->get($tool['slug']);
+        $current = $this->productMetrics($period, $filters)->keyBy('slug');
+        $previous = $this->productMetrics($period->previous(), $filters)->keyBy('slug');
 
-            return $this->row($tool, $row);
+        $tools = $this->catalog->all(false)->map(function (array $tool) use ($current, $previous): object {
+            $row = $current->get($tool['slug'], $this->emptyMetric($tool['slug']));
+            $before = $previous->get($tool['slug'], $this->emptyMetric($tool['slug']));
+
+            return (object) array_merge($tool, (array) $row, [
+                'opens_trend' => $this->percentageChange($row->opens, $before->opens),
+                'completion_trend' => $this->percentageChange($row->completion_rate, $before->completion_rate),
+                'previous_completion_rate' => $before->completion_rate,
+                'previous_abandonment_rate' => $before->abandonment_rate,
+                'previous_errors' => $before->errors,
+            ]);
         })->sortByDesc('opens')->values();
+
+        $events = $this->filteredEvents($period, $filters)->get();
 
         return [
             'period' => $period,
+            'previous_period' => $period->previous(),
+            'filters' => $filters,
+            'filter_options' => $this->filterOptions($period),
             'summary' => [
-                'tools' => $tools->count(), 'opens' => (int) $tools->sum('opens'),
-                'starts' => (int) $tools->sum('starts'), 'completions' => (int) $tools->sum('completions'),
-                'exports' => (int) $tools->sum('exports'), 'history' => (int) $tools->sum('history'),
-                'plus' => (int) $tools->sum('plus'),
+                'tools' => $tools->count(),
+                'opens' => (int) $tools->sum('opens'),
+                'results' => (int) $tools->sum('results'),
+                'calculations' => (int) $tools->sum('calculations'),
+                'abandonments' => (int) $tools->sum('abandonments'),
+                'errors' => (int) $tools->sum('errors'),
+                'exports' => (int) $tools->sum('exports'),
+                'shares' => (int) $tools->sum('shares'),
             ],
             'tools' => $tools,
             'rankings' => [
                 'most_opened' => $tools->sortByDesc('opens')->take(10)->values(),
-                'most_completed' => $tools->sortByDesc('completions')->take(10)->values(),
-                'highest_conversion' => $tools->filter(fn (object $r) => $r->starts > 0)->sortByDesc('conversion_rate')->take(10)->values(),
+                'highest_completion' => $tools->filter(fn (object $r) => $r->opens > 0)->sortByDesc('completion_rate')->take(10)->values(),
                 'highest_abandonment' => $tools->filter(fn (object $r) => $r->starts > 0)->sortByDesc('abandonment_rate')->take(10)->values(),
-                'most_exported' => $tools->sortByDesc('exports')->take(10)->values(),
+                'most_errors' => $tools->sortByDesc('errors')->take(10)->values(),
             ],
-            'daily' => $this->daily($period),
+            'problem_fields' => $this->problemFields($events),
+            'dropoff_steps' => $this->dropoffSteps($events),
+            'daily' => $this->daily($period, null, $filters),
+            'alerts' => $this->alerts($tools),
         ];
     }
 
@@ -52,12 +72,12 @@ final readonly class ToolAnalyticsQuery
     {
         $tool = $this->catalog->find($slug);
         abort_if($tool === null, 404);
-        $metric = $this->metrics($period, $slug)->first();
+        $metric = $this->productMetrics($period, ['tool' => $slug])->first() ?? $this->emptyMetric($slug);
 
         return [
             'period' => $period,
             'tool' => $tool,
-            'metrics' => $this->row($tool, $metric),
+            'metrics' => (object) array_merge($tool, (array) $metric),
             'daily' => $this->daily($period, $slug),
             'devices' => $this->audienceBreakdown($period, $slug, 'device_type', 'unknown'),
             'sources' => $this->audienceBreakdown($period, $slug, 'source', 'direct')->take(10),
@@ -65,58 +85,150 @@ final readonly class ToolAnalyticsQuery
         ];
     }
 
+    /** @param array<string, string|null> $filters */
+    private function productMetrics(AnalyticsPeriod $period, array $filters): Collection
+    {
+        return $this->filteredEvents($period, $filters)->orderBy('occurred_at')->get()->groupBy('subject_slug')
+            ->map(function (Collection $events, string $slug): object {
+                $count = fn (AnalyticsEventName $name): int => $events->whereIn('event_name', $this->names([$name]))->count();
+                $opens = $count(AnalyticsEventName::ToolOpened);
+                $starts = $count(AnalyticsEventName::ToolStarted);
+                $calculations = $count(AnalyticsEventName::ToolCalculationExecuted);
+                $results = $count(AnalyticsEventName::ToolResultViewed);
+                $abandonments = $count(AnalyticsEventName::ToolAbandoned);
+                $errors = $count(AnalyticsEventName::ToolValidationError);
+                $calculationTimes = $this->elapsedTimes($events, AnalyticsEventName::ToolStarted, AnalyticsEventName::ToolCalculationExecuted);
+                $abandonmentTimes = $this->elapsedTimes($events, AnalyticsEventName::ToolStarted, AnalyticsEventName::ToolAbandoned);
+
+                return (object) [
+                    'slug' => $slug,
+                    'opens' => $opens,
+                    'starts' => $starts,
+                    'calculations' => $calculations,
+                    'results' => $results,
+                    'abandonments' => $abandonments,
+                    'errors' => $errors,
+                    'exports' => $count(AnalyticsEventName::ToolResultExported),
+                    'shares' => $count(AnalyticsEventName::ToolShared),
+                    'fields_completed' => $count(AnalyticsEventName::ToolFieldCompleted),
+                    'completion_rate' => $opens > 0 ? round($results / $opens * 100, 1) : 0.0,
+                    'abandonment_rate' => $starts > 0 ? round($abandonments / $starts * 100, 1) : 0.0,
+                    'export_rate' => $results > 0 ? round($count(AnalyticsEventName::ToolResultExported) / $results * 100, 1) : 0.0,
+                    'share_rate' => $results > 0 ? round($count(AnalyticsEventName::ToolShared) / $results * 100, 1) : 0.0,
+                    'average_calculation_seconds' => $this->average($calculationTimes),
+                    'median_calculation_seconds' => $this->percentile($calculationTimes, 50),
+                    'p95_calculation_seconds' => $this->percentile($calculationTimes, 95),
+                    'average_abandonment_seconds' => $this->average($abandonmentTimes),
+                ];
+            })->values();
+    }
+
+    private function emptyMetric(string $slug): object
+    {
+        return (object) [
+            'slug' => $slug, 'opens' => 0, 'starts' => 0, 'calculations' => 0, 'results' => 0,
+            'abandonments' => 0, 'errors' => 0, 'exports' => 0, 'shares' => 0, 'fields_completed' => 0,
+            'completion_rate' => 0.0, 'abandonment_rate' => 0.0, 'export_rate' => 0.0, 'share_rate' => 0.0,
+            'average_calculation_seconds' => 0.0, 'median_calculation_seconds' => 0.0,
+            'p95_calculation_seconds' => 0.0, 'average_abandonment_seconds' => 0.0,
+        ];
+    }
+
+    private function elapsedTimes(Collection $events, AnalyticsEventName $from, AnalyticsEventName $to): array
+    {
+        $fromNames = $this->names([$from]);
+        $toNames = $this->names([$to]);
+        $durations = [];
+
+        foreach ($events->groupBy(fn ($event) => data_get($event->metadata, 'journey_id') ?: $event->analytics_session_id ?: $event->visitor_id ?: $event->session_id ?: 'anonymous') as $journey) {
+            $start = $journey->first(fn ($event) => in_array($event->event_name, $fromNames, true));
+            $end = $start ? $journey->first(fn ($event) => in_array($event->event_name, $toNames, true) && $event->occurred_at->greaterThanOrEqualTo($start->occurred_at)) : null;
+            if ($start && $end) {
+                $durations[] = $start->occurred_at->diffInSeconds($end->occurred_at);
+            }
+        }
+
+        sort($durations);
+        return $durations;
+    }
+
+    private function problemFields(Collection $events): Collection
+    {
+        return $events->filter(fn ($event) => in_array($event->event_name, $this->names([AnalyticsEventName::ToolValidationError, AnalyticsEventName::ToolAbandoned]), true))
+            ->filter(fn ($event) => filled(data_get($event->metadata, 'field')))
+            ->groupBy(fn ($event) => $event->subject_slug.'|'.data_get($event->metadata, 'field').'|'.data_get($event->metadata, 'step', '—'))
+            ->map(function (Collection $rows): object {
+                $first = $rows->first();
+                return (object) [
+                    'tool' => $first->subject_slug, 'field' => data_get($first->metadata, 'field'),
+                    'step' => data_get($first->metadata, 'step', '—'),
+                    'errors' => $rows->whereIn('event_name', $this->names([AnalyticsEventName::ToolValidationError]))->count(),
+                    'abandonments' => $rows->whereIn('event_name', $this->names([AnalyticsEventName::ToolAbandoned]))->count(),
+                ];
+            })->sortByDesc(fn ($row) => $row->errors + $row->abandonments)->take(20)->values();
+    }
+
+    private function dropoffSteps(Collection $events): Collection
+    {
+        $abandoned = $events->whereIn('event_name', $this->names([AnalyticsEventName::ToolAbandoned]));
+        $total = max(1, $abandoned->count());
+        return $abandoned->groupBy(fn ($event) => data_get($event->metadata, 'step', 'unknown'))
+            ->map(fn (Collection $rows, string $step) => (object) ['step' => $step, 'total' => $rows->count(), 'percentage' => round($rows->count() / $total * 100, 1)])
+            ->sortByDesc('total')->values();
+    }
+
+    private function alerts(Collection $tools): Collection
+    {
+        return $tools->flatMap(function (object $tool): array {
+            $alerts = [];
+            if ($tool->completion_trend !== null && $tool->completion_trend <= -20) $alerts[] = (object) ['severity' => 'danger', 'tool' => $tool->name, 'message' => 'Queda de conclusão superior a 20%.'];
+            if ($tool->previous_errors > 0 && $tool->errors > $tool->previous_errors * 1.2) $alerts[] = (object) ['severity' => 'warning', 'tool' => $tool->name, 'message' => 'Crescimento anormal de erros.'];
+            if ($tool->opens >= 10 && $tool->completion_rate < 20) $alerts[] = (object) ['severity' => 'warning', 'tool' => $tool->name, 'message' => 'Muitas aberturas e poucos resultados visualizados.'];
+            return $alerts;
+        })->values();
+    }
+
+    /** @param array<string, string|null> $filters */
+    private function filteredEvents(AnalyticsPeriod $period, array $filters): Builder
+    {
+        $query = $this->base($period)->whereNotNull('subject_slug');
+        $columns = ['source', 'device_type', 'browser', 'country_code', 'language'];
+        foreach ($columns as $column) if (filled($filters[$column] ?? null)) $query->where($column, $filters[$column]);
+        if (filled($filters['tool'] ?? null)) $query->where('subject_slug', $filters['tool']);
+        if (filled($filters['category'] ?? null)) {
+            $slugs = $this->catalog->all(false)->where('category', $filters['category'])->pluck('slug');
+            $query->whereIn('subject_slug', $slugs);
+        }
+        return $query;
+    }
+
+    private function filterOptions(AnalyticsPeriod $period): array
+    {
+        $base = $this->base($period);
+        $distinct = fn (string $column): Collection => (clone $base)->whereNotNull($column)->where($column, '!=', '')->distinct()->orderBy($column)->pluck($column);
+        return [
+            'tools' => $this->catalog->all(false)->map(fn (array $tool) => ['slug' => $tool['slug'], 'name' => $tool['name']]),
+            'categories' => $this->catalog->all(false)->pluck('category')->filter()->unique()->sort()->values(),
+            'sources' => $distinct('source'), 'devices' => $distinct('device_type'), 'browsers' => $distinct('browser'),
+            'countries' => $distinct('country_code'), 'languages' => $distinct('language'),
+        ];
+    }
+
     private function audienceBreakdown(AnalyticsPeriod $period, string $slug, string $column, string $fallback): Collection
     {
-        $events = $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]);
-
-        return $this->base($period, $slug)
-            ->whereIn('event_name', $events)
-            ->selectRaw("COALESCE($column, ?) as label", [$fallback])
-            ->selectRaw(AnalyticsMetricSql::countDistinctCase($events, "COALESCE(subject_slug, '')").' as total', $events)
-            ->groupBy($column)
-            ->orderByDesc('total')
-            ->get();
+        $events = $this->names([AnalyticsEventName::ToolOpened]);
+        return $this->base($period, $slug)->whereIn('event_name', $events)->selectRaw("COALESCE($column, ?) as label", [$fallback])
+            ->selectRaw('COUNT(*) as total')->groupBy($column)->orderByDesc('total')->get();
     }
 
-    private function row(array $tool, ?object $metric): object
+    /** @param array<string, string|null> $filters */
+    private function daily(AnalyticsPeriod $period, ?string $slug = null, array $filters = []): Collection
     {
-        $starts = (int) ($metric?->starts ?? 0);
-        $completed = (int) ($metric?->completions ?? 0);
-        $abandoned = max(0, $starts - $completed);
-
-        return (object) array_merge($tool, [
-            'opens' => (int) ($metric?->opens ?? 0), 'starts' => $starts, 'completions' => $completed,
-            'exports' => (int) ($metric?->exports ?? 0), 'history' => (int) ($metric?->history ?? 0),
-            'registrations' => (int) ($metric?->registrations ?? 0),
-            'plus' => (int) ($metric?->plus ?? 0), 'unique_visitors' => (int) ($metric?->unique_visitors ?? 0),
-            'average_time_seconds' => (int) round((float) ($metric?->average_time_seconds ?? 0)),
-            'abandonments' => $abandoned,
-            'conversion_rate' => $starts > 0 ? round($completed / $starts * 100, 1) : 0.0,
-            'abandonment_rate' => $starts > 0 ? round($abandoned / $starts * 100, 1) : 0.0,
-        ]);
-    }
-
-    private function metrics(AnalyticsPeriod $period, ?string $slug = null): Collection
-    {
-        return $this->base($period, $slug)->whereNotNull('subject_slug')->selectRaw('subject_slug as tool_slug')
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]).' as exports', $this->names([AnalyticsEventName::ToolResultExported, AnalyticsEventName::BusinessDocumentValidatorBatchExported]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolHistoryViewed]).' as history', $this->names([AnalyticsEventName::ToolHistoryViewed]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::AccountCreated]).' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]).' as plus', $this->names([AnalyticsEventName::ToolPlusUsed, AnalyticsEventName::SubscriptionStarted, AnalyticsEventName::SubscriptionCreated]))
-            ->selectRaw('COUNT(DISTINCT visitor_id) as unique_visitors')
-            ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::ToolTimeSpent])).') THEN '.$this->jsonNumber('seconds').' END) as average_time_seconds', $this->names([AnalyticsEventName::ToolTimeSpent]))
-            ->groupBy('subject_slug')->get();
-    }
-
-    private function daily(AnalyticsPeriod $period, ?string $slug = null): Collection
-    {
-        return $this->base($period, $slug)->selectRaw($this->dateExpression().' as day')
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]).' as opens', $this->names([AnalyticsEventName::ToolOpened, AnalyticsEventName::ToolViewed]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationStarted]).' as starts', $this->names([AnalyticsEventName::ToolCalculationStarted]))
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]).' as completions', $this->names([AnalyticsEventName::ToolCalculationCompleted, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed]))
+        if ($slug) $filters['tool'] = $slug;
+        return $this->filteredEvents($period, $filters)->selectRaw('DATE(occurred_at) as day')
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolOpened]).' as opens', $this->names([AnalyticsEventName::ToolOpened]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolResultViewed]).' as results', $this->names([AnalyticsEventName::ToolResultViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::ToolAbandoned]).' as abandonments', $this->names([AnalyticsEventName::ToolAbandoned]))
             ->groupBy('day')->orderBy('day')->get();
     }
 
@@ -127,40 +239,22 @@ final readonly class ToolAnalyticsQuery
     }
 
     /** @param list<AnalyticsEventName> $events @return list<string> */
-    private function names(array $events): array
-    {
-        return $this->eventNames->expand($events);
-    }
+    private function names(array $events): array { return $this->eventNames->expand($events); }
 
     /** @param list<AnalyticsEventName> $events */
-    private function distinctMetric(array $events): string
-    {
-        return AnalyticsMetricSql::countDistinctCase($this->names($events), "COALESCE(subject_slug, '')");
-    }
+    private function sumCase(array $events): string { return 'SUM(CASE WHEN event_name IN ('.implode(',', array_fill(0, count($this->names($events)), '?')).') THEN 1 ELSE 0 END)'; }
 
-    /** @param list<AnalyticsEventName> $events */
-    private function sumCase(array $events): string
+    private function average(array $values): float { return $values === [] ? 0.0 : round(array_sum($values) / count($values), 1); }
+    private function percentile(array $values, int $percentile): float
     {
-        return 'SUM(CASE WHEN event_name IN ('.$this->placeholders($this->names($events)).') THEN 1 ELSE 0 END)';
+        if ($values === []) return 0.0;
+        $index = ($percentile / 100) * (count($values) - 1);
+        $lower = (int) floor($index); $upper = (int) ceil($index);
+        return round($values[$lower] + (($values[$upper] - $values[$lower]) * ($index - $lower)), 1);
     }
-
-    /** @param list<string> $values */
-    private function placeholders(array $values): string
+    private function percentageChange(float|int $current, float|int $previous): ?float
     {
-        return implode(',', array_fill(0, max(1, count($values)), '?'));
-    }
-
-    private function dateExpression(): string
-    {
-        return match (PlatformAnalyticsEvent::query()->getConnection()->getDriverName()) {
-            'pgsql' => 'DATE(occurred_at)', default => 'DATE(occurred_at)'
-        };
-    }
-
-    private function jsonNumber(string $key): string
-    {
-        return match (PlatformAnalyticsEvent::query()->getConnection()->getDriverName()) {
-            'pgsql' => "CAST(metadata->>'$key' AS DECIMAL(12,2))", 'sqlite' => "CAST(json_extract(metadata, '$.$key') AS REAL)", default => "CAST(JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.$key')) AS DECIMAL(12,2))"
-        };
+        if ((float) $previous === 0.0) return (float) $current === 0.0 ? 0.0 : null;
+        return round((($current - $previous) / $previous) * 100, 1);
     }
 }

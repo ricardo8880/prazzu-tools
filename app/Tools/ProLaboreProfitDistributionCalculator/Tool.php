@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\ProLaboreProfitDistributionCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
@@ -26,7 +30,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 use App\Tools\ProLaboreProfitDistributionCalculator\Api\Actions\CalculateApiAction;
 
-final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public function apiActions(): array
     {
@@ -40,6 +44,38 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasToolIntegrations
         return new ToolIntegrationManifest(
             publishes: [],
             accepts: [],
+        );
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'calculadora-pro-labore-distribuicao-lucros',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'),
+                    new ToolAnalyticsField('company_regime', 'input', selector: '[name="company_regime"]'),
+                    new ToolAnalyticsField('partner_label', 'input', selector: '[name="partner_label"]'),
+                    new ToolAnalyticsField('ownership_percentage', 'input', selector: '[name="ownership_percentage"]'),
+                    new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
+                    new ToolAnalyticsField('gross_pro_labore', 'input', selector: '[name="gross_pro_labore"]'),
+                    new ToolAnalyticsField('other_official_social_security', 'input', selector: '[name="other_official_social_security"]'),
+                    new ToolAnalyticsField('accounting_profit', 'input', selector: '[name="accounting_profit"]'),
+                    new ToolAnalyticsField('accumulated_losses', 'input', selector: '[name="accumulated_losses"]'),
+                    new ToolAnalyticsField('reserves_and_unavailable_amounts', 'input', selector: '[name="reserves_and_unavailable_amounts"]'),
+                    new ToolAnalyticsField('adjustments', 'input', selector: '[name="adjustments"]'),
+                    new ToolAnalyticsField('prior_distributions', 'input', selector: '[name="prior_distributions"]'),
+                    new ToolAnalyticsField('intended_distribution', 'input', selector: '[name="intended_distribution"]'),
+                    new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
         );
     }
 

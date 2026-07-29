@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tools\SimplesNacionalCalculator;
 
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
@@ -30,7 +34,7 @@ use App\Tools\SimplesNacionalCalculator\Infrastructure\Providers\SimplesNacional
 
 use App\Tools\SimplesNacionalCalculator\Api\Actions\CalculateApiAction;
 
-final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public function apiActions(): array
     {
@@ -46,6 +50,32 @@ final class Tool implements HasApiActions, HasHistoryPolicy, HasMigrations, HasS
         return new ToolIntegrationManifest(
             publishes: ['company-tax-snapshot:v1'],
             accepts: ['company-operating-profile:v1'],
+        );
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(
+            toolSlug: 'calculadora-simples-nacional',
+            forms: [
+                new ToolAnalyticsForm(
+                    key: 'main',
+                    steps: ['input'],
+                    fields: [
+                    new ToolAnalyticsField('use_factor_r', 'input', selector: '[name="use_factor_r"]'),
+                    new ToolAnalyticsField('annex', 'input', selector: '[name="annex"]'),
+                    new ToolAnalyticsField('rbt12', 'input', selector: '[name="rbt12"]'),
+                    new ToolAnalyticsField('monthly_revenue', 'input', selector: '[name="monthly_revenue"]'),
+                    new ToolAnalyticsField('payroll_12', 'input', selector: '[name="payroll_12"]'),
+                    new ToolAnalyticsField('annexes', 'input', selector: '[name="annexes"]'),
+                    new ToolAnalyticsField('monthly_growth', 'input', selector: '[name="monthly_growth"]'),
+                    new ToolAnalyticsField('reference_month', 'input', selector: '[name="reference_month"]'),
+                    ],
+                    actions: ['calculate', 'export', 'share'],
+                    selector: 'form[action*="calculate"]',
+                    resultSelector: '[data-analytics-result="main"]',
+                ),
+            ],
         );
     }
 

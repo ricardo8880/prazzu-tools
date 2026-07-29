@@ -32,6 +32,41 @@ final class ToolAnalyticsTest extends TestCase
     }
 
 
+    public function test_browser_can_publish_a_journey_event_without_persisting_sensitive_values(): void
+    {
+        $this->postJson(route('analytics.tools.track'), [
+            'tool' => 'calculadora-margem-markup',
+            'event' => AnalyticsEventName::ToolFieldCompleted->value,
+            'schema_version' => 1,
+            'metadata' => [
+                'journey_id' => 'journey-1',
+                'form' => 'main',
+                'step' => 'input',
+                'field' => 'monthly_revenue',
+                'completion_percentage' => 25,
+                'cpf' => '12345678900',
+                'value' => '1000,00',
+            ],
+        ])->assertNoContent();
+
+        $event = PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::ToolFieldCompleted->value)
+            ->firstOrFail();
+
+        self::assertSame('main', $event->metadata['form']);
+        self::assertSame('monthly_revenue', $event->metadata['field']);
+        self::assertArrayNotHasKey('cpf', $event->metadata);
+        self::assertArrayNotHasKey('value', $event->metadata);
+    }
+
+    public function test_browser_rejects_unknown_tool_journey_events(): void
+    {
+        $this->postJson(route('analytics.tools.track'), [
+            'tool' => 'calculadora-margem-markup',
+            'event' => 'tool.payload.captured',
+        ])->assertUnprocessable();
+    }
+
     public function test_repeated_tool_events_in_the_same_session_are_deduplicated(): void
     {
         $payload = [
@@ -67,4 +102,31 @@ final class ToolAnalyticsTest extends TestCase
         ]);
         $this->get(route('admin.analytics.tools'))->assertOk()->assertSee('Analytics das Ferramentas');
     }
+    public function test_product_dashboard_uses_declared_journey_events_and_period_comparison(): void
+    {
+        $this->signInAsInternalAdministrator();
+        $slug = 'calculadora-margem-markup';
+        $journey = fake()->uuid();
+
+        foreach ([
+            [AnalyticsEventName::ToolOpened, now()->subMinutes(4), []],
+            [AnalyticsEventName::ToolStarted, now()->subMinutes(3), ['journey_id' => $journey]],
+            [AnalyticsEventName::ToolCalculationExecuted, now()->subMinutes(2), ['journey_id' => $journey]],
+            [AnalyticsEventName::ToolResultViewed, now()->subMinute(), ['journey_id' => $journey]],
+            [AnalyticsEventName::ToolValidationError, now(), ['journey_id' => $journey, 'field' => 'purchase_price', 'step' => 'input']],
+        ] as [$event, $occurredAt, $metadata]) {
+            PlatformAnalyticsEvent::query()->create([
+                'event_id' => fake()->uuid(), 'event_name' => $event->value, 'schema_version' => 1,
+                'channel' => 'tool', 'subject_type' => 'tool', 'subject_slug' => $slug,
+                'metadata' => $metadata, 'occurred_at' => $occurredAt,
+            ]);
+        }
+
+        $this->get(route('admin.analytics.tools', ['period' => '7', 'tool' => $slug]))
+            ->assertOk()
+            ->assertSee('100,0%')
+            ->assertSee('purchase_price')
+            ->assertSee('60,0s');
+    }
+
 }
