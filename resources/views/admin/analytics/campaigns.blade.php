@@ -6,7 +6,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
         <div><h1 class="h3 mb-1">Campanhas inteligentes</h1><p class="text-body-secondary mb-0">Contextos, palavras-chave, ferramentas e conversões atribuídas.</p></div>
-        <form method="GET" class="d-flex gap-2 align-items-end"><div><label class="form-label small">Período</label><select name="period" class="form-select" onchange="this.form.submit()">@foreach(['1'=>'Hoje','7'=>'7 dias','30'=>'30 dias','90'=>'90 dias'] as $value=>$label)<option value="{{ $value }}" @selected($selected_period === $value)>{{ $label }}</option>@endforeach</select></div></form>
+        <form method="GET" class="d-flex gap-2 align-items-end"><div><label class="form-label small">Período</label><select name="period" class="form-select" data-submit-on-change>@foreach(['1'=>'Hoje','7'=>'7 dias','30'=>'30 dias','90'=>'90 dias'] as $value=>$label)<option value="{{ $value }}" @selected($selected_period === $value)>{{ $label }}</option>@endforeach</select></div></form>
     </div>
 
     <div class="d-flex flex-wrap gap-2 mb-4"><a class="badge text-bg-light border text-decoration-none" href="{{ route('admin.analytics.acquisition') }}">Aquisição geral</a><span class="badge text-bg-primary">Campanhas inteligentes</span></div>

@@ -49,7 +49,7 @@
                     <div class="d-flex flex-wrap gap-2 mt-3">
                         <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $calculation->id) }}">@csrf<button class="btn btn-sm btn-primary"><i class="bi bi-copy me-1"></i>Duplicar</button></form>
                         <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation->id) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning"><i class="bi bi-star me-1"></i>{{ $calculation->favorite ? 'Desfavoritar' : 'Favoritar' }}</button></form>
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation->id) }}" onsubmit="return confirm('Remover este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
+                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation->id) }}" data-confirm="Remover este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
                     </div>
                 </div>
             </article>

@@ -14,7 +14,7 @@
         <form method="post" action="{{ route('tools.calculadora-margem-markup.history.repeat', $run->id) }}">@csrf<button class="btn btn-primary"><i class="bi bi-arrow-repeat me-1"></i>Repetir</button></form>
         @if($type === 'single')<a class="btn btn-outline-primary" target="_blank" href="{{ route('tools.calculadora-margem-markup.history.pdf', $run->id) }}"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>@endif
         <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
-        <form method="post" action="{{ route('tools.calculadora-margem-markup.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este registro?')">@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
+        <form method="post" action="{{ route('tools.calculadora-margem-markup.history.destroy', $run->id) }}" data-confirm="Excluir este registro?">@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
     </div>
 
     @if($type === 'single')

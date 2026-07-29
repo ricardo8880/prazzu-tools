@@ -18,6 +18,13 @@ final class ToolAnalyticsEventClassifier
         'analyze-consistency',
         'lookup-company',
         'validate-state-registration',
+        'compare',
+        'issue',
+        'batch.issue',
+        'plan',
+        'simulate',
+        'scenarios.compare',
+        'models.compare',
     ];
 
     public function classify(string $action, string $method): ?AnalyticsEventName

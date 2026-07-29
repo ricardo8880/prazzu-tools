@@ -198,7 +198,7 @@
     @include('tools-calculadora-margem-markup::partials.batch-calculator')
 </div>
 @if ($taxSnapshotIntegration)
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         document.querySelector('[data-apply-effective-rate]')?.addEventListener('click', () => {
             const rate = String(@json($taxSnapshotIntegration->data['effective_rate']))
                 .replace('%', '').replace('.', '').replace(',', '.').trim();

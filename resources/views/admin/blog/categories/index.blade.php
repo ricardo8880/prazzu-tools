@@ -61,7 +61,7 @@
                             <td class="text-end pe-4">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Ações da categoria">
                                     <a class="btn btn-outline-primary" href="{{ route('admin.blog.categories.edit', $category) }}">Editar</a>
-                                    <form method="post" action="{{ route('admin.blog.categories.destroy', $category) }}" onsubmit="return confirm('Excluir esta categoria permanentemente?')">
+                                    <form method="post" action="{{ route('admin.blog.categories.destroy', $category) }}" data-confirm="Excluir esta categoria permanentemente?">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-outline-danger rounded-start-0" type="submit" aria-label="Excluir {{ $category->name }}" @disabled($category->posts_count > 0)><i class="bi bi-trash"></i></button>

@@ -44,7 +44,7 @@
                             <div class="d-inline-flex flex-wrap justify-content-end gap-1">
                                 <a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.show', $run->id) }}" aria-label="Ver detalhes"><i class="bi bi-eye"></i></a>
                                 <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.repeat', $run->id) }}">@csrf<button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Repetir cálculo"><i class="bi bi-arrow-repeat"></i></button></form>
-                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir cálculo"><i class="bi bi-trash"></i></button></form>
+                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir cálculo"><i class="bi bi-trash"></i></button></form>
                             </div>
                         </td>
                     </tr>

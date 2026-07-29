@@ -82,7 +82,7 @@
         @if($singleResult)
             <a class="btn btn-outline-secondary" href="{{ route('tools.custo-funcionario-clt.history.print', $run->id) }}">Imprimir / PDF</a>
         @endif
-        <form method="post" action="{{ route('tools.custo-funcionario-clt.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este cálculo?')">
+        <form method="post" action="{{ route('tools.custo-funcionario-clt.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo?">
             @csrf
             @method('DELETE')
             <button class="btn btn-outline-danger" type="submit">Excluir</button>

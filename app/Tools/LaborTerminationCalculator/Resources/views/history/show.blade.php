@@ -22,7 +22,7 @@
         <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.repeat', $run->id) }}">@csrf<button class="btn btn-primary" type="submit"><i class="bi bi-arrow-repeat me-1"></i>Repetir cálculo</button></form>
         <a class="btn btn-outline-primary" target="_blank" href="{{ route('tools.calculadora-de-rescisao.history.pdf', $run->id) }}"><i class="bi bi-file-earmark-pdf me-1"></i>Exportar PDF</a>
         <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.index') }}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
-        <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este cálculo do histórico?')">@csrf @method('DELETE')<button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash me-1"></i>Excluir</button></form>
+        <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash me-1"></i>Excluir</button></form>
     </div>
 
     <section class="prazzu-tool-card mb-4">

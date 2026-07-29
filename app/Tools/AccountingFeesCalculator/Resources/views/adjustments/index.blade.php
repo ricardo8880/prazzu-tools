@@ -144,7 +144,7 @@
                                             <td class="fw-semibold text-primary text-nowrap">R$ {{ number_format(data_get($adjustment->result, 'adjusted_value_cents') / 100, 2, ',', '.') }}</td>
                                             <td>{{ \Carbon\Carbon::createFromFormat('Y-m', data_get($adjustment->input, 'reference_period'))->format('m/Y') }}</td>
                                             <td class="text-end">
-                                                <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.delete', $adjustment->id) }}" onsubmit="return confirm('Remover este reajuste do histórico?')">
+                                                <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.delete', $adjustment->id) }}" data-confirm="Remover este reajuste do histórico?">
                                                     @csrf @method('DELETE')
                                                     <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir reajuste"><i class="bi bi-trash"></i></button>
                                                 </form>

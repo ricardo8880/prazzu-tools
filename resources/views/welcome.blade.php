@@ -110,7 +110,7 @@
 
 @push('scripts')
 @if($acquisitionContext)
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (() => {
     const endpoint = document.querySelector('.prazzu-home')?.dataset.acquisitionEndpoint;
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;

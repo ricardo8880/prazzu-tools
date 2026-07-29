@@ -196,7 +196,7 @@ const instrumentForm = ({config, definition, root, transport, journeyId}) => {
         // Storage may be unavailable in private or restricted browser contexts.
     }
 
-    if (result && pending) {
+    if (pending) {
         try {
             const previous = JSON.parse(pending);
             const executionTime = Math.max(0, Math.min(3600000, Date.now() - Number(previous.submitted_at || Date.now())));
@@ -204,13 +204,25 @@ const instrumentForm = ({config, definition, root, transport, journeyId}) => {
                 journey_id: previous.journey_id || journeyId,
                 form: definition.key,
                 action: 'calculate',
-                calculation_success: true,
+                calculation_success: Boolean(result),
                 execution_time_ms: executionTime,
             };
-            transport.send('tool.calculation.executed', metadata);
-            transport.send('tool.result.viewed', metadata);
-            resultViewed = true;
-            try { sessionStorage.removeItem(pendingKey); } catch {}
+
+            if (result) {
+                transport.send('tool.calculation.executed', metadata);
+                transport.send('tool.result.viewed', metadata);
+                resultViewed = true;
+            } else if (config.has_validation_errors) {
+                transport.send('tool.calculation.executed', metadata);
+                transport.send('tool.validation.error', {
+                    ...metadata,
+                    validation_error: 'server_validation',
+                });
+            }
+
+            if (result || config.has_validation_errors) {
+                try { sessionStorage.removeItem(pendingKey); } catch {}
+            }
         } catch {
             try { sessionStorage.removeItem(pendingKey); } catch {}
         }
@@ -223,7 +235,12 @@ const instrumentForm = ({config, definition, root, transport, journeyId}) => {
 
             const metadata = {...snapshotMetadata(), action};
             if (action === 'export') {
-                transport.send('tool.result.exported', {...metadata, export_format: element.dataset.analyticsFormat || 'unknown'});
+                // Server-backed downloads are recorded only after the response is
+                // successfully delivered by CaptureAnalyticsContext. Tracking the
+                // click as well would double count exports and count failed ones.
+                if (element.dataset.analyticsClientOnly === 'true') {
+                    transport.send('tool.result.exported', {...metadata, export_format: element.dataset.analyticsFormat || 'unknown'});
+                }
             } else if (action === 'share') {
                 transport.send('tool.shared', {...metadata, share_method: element.dataset.analyticsMethod || 'unknown'});
             }

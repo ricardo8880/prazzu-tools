@@ -238,7 +238,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (() => {
     document.querySelectorAll('[data-ordered-selector]').forEach((root) => {
         const select = root.querySelector('[data-selector-options]');

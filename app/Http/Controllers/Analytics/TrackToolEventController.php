@@ -25,8 +25,14 @@ final class TrackToolEventController extends Controller
 
         $properties = $metadata->sanitize((array) ($data['metadata'] ?? []));
 
-        if (isset($data['seconds']) && ! isset($properties['abandoned_after_seconds'])) {
-            $properties['abandoned_after_seconds'] = (int) $data['seconds'];
+        if (isset($data['seconds'])) {
+            $legacySecondsKey = $data['event'] === \App\Core\Analytics\Domain\Enums\AnalyticsEventName::ToolTimeSpent->value
+                ? 'time_spent_seconds'
+                : 'abandoned_after_seconds';
+
+            if (! isset($properties[$legacySecondsKey])) {
+                $properties[$legacySecondsKey] = (int) $data['seconds'];
+            }
         }
 
         $analytics->track(new AnalyticsEvent(

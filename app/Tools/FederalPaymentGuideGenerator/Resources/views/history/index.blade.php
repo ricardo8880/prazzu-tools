@@ -21,7 +21,7 @@
                     <form method="post" action="{{ route('tools.gerador-darf-gps.history.repeat', $run->id) }}">@csrf<button class="btn btn-sm btn-primary">Reutilizar</button></form>
                     @foreach(['csv' => 'CSV', 'json' => 'JSON', 'pdf' => 'PDF'] as $format => $label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.gerador-darf-gps.history.export', [$run->id, $format]) }}">{{ $label }}</a>@endforeach
                     <form method="post" action="{{ route('tools.gerador-darf-gps.history.favorite', $run->id) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning">{{ $run->favorite ? 'Desfavoritar' : 'Favoritar' }}</button></form>
-                    <form method="post" action="{{ route('tools.gerador-darf-gps.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este cálculo?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Excluir</button></form>
+                    <form method="post" action="{{ route('tools.gerador-darf-gps.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Excluir</button></form>
                 </div>
             </div></article>
         @empty

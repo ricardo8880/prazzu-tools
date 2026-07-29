@@ -311,7 +311,7 @@
                                                                 @method('PATCH')
                                                                 <button class="btn btn-sm btn-outline-primary" type="submit">Restaurar</button>
                                                             </form>
-                                                            <form method="POST" action="{{ route('organizations.invitations.purge', [$organization, $invitation]) }}" onsubmit="return confirm('Apagar este convite definitivamente? Esta ação não pode ser desfeita.')">
+                                                            <form method="POST" action="{{ route('organizations.invitations.purge', [$organization, $invitation]) }}" data-confirm="Apagar este convite definitivamente? Esta ação não pode ser desfeita.">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button class="btn btn-sm btn-outline-danger" type="submit">Apagar</button>
@@ -338,7 +338,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('click', async (event) => {
     const button = event.target.closest('[data-copy-target], [data-copy-value]');
     if (!button) return;

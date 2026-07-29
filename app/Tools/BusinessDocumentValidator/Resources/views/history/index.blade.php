@@ -39,7 +39,7 @@
                         <td>{{ data_get($run->result, 'summary.invalid', 0) }}</td>
                         <td>{{ data_get($run->result, 'summary.with_inconsistencies', 0) }}</td>
                         <td class="text-end">
-                            <form method="post" action="{{ route('tools.validador-de-cnpj.history.destroy', $run->id) }}" class="d-inline" onsubmit="return confirm('Excluir esta validação do histórico?')">
+                            <form method="post" action="{{ route('tools.validador-de-cnpj.history.destroy', $run->id) }}" class="d-inline" data-confirm="Excluir esta validação do histórico?">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir validação">

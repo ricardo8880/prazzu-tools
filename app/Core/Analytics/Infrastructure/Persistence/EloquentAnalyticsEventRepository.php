@@ -105,12 +105,15 @@ final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
             'visitor_id' => $context->visitorId,
             'user_id' => $context->userId,
             'session_id' => $context->laravelSessionId,
-            // The analytics cookie is attached to the response. A second request made
-            // before the client persists that cookie can receive fresh visitor/session
-            // UUIDs. Keep the network fingerprint as an alternative identity, while
-            // the event, subject, metadata and short time window still scope the match.
-            'ip_hash' => $context->ipHash,
         ], static fn (mixed $value): bool => $value !== null && $value !== '');
+
+        // IP addresses are shared by offices, mobile carriers, proxies and VPNs.
+        // Using the IP hash together with stable identities would merge independent
+        // visitors who perform the same action within the deduplication window.
+        // Keep it only as a last-resort identity when no session/user identifier exists.
+        if ($identities === [] && $context->ipHash !== null && $context->ipHash !== '') {
+            $identities['ip_hash'] = $context->ipHash;
+        }
 
         if ($identities !== []) {
             $query->where(function ($identityQuery) use ($identities): void {

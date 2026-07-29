@@ -89,7 +89,7 @@
                                         <button class="btn btn-sm btn-outline-secondary" type="submit">Duplicar</button>
                                     </form>
                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.acquisition.contexts.edit', $context['id']) }}">Editar</a>
-                                    <form method="post" action="{{ route('admin.acquisition.contexts.destroy', $context['id']) }}" onsubmit="return confirm('Excluir este contexto permanentemente?')">
+                                    <form method="post" action="{{ route('admin.acquisition.contexts.destroy', $context['id']) }}" data-confirm="Excluir este contexto permanentemente?">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir {{ $context['name'] }}"><i class="bi bi-trash"></i></button>

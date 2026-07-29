@@ -52,6 +52,7 @@ final class TrackToolEventRequest extends FormRequest
             'metadata.validation_error' => ['sometimes', 'string', 'max:120', 'regex:/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/'],
             'metadata.execution_time_ms' => ['sometimes', 'integer', 'min:0', 'max:3600000'],
             'metadata.calculation_success' => ['sometimes', 'boolean'],
+            'metadata.time_spent_seconds' => ['sometimes', 'integer', 'min:0', 'max:86400'],
             'metadata.abandoned_after_seconds' => ['sometimes', 'integer', 'min:0', 'max:86400'],
             'metadata.export_format' => ['sometimes', 'string', 'max:30', 'regex:/^[a-z0-9_-]+$/'],
             'metadata.share_method' => ['sometimes', 'string', 'max:30', 'regex:/^[a-z0-9_-]+$/'],

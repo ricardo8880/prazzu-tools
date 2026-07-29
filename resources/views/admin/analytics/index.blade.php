@@ -305,7 +305,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
     document.querySelector('[data-period-select]')?.addEventListener('change', function () {
         document.querySelectorAll('[data-custom-period]').forEach(function (element) {
             element.classList.toggle('d-none', this.value !== 'custom');

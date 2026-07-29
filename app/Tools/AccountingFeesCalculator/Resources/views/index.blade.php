@@ -519,7 +519,7 @@
     @endif
 </div>
 @if ($taxSnapshotIntegration)
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         document.querySelector('[data-apply-tax-snapshot]')?.addEventListener('click', () => {
             document.getElementById('monthly_revenue').value = @json($taxSnapshotIntegration->data['monthly_revenue']);
             document.getElementById('tax_regime').value = 'simples_nacional';

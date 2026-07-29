@@ -55,7 +55,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (() => {
     const root = document.querySelector('[data-realtime-dashboard]');
     if (!root) return;

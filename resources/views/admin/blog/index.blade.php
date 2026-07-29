@@ -75,7 +75,7 @@
                                         </a>
                                     @endif
                                     <a class="btn btn-outline-primary" href="{{ route('admin.blog.posts.edit', $post) }}">Editar</a>
-                                    <form method="post" action="{{ route('admin.blog.posts.destroy', $post) }}" onsubmit="return confirm('Excluir esta postagem permanentemente?')">
+                                    <form method="post" action="{{ route('admin.blog.posts.destroy', $post) }}" data-confirm="Excluir esta postagem permanentemente?">
                                         @csrf
                                         @method('DELETE')
                                         <button class="btn btn-outline-danger rounded-start-0" type="submit" aria-label="Excluir {{ $post->title }}">

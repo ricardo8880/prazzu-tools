@@ -113,7 +113,7 @@
 </template>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded', () => {
     const rows = document.getElementById('scenario-rows');
     const template = document.getElementById('scenario-row-template');

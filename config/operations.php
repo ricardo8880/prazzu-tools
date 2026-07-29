@@ -14,7 +14,7 @@ return [
         ),
         'value' => env(
             'SECURITY_CONTENT_POLICY',
-            "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+            "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' 'nonce-__CSP_NONCE__' https://cdn.jsdelivr.net; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
         ),
     ],
     'hsts' => env('SECURITY_HSTS', 'max-age=31536000; includeSubDomains'),

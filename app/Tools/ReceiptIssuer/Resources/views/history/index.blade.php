@@ -38,7 +38,7 @@
                                 <button class="btn btn-sm btn-primary" type="submit">Reutilizar</button>
                             </form>
                             <a class="btn btn-sm btn-outline-success" href="{{ route('tools.emissor-de-recibos.history.export.pdf', $run->id) }}" target="_blank">Exportar PDF</a>
-                            <form method="POST" action="{{ route('tools.emissor-de-recibos.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este recibo do histórico?')">
+                            <form method="POST" action="{{ route('tools.emissor-de-recibos.history.destroy', $run->id) }}" data-confirm="Excluir este recibo do histórico?">
                                 @csrf
                                 @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>

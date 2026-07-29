@@ -64,6 +64,18 @@
 
     @stack('head')
 
+    @php
+        $analyticsRouteName = request()->route()?->getName();
+        $analyticsToolSlug = is_string($analyticsRouteName) && str_starts_with($analyticsRouteName, 'tools.')
+            ? (explode('.', $analyticsRouteName)[1] ?? null)
+            : null;
+    @endphp
+    <meta name="analytics-audience-endpoint" content="{{ route('analytics.audience.capture') }}">
+    @if($analyticsToolSlug)
+        <meta name="analytics-tool-endpoint" content="{{ route('analytics.tools.track') }}">
+        <meta name="analytics-presence-endpoint" content="{{ route('analytics.tools.presence') }}">
+        <meta name="analytics-tool-slug" content="{{ $analyticsToolSlug }}">
+    @endif
 
 </head>
 <body class="prazzu-app">
@@ -131,78 +143,6 @@
 
 @stack('scripts')
 
-<script>
-(() => {
-    if (sessionStorage.getItem('prazzu-audience-context') === '1') return;
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null;
-    const screenResolution = `${window.screen.width}x${window.screen.height}`;
-    const language = navigator.language || null;
-    fetch(@json(route('analytics.audience.capture')), {
-        method: 'POST',
-        credentials: 'same-origin',
-        keepalive: true,
-        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json'},
-        body: JSON.stringify({timezone, screen_resolution: screenResolution, language})
-    }).then((response) => {
-        if (response.ok) sessionStorage.setItem('prazzu-audience-context', '1');
-    }).catch(() => {});
-})();
-</script>
-
-@php
-    $analyticsRouteName = request()->route()?->getName();
-    $analyticsToolSlug = is_string($analyticsRouteName) && str_starts_with($analyticsRouteName, 'tools.')
-        ? (explode('.', $analyticsRouteName)[1] ?? null)
-        : null;
-@endphp
-@if($analyticsToolSlug)
-<script>
-(() => {
-    const endpoint = @json(route('analytics.tools.track'));
-    const presenceEndpoint = @json(route('analytics.tools.presence'));
-    const tool = @json($analyticsToolSlug);
-    const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
-    const startedAt = Date.now();
-    const presenceId = crypto.randomUUID();
-    const send = (event, properties = {}) => fetch(endpoint, {
-        method: 'POST', credentials: 'same-origin', keepalive: true,
-        headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json'},
-        body: JSON.stringify({tool, event, ...properties})
-    }).catch(() => {});
-
-    const sendPresence = (action, beacon = false) => {
-        const body = JSON.stringify({_token: csrf, presence_id: presenceId, tool, action});
-        if (beacon && navigator.sendBeacon) {
-            const payload = new Blob([body], {type: 'application/json'});
-            navigator.sendBeacon(presenceEndpoint, payload);
-            return;
-        }
-        fetch(presenceEndpoint, {
-            method: 'POST', credentials: 'same-origin', keepalive: true,
-            headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json'},
-            body
-        }).catch(() => {});
-    };
-
-    sendPresence('heartbeat');
-    const presenceTimer = window.setInterval(() => {
-        if (!document.hidden) sendPresence('heartbeat');
-    }, 10000);
-
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) sendPresence('heartbeat');
-    });
-
-    window.addEventListener('pagehide', () => {
-        window.clearInterval(presenceTimer);
-        sendPresence('leave', true);
-        const seconds = Math.min(86400, Math.max(0, Math.round((Date.now() - startedAt) / 1000)));
-        if (seconds >= 3) send('tool.time.spent', {seconds});
-    }, {once: true});
-})();
-</script>
-@endif
 
 </body>
 </html>

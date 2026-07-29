@@ -102,7 +102,7 @@
 @endisset
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (() => {
  const root=document.getElementById('simulation-scenarios'); if(!root)return;
  const reindex=()=>{[...root.querySelectorAll('[data-scenario]')].forEach((s,si)=>{[...s.querySelectorAll('[data-period]')].forEach((p,pi)=>{[...p.querySelectorAll('[data-partner]')].forEach((r,ri)=>{r.querySelectorAll('[name]').forEach(i=>i.name=i.name.replace(/scenarios\[\d+\]\[periods\]\[\d+\]\[partners\]\[\d+\]/,`scenarios[${si}][periods][${pi}][partners][${ri}]`));});p.querySelectorAll(':scope > .row [name]').forEach(i=>i.name=i.name.replace(/scenarios\[\d+\]\[periods\]\[\d+\]/,`scenarios[${si}][periods][${pi}]`));});s.querySelector('.scenario-name').name=`scenarios[${si}][name]`;});};

@@ -41,11 +41,12 @@
             .print-grid { grid-template-columns: 1fr; }
         }
     </style>
+    @vite('resources/js/print-page.js')
 </head>
 <body>
 <div class="print-toolbar" aria-label="Ações do relatório">
-    <button class="print-button" type="button" onclick="history.back()">{{ $document->backLabel }}</button>
-    <button class="print-button print-button--primary" type="button" onclick="window.print()">{{ $document->printLabel }}</button>
+    <button class="print-button" type="button" data-browser-action="back">{{ $document->backLabel }}</button>
+    <button class="print-button print-button--primary" type="button" data-browser-action="print">{{ $document->printLabel }}</button>
 </div>
 
 <main class="print-sheet">

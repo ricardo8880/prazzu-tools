@@ -10,7 +10,7 @@ final class ToolAnalyticsMetadata
     public const ALLOWED_KEYS = [
         'journey_id', 'form', 'step', 'field', 'action', 'completion_percentage',
         'filled_fields', 'total_fields', 'validation_error', 'execution_time_ms',
-        'calculation_success', 'abandoned_after_seconds', 'export_format', 'share_method',
+        'calculation_success', 'time_spent_seconds', 'abandoned_after_seconds', 'export_format', 'share_method',
     ];
 
     /** @param array<string, mixed> $metadata

@@ -41,7 +41,7 @@
 </div>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (() => {
     const name = document.getElementById('name');
     const slug = document.getElementById('slug');

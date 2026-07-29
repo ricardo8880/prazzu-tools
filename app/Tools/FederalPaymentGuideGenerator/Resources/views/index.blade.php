@@ -150,7 +150,7 @@
     </div>
 
     @push('scripts')
-        <script>
+        <script nonce="{{ $cspNonce ?? '' }}">
             document.addEventListener('DOMContentLoaded', () => {
                 const type = document.getElementById('guide_type');
                 const code = document.getElementById('revenue_code');

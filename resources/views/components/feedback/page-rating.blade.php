@@ -91,7 +91,7 @@
 
 @once
     @push('scripts')
-        <script>
+        <script nonce="{{ $cspNonce ?? '' }}">
         (() => {
             const root = document.querySelector('[data-page-feedback]');
             if (!root || root.dataset.initialized === 'true') return;

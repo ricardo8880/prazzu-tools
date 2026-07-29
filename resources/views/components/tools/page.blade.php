@@ -15,6 +15,7 @@
         [
             'endpoint' => route('analytics.tools.track'),
             'csrf' => csrf_token(),
+            'has_validation_errors' => $errors->any(),
         ],
     );
 @endphp
@@ -73,6 +74,6 @@
     @endif
 
     @if ($analyticsConfig !== null)
-        <script type="application/json" data-tool-analytics-config>{!! json_encode($analyticsConfig, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
+        <script type="application/json" data-tool-analytics-config nonce="{{ $cspNonce ?? '' }}">{!! json_encode($analyticsConfig, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
     @endif
 </div>

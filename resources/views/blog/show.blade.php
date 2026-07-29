@@ -27,7 +27,7 @@
     <meta property="article:section" content="{{ $post->category }}">
     @if ($post->author)<meta property="article:author" content="{{ $post->author->name }}">@endif
     @foreach ($post->related_keywords ?? [] as $keyword)<meta property="article:tag" content="{{ $keyword }}">@endforeach
-    <script type="application/ld+json">{!! json_encode([
+    <script type="application/ld+json" nonce="{{ $cspNonce ?? '' }}">{!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'BlogPosting',
         'headline' => $post->title,
@@ -42,7 +42,7 @@
         'image' => $articleImage ? [$articleImage] : null,
         'keywords' => collect([$post->primary_keyword, ...($post->related_keywords ?? [])])->filter()->values()->implode(', '),
     ], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) !!}</script>
-    <script type="application/ld+json">{!! json_encode([
+    <script type="application/ld+json" nonce="{{ $cspNonce ?? '' }}">{!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'BreadcrumbList',
         'itemListElement' => [
@@ -117,7 +117,7 @@
 
 @push('scripts')
 @if (empty($isPreview))
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (() => {
     const endpoint = @json(route('blog.analytics'));
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;

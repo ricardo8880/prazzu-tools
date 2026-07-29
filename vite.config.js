@@ -33,6 +33,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/print-page.js',
                 'resources/js/admin/blog-editor.js',
                 ...toolAssetEntries(),
             ],

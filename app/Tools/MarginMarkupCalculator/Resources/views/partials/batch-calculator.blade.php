@@ -81,7 +81,7 @@
 <template id="batch-row-template">@include('tools-calculadora-margem-markup::partials.batch-row', ['index' => '__INDEX__', 'product' => []])</template>
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded', () => {
     const body = document.getElementById('batch-products');
     const template = document.getElementById('batch-row-template');

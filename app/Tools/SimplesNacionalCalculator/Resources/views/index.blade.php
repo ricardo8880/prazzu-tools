@@ -281,7 +281,7 @@
 
 </x-tools.page>
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded', () => {
     const factorSwitch = document.getElementById('use_factor_r');
     const annexField = document.getElementById('annex-field');
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 @if ($operatingProfileIntegration)
-    <script>
+    <script nonce="{{ $cspNonce ?? '' }}">
         document.querySelector('[data-apply-operating-profile]')?.addEventListener('click', () => {
             document.getElementById('monthly_revenue').value = @json($operatingProfileIntegration->data['monthly_revenue']);
             document.getElementById('monthly_revenue').focus();

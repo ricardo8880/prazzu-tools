@@ -91,12 +91,19 @@ final readonly class ToolAnalyticsQuery
         return $this->filteredEvents($period, $filters)->orderBy('occurred_at')->get()->groupBy('subject_slug')
             ->map(function (Collection $events, string $slug): object {
                 $count = fn (AnalyticsEventName $name): int => $events->whereIn('event_name', $this->names([$name]))->count();
+                $unique = fn (AnalyticsEventName $name): int => $this->uniqueAudienceCount($events, $name);
                 $opens = $count(AnalyticsEventName::ToolOpened);
                 $starts = $count(AnalyticsEventName::ToolStarted);
                 $calculations = $count(AnalyticsEventName::ToolCalculationExecuted);
                 $results = $count(AnalyticsEventName::ToolResultViewed);
                 $abandonments = $count(AnalyticsEventName::ToolAbandoned);
                 $errors = $count(AnalyticsEventName::ToolValidationError);
+                $uniqueOpens = $unique(AnalyticsEventName::ToolOpened);
+                $uniqueStarts = $unique(AnalyticsEventName::ToolStarted);
+                $uniqueResults = $unique(AnalyticsEventName::ToolResultViewed);
+                $uniqueAbandonments = $unique(AnalyticsEventName::ToolAbandoned);
+                $uniqueExports = $unique(AnalyticsEventName::ToolResultExported);
+                $uniqueShares = $unique(AnalyticsEventName::ToolShared);
                 $calculationTimes = $this->elapsedTimes($events, AnalyticsEventName::ToolStarted, AnalyticsEventName::ToolCalculationExecuted);
                 $abandonmentTimes = $this->elapsedTimes($events, AnalyticsEventName::ToolStarted, AnalyticsEventName::ToolAbandoned);
 
@@ -111,16 +118,40 @@ final readonly class ToolAnalyticsQuery
                     'exports' => $count(AnalyticsEventName::ToolResultExported),
                     'shares' => $count(AnalyticsEventName::ToolShared),
                     'fields_completed' => $count(AnalyticsEventName::ToolFieldCompleted),
-                    'completion_rate' => $opens > 0 ? round($results / $opens * 100, 1) : 0.0,
-                    'abandonment_rate' => $starts > 0 ? round($abandonments / $starts * 100, 1) : 0.0,
-                    'export_rate' => $results > 0 ? round($count(AnalyticsEventName::ToolResultExported) / $results * 100, 1) : 0.0,
-                    'share_rate' => $results > 0 ? round($count(AnalyticsEventName::ToolShared) / $results * 100, 1) : 0.0,
+                    'completion_rate' => $this->conversionRate($uniqueResults, $uniqueOpens),
+                    'abandonment_rate' => $this->conversionRate($uniqueAbandonments, $uniqueStarts),
+                    'export_rate' => $this->conversionRate($uniqueExports, $uniqueResults),
+                    'share_rate' => $this->conversionRate($uniqueShares, $uniqueResults),
                     'average_calculation_seconds' => $this->average($calculationTimes),
                     'median_calculation_seconds' => $this->percentile($calculationTimes, 50),
                     'p95_calculation_seconds' => $this->percentile($calculationTimes, 95),
                     'average_abandonment_seconds' => $this->average($abandonmentTimes),
                 ];
             })->values();
+    }
+
+    private function uniqueAudienceCount(Collection $events, AnalyticsEventName $name): int
+    {
+        return $events->whereIn('event_name', $this->names([$name]))
+            ->map(fn ($event): string => (string) (
+                $event->analytics_session_id
+                ?: $event->visitor_id
+                ?: $event->session_id
+                ?: $event->user_id
+                ?: $event->event_id
+                ?: 'event-'.$event->id
+            ))
+            ->unique()
+            ->count();
+    }
+
+    private function conversionRate(int $converted, int $base): float
+    {
+        if ($base <= 0) {
+            return 0.0;
+        }
+
+        return round(min(100, $converted / $base * 100), 1);
     }
 
     private function emptyMetric(string $slug): object

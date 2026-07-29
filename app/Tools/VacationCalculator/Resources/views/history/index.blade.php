@@ -11,7 +11,7 @@
             <div class="d-flex flex-wrap gap-2">
                 <form method="post" action="{{ route('tools.calculadora-ferias.history.repeat', $run->id) }}">@csrf<button class="btn btn-sm btn-primary">Reutilizar</button></form>
                 @foreach(['csv'=>'CSV','json'=>'JSON','pdf'=>'PDF'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-ferias.history.export', [$run->id,$format]) }}">{{ $label }}</a>@endforeach
-                <form method="post" action="{{ route('tools.calculadora-ferias.history.destroy', $run->id) }}" onsubmit="return confirm('Excluir este cálculo?')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Excluir</button></form>
+                <form method="post" action="{{ route('tools.calculadora-ferias.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Excluir</button></form>
             </div>
         </div></article>
     @empty<div class="alert alert-light border">Nenhum cálculo salvo ainda.</div>@endforelse
