@@ -1,0 +1,1 @@
+document.addEventListener("click",e=>{const t=e.target.closest("[data-browser-action]");t instanceof HTMLElement&&(t.dataset.browserAction==="print"?window.print():t.dataset.browserAction==="back"&&history.back())});

@@ -9150,3 +9150,26 @@ body.tox-dialog__disable-scroll {
         transition: none;
     }
 }
+
+/* Correção de interação — ações de exportação/PDF nas ferramentas.
+ * Os widgets flutuantes devem receber cliques apenas nos próprios controles,
+ * nunca em áreas transparentes que possam ficar sobre o conteúdo da página. */
+.prazzu-page-feedback {
+    pointer-events: none;
+}
+
+.prazzu-page-feedback__trigger,
+.prazzu-page-feedback__panel,
+.prazzu-page-feedback__panel * {
+    pointer-events: auto;
+}
+
+.tool-page form:has([data-analytics-action="export"]),
+.tool-page [data-analytics-action="export"],
+.tool-page a[href*="export"],
+.tool-page a[href*="pdf"],
+.tool-page button[data-browser-action="print"] {
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
+}

@@ -20,10 +20,10 @@
             </p>
 
             <div class="d-flex flex-wrap justify-content-center gap-2">
-                <a class="btn prazzu-btn-primary btn-lg" href="{{ route('tools.index') }}">
+                <a class="btn prazzu-btn-primary" href="{{ route('tools.index') }}">
                     <i class="bi bi-grid-3x3-gap me-2" aria-hidden="true"></i>Explorar ferramentas
                 </a>
-                <a class="btn prazzu-btn-outline btn-lg" href="{{ route('plans') }}">
+                <a class="btn prazzu-btn-outline" href="{{ route('plans') }}">
                     Conhecer o Prazzu Plus
                 </a>
             </div>
@@ -239,7 +239,7 @@
                     Novas ferramentas, conteúdos e recursos serão adicionados continuamente. Nosso objetivo é transformar
                     o Prazzu Tools na plataforma de referência para quem trabalha com contabilidade.
                 </p>
-                <a class="btn btn-light btn-lg" href="{{ route('tools.index') }}">
+                <a class="btn btn-light" href="{{ route('tools.index') }}">
                     Conhecer as ferramentas
                 </a>
             </div>

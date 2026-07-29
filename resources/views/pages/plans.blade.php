@@ -77,7 +77,7 @@
                                 <li class="d-flex gap-2"><i class="bi bi-stars prazzu-plans__spark flex-shrink-0" aria-hidden="true"></i><span>Recursos Plus liberados durante a fase de lançamento</span></li>
                             </ul>
 
-                            <a class="btn prazzu-btn-outline btn-lg w-100 mt-auto" href="{{ route('tools.index') }}">
+                            <a class="btn prazzu-btn-outline w-100 mt-auto" href="{{ route('tools.index') }}">
                                 Explorar ferramentas gratuitas
                             </a>
                         </div>
@@ -137,7 +137,7 @@
                                 <li class="col-12 col-md-6 d-flex gap-2"><i class="bi bi-check-circle-fill prazzu-plans__check flex-shrink-0" aria-hidden="true"></i><span>Novas ferramentas incluídas</span></li>
                             </ul>
 
-                            <button class="btn prazzu-btn-primary btn-lg w-100 mt-auto" type="button" disabled>
+                            <button class="btn prazzu-btn-primary w-100 mt-auto" type="button" disabled>
                                 <i class="bi bi-lock me-1" aria-hidden="true"></i>Assinaturas em breve
                             </button>
                             <p class="small text-body-secondary text-center mt-2 mb-0">Nenhum pagamento será realizado nesta etapa.</p>
@@ -210,11 +210,11 @@
 
                             <div class="d-flex flex-wrap gap-2">
                                 @auth
-                                    <a class="btn prazzu-btn-outline btn-lg" href="{{ route('organizations.create') }}">
+                                    <a class="btn prazzu-btn-outline" href="{{ route('organizations.create') }}">
                                         <i class="bi bi-building-add me-1" aria-hidden="true"></i>Criar conta empresarial
                                     </a>
                                 @else
-                                    <a class="btn prazzu-btn-outline btn-lg" href="{{ route('login') }}">
+                                    <a class="btn prazzu-btn-outline" href="{{ route('login') }}">
                                         <i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Entrar para criar uma empresa
                                     </a>
                                 @endauth
@@ -341,7 +341,7 @@
                 <p class="text-body-secondary mx-auto mb-4" style="max-width: 700px;">
                     Aproveite o lançamento para usar gratuitamente as soluções Essenciais completas e todos os recursos Plus disponíveis.
                 </p>
-                <a class="btn prazzu-btn-primary btn-lg" href="{{ route('tools.index') }}">
+                <a class="btn prazzu-btn-primary" href="{{ route('tools.index') }}">
                     <i class="bi bi-grid-3x3-gap me-1" aria-hidden="true"></i>Conhecer as ferramentas
                 </a>
             </div>
