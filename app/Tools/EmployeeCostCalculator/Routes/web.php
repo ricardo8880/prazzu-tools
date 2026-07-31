@@ -11,6 +11,8 @@ Route::prefix('ferramentas/custo-funcionario-clt')
         Route::get('/', [ToolController::class, 'index'])->name('index');
         Route::post('/calcular', [ToolController::class, 'calculate'])
             ->middleware('tool.feature:custo-funcionario-clt,calculate')->name('calculate');
+        Route::post('/baixar/pdf', [ToolController::class, 'downloadPdf'])->name('download.pdf');
+        Route::post('/baixar/excel', [ToolController::class, 'downloadExcel'])->name('download.excel');
         Route::post('/imprimir', [ToolController::class, 'printCurrent'])
             ->middleware('tool.feature:custo-funcionario-clt,print_report')->name('print');
         Route::post('/exportar/csv', [ToolController::class, 'exportCurrent'])

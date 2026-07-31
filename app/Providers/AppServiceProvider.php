@@ -8,6 +8,10 @@ use App\Console\Commands\MakeToolCommand;
 use App\Console\Commands\PurgeExpiredToolRunsCommand;
 use App\Core\Audit\Contracts\AuditLogger;
 use App\Core\Audit\Services\DatabaseAuditLogger;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\DompdfPdfExporter;
+use App\Core\Export\Services\PhpSpreadsheetExporter;
 use App\Core\Imports\Contracts\ImportDatasetStore;
 use App\Core\Imports\Infrastructure\CacheImportDatasetStore;
 use App\Core\Imports\Services\CompositeTabularFileReader;
@@ -47,6 +51,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AuditLogger::class, DatabaseAuditLogger::class);
+        $this->app->bind(PdfExporter::class, DompdfPdfExporter::class);
+        $this->app->bind(SpreadsheetExporter::class, PhpSpreadsheetExporter::class);
         $this->app->bind(ToolRunRecorder::class, DatabaseToolRunRecorder::class);
         $this->app->bind(ToolRunHistory::class, DatabaseToolRunHistory::class);
         $this->app->bind(ToolRunFavorites::class, DatabaseToolRunFavorites::class);

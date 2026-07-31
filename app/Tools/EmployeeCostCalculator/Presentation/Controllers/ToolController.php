@@ -6,8 +6,11 @@ namespace App\Tools\EmployeeCostCalculator\Presentation\Controllers;
 
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Data\PrintableDocument;
 use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Services\ToolResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\ToolProfiles\Services\ToolProfileManager;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
@@ -453,6 +456,41 @@ final class ToolController extends Controller
     }
 
     /** @param array<string, mixed> $input @param array<string, mixed> $result */
+
+
+    public function downloadPdf(
+        ExecuteToolRequest $request,
+        CalculateTool $action,
+        PdfExporter $exporter,
+        ToolResultExportFactory $documents,
+    ): \Symfony\Component\HttpFoundation\Response {
+        $input = $request->validated();
+        $result = $action->execute($input);
+
+        return $exporter->download($documents->pdf(
+            title: 'Relatório de Custo de Funcionário CLT',
+            filename: 'custo-funcionario-clt-'.now()->format('Y-m-d'),
+            result: $result,
+            input: $input,
+        ));
+    }
+
+    public function downloadExcel(
+        ExecuteToolRequest $request,
+        CalculateTool $action,
+        SpreadsheetExporter $exporter,
+        ToolResultExportFactory $documents,
+    ): \Symfony\Component\HttpFoundation\Response {
+        $input = $request->validated();
+        $result = $action->execute($input);
+
+        return $exporter->download($documents->spreadsheet(
+            filename: 'custo-funcionario-clt-'.now()->format('Y-m-d'),
+            result: $result,
+            input: $input,
+        ));
+    }
+
     private function printableDocument(array $input, array $result, ?array $company, string $title): PrintableDocument
     {
         $summary = collect($result['summary'] ?? [])->keyBy('key');

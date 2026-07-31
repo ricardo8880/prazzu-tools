@@ -408,3 +408,25 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 
 - Evoluções futuras podem expor a mesma consulta por endpoints JSON internos, caso um consumidor além do dashboard Blade seja criado.
 - Alertas persistentes e notificações externas devem reutilizar o sistema de Insights existente, evitando uma segunda infraestrutura paralela.
+
+## Exportação universal — Lote 1 — Core PDF e Excel por bibliotecas
+
+### Resultado
+
+- O estado foi reconstruído a partir do ZIP original e conferido contra README, `CORE_CANDIDATES.md`, inventário executável e relatórios existentes.
+- Foram declaradas as dependências oficiais `dompdf/dompdf` e `phpoffice/phpspreadsheet`.
+- Foram criados contratos compartilhados para PDF e Excel em `App\Core\Export\Contracts`.
+- PDF passa a ser produzido no backend por Dompdf, sem `window.print()`, impressão do navegador ou captura da página.
+- Excel passa a ser produzido como `.xlsx` real por PhpSpreadsheet, sem CSV renomeado, HTML ou OOXML artesanal.
+- Os DTOs do Core transportam somente o conteúdo do resultado e opções do documento; layout, formulário, menu e demais partes da plataforma não fazem parte da API.
+- Os serviços foram registrados no container Laravel por interfaces.
+- O legado existente ainda não foi removido porque as ferramentas serão migradas nos lotes seguintes.
+
+### Continuidade obrigatória para o Lote 2
+
+- Reconstruir novamente o projeto usando o ZIP original e aplicar este Lote 1 antes de qualquer alteração.
+- Reler README, `CORE_CANDIDATES.md`, este documento e o inventário executável.
+- Instalar/atualizar as dependências Composer e gerar `composer.lock` no ambiente com acesso ao repositório de pacotes.
+- Migrar somente o primeiro grupo de oito ferramentas para os contratos oficiais.
+- Cada ferramenta deve exportar exatamente o mesmo objeto de resultado usado na tela.
+- Não utilizar `BrowserPrintExporter`, `window.print()`, `TabularExportService::excel()` ou `TabularExportService::xlsx()` em novas migrações.

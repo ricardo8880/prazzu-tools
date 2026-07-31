@@ -133,3 +133,13 @@ O payload público é protegido por `ToolAnalyticsMetadata`, que mantém uma lis
 A captura de jornada foi consolidada em `resources/js/analytics/tool-journey.js`, consumindo exclusivamente o contrato `HasAnalyticsJourney`. A implementação pertence ao Core porque resolve uma necessidade transversal e não contém regras específicas de ferramenta.
 
 O capturador fica inativo para módulos sem declaração e usa seletores/atributos explícitos, evitando a abstração incorreta de que todo formulário `POST` representa um cálculo. Não surgiu novo candidato: adaptações específicas de campos dinâmicos devem ser observadas nos pilotos e só poderão gerar extensão do contrato após repetição concreta.
+
+## Exportação oficial por bibliotecas — Lote 1
+
+A necessidade de PDF e Excel em todas as 32 ferramentas confirmou a promoção definitiva das duas capacidades para o Core técnico:
+
+- `App\Core\Export\Contracts\PdfExporter`, implementado por `DompdfPdfExporter` com `dompdf/dompdf`;
+- `App\Core\Export\Contracts\SpreadsheetExporter`, implementado por `PhpSpreadsheetExporter` com `phpoffice/phpspreadsheet`;
+- DTOs compartilhados `PdfDocument`, `SpreadsheetDocument` e `SpreadsheetSheet` definem apenas conteúdo, arquivo e opções de formato.
+
+As implementações antigas baseadas em impressão do navegador e construção manual de OOXML permanecem temporariamente apenas para compatibilidade durante a migração. Nenhuma ferramenta nova deve utilizá-las. A remoção ocorrerá no lote final após todas as ferramentas consumirem os contratos oficiais.
