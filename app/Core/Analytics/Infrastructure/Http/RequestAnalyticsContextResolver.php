@@ -142,6 +142,18 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             return $cookie;
         }
 
+        if ($request->hasSession()) {
+            $sessionVisitorId = $request->session()->get('analytics.visitor_id');
+            if (is_string($sessionVisitorId) && Str::isUuid($sessionVisitorId)) {
+                return $sessionVisitorId;
+            }
+
+            $visitorId = (string) Str::uuid();
+            $request->session()->put('analytics.visitor_id', $visitorId);
+
+            return $visitorId;
+        }
+
         return (string) Str::uuid();
     }
 

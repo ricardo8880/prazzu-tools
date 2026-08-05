@@ -11,6 +11,7 @@ Route::prefix('ferramentas/calculadora-de-honorarios-contabeis')
         Route::get('/', [AccountingFeesController::class, 'index'])->name('index');
         Route::middleware('tool.feature:calculadora-de-honorarios-contabeis,calculate')
             ->post('/calcular', [AccountingFeesController::class, 'calculate'])->name('calculate');
+        Route::post('/exportar/{format}', [AccountingFeesController::class, 'exportCurrent'])->whereIn('format', ['pdf', 'xlsx'])->name('export');
         Route::middleware('tool.feature:calculadora-de-honorarios-contabeis,commercial_proposal')
             ->post('/proposta-comercial', [AccountingFeesController::class, 'proposal'])->name('proposal');
         Route::middleware('tool.feature:calculadora-de-honorarios-contabeis,service_contract')

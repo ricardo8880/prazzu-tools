@@ -35,7 +35,7 @@
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <table class="table table-sm mb-0"><tbody>@foreach(($result->calculationMemory?->steps ?? []) as $step)<tr><th>{{ $step->label }}<div class="small fw-normal text-body-secondary">{{ $step->formula }}</div></th><td class="text-end">{{ is_int($step->result) ? 'R$ '.number_format($step->result / 100, 2, ',', '.') : $step->result }}</td></tr>@endforeach</tbody></table>
             <div class="alert alert-warning mt-3 mb-0">Confirme FPAS, código de terceiros, CNAE preponderante, RAT, FAP, desoneração e decisões judiciais.</div>
-        </x-tools.result-panel>
+        <x-tools.export-buttons :pdf-route="route('tools.inss-patronal.export.pdf')" :excel-route="route('tools.inss-patronal.export.excel')" :input="$calculationInput ?? []" /></x-tools.result-panel>
     @endisset
 </x-tools.page>
 @endsection

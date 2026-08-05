@@ -29,7 +29,7 @@ final class PhpSpreadsheetExporter implements SpreadsheetExporter
             foreach ($document->sheets as $sheetIndex => $definition) {
                 $sheet = $spreadsheet->createSheet($sheetIndex);
                 $sheet->setTitle($definition->name);
-                $sheet->fromArray($definition->rows, null, 'A1', true);
+                $sheet->fromArray($this->safeRows($definition->rows), null, 'A1', true);
 
                 $this->formatSheet($sheet, $definition);
             }
@@ -43,6 +43,24 @@ final class PhpSpreadsheetExporter implements SpreadsheetExporter
             'Pragma' => 'public',
             'X-Content-Type-Options' => 'nosniff',
         ]);
+    }
+
+    /**
+     * Prevent user-controlled text from being interpreted as an Excel formula.
+     *
+     * @param list<list<string|int|float|bool|null>> $rows
+     * @return list<list<string|int|float|bool|null>>
+     */
+    private function safeRows(array $rows): array
+    {
+        return array_map(
+            static fn (array $row): array => array_map(
+                static fn (string|int|float|bool|null $value): string|int|float|bool|null =>
+                    is_string($value) && preg_match('/^[=+\-@]/', $value) === 1 ? "'".$value : $value,
+                $row,
+            ),
+            $rows,
+        );
     }
 
     private function formatSheet(Worksheet $sheet, SpreadsheetSheet $definition): void

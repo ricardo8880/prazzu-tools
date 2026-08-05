@@ -46,15 +46,14 @@
         @endif
 
         @isset($result)
-    <span data-analytics-result="main" hidden></span>
-            <div class="card mt-4">
-                <div class="card-body">
-                    <h2 class="h4">Resultado</h2>
-                    @foreach ($result->summary as $item)
-                        <p><strong>{{ $item->label }}:</strong> {{ $item->value }}</p>
-                    @endforeach
-                </div>
-            </div>
+            <span data-analytics-result="main" hidden></span>
+            <div class="card mt-4"><div class="card-body">
+                <h2 class="h4">Resultado</h2>
+                @foreach ($result->summary as $item)
+                    <p><strong>{{ $item->label }}:</strong> {{ $item->value }}</p>
+                @endforeach
+                <x-tools.export-buttons :pdf-route="route('tools.simulador-pro-labore-ideal.export.pdf')" :excel-route="route('tools.simulador-pro-labore-ideal.export.excel')" :input="$calculationInput ?? []" />
+            </div></div>
         @endisset
     </x-tools.page>
 @endsection

@@ -12,6 +12,8 @@ Route::prefix('ferramentas/calculadora-simples-nacional')
         Route::get('/', [SimplesNacionalController::class, 'index'])->name('index');
         Route::middleware('tool.feature:calculadora-simples-nacional,calculate')
             ->post('/calcular', [SimplesNacionalController::class, 'calculate'])->name('calculate');
+        Route::middleware('tool.feature:calculadora-simples-nacional,calculate')
+            ->post('/exportar/{format}', [SimplesNacionalController::class, 'exportCurrent'])->whereIn('format', ['pdf', 'xlsx'])->name('export');
         Route::middleware('tool.feature:calculadora-simples-nacional,alerts')
             ->post('/plus/alertas', [SimplesNacionalPlusController::class, 'alerts'])->name('plus.alerts');
         Route::middleware('tool.feature:calculadora-simples-nacional,compare_scenarios')

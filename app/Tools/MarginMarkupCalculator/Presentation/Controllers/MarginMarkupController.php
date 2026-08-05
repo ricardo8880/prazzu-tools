@@ -7,8 +7,6 @@ namespace App\Tools\MarginMarkupCalculator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
 use App\Core\ToolIntegration\Contracts\ToolResultResolver;
@@ -248,7 +246,6 @@ final class MarginMarkupController extends Controller
     public function exportPdf(
         CalculateMarginMarkupRequest $request,
         CalculateMarginMarkup $action,
-        BrowserPrintExporter $exporter,
     ): View {
         try {
             $input = $request->validated();
@@ -257,7 +254,7 @@ final class MarginMarkupController extends Controller
             throw ValidationException::withMessages(['base_cost' => $exception->getMessage()]);
         }
 
-        return $this->pdfView($exporter, $result, $input, now()->format('d/m/Y H:i'));
+        return $exporter->download($documents->pdf('Calculadora de Precificação de Produtos', 'margem-markup-'.now()->format('Y-m-d'), $result, $input));
     }
 
     public function exportBatch(
@@ -329,16 +326,14 @@ final class MarginMarkupController extends Controller
         Request $request,
         string $run,
         PrepareMarginMarkupHistoryReport $action,
-        BrowserPrintExporter $exporter,
     ): View {
         $report = $action->execute($run, (int) $request->user()->getAuthIdentifier());
 
-        return $this->pdfView(
-            $exporter,
-            $report['result'],
-            $report['input'],
-            $report['generatedAt'],
-        );
+        return view('exports.structured-result', [
+            'title' => 'Relatório de Margem, Markup e Formação de Preço',
+            'result' => $report['result'],
+            'input' => $report['input'],
+        ]);
     }
 
     public function destroyHistory(
@@ -416,20 +411,6 @@ final class MarginMarkupController extends Controller
             input: $input,
             userId: $request->user()->id,
         );
-    }
-
-    /** @param array<string, mixed> $result @param array<string, mixed> $input */
-    private function pdfView(BrowserPrintExporter $exporter, array $result, array $input, string $generatedAt): View
-    {
-        return $exporter->render(new PrintableDocument(
-            title: 'Relatório de Margem, Markup e Formação de Preço',
-            subtitle: 'Composição do preço de venda e rentabilidade estimada',
-            contentView: 'tools-calculadora-margem-markup::pdf.report',
-            data: ['result' => $result, 'input' => $input],
-            generatedAt: $generatedAt,
-            summaryLabel: 'Preço de venda sugerido',
-            summaryValue: $result['sale_price'] ?? '—',
-        ));
     }
 
     private function recordFailure(ToolRunRecorder $recorder, ?ToolRunHandle $run, string $errorCode): void

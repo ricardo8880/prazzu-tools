@@ -9,6 +9,7 @@ use App\Http\Middleware\EnsureAuthenticatedForPersistence;
 use App\Http\Middleware\EnsureInternalAdministrator;
 use App\Http\Middleware\EnsureTabularImportFeatureAccess;
 use App\Http\Middleware\EnsureToolFeatureAccess;
+use App\Http\Middleware\LogExportRequests;
 use App\Http\Middleware\ShareActiveAcquisitionContext;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
+            LogExportRequests::class,
             ApplySecurityHeaders::class,
             ShareActiveAcquisitionContext::class,
             CaptureAnalyticsContext::class,

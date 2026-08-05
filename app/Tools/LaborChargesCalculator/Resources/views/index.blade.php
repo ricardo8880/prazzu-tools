@@ -16,6 +16,6 @@
 @isset($result)
     <span data-analytics-result="main" hidden></span><x-tools.result-panel title="Custo provisionado"><div class="row g-3">@foreach($result->summary as $item)<div class="col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description"/></div>@endforeach</div>
 <h3 class="h5 mt-4">Memória de cálculo</h3><table class="table table-sm"><tbody>@foreach(($result->calculationMemory?->steps ?? []) as $step)<tr><th>{{ $step->label }}<div class="small fw-normal text-body-secondary">{{ $step->formula }}</div></th><td class="text-end">{{ is_int($step->result) ? 'R$ '.number_format($step->result / 100, 2, ',', '.') : $step->result }}</td></tr>@endforeach</tbody></table>
-<div class="alert alert-warning mb-0">Estimativa mensal. Confirme incidências, benefícios, CCT, FPAS, FAP e particularidades da folha.</div></x-tools.result-panel>@endisset
+<div class="alert alert-warning mb-0">Estimativa mensal. Confirme incidências, benefícios, CCT, FPAS, FAP e particularidades da folha.</div><x-tools.export-buttons :pdf-route="route('tools.encargos-trabalhistas.export.pdf')" :excel-route="route('tools.encargos-trabalhistas.export.excel')" :input="$calculationInput ?? []" /></x-tools.result-panel>@endisset
 </x-tools.page>
 @endsection

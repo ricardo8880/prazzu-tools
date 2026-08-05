@@ -7,8 +7,10 @@ namespace App\Tools\ContractGenerator\Presentation\Controllers;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Data\PdfDocument;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Tools\ContractGenerator\Application\Actions\BuildContractDraft;
 use App\Tools\ContractGenerator\Domain\Enums\ContractType;
 use App\Tools\ContractGenerator\Domain\Enums\PartyDocumentType;
@@ -18,7 +20,7 @@ use App\Tools\ContractGenerator\Presentation\Requests\BuildContractDraftRequest;
 use App\Tools\ContractGenerator\Presentation\Requests\PreviewContractTextRequest;
 use App\Tools\ContractGenerator\Tool;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\View\View;
 
 final class ContractGeneratorController
@@ -65,7 +67,6 @@ final class ContractGeneratorController
 
     public function exportPdf(
         PreviewContractTextRequest $request,
-        BrowserPrintExporter $exporter,
         PlatformAnalytics $analytics,
     ): View {
         $validated = $request->validated();
@@ -78,15 +79,22 @@ final class ContractGeneratorController
             ['subject_type' => 'tool', 'subject_slug' => Tool::SLUG, 'contract_type' => $type->value, 'format' => 'pdf'],
         ), $request);
 
-        return $exporter->render(new PrintableDocument(
-            title: 'Contrato para impressão',
-            subtitle: $title,
-            contentView: 'tools-gerador-de-contratos::pdf.contract',
-            data: ['content' => (string) $validated['contract_text']],
-            generatedAt: now()->format('d/m/Y H:i'),
-            backLabel: 'Voltar ao contrato',
-            printLabel: 'Imprimir / Salvar como PDF',
-        ));
+        return view('exports.printable-document', [
+            'title' => 'Contrato para impressão',
+            'contentView' => 'tools-gerador-de-contratos::pdf.contract',
+            'contentData' => ['content' => (string) $validated['contract_text']],
+            'generatedAt' => now()->format('d/m/Y H:i'),
+        ]);
+    }
+
+    public function exportXlsx(PreviewContractTextRequest $request, SpreadsheetExporter $exporter, StructuredResultExportFactory $documents): Response
+    {
+        $validated = $request->validated();
+        $type = ContractType::from((string) $validated['contract_type']);
+        return $exporter->download($documents->spreadsheet('contrato-'.now()->format('Y-m-d'), [
+            'titulo' => $type->documentTitle(),
+            'conteudo' => (string) $validated['contract_text'],
+        ], ['tipo' => $type->value]));
     }
 
     public function exportDocx(

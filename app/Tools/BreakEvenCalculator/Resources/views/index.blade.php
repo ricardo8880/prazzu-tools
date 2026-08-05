@@ -21,6 +21,7 @@
             <div class="row g-3">@foreach ($result->summary as $item)<div class="col-12 col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description" /></div>@endforeach</div>
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <table class="table table-sm mb-0"><tbody>@foreach(($result->calculationMemory?->steps ?? []) as $step)<tr><th>{{ $step->label }}<div class="small fw-normal text-body-secondary">{{ $step->formula }}</div></th><td class="text-end">{{ is_int($step->result) ? 'R$ '.number_format($step->result / 100, 2, ',', '.') : $step->result }}</td></tr>@endforeach</tbody></table>
+        <x-tools.export-buttons :pdf-route="route('tools.ponto-de-equilibrio.export.pdf')" :excel-route="route('tools.ponto-de-equilibrio.export.excel')" :input="$calculationInput ?? []" />
         </x-tools.result-panel>
     @endisset
 </x-tools.page>

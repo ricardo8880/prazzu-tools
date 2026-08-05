@@ -8,6 +8,9 @@ use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Dates\ReferenceDate;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
@@ -95,12 +98,12 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function exportCurrent(Request $request, string $format, TabularExportService $tabular, TemporaryPayloadStore $temporary): JsonResponse|Response|StreamedResponse
+    public function exportCurrent(Request $request, string $format, TabularExportService $tabular, TemporaryPayloadStore $temporary, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): JsonResponse|Response|StreamedResponse
     {
         $token = (string) $request->query('result_token', '');
         $result = $temporary->get('fiscal-xml.current', $token, $this->temporaryOwnerKey($request));
         abort_unless(is_array($result), 404);
-        return $this->export($format, $result, $tabular);
+        return $this->export($format, $result, $tabular, $documents, $pdf, $spreadsheet);
     }
 
     public function history(Request $request, ManageFiscalXmlHistory $history): View
@@ -123,9 +126,9 @@ final class ToolController extends Controller
         return back()->with('history_message', 'Processamento removido do histórico.');
     }
 
-    public function exportHistory(Request $request, string $run, string $format, ManageFiscalXmlHistory $history, TabularExportService $tabular): JsonResponse|Response|StreamedResponse
+    public function exportHistory(Request $request, string $run, string $format, ManageFiscalXmlHistory $history, TabularExportService $tabular, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): JsonResponse|Response|StreamedResponse
     {
-        return $this->export($format, $history->owned($run, (int) $request->user()->getAuthIdentifier())->result, $tabular);
+        return $this->export($format, $history->owned($run, (int) $request->user()->getAuthIdentifier())->result, $tabular, $documents, $pdf, $spreadsheet);
     }
 
     private function temporaryOwnerKey(Request $request): string
@@ -137,9 +140,16 @@ final class ToolController extends Controller
         return 'guest:'.hash('sha256', ($request->ip() ?? 'unknown').'|'.($request->userAgent() ?? 'unknown'));
     }
 
-    private function export(string $format, array $result, TabularExportService $tabular): JsonResponse|Response|StreamedResponse
+    private function export(string $format, array $result, TabularExportService $tabular, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): JsonResponse|Response|StreamedResponse
     {
-        abort_unless(in_array($format, ['csv', 'json', 'xlsx'], true), 404);
+        abort_unless(in_array($format, ['csv', 'json', 'pdf', 'xlsx'], true), 404);
+        $filename = 'xml-fiscal-'.now()->format('Y-m-d');
+        if ($format === 'pdf') {
+            return $pdf->download($documents->pdf('Conversão fiscal de XML', $filename, $result));
+        }
+        if ($format === 'xlsx') {
+            return $spreadsheet->download($documents->spreadsheet($filename, $result));
+        }
         $documents = isset($result['documents']) ? $result['documents'] : [$result];
         if ($format === 'json') {
             return response()->json($result, 200, ['Content-Disposition' => 'attachment; filename="xml-fiscal.json"'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
@@ -158,8 +168,6 @@ final class ToolController extends Controller
             }
         }
         $headers = ['Arquivo','Modelo','Chave','Número','Série','CNPJ/CPF emitente','Item','Código','Descrição','NCM','CFOP','Quantidade','Unidade','Valor unitário','Valor total','ICMS','IPI','PIS','Cofins'];
-        return $format === 'csv'
-            ? $tabular->csv('xml-fiscal.csv', $headers, $rows)
-            : $tabular->excel('xml-fiscal.xls', $headers, $rows, 'Itens fiscais');
+        return $tabular->csv('xml-fiscal.csv', $headers, $rows);
     }
 }

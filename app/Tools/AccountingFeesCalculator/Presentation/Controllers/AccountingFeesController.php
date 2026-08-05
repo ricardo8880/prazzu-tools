@@ -6,6 +6,9 @@ namespace App\Tools\AccountingFeesCalculator\Presentation\Controllers;
 
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Exceptions\InvalidValue;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
 use App\Core\ToolIntegration\Contracts\ToolResultResolver;
@@ -27,6 +30,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class AccountingFeesController extends Controller
@@ -59,6 +63,17 @@ final class AccountingFeesController extends Controller
             'calculationResult' => $outcome['result'],
             'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Cálculo'),
         ]);
+    }
+
+    public function exportCurrent(CalculateAccountingFeesRequest $request, CalculateAndStoreAccountingFees $action, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): Response
+    {
+        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
+        $input = $request->validated();
+        $result = $action->execute($input, null, false)['result'];
+        $filename = 'honorarios-contabeis-'.now()->format('Y-m-d');
+        return $format === 'pdf'
+            ? $pdf->download($documents->pdf('Cálculo de honorários contábeis', $filename, $result, $input))
+            : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));
     }
 
     public function proposal(GenerateCommercialProposalRequest $request, BuildCommercialProposal $action): View

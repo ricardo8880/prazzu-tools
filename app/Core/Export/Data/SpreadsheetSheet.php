@@ -25,7 +25,7 @@ final readonly class SpreadsheetSheet
             throw new InvalidArgumentException('O nome da planilha não pode exceder 31 caracteres.');
         }
 
-        if (preg_match('/[\\\/?*\[\]:]/', $this->name) === 1) {
+        if (preg_match('~[\\\\/?:*\[\]]~', $this->name) === 1) {
             throw new InvalidArgumentException('O nome da planilha contém caracteres inválidos.');
         }
     }

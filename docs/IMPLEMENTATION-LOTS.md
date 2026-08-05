@@ -430,3 +430,27 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - Migrar somente o primeiro grupo de oito ferramentas para os contratos oficiais.
 - Cada ferramenta deve exportar exatamente o mesmo objeto de resultado usado na tela.
 - Não utilizar `BrowserPrintExporter`, `window.print()`, `TabularExportService::excel()` ou `TabularExportService::xlsx()` em novas migrações.
+
+
+## Exportação universal — Lote 2
+
+- Migradas as ferramentas oficiais 1 a 8 para PDF real e Excel real pelo Core.
+- Próximo lote: ferramentas oficiais 9 a 16.
+
+## Exportação universal — Lote 3
+
+- O estado foi reconstruído do ZIP original com reaplicação dos Lotes 1 e 2.
+- As ferramentas oficiais 9 a 16 receberam download de PDF real e Excel XLSX real.
+- Resultados baseados em `ToolCalculationResult` reutilizam `ToolResultExportFactory`.
+- Resultados estruturados de Margem/Markup e Rescisão reutilizam `StructuredResultExportFactory` no Core.
+- Impressão direta foi retirada dos resultados atuais de Holerite e Admissão.
+- Exportações históricas legadas permanecem somente até o lote final de limpeza.
+
+## Exportação universal — Lote Final de Encerramento
+
+- Confirmada a migração das 32 ferramentas oficiais para PDF e Excel por bibliotecas reais e contratos compartilhados.
+- Removidos o exportador baseado em impressão, o DTO de impressão, a view de impressão e o script com `window.print()`.
+- `TabularExportService` passou a atender exclusivamente CSV; XLS/XLSX são responsabilidade exclusiva de `SpreadsheetExporter`/PhpSpreadsheet.
+- Históricos e endpoints de compatibilidade foram migrados sem alteração dos slugs e nomes públicos de rota.
+- O exportador administrativo de Analytics também deixou de gerar SpreadsheetML e passou a entregar `.xlsx` real.
+- A documentação do lote final e a lista explícita de arquivos removidos acompanham o ZIP incremental.

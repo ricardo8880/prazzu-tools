@@ -7,8 +7,9 @@ namespace App\Tools\TaxRegimeComparator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Money\Money;
 use App\Core\Money\Percentage;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
@@ -103,27 +104,13 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function report(
-        CompareTaxRegimesRequest $request,
-        CompareTaxRegimes $compare,
-        TaxComparisonResultPresenter $presenter,
-        BrowserPrintExporter $exporter,
-    ): View {
-        try {
-            $result = $presenter->present($compare->execute($this->input($request->validated())));
-        } catch (InvalidValue $exception) {
-            throw ValidationException::withMessages(['monthly_revenue' => $exception->getMessage()]);
-        }
-
-        return $exporter->render(new PrintableDocument(
-            title: 'Relatório de Comparação Tributária',
-            subtitle: 'Simples Nacional, Lucro Presumido e Lucro Real',
-            contentView: 'tools-comparador-tributario::pdf.report',
-            data: ['result' => $result, 'input' => $request->validated()],
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: 'Menor ônus estimado',
-            summaryValue: $result['winner'] ?? 'Sem comparação suficiente',
-        ));
+    public function document(CompareTaxRegimesRequest $request, CompareTaxRegimes $compare, TaxComparisonResultPresenter $presenter, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): Response
+    {
+        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
+        try { $input=$request->validated(); $result=$presenter->present($compare->execute($this->input($input))); }
+        catch (InvalidValue $exception) { throw ValidationException::withMessages(['monthly_revenue'=>$exception->getMessage()]); }
+        $filename='comparacao-tributaria-'.now()->format('Y-m-d');
+        return $format==='pdf' ? $pdf->download($documents->pdf('Relatório de Comparação Tributária',$filename,$result,$input)) : $spreadsheet->download($documents->spreadsheet($filename,$result,$input));
     }
 
     public function history(Request $request, ListTaxComparisonHistory $action): View

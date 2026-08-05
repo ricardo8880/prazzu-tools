@@ -6,6 +6,9 @@ namespace App\Tools\SimplesNacionalCalculator\Presentation\Controllers;
 
 use App\Core\Access\Contracts\ToolFeatureAccessGate;
 use App\Core\Exceptions\InvalidValue;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
 use App\Core\ToolIntegration\Contracts\ToolResultResolver;
 use App\Core\Tools\ToolRegistry;
@@ -21,6 +24,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 final class SimplesNacionalController extends Controller
 {
@@ -115,4 +119,31 @@ final class SimplesNacionalController extends Controller
             'factorRResult' => $factorRResult?->toArray(),
         ]);
     }
+    public function exportCurrent(
+        CalculateSimplesNacionalRequest $request,
+        StandardSimplesNacionalCalculator $calculateSimples,
+        CalculateFactorR $calculateFactorR,
+        StructuredResultExportFactory $documents,
+        PdfExporter $pdf,
+        SpreadsheetExporter $spreadsheet,
+        string $format,
+    ): Response {
+        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
+        $input = $request->validated();
+        if ($request->boolean('use_factor_r')) {
+            $factorR = $calculateFactorR->execute(['payroll_12' => (string) $input['payroll_12'], 'rbt12' => (string) $input['rbt12']]);
+            $input['annex'] = $factorR->applicableAnnex->value;
+        }
+        $result = $calculateSimples->calculate(SimplesNacionalCalculationInput::fromArray([
+            'annex' => (string) $input['annex'],
+            'rbt12' => (string) $input['rbt12'],
+            'monthly_revenue' => (string) $input['monthly_revenue'],
+        ]))->details;
+        $filename = 'simples-nacional-'.now()->format('Y-m-d');
+
+        return $format === 'pdf'
+            ? $pdf->download($documents->pdf('Cálculo do Simples Nacional', $filename, $result, $input))
+            : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));
+    }
+
 }

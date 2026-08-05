@@ -28,7 +28,7 @@ A persistência usa `ToolRunHistory`, schema versionado e retenção de 365 dias
 O módulo depende somente dos contratos compartilhados do Core para dinheiro, percentuais, histórico, favoritos, persistência, analytics e exportações. Não depende de outra ferramenta nem mantém implementação paralela dessas capacidades.
 
 ## Arquitetura
-Actions coordenam os casos de uso; Requests validam entrada; Services concentram domínio; Controllers apenas orquestram HTTP. Dinheiro e percentuais usam o Core. CSV usa `TabularExportService`; PDF usa `BrowserPrintExporter` e `PrintableDocument`.
+Actions coordenam os casos de uso; Requests validam entrada; Services concentram domínio; Controllers apenas orquestram HTTP. Dinheiro e percentuais usam o Core. CSV usa `TabularExportService`; PDF e Excel usam os contratos oficiais do Core (`PdfExporter` e `SpreadsheetExporter`).
 
 ## Qualidade
 O módulo possui contrato arquitetural, contrato de integração, perfil de risco, golden cases completos e regressão executável. A regra de acréscimos legais implementa o contrato central `App\Core\Normative`, é resolvida pela data de vencimento e registra metadados completos no histórico.

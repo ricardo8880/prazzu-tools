@@ -7,8 +7,10 @@ namespace App\Tools\ReceiptIssuer\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Data\PdfDocument;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
 use App\Http\Controllers\Controller;
@@ -27,6 +29,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Response;
 
 final class ToolController extends Controller
 {
@@ -40,19 +43,51 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function exportPdf(
+    public function exportCurrent(
         ExecuteToolRequest $request,
         BuildCalculationInput $build,
         CalculateTool $calculate,
-        BrowserPrintExporter $exporter,
+        StructuredResultExportFactory $documents,
+        PdfExporter $pdf,
+        SpreadsheetExporter $spreadsheet,
+        string $format,
+    ): Response {
+        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
+        try {
+            $input = $request->validated();
+            $result = $calculate->execute($build->execute($input))->toArray();
+        } catch (InvalidValue|InvalidArgumentException $exception) {
+            throw ValidationException::withMessages(['receipt' => $exception->getMessage()]);
+        }
+        if ($format === 'pdf') return $this->downloadPdf($result, $pdf);
+        return $spreadsheet->download($documents->spreadsheet('recibo-'.now()->format('Y-m-d'), $result, $input));
+    }
+
+    public function printCurrent(
+        ExecuteToolRequest $request,
+        BuildCalculationInput $build,
+        CalculateTool $calculate,
     ): View {
         try {
-            $result = $calculate->execute($build->execute($request->validated()))->toArray();
+            $input = $request->validated();
+            $result = $calculate->execute($build->execute($input))->toArray();
         } catch (InvalidValue|InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['receipt' => $exception->getMessage()]);
         }
 
-        return $this->renderPdf($result, $exporter);
+        $receipt = $result['details']['receipt'] ?? null;
+        if (! is_array($receipt)) {
+            throw ValidationException::withMessages(['receipt' => 'Não foi possível preparar o recibo para impressão.']);
+        }
+
+        return view('exports.printable-document', [
+            'title' => 'Recibo nº '.$receipt['number'],
+            'contentView' => 'tools-emissor-de-recibos::pdf.receipt',
+            'contentData' => ['receipt' => $receipt],
+            'generatedAt' => now()->format('d/m/Y H:i'),
+            'summaryLabel' => 'Valor',
+            'summaryValue' => $receipt['amount'],
+        ]);
     }
 
     public function issue(
@@ -125,11 +160,11 @@ final class ToolController extends Controller
         return back()->with('history_message', 'Recibo removido do histórico.');
     }
 
-    public function exportHistory(Request $request, string $run, ManageReceiptHistory $history, BrowserPrintExporter $exporter): View
+    public function exportHistory(Request $request, string $run, string $format, ManageReceiptHistory $history, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): Response
     {
+        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier());
-
-        return $this->renderPdf($entry->result, $exporter);
+        return $format === 'pdf' ? $this->downloadPdf($entry->result, $pdf) : $spreadsheet->download($documents->spreadsheet('recibo-historico', $entry->result, $entry->input));
     }
 
 
@@ -138,21 +173,16 @@ final class ToolController extends Controller
         return view('tools-emissor-de-recibos::batch.index');
     }
 
-    public function issueBatch(BatchIssueRequest $request, GenerateReceiptBatch $batch, BrowserPrintExporter $exporter): View
+    public function issueBatch(BatchIssueRequest $request, GenerateReceiptBatch $batch): View
     {
         $result = $batch->execute($request->file('file'));
 
-        return $exporter->render(new PrintableDocument(
-            title: 'Recibos em lote',
-            subtitle: $result['total'].' linha(s) processada(s), '.count($result['receipts']).' recibo(s) válido(s)',
-            contentView: 'tools-emissor-de-recibos::pdf.batch',
-            data: $result,
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: 'Recibos gerados',
-            summaryValue: (string) count($result['receipts']),
-            backLabel: 'Voltar à geração em lote',
-            printLabel: 'Imprimir / Salvar lote como PDF',
-        ));
+        return view('exports.printable-document', [
+            'title' => 'Recibos em lote',
+            'contentView' => 'tools-emissor-de-recibos::pdf.batch',
+            'contentData' => $result,
+            'generatedAt' => now()->format('d/m/Y H:i'),
+        ]);
     }
 
     public function profiles(Request $request, ManageReceiptPartyProfiles $profiles): View
@@ -188,24 +218,13 @@ final class ToolController extends Controller
         return back()->with('profile_message', 'Perfil removido.');
     }
 
-    /** @param array<string, mixed> $result */
-    private function renderPdf(array $result, BrowserPrintExporter $exporter): View
+    private function downloadPdf(array $result, PdfExporter $pdf): Response
     {
         $receipt = $result['details']['receipt'] ?? null;
         if (! is_array($receipt)) {
             throw ValidationException::withMessages(['receipt' => 'Não foi possível preparar o recibo para exportação.']);
         }
-
-        return $exporter->render(new PrintableDocument(
-            title: 'Recibo nº '.$receipt['number'],
-            subtitle: 'Documento emitido pelo Emissor de Recibos',
-            contentView: 'tools-emissor-de-recibos::pdf.receipt',
-            data: ['receipt' => $receipt],
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: 'Valor recebido',
-            summaryValue: (string) $receipt['amount'],
-            backLabel: 'Voltar ao recibo',
-            printLabel: 'Imprimir / Salvar como PDF',
-        ));
+        return $pdf->download(new PdfDocument(filename: 'recibo-'.$receipt['number'], view: 'tools-emissor-de-recibos::pdf.receipt', data: ['receipt' => $receipt]));
     }
+
 }

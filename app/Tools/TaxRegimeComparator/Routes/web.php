@@ -14,7 +14,7 @@ Route::prefix('ferramentas/comparador-tributario')
         Route::middleware('tool.feature:comparador-tributario,export')
             ->post('/exportar/{format}', [ToolController::class, 'export'])->whereIn('format', ['csv', 'json'])->name('export');
         Route::middleware('tool.feature:comparador-tributario,professional_report')
-            ->post('/relatorio', [ToolController::class, 'report'])->name('report');
+            ->post('/exportar-documento/{format}', [ToolController::class, 'document'])->whereIn('format', ['pdf', 'xlsx'])->name('document');
 
         Route::middleware(['tool.feature:comparador-tributario,history', 'persistence.auth'])
             ->prefix('historico')->name('history.')->group(function (): void {

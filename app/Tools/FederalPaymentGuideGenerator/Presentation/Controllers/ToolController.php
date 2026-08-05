@@ -7,8 +7,9 @@ namespace App\Tools\FederalPaymentGuideGenerator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
@@ -76,9 +77,9 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function exportCurrent(CalculateGuideRequest $request, CalculateGuide $action, PrepareGuideExport $prepare, string $format, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
+    public function exportCurrent(CalculateGuideRequest $request, CalculateGuide $action, PrepareGuideExport $prepare, string $format, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, TabularExportService $tabular): JsonResponse|StreamedResponse
     {
-        return $this->export($format, $request->validated(), $action->execute($request->validated()), $prepare, $print, $tabular);
+        return $this->export($format, $request->validated(), $action->execute($request->validated()), $prepare, $documents, $pdf, $spreadsheet, $tabular);
     }
 
     public function history(Request $request, ManageGuideHistory $history): View
@@ -113,17 +114,17 @@ final class ToolController extends Controller
         return back()->with('history_message', 'Cálculo removido do histórico.');
     }
 
-    public function exportHistory(Request $request, string $run, string $format, ManageGuideHistory $history, PrepareGuideExport $prepare, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
+    public function exportHistory(Request $request, string $run, string $format, ManageGuideHistory $history, PrepareGuideExport $prepare, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, TabularExportService $tabular): JsonResponse|StreamedResponse
     {
         $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
-        return $this->export($format, $entry->input, $entry->result, $prepare, $print, $tabular);
+        return $this->export($format, $entry->input, $entry->result, $prepare, $documents, $pdf, $spreadsheet, $tabular);
     }
 
     /** @param array<string, mixed> $input @param array<string, mixed> $result */
-    private function export(string $format, array $input, array $result, PrepareGuideExport $prepare, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
+    private function export(string $format, array $input, array $result, PrepareGuideExport $prepare, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, TabularExportService $tabular): JsonResponse|StreamedResponse
     {
-        abort_unless(in_array($format, ['csv', 'json', 'pdf'], true), 404);
+        abort_unless(in_array($format, ['csv', 'json', 'pdf', 'xlsx'], true), 404);
         $export = $prepare->execute($input, $result);
 
         if ($format === 'json') {
@@ -136,14 +137,9 @@ final class ToolController extends Controller
             return $tabular->csv($export['filename'].'.csv', $export['headers'], $export['rows']);
         }
 
-        return $print->render(new PrintableDocument(
-            title: 'Relatório orientativo de DARF/GPS',
-            contentView: 'tools-gerador-darf-gps::pdf.report',
-            data: $export['payload'],
-            subtitle: $export['subtitle'],
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: 'Total estimado',
-            summaryValue: $export['summary'],
-        ));
+        $filename = $export['filename'];
+        return $format === 'pdf'
+            ? $pdf->download($documents->pdf('Relatório orientativo de DARF/GPS', $filename, $export['payload'], $input))
+            : $spreadsheet->download($documents->spreadsheet($filename, $export['payload'], $input));
     }
 }

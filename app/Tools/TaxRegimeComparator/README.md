@@ -292,7 +292,7 @@ Recursos implementados:
   regra e schema;
 - listagem, consulta, reutilização e exclusão de comparações próprias;
 - exportação estruturada em CSV e JSON pelo `ToolResultExporter` central;
-- relatório profissional por `BrowserPrintExporter`, pronto para impressão ou PDF;
+- relatório profissional em PDF por `PdfExporter`/Dompdf e planilha Excel por `SpreadsheetExporter`/PhpSpreadsheet;
 - gates compartilhados por funcionalidade, sem regras comerciais locais;
 - estados vazios e mensagens de continuidade na interface.
 

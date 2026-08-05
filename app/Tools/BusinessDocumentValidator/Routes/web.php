@@ -16,7 +16,7 @@ Route::prefix('ferramentas/validador-de-cnpj')
         Route::middleware('tool.feature:validador-de-cnpj,batch_export')
             ->get('/importar-lote/exportar', [BusinessDocumentValidatorController::class, 'exportBatch'])->name('batch.export');
         Route::middleware('tool.feature:validador-de-cnpj,batch_export')
-            ->get('/importar-lote/imprimir', [BusinessDocumentValidatorController::class, 'printBatch'])->name('batch.print');
+            ->get('/importar-lote/exportar/{format}', [BusinessDocumentValidatorController::class, 'exportBatchOfficial'])->whereIn('format', ['pdf', 'xlsx'])->name('batch.export.official');
         Route::middleware('tool.feature:validador-de-cnpj,validate_document')
             ->post('/validar', [BusinessDocumentValidatorController::class, 'validateDocument'])->name('validate');
         Route::middleware('tool.feature:validador-de-cnpj,analyze_consistency')

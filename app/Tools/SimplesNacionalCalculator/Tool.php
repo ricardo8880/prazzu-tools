@@ -116,7 +116,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                 new ToolFeature('monthly_history', 'Histórico mensal', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
-            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
+            export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'xlsx', 'csv', 'json']),
             sharing: ToolSharingPolicy::disabled(),
             sensitiveData: new ToolSensitiveDataPolicy(SensitiveDataMode::Encrypted, ['history_payload']),
         );

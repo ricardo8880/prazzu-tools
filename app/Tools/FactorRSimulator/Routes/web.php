@@ -9,3 +9,7 @@ Route::get('/ferramentas/simulador-fator-r', [ToolController::class, 'index'])
     ->name('tools.simulador-fator-r.index');
 Route::post('/ferramentas/simulador-fator-r', [ToolController::class, 'calculate'])
     ->name('tools.simulador-fator-r.calculate');
+Route::post('/ferramentas/simulador-fator-r/exportar/pdf', [ToolController::class, 'exportPdf'])
+    ->name('tools.simulador-fator-r.export.pdf');
+Route::post('/ferramentas/simulador-fator-r/exportar/excel', [ToolController::class, 'exportExcel'])
+    ->name('tools.simulador-fator-r.export.excel');

@@ -8,7 +8,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('ferramentas/emissor-de-recibos')->name('tools.emissor-de-recibos.')->group(function (): void {
     Route::get('/', [ToolController::class, 'index'])->name('index');
     Route::post('/emitir', [ToolController::class, 'issue'])->name('issue');
-    Route::post('/exportar-pdf', [ToolController::class, 'exportPdf'])
+    Route::post('/exportar/{format}', [ToolController::class, 'exportCurrent'])
+        ->whereIn('format', ['pdf', 'xlsx'])
+        ->middleware('tool.feature:emissor-de-recibos,pdf_export')
+        ->name('export');
+    Route::post('/exportar-pdf', [ToolController::class, 'printCurrent'])
+        ->defaults('format', 'pdf')
         ->middleware('tool.feature:emissor-de-recibos,pdf_export')
         ->name('export.pdf');
 
@@ -24,7 +29,12 @@ Route::prefix('ferramentas/emissor-de-recibos')->name('tools.emissor-de-recibos.
             Route::get('/', [ToolController::class, 'history'])->name('index');
             Route::post('/{run}/reutilizar', [ToolController::class, 'repeatHistory'])->name('repeat');
             Route::delete('/{run}', [ToolController::class, 'destroyHistory'])->name('destroy');
+            Route::get('/{run}/exportar/{format}', [ToolController::class, 'exportHistory'])
+                ->whereIn('format', ['pdf', 'xlsx'])
+                ->middleware('tool.feature:emissor-de-recibos,pdf_export')
+                ->name('export');
             Route::get('/{run}/exportar-pdf', [ToolController::class, 'exportHistory'])
+                ->defaults('format', 'pdf')
                 ->middleware('tool.feature:emissor-de-recibos,pdf_export')
                 ->name('export.pdf');
         });

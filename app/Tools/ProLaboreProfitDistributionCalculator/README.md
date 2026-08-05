@@ -300,7 +300,7 @@ IRRF, custo empresarial, memória de cálculo e respectivos testes unitários.
 
 O cálculo Essencial pode ser executado por visitantes e exportado em PDF, CSV e JSON sem autenticação. Quando existe usuário autenticado, o resultado é registrado pelo histórico compartilhado do Core por 180 dias, com versão da ferramenta, schema, competência e versão de regra.
 
-O histórico permite consultar, reabrir, repetir, exportar e excluir uma simulação. O módulo não possui tabela, repository, armazenamento ou exportador próprio: usa `ToolRunRecorder`, `ToolRunHistory`, `BrowserPrintExporter` e `TabularExportService`.
+O histórico permite consultar, reabrir, repetir, exportar e excluir uma simulação. O módulo não possui tabela, repository, armazenamento ou exportador próprio: usa `ToolRunRecorder`, `ToolRunHistory`, os exportadores compartilhados de PDF/Excel e `TabularExportService`.
 
 As simulações avançadas continuam temporárias neste lote. A persistência delas exige um contrato de projeção específico e permanece fora do histórico até o gate final avaliar tamanho, privacidade e compatibilidade de schema.
 
@@ -315,7 +315,7 @@ O último lote remove os placeholders dos casos dourados, alinha o manifesto aos
 - Laravel e componentes compartilhados da aplicação;
 - contratos, registro, histórico, persistência e autorização do Core de ferramentas;
 - `ToolRunRecorder` e `ToolRunHistory`;
-- `BrowserPrintExporter` e `TabularExportService`;
+- `PdfExporter`, `SpreadsheetExporter`, `StructuredResultExportFactory` e `TabularExportService`;
 - tabelas normativas versionadas documentadas em `docs/NORMATIVE_RULES.md`;
 - autenticação da aplicação somente para recursos persistentes.
 

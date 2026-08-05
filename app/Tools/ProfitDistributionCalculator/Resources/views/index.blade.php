@@ -62,6 +62,18 @@
                     @endforeach
                 </div>
             </div>
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+                @foreach (['pdf' => 'Baixar PDF', 'excel' => 'Baixar Excel (.xlsx)'] as $format => $label)
+                    <form method="post" action="{{ route('tools.distribuicao-de-lucros.export.'.$format) }}">
+                        @csrf
+                        @foreach ($result->details['input'] as $name => $value)
+                            <input type="hidden" name="{{ $name }}" value="{{ is_bool($value) ? ($value ? 1 : 0) : $value }}">
+                        @endforeach
+                        <input type="hidden" name="confirm_assumptions" value="1">
+                        <button class="btn {{ $format === 'pdf' ? 'btn-outline-primary' : 'btn-outline-success' }}">{{ $label }}</button>
+                    </form>
+                @endforeach
+            </div>
         @endisset
     </x-tools.page>
 @endsection

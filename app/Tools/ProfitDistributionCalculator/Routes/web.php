@@ -8,4 +8,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('ferramentas/distribuicao-de-lucros')->name('tools.distribuicao-de-lucros.')->group(function (): void {
     Route::get('/', [ToolController::class, 'index'])->name('index');
     Route::post('/', [ToolController::class, 'calculate'])->name('calculate');
+    Route::post('/baixar-pdf', [ToolController::class, 'downloadPdf'])->name('export.pdf');
+    Route::post('/baixar-excel', [ToolController::class, 'downloadExcel'])->name('export.excel');
 });

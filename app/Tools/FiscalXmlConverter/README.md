@@ -58,7 +58,7 @@ A versão 1.0 mantém a leitura individual completa no Essencial e acrescenta pr
 
 - processamento temporário de 2 a 50 XMLs por lote;
 - consolidação da quantidade de documentos, itens, falhas e valor total;
-- exportação dos itens em CSV, JSON e SpreadsheetML compatível com Excel;
+- exportação dos itens em CSV, JSON e Excel `.xlsx` real por PhpSpreadsheet;
 - histórico criptografado para usuários autenticados, com reabertura e exclusão;
 - reutilização do mesmo parser seguro da leitura individual, sem armazenamento dos arquivos originais.
 

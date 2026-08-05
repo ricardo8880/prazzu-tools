@@ -18,6 +18,8 @@ final readonly class DompdfPdfExporter implements PdfExporter
 
     public function download(PdfDocument $document): Response
     {
+        $html = $this->views->make($document->view, $document->data)->render();
+
         if (! class_exists(Dompdf::class)) {
             throw new RuntimeException('A biblioteca dompdf/dompdf não está instalada. Execute Composer antes de exportar PDFs.');
         }
@@ -29,7 +31,7 @@ final readonly class DompdfPdfExporter implements PdfExporter
         $options->set('defaultFont', 'DejaVu Sans');
 
         $dompdf = new Dompdf($options);
-        $dompdf->loadHtml($this->views->make($document->view, $document->data)->render(), 'UTF-8');
+        $dompdf->loadHtml($html, 'UTF-8');
         $dompdf->setPaper($document->paper, $document->orientation);
         $dompdf->render();
 

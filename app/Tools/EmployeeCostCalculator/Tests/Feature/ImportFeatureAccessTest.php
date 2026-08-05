@@ -6,12 +6,13 @@ namespace App\Tools\EmployeeCostCalculator\Tests\Feature;
 
 use App\Core\Access\Enums\CommercialAccessMode;
 use App\Core\Access\Enums\SubscriptionPlan;
-use App\Core\Export\Services\TabularExportService;
 use App\Core\Imports\Contracts\ImportDatasetStore;
 use App\Core\Imports\Data\TabularDataset;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -104,16 +105,19 @@ final class ImportFeatureAccessTest extends TestCase
             );
         }
 
-        $response = app(TabularExportService::class)->xlsx(
-            'funcionarios.xlsx',
+        $spreadsheet = new Spreadsheet;
+        $spreadsheet->getActiveSheet()->fromArray([
             ['Nome', 'Salario'],
-            [['Ana Lima', '5000,00']],
-        );
+            ['Ana Lima', '5000,00'],
+        ]);
+        $path = tempnam(sys_get_temp_dir(), 'prazzu-xlsx-test-');
+        self::assertNotFalse($path);
+        (new Xlsx($spreadsheet))->save($path);
+        $content = file_get_contents($path) ?: '';
+        $spreadsheet->disconnectWorksheets();
+        @unlink($path);
 
-        return UploadedFile::fake()->createWithContent(
-            'funcionarios.xlsx',
-            (string) $response->getContent(),
-        );
+        return UploadedFile::fake()->createWithContent('funcionarios.xlsx', $content);
     }
 
     private function storeDataset(User $user, string $format): string

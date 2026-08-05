@@ -7,8 +7,10 @@ namespace App\Tools\LaborTerminationCalculator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Data\PdfDocument;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
 use App\Core\Tools\History\Data\ToolRunHandle;
@@ -80,7 +82,6 @@ final class LaborTerminationController extends Controller
     public function export(
         CalculateLaborTerminationRequest $request,
         CalculateLaborTermination $action,
-        BrowserPrintExporter $exporter,
     ): View {
         $input = $request->validated();
 
@@ -90,23 +91,44 @@ final class LaborTerminationController extends Controller
             throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
         }
 
-        return $this->pdfView($exporter, $result, $input, now()->format('d/m/Y H:i'));
+        return view('exports.printable-document', [
+            'title' => 'Relatório de Rescisão Trabalhista',
+            'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
+            'contentData' => ['result' => $result, 'input' => $input],
+            'generatedAt' => now()->format('d/m/Y H:i'),
+            'summaryLabel' => 'Valor líquido estimado',
+            'summaryValue' => $result['net_total'] ?? null,
+        ]);
+    }
+
+
+    public function exportExcel(
+        CalculateLaborTerminationRequest $request,
+        CalculateLaborTermination $action,
+        SpreadsheetExporter $exporter,
+        StructuredResultExportFactory $documents,
+    ): \Symfony\Component\HttpFoundation\Response {
+        $input = $request->validated();
+        try { $result = $action->execute($input)->toArray(); }
+        catch (InvalidValue $exception) { throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]); }
+        return $exporter->download($documents->spreadsheet('rescisao-'.now()->format('Y-m-d'), $result, $input));
     }
 
     public function exportHistory(
         Request $request,
         string $run,
-        BrowserPrintExporter $exporter,
         ManageLaborTerminationHistory $history,
     ): View {
         $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
-        return $this->pdfView(
-            $exporter,
-            $run->result,
-            $run->input,
-            $run->finishedAt->format('d/m/Y H:i') ?? now()->format('d/m/Y H:i'),
-        );
+        return view('exports.printable-document', [
+            'title' => 'Relatório de Rescisão Trabalhista',
+            'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
+            'contentData' => ['result' => $run->result, 'input' => $run->input],
+            'generatedAt' => $run->finishedAt->format('d/m/Y H:i'),
+            'summaryLabel' => 'Valor líquido estimado',
+            'summaryValue' => $run->result['net_total'] ?? null,
+        ]);
     }
 
     public function history(Request $request, ManageLaborTerminationHistory $history): View
@@ -180,34 +202,6 @@ final class LaborTerminationController extends Controller
         }
 
         return $options;
-    }
-
-    /**
-     * @param array<string, mixed> $result
-     * @param array<string, mixed> $input
-     */
-    private function pdfView(
-        BrowserPrintExporter $exporter,
-        array $result,
-        array $input,
-        string $generatedAt,
-    ): View {
-        return $exporter->render(new PrintableDocument(
-            title: 'Relatório de Rescisão Trabalhista',
-            subtitle: sprintf(
-                '%s · %s',
-                $result['termination_type_label'] ?? 'Rescisão trabalhista',
-                $result['notice_type_label'] ?? 'Aviso não informado',
-            ),
-            contentView: 'tools-calculadora-de-rescisao::pdf.report',
-            data: [
-                'result' => $result,
-                'input' => $input,
-            ],
-            generatedAt: $generatedAt,
-            summaryLabel: 'Valor líquido estimado',
-            summaryValue: $result['net_total'] ?? '—',
-        ));
     }
 
     private function recordFailure(ToolRunRecorder $recorder, ?ToolRunHandle $run, string $errorCode): void

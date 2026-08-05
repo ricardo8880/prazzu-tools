@@ -11,16 +11,28 @@ use App\Core\Tools\Calculation\Data\ToolCalculationResult;
 
 final class ToolResultExportFactory
 {
+    public function __construct(private readonly HumanReadableExportPresenter $presenter) {}
+
     /** @param array<string, mixed> $input */
     public function pdf(string $title, string $filename, ToolCalculationResult $result, array $input = []): PdfDocument
     {
+        $payload = $result->toArray();
+
         return new PdfDocument(
             filename: $filename,
             view: 'exports.tool-result',
             data: [
                 'title' => $title,
-                'input' => $input,
-                'result' => $result->toArray(),
+                'summary' => $payload['summary'] ?? [],
+                'inputRows' => $this->presenter->rows($input),
+                'detailRows' => $this->presenter->rows(
+                    is_array($payload['details'] ?? null) ? $payload['details'] : [],
+                    skipDuplicatedInput: true,
+                ),
+                'memoryRows' => $this->presenter->memoryRows(
+                    is_array($payload['calculation_memory'] ?? null) ? $payload['calculation_memory'] : [],
+                ),
+                'warnings' => $payload['warnings'] ?? [],
             ],
         );
     }
@@ -29,22 +41,24 @@ final class ToolResultExportFactory
     public function spreadsheet(string $filename, ToolCalculationResult $result, array $input = []): SpreadsheetDocument
     {
         $payload = $result->toArray();
-        $sheets = [
-            new SpreadsheetSheet('Resumo', $this->summaryRows($payload)),
-        ];
+        $sheets = [new SpreadsheetSheet('Resumo', $this->summaryRows($payload))];
 
         if ($input !== []) {
-            $sheets[] = new SpreadsheetSheet('Dados informados', $this->keyValueRows($input));
+            $sheets[] = new SpreadsheetSheet('Dados informados', $this->readableRows($this->presenter->rows($input)));
         }
 
-        $details = $payload['details'] ?? [];
-        if (is_array($details) && $details !== []) {
-            $sheets[] = new SpreadsheetSheet('Detalhamento', $this->keyValueRows($details));
+        $details = is_array($payload['details'] ?? null) ? $payload['details'] : [];
+        if ($details !== []) {
+            $sheets[] = new SpreadsheetSheet('Detalhamento', $this->readableRows($this->presenter->rows($details, true)));
         }
 
-        $memory = $payload['calculation_memory'] ?? null;
-        if (is_array($memory) && $memory !== []) {
-            $sheets[] = new SpreadsheetSheet('Memória de cálculo', $this->memoryRows($memory));
+        $memory = is_array($payload['calculation_memory'] ?? null) ? $payload['calculation_memory'] : [];
+        if ($memory !== []) {
+            $rows = [['Etapa', 'Fórmula', 'Resultado']];
+            foreach ($this->presenter->memoryRows($memory) as $step) {
+                $rows[] = [$step['label'], $step['formula'], $step['result']];
+            }
+            $sheets[] = new SpreadsheetSheet('Memória de cálculo', $rows);
         }
 
         return new SpreadsheetDocument(filename: $filename, sheets: $sheets);
@@ -60,56 +74,21 @@ final class ToolResultExportFactory
             }
             $rows[] = [
                 (string) ($item['label'] ?? $item['key'] ?? ''),
-                $this->scalar($item['value'] ?? null),
+                $this->presenter->formatValue((string) ($item['key'] ?? ''), $item['value'] ?? null),
                 (string) ($item['description'] ?? ''),
             ];
         }
         return $rows;
     }
 
-    /** @param array<string, mixed> $data @return list<list<string|int|float|bool|null>> */
-    private function keyValueRows(array $data): array
+    /** @param list<array{label:string,value:string,level:int}> $items @return list<list<string|int|float|bool|null>> */
+    private function readableRows(array $items): array
     {
         $rows = [['Campo', 'Valor']];
-        $this->flatten($data, '', $rows);
+        foreach ($items as $item) {
+            $rows[] = [str_repeat('  ', $item['level']).$item['label'], $item['value']];
+        }
+
         return $rows;
-    }
-
-    /** @param array<string, mixed> $data @param list<list<string|int|float|bool|null>> $rows */
-    private function flatten(array $data, string $prefix, array &$rows): void
-    {
-        foreach ($data as $key => $value) {
-            $path = $prefix === '' ? (string) $key : $prefix.'.'.$key;
-            if (is_array($value)) {
-                $this->flatten($value, $path, $rows);
-                continue;
-            }
-            $rows[] = [$path, $this->scalar($value)];
-        }
-    }
-
-    /** @param array<string, mixed> $memory @return list<list<string|int|float|bool|null>> */
-    private function memoryRows(array $memory): array
-    {
-        $rows = [['Etapa', 'Fórmula', 'Resultado']];
-        foreach (($memory['steps'] ?? []) as $step) {
-            if (! is_array($step)) {
-                continue;
-            }
-            $rows[] = [
-                (string) ($step['label'] ?? ''),
-                (string) ($step['formula'] ?? ''),
-                $this->scalar($step['result'] ?? null),
-            ];
-        }
-        return $rows;
-    }
-
-    private function scalar(mixed $value): string|int|float|bool|null
-    {
-        if ($value === null || is_string($value) || is_int($value) || is_float($value) || is_bool($value)) {
-            return $value;
-        }
-        return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '';
     }
 }

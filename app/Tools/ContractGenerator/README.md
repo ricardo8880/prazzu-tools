@@ -44,13 +44,13 @@ O Plus adiciona produtividade e continuidade. Nenhum recurso Plus é necessário
 
 ## Dependências
 
-- Core técnico: CPF, CNPJ, Money, `BrazilianMoneyInWords`, `BrowserPrintExporter`, `PrintableDocument`, `SimpleZipArchiveBuilder`, contratos padronizados de ferramenta e componentes visuais compartilhados da plataforma.
+- Core técnico: CPF, CNPJ, Money, `BrazilianMoneyInWords`, `PdfExporter`, `SpreadsheetExporter`, `SimpleZipArchiveBuilder`, contratos padronizados de ferramenta e componentes visuais compartilhados da plataforma.
 - Nenhuma dependência de outro módulo de ferramenta.
 
 ## Regras arquiteturais
 
 - todo domínio e redação contratual específicos permanecem neste módulo;
-- PDF reutiliza `App\Core\Export\Services\BrowserPrintExporter` em vez de criar infraestrutura própria;
+- PDF reutiliza `App\Core\Export\Contracts\PdfExporter` e Excel reutiliza `SpreadsheetExporter`, sem infraestrutura própria;
 - a criação OpenXML do DOCX permanece específica deste módulo enquanto somente o Gerador de Contratos precisar de Word;
 - o empacotamento ZIP foi promovido para `App\Core\Export\Services\SimpleZipArchiveBuilder`, pois passou a existir uma segunda necessidade real além do Analytics;
 - o módulo não gerencia clientes, tarefas, processos ou workflow empresarial;

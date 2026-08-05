@@ -10,5 +10,6 @@ Route::prefix('ferramentas/gerador-de-contratos')->name('tools.gerador-de-contra
     Route::post('/rascunho', [ContractGeneratorController::class, 'build'])->name('build');
     Route::post('/visualizar', [ContractGeneratorController::class, 'preview'])->name('preview');
     Route::post('/exportar/pdf', [ContractGeneratorController::class, 'exportPdf'])->name('export.pdf');
+    Route::post('/exportar/xlsx', [ContractGeneratorController::class, 'exportXlsx'])->name('export.xlsx');
     Route::post('/exportar/word', [ContractGeneratorController::class, 'exportDocx'])->name('export.docx');
 });

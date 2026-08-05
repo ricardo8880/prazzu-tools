@@ -140,8 +140,7 @@
                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                             <h2 id="recibo-gerado" class="h3 mb-0">Revisão do recibo</h2>
                             <div class="d-flex flex-wrap gap-2">
-                                <x-tools.print-button label="Imprimir página" />
-                                <form method="POST" action="{{ route('tools.emissor-de-recibos.export.pdf') }}" target="_blank">
+                                <form method="POST" action="{{ route('tools.emissor-de-recibos.export', 'pdf') }}">
                                     @csrf
                                     @foreach (['number', 'payer_name', 'payer_document_type', 'payer_document', 'payee_name', 'payee_document_type', 'payee_document', 'amount', 'description', 'issued_at', 'city'] as $field)
                                         <input type="hidden" name="{{ $field }}" value="{{ old($field) }}">
@@ -149,6 +148,13 @@
                                     <button class="btn btn-success" type="submit">
                                         <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>Exportar PDF
                                     </button>
+                                </form>
+                                <form method="POST" action="{{ route('tools.emissor-de-recibos.export', 'xlsx') }}">
+                                    @csrf
+                                    @foreach (['number', 'payer_name', 'payer_document_type', 'payer_document', 'payee_name', 'payee_document_type', 'payee_document', 'amount', 'description', 'issued_at', 'city'] as $field)
+                                        <input type="hidden" name="{{ $field }}" value="{{ old($field) }}">
+                                    @endforeach
+                                    <button class="btn btn-outline-success" type="submit"><i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i>Exportar Excel (.xlsx)</button>
                                 </form>
                             </div>
                         </div>

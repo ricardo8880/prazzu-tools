@@ -7,8 +7,9 @@ namespace App\Tools\VacationCalculator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
@@ -26,6 +27,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class ToolController extends Controller
@@ -62,8 +64,8 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, string $format, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
-    { return $this->export($format, $action->execute($request->validated())->toArray(), $request->validated(), $print, $tabular); }
+    public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, string $format, TabularExportService $tabular, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): JsonResponse|Response|StreamedResponse
+    { return $this->export($format, $action->execute($request->validated())->toArray(), $request->validated(), $tabular, $documents, $pdf, $spreadsheet); }
 
     public function history(Request $request, ManageVacationHistory $history): View
     { return view('tools-calculadora-ferias::history.index', ['runs' => $history->paginate((int) $request->user()->getAuthIdentifier(), max(1, $request->integer('page', 1)))]); }
@@ -74,17 +76,17 @@ final class ToolController extends Controller
     public function destroyHistory(Request $request, string $run, ManageVacationHistory $history): RedirectResponse
     { $history->delete($run, (int) $request->user()->getAuthIdentifier()); return back()->with('history_message', 'Cálculo removido do histórico.'); }
 
-    public function exportHistory(Request $request, string $run, string $format, ManageVacationHistory $history, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
-    { $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier()); return $this->export($format, $entry->result, $entry->input, $print, $tabular); }
+    public function exportHistory(Request $request, string $run, string $format, ManageVacationHistory $history, TabularExportService $tabular, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): JsonResponse|Response|StreamedResponse
+    { $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier()); return $this->export($format, $entry->result, $entry->input, $tabular, $documents, $pdf, $spreadsheet); }
 
     public function planner(): View { return view('tools-calculadora-ferias::planner'); }
     public function plan(PlanVacationsRequest $request, PlanVacations $action): View
     { return view('tools-calculadora-ferias::planner', ['plan' => $action->execute($request->validated('employees'))]); }
 
     /** @param array<string,mixed> $result @param array<string,mixed> $input */
-    private function export(string $format, array $result, array $input, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
+    private function export(string $format, array $result, array $input, TabularExportService $tabular, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): JsonResponse|Response|StreamedResponse
     {
-        abort_unless(in_array($format, ['csv','json','pdf'], true), 404);
+        abort_unless(in_array($format, ['csv','json','pdf','xlsx'], true), 404);
         $filename = 'ferias-'.($input['vacation_start_date'] ?? now()->format('Y-m-d'));
         if ($format === 'json') return response()->json(['input'=>$input,'result'=>$result], 200, ['Content-Disposition'=>'attachment; filename="'.$filename.'.json"'], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
         if ($format === 'csv') {
@@ -92,6 +94,8 @@ final class ToolController extends Controller
             foreach (($result['summary'] ?? []) as $item) $rows[] = [$item['label'] ?? '', $item['value'] ?? '', $item['description'] ?? ''];
             return $tabular->csv($filename.'.csv', ['Indicador','Valor','Descrição'], $rows);
         }
-        return $print->render(new PrintableDocument('Relatório de Férias', 'Início em '.($input['vacation_start_date'] ?? '—'), 'tools-calculadora-ferias::pdf.report', ['input'=>$input,'result'=>$result], now()->format('d/m/Y H:i'), 'Total estimado', $result['summary'][4]['value'] ?? '—'));
+        return $format === 'pdf'
+            ? $pdf->download($documents->pdf('Relatório de Férias', $filename, $result, $input))
+            : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));
     }
 }

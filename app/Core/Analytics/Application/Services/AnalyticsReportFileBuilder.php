@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Core\Analytics\Application\Services;
 
 use Illuminate\Support\Collection;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 final class AnalyticsReportFileBuilder
 {
@@ -52,15 +54,25 @@ final class AnalyticsReportFileBuilder
     /** @param Collection<int, object> $rows */
     private function excel(Collection $rows, string $title): string
     {
-        $xmlRows = '';
-        foreach (collect([$this->headers()])->concat($rows->map(fn ($row) => $this->values($row))) as $row) {
-            $cells = collect($row)->map(fn ($value) => '<Cell><Data ss:Type="String">'.htmlspecialchars((string) $value, ENT_XML1 | ENT_QUOTES, 'UTF-8').'</Data></Cell>')->implode('');
-            $xmlRows .= '<Row>'.$cells.'</Row>';
+        $spreadsheet = new Spreadsheet;
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle(mb_substr($title, 0, 31));
+        $sheet->fromArray([$this->headers(), ...$rows->map(fn ($row) => $this->values($row))->all()]);
+        $sheet->freezePane('A2');
+        $sheet->getStyle('A1:AN1')->getFont()->setBold(true);
+
+        $path = tempnam(sys_get_temp_dir(), 'prazzu-analytics-xlsx-');
+        if ($path === false) {
+            throw new \RuntimeException('Não foi possível criar o arquivo temporário do relatório Excel.');
         }
 
-        return '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?>'
-            .'<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
-            .'<Worksheet ss:Name="'.htmlspecialchars(mb_substr($title, 0, 31), ENT_XML1 | ENT_QUOTES, 'UTF-8').'"><Table>'.$xmlRows.'</Table></Worksheet></Workbook>';
+        try {
+            (new Xlsx($spreadsheet))->save($path);
+            return file_get_contents($path) ?: '';
+        } finally {
+            $spreadsheet->disconnectWorksheets();
+            @unlink($path);
+        }
     }
 
     /** PDF simples e válido, sem dependências externas. @param Collection<int, object> $rows */

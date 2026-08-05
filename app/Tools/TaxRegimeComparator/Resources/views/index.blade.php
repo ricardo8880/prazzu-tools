@@ -122,10 +122,11 @@
                             <button class="btn btn-outline-primary btn-sm" type="submit" data-analytics-action="export" data-analytics-form="comparison" data-analytics-format="{{ $format }}">Exportar {{ $label }}</button>
                         </form>
                     @endforeach
-                    <form method="post" action="{{ route('tools.comparador-tributario.report') }}">@csrf
-                        @foreach(old() as $key => $value) @if(is_scalar($value))<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach
-                        <button class="btn btn-primary btn-sm" type="submit" data-analytics-action="export" data-analytics-form="comparison" data-analytics-format="pdf"><i class="bi bi-file-earmark-pdf me-1"></i>Relatório</button>
-                    </form>
+                    @foreach (['pdf'=>'Baixar PDF','xlsx'=>'Baixar Excel'] as $format=>$label)
+                    <form method="post" action="{{ route('tools.comparador-tributario.document',$format) }}">@csrf
+                    @foreach(old() as $key=>$value) @if(is_scalar($value))<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach
+                    <button class="btn btn-primary btn-sm" type="submit" data-analytics-action="export" data-analytics-format="{{ $format }}">{{ $label }}</button></form>
+                    @endforeach
                 </div>
             </div>
 

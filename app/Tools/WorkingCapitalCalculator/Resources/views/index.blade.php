@@ -45,7 +45,7 @@
                 @endforeach
                 </tbody></table>
             </div>
-        </x-tools.result-panel>
+        <x-tools.export-buttons :pdf-route="route('tools.capital-de-giro.export.pdf')" :excel-route="route('tools.capital-de-giro.export.excel')" :input="$calculationInput ?? []" /></x-tools.result-panel>
     @endisset
 </x-tools.page>
 @endsection

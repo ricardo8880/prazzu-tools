@@ -92,7 +92,18 @@
         <section class="mt-4" aria-labelledby="calculation-result-title">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <h2 id="calculation-result-title" class="prazzu-section-title mb-0">Resultado estimado</h2>
-                <span class="badge text-bg-primary">{{ $result['annex_label'] }}</span>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="badge text-bg-primary">{{ $result['annex_label'] }}</span>
+                    @foreach (['pdf' => 'Baixar PDF', 'xlsx' => 'Baixar Excel (.xlsx)'] as $format => $label)
+                        <form method="post" action="{{ route('tools.calculadora-simples-nacional.export', $format) }}">
+                            @csrf
+                            @foreach(old() as $key => $value)
+                                @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif
+                            @endforeach
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">{{ $label }}</button>
+                        </form>
+                    @endforeach
+                </div>
             </div>
 
             @if ($factorR)

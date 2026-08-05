@@ -58,7 +58,7 @@ liberados pela política comercial central, mantendo login apenas para salvar.
 
 - `Money`, datas de referência e exceções de domínio do Core;
 - contratos centrais de histórico e auditoria;
-- `BrowserPrintExporter` e `PrintableDocument` para impressão;
+- `PdfExporter`/Dompdf e `SpreadsheetExporter`/PhpSpreadsheet para exportações oficiais;
 - Laravel apenas nas camadas Presentation e Infrastructure;
 - recurso nativo de impressão do navegador, sem biblioteca externa de PDF no
   servidor.

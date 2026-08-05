@@ -102,7 +102,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
                 new ToolFeature('custom_branding', 'Personalização visual do recibo', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
-            export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'json']),
+            export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'xlsx', 'json']),
             sharing: ToolSharingPolicy::disabled(),
             sensitiveData: new ToolSensitiveDataPolicy(SensitiveDataMode::Encrypted, ['payer_document', 'payee_document']),
         );

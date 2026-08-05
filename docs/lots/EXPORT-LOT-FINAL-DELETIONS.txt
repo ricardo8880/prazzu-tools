@@ -1,0 +1,5 @@
+app/Core/Export/Data/PrintableDocument.php
+app/Core/Export/Services/BrowserPrintExporter.php
+resources/js/print-page.js
+resources/views/exports/browser-print.blade.php
+tests/Unit/Core/Export/TabularExportServiceTest.php

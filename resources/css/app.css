@@ -758,12 +758,6 @@ body.prazzu-app .text-body-secondary {
     inset: 0;
 }
 
-.prazzu-tool-card > :not(.prazzu-tool-card__link) {
-    position: relative;
-    z-index: 2;
-    pointer-events: none;
-}
-
 .prazzu-tool-card .prazzu-icon-tile {
     width: 38px;
     height: 38px;

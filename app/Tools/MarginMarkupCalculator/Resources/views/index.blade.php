@@ -186,8 +186,8 @@
                     @foreach (['reference_date','base_cost','additional_costs','freight_cost','packaging_cost','fixed_expenses','desired_margin','taxes_percentage','commission_percentage','card_fees_percentage','marketplace_fees_percentage'] as $field)
                         <input type="hidden" name="{{ $field }}" value="{{ old($field) }}">
                     @endforeach
-                    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-filetype-csv me-1"></i> Exportar CSV</button>
-                    <button class="btn btn-outline-danger" type="submit" formaction="{{ route('tools.calculadora-margem-markup.export.pdf') }}" formtarget="_blank"><i class="bi bi-file-earmark-pdf me-1"></i> Exportar PDF</button>
+                    <button class="btn btn-outline-primary" type="submit"><i class="bi bi-file-earmark-excel me-1"></i> Baixar Excel</button>
+                    <button class="btn btn-outline-danger" type="submit" formaction="{{ route('tools.calculadora-margem-markup.export.pdf') }}" formtarget="_blank"><i class="bi bi-file-earmark-pdf me-1"></i> Baixar PDF</button>
                 </form>
                 <p class="text-body-secondary mb-0"><small>Regra {{ $result['rule_version'] }}. Estimativa para apoio gerencial.</small></p>
             </div>

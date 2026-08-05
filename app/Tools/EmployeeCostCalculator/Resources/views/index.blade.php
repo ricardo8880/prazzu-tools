@@ -106,7 +106,7 @@
                     </form>
                 @endforeach
             </div>
-        <x-tools.export-buttons :pdf-route="route('tools.custo-funcionario-clt.download.pdf')" :excel-route="route('tools.custo-funcionario-clt.download.excel')" :input="$calculationInput ?? []" /></x-tools.result-panel>
+        </x-tools.result-panel>
     @endisset
 
     <section class="mt-4" aria-labelledby="employee-cost-plus-title">

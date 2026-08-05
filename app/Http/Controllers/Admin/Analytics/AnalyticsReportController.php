@@ -46,10 +46,10 @@ final class AnalyticsReportController extends Controller
             $content = $files->build($format, $rows, 'Relatório Analytics - '.$request->period()->label());
         }
         $extension = match ($format) {
-            'excel' => 'xml', 'markdown' => 'md', 'package', 'package_summary' => 'zip', default => $format
+            'excel' => 'xlsx', 'markdown' => 'md', 'package', 'package_summary' => 'zip', default => $format
         };
         $mime = match ($format) {
-            'excel' => 'application/vnd.ms-excel; charset=UTF-8',
+            'excel' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'pdf' => 'application/pdf',
             'json' => 'application/json; charset=UTF-8',
             'markdown' => 'text/markdown; charset=UTF-8',

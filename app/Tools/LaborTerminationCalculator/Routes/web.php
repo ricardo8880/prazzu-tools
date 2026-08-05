@@ -13,6 +13,7 @@ Route::prefix('ferramentas/calculadora-de-rescisao')
             ->post('/calcular', [LaborTerminationController::class, 'calculate'])->name('calculate');
         Route::middleware('tool.feature:calculadora-de-rescisao,current_report')
             ->post('/exportar-pdf', [LaborTerminationController::class, 'export'])->name('export');
+        Route::post('/exportar-excel', [LaborTerminationController::class, 'exportExcel'])->name('export.excel');
 
         Route::middleware('persistence.auth')->prefix('historico')->name('history.')->group(function (): void {
             Route::middleware('tool.feature:calculadora-de-rescisao,history')

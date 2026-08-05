@@ -7,9 +7,7 @@ namespace App\Tools\EmployeeCostCalculator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
-use App\Core\Export\Contracts\SpreadsheetExporter;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Data\PdfDocument;
 use App\Core\Export\Services\ToolResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\ToolProfiles\Services\ToolProfileManager;
@@ -37,7 +35,7 @@ use App\Tools\EmployeeCostCalculator\Tool;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -90,19 +88,20 @@ final class ToolController extends Controller
     public function printCurrent(
         ExecuteToolRequest $request,
         CalculateTool $action,
-        BrowserPrintExporter $print,
         ToolProfileManager $profiles,
     ): View {
         $input = $request->validated();
         $company = $this->companyForReport($request, $profiles, $input);
         $result = $action->execute($input)->toArray();
 
-        return $print->render($this->printableDocument(
-            input: $input,
-            result: $result,
-            company: $company,
-            title: 'Relatório de Custo de Funcionário CLT',
-        ));
+        return view('exports.printable-document', [
+            'title' => 'Relatório de Custo de Funcionário CLT',
+            'contentView' => 'tools-custo-funcionario-clt::report',
+            'contentData' => ['input' => $input, 'result' => $result, 'company' => $company],
+            'generatedAt' => now()->format('d/m/Y H:i'),
+            'summaryLabel' => 'Custo anual projetado',
+            'summaryValue' => $result['annual_cost'] ?? null,
+        ]);
     }
 
     public function exportCurrent(
@@ -182,24 +181,20 @@ final class ToolController extends Controller
     public function printBatch(
         CalculateBatchRequest $request,
         CalculateEmployeeBatch $action,
-        BrowserPrintExporter $print,
         ToolProfileManager $profiles,
     ): View {
         $input = $request->validated();
         $result = $action->execute($input);
 
-        return $print->render(new PrintableDocument(
-            title: 'Relatório Consolidado de Custos CLT',
-            contentView: 'tools-custo-funcionario-clt::report-batch',
-            data: [
+        return view('exports.printable-document', [
+            'title' => 'Relatório Consolidado de Custos CLT',
+            'contentView' => 'tools-custo-funcionario-clt::report-batch',
+            'contentData' => [
                 'batch' => $result,
                 'company' => $this->companyForReport($request, $profiles, $input),
             ],
-            subtitle: $result['scenario_name'],
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: 'Custo anual',
-            summaryValue: $result['annual_total'],
-        ));
+            'generatedAt' => now()->format('d/m/Y H:i'),
+        ]);
     }
 
     public function compareScenarios(
@@ -358,16 +353,22 @@ final class ToolController extends Controller
         Request $request,
         string $run,
         ManageEmployeeCostHistory $history,
-        BrowserPrintExporter $print,
-    ): View {
+        PdfExporter $pdf,
+    ): Response {
         $entry = $history->find($run, (int) $request->user()->getAuthIdentifier());
         $result = $entry->result['result'] ?? $entry->result;
 
-        return $print->render($this->printableDocument(
-            input: $entry->input,
-            result: $result,
-            company: null,
-            title: 'Segunda via — Custo de Funcionário CLT',
+        return $pdf->download(new PdfDocument(
+            filename: 'custo-funcionario-clt-historico-'.now()->format('Y-m-d'),
+            view: 'exports.printable-document',
+            data: [
+                'title' => 'Relatório de Custo de Funcionário CLT',
+                'contentView' => 'tools-custo-funcionario-clt::report',
+                'contentData' => ['input' => $entry->input, 'result' => $result, 'company' => null],
+                'generatedAt' => now()->format('d/m/Y H:i'),
+                'summaryLabel' => 'Custo anual projetado',
+                'summaryValue' => $result['annual_cost'] ?? null,
+            ],
         ));
     }
 
@@ -453,58 +454,6 @@ final class ToolController extends Controller
             'accountant_name',
             'accountant_registration',
         ]);
-    }
-
-    /** @param array<string, mixed> $input @param array<string, mixed> $result */
-
-
-    public function downloadPdf(
-        ExecuteToolRequest $request,
-        CalculateTool $action,
-        PdfExporter $exporter,
-        ToolResultExportFactory $documents,
-    ): \Symfony\Component\HttpFoundation\Response {
-        $input = $request->validated();
-        $result = $action->execute($input);
-
-        return $exporter->download($documents->pdf(
-            title: 'Relatório de Custo de Funcionário CLT',
-            filename: 'custo-funcionario-clt-'.now()->format('Y-m-d'),
-            result: $result,
-            input: $input,
-        ));
-    }
-
-    public function downloadExcel(
-        ExecuteToolRequest $request,
-        CalculateTool $action,
-        SpreadsheetExporter $exporter,
-        ToolResultExportFactory $documents,
-    ): \Symfony\Component\HttpFoundation\Response {
-        $input = $request->validated();
-        $result = $action->execute($input);
-
-        return $exporter->download($documents->spreadsheet(
-            filename: 'custo-funcionario-clt-'.now()->format('Y-m-d'),
-            result: $result,
-            input: $input,
-        ));
-    }
-
-    private function printableDocument(array $input, array $result, ?array $company, string $title): PrintableDocument
-    {
-        $summary = collect($result['summary'] ?? [])->keyBy('key');
-
-        return new PrintableDocument(
-            title: $title,
-            contentView: 'tools-custo-funcionario-clt::report',
-            data: ['input' => $input, 'result' => $result, 'company' => $company],
-            applicationName: (string) ($company['office_name'] ?? 'Prazzu Tools'),
-            subtitle: trim((string) ($input['employee_name'] ?? '')) ?: 'Simulação individual',
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: 'Custo anual projetado',
-            summaryValue: $summary->get('annual_cost')['value'] ?? null,
-        );
     }
 
     /** @param array<string, mixed> $input @param array<string, mixed> $result */

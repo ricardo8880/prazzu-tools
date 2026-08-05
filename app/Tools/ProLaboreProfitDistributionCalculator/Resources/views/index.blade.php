@@ -121,8 +121,8 @@
         </x-tools.result-panel>
 
         <div class="d-flex flex-wrap gap-2 mt-4">
-            @foreach (['pdf' => 'PDF', 'csv' => 'CSV', 'json' => 'JSON'] as $format => $label)
-                <form method="POST" action="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.export', $format) }}" @if($format === 'pdf') target="_blank" @endif>
+            @foreach (['pdf' => 'PDF', 'xlsx' => 'Excel (.xlsx)', 'csv' => 'CSV', 'json' => 'JSON'] as $format => $label)
+                <form method="POST" action="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.export', $format) }}">
                     @csrf
                     @foreach($result->details['input'] as $name => $value)<input type="hidden" name="{{ $name }}" value="{{ $value }}">@endforeach
                     <input type="hidden" name="confirm_assumptions" value="1">

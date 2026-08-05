@@ -7,8 +7,9 @@ namespace App\Tools\BusinessDocumentValidator\Presentation\Controllers;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Dates\ReferenceDate;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
@@ -109,7 +110,7 @@ final class BusinessDocumentValidatorController extends Controller
         ]);
     }
 
-    public function exportBatch(Request $request, BuildBatchExportRows $builder, TabularExportService $exporter, PlatformAnalytics $analytics, TemporaryPayloadStore $temporary): StreamedResponse|Response
+    public function exportBatch(Request $request, BuildBatchExportRows $builder, TabularExportService $exporter, SpreadsheetExporter $spreadsheet, PlatformAnalytics $analytics, TemporaryPayloadStore $temporary): StreamedResponse|Response
     {
         $result = $this->batchResult($request, $temporary);
         $format = (string) $request->get('format', 'csv');
@@ -120,23 +121,18 @@ final class BusinessDocumentValidatorController extends Controller
         $analytics->record(AnalyticsEventName::BusinessDocumentValidatorBatchExported->value, 'tool', $request, ['format' => $format, 'only_issues' => $onlyIssues, 'rows' => count($rows)]);
 
         return $format === 'excel'
-            ? $exporter->excel('validacao-documentos'.$suffix.'.xls', $builder->headers(), $rows, 'Validações')
+            ? $spreadsheet->download(new \App\Core\Export\Data\SpreadsheetDocument('validacao-documentos'.$suffix, [new \App\Core\Export\Data\SpreadsheetSheet('Validações', [$builder->headers(), ...$rows])]))
             : $exporter->csv('validacao-documentos'.$suffix.'.csv', $builder->headers(), $rows);
     }
 
-    public function printBatch(Request $request, BrowserPrintExporter $exporter, TemporaryPayloadStore $temporary): View
+    public function exportBatchOfficial(Request $request, string $format, TemporaryPayloadStore $temporary, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): Response
     {
+        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         $result = $this->batchResult($request, $temporary);
-
-        return $exporter->render(new PrintableDocument(
-            title: 'Relatório de validação de documentos',
-            subtitle: 'CPF, CNPJ, Inscrição Estadual e inconsistências cadastrais',
-            contentView: 'tools-validador-de-cnpj::print.batch-report',
-            data: ['result' => $result],
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: 'Registros analisados',
-            summaryValue: (string) data_get($result, 'summary.total', 0),
-        ));
+        $filename = 'validacao-documentos-lote-'.now()->format('Y-m-d');
+        return $format === 'pdf'
+            ? $pdf->download($documents->pdf('Validação de documentos em lote', $filename, $result))
+            : $spreadsheet->download($documents->spreadsheet($filename, $result));
     }
 
     public function history(Request $request, ListValidationHistory $history): View

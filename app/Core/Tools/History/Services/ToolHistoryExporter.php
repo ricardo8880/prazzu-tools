@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Tools\History\Services;
 
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Data\ToolRunEntry;
 use App\Core\Tools\ToolRegistry;
@@ -20,7 +21,9 @@ final readonly class ToolHistoryExporter
     public function __construct(
         private ToolRegistry $registry,
         private TabularExportService $tabular,
-        private BrowserPrintExporter $print,
+        private PdfExporter $pdf,
+        private SpreadsheetExporter $spreadsheet,
+        private StructuredResultExportFactory $documents,
     ) {}
 
     public function export(ToolRunEntry $entry, string $format): View|Response|StreamedResponse
@@ -32,16 +35,8 @@ final readonly class ToolHistoryExporter
 
         return match ($format) {
             'csv' => $this->tabular->csv($basename.'.csv', ['Seção', 'Campo', 'Valor'], $rows),
-            'xlsx' => $this->tabular->xlsx($basename.'.xlsx', ['Seção', 'Campo', 'Valor'], $rows, 'Resultado'),
-            'pdf' => $this->print->render(new PrintableDocument(
-                title: $manifest->name,
-                subtitle: 'Relatório de cálculo salvo',
-                contentView: 'exports.partials.tool-history',
-                data: ['entry' => $entry],
-                generatedAt: now()->format('d/m/Y H:i'),
-                summaryLabel: 'Data de referência',
-                summaryValue: $entry->referenceDate->format('d/m/Y'),
-            )),
+            'xlsx' => $this->spreadsheet->download($this->documents->spreadsheet($basename, $entry->result, $entry->input)),
+            'pdf' => $this->pdf->download($this->documents->pdf($manifest->name, $basename, $entry->result, $entry->input)),
             default => throw new InvalidArgumentException('Formato de exportação não suportado.'),
         };
     }

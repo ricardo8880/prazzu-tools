@@ -6,8 +6,9 @@ namespace App\Tools\ProLaboreProfitDistributionCalculator\Presentation\Controlle
 
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
-use App\Core\Export\Data\PrintableDocument;
-use App\Core\Export\Services\BrowserPrintExporter;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
@@ -23,6 +24,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class ToolController extends Controller
@@ -76,12 +78,12 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, string $format, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
+    public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, string $format, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, TabularExportService $tabular): Response|JsonResponse|StreamedResponse
     {
         $input = $request->validated();
         $result = $action->execute($input)->toArray();
 
-        return $this->export($format, $result, $input, $print, $tabular);
+        return $this->export($format, $result, $input, $documents, $pdf, $spreadsheet, $tabular);
     }
 
     public function history(Request $request, ManageToolHistory $history): View
@@ -115,42 +117,20 @@ final class ToolController extends Controller
             ->with('history_message', 'Simulação removida do histórico.');
     }
 
-    public function exportHistory(Request $request, string $run, string $format, ManageToolHistory $history, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
+    public function exportHistory(Request $request, string $run, string $format, ManageToolHistory $history, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, TabularExportService $tabular): Response|JsonResponse|StreamedResponse
     {
         $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
-        return $this->export($format, $entry->result, $entry->input, $print, $tabular);
+        return $this->export($format, $entry->result, $entry->input, $documents, $pdf, $spreadsheet, $tabular);
     }
 
     /** @param array<string,mixed> $result @param array<string,mixed> $input */
-    private function export(string $format, array $result, array $input, BrowserPrintExporter $print, TabularExportService $tabular): View|JsonResponse|StreamedResponse
+    private function export(string $format, array $result, array $input, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, TabularExportService $tabular): Response|JsonResponse|StreamedResponse
     {
-        abort_unless(in_array($format, ['csv', 'json', 'pdf'], true), 404);
-        $filename = 'pro-labore-lucros-'.($input['competence'] ?? now()->format('Y-m'));
-
-        if ($format === 'json') {
-            return response()->json(['input' => $input, 'result' => $result], 200, [
-                'Content-Disposition' => 'attachment; filename="'.$filename.'.json"',
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-        }
-
-        if ($format === 'csv') {
-            $rows = [];
-            foreach (($result['summary'] ?? []) as $item) {
-                $rows[] = [$item['label'] ?? '', $item['value'] ?? '', $item['description'] ?? ''];
-            }
-
-            return $tabular->csv($filename.'.csv', ['Indicador', 'Valor', 'Descrição'], $rows);
-        }
-
-        return $print->render(new PrintableDocument(
-            title: 'Relatório de Pró-Labore e Distribuição de Lucros',
-            subtitle: 'Competência '.($input['competence'] ?? 'não informada'),
-            contentView: 'tools-calculadora-pro-labore-distribuicao-lucros::pdf.report',
-            data: ['input' => $input, 'result' => $result],
-            generatedAt: now()->format('d/m/Y H:i'),
-            summaryLabel: $result['summary'][2]['label'] ?? 'Total recebido',
-            summaryValue: $result['summary'][2]['value'] ?? '—',
-        ));
+        abort_unless(in_array($format,['csv','json','pdf','xlsx'],true),404); $filename='pro-labore-lucros-'.($input['competence']??now()->format('Y-m'));
+        if($format==='json') return response()->json(['input'=>$input,'result'=>$result],200,['Content-Disposition'=>'attachment; filename="'.$filename.'.json"'],JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+        if($format==='csv'){ $rows=[]; foreach(($result['summary']??[]) as $item)$rows[]=[$item['label']??'',$item['value']??'',$item['description']??'']; return $tabular->csv($filename.'.csv',['Indicador','Valor','Descrição'],$rows); }
+        return $format==='pdf' ? $pdf->download($documents->pdf('Relatório de Pró-Labore e Distribuição de Lucros',$filename,$result,$input)) : $spreadsheet->download($documents->spreadsheet($filename,$result,$input));
     }
+
 }

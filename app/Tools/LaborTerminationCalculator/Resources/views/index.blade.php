@@ -272,17 +272,7 @@
                     <small class="text-body-secondary d-block">Valor líquido estimado</small>
                     <strong class="fs-3 text-success">{{ $result['net_total'] }}</strong>
                     @if (! empty($exportInput))
-                        <form method="post" action="{{ route('tools.calculadora-de-rescisao.export') }}" class="mt-2" target="_blank">
-                            @csrf
-                            @foreach ($exportInput as $field => $value)
-                                @if (! is_array($value) && $value !== null)
-                                    <input type="hidden" name="{{ $field }}" value="{{ $value }}">
-                                @endif
-                            @endforeach
-                            <button class="btn btn-outline-primary btn-sm" type="submit">
-                                <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i> Exportar PDF
-                            </button>
-                        </form>
+                        <x-tools.export-buttons :pdf-route="route('tools.calculadora-de-rescisao.export')" :excel-route="route('tools.calculadora-de-rescisao.export.excel')" :input="$exportInput" />
                     @endif
                 </div>
             </div>

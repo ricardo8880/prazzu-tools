@@ -93,10 +93,10 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                 new ToolFeature('history', 'Histórico, recuperação e duplicação de cálculos', ToolFeatureTier::Plus),
                 new ToolFeature('multiple_employees', 'Cálculo e planejamento para múltiplos funcionários', ToolFeatureTier::Plus),
                 new ToolFeature('vacation_planning', 'Calendário, alertas e planejamento de períodos', ToolFeatureTier::Plus),
-                new ToolFeature('professional_export', 'Exportação profissional em CSV, JSON e PDF', ToolFeatureTier::Plus),
+                new ToolFeature('professional_export', 'Exportação profissional em PDF, XLSX, CSV e JSON', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 180, minimumReadableSchemaVersion: 1),
-            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),
+            export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'xlsx', 'csv', 'json']),
             sharing: ToolSharingPolicy::disabled(),
             sensitiveData: ToolSensitiveDataPolicy::none(),
         );

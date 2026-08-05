@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Throwable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -110,9 +111,13 @@ class AppServiceProvider extends ServiceProvider
         });
 
         View::composer('components.layout.right-sidebar', function ($view): void {
-            $recentBlogPosts = Schema::hasTable('blog_posts')
-                ? BlogPost::query()->publiclyAvailable()->take(3)->get()
-                : collect();
+            try {
+                $recentBlogPosts = Schema::hasTable('blog_posts')
+                    ? BlogPost::query()->publiclyAvailable()->take(3)->get()
+                    : collect();
+            } catch (Throwable) {
+                $recentBlogPosts = collect();
+            }
 
             $routeName = request()->route()?->getName();
             $segments = is_string($routeName) ? explode('.', $routeName) : [];

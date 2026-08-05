@@ -9,3 +9,7 @@ Route::get('/ferramentas/capital-de-giro', [ToolController::class, 'index'])
     ->name('tools.capital-de-giro.index');
 Route::post('/ferramentas/capital-de-giro', [ToolController::class, 'calculate'])
     ->name('tools.capital-de-giro.calculate');
+Route::post('/ferramentas/capital-de-giro/exportar/pdf', [ToolController::class, 'exportPdf'])
+    ->name('tools.capital-de-giro.export.pdf');
+Route::post('/ferramentas/capital-de-giro/exportar/excel', [ToolController::class, 'exportExcel'])
+    ->name('tools.capital-de-giro.export.excel');

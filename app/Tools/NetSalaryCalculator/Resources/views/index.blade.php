@@ -140,24 +140,7 @@
                     <div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>
                 @endif
 
-                <div class="d-flex flex-wrap gap-2">
-                    <form method="POST" action="{{ route('tools.calculadora-salario-liquido.print') }}" target="_blank">
-                        @csrf
-                        @foreach ($result->details['input'] as $name => $value)
-                            <input type="hidden" name="{{ $name }}" value="{{ $value }}">
-                        @endforeach
-                        <input type="hidden" name="confirm_assumptions" value="1">
-                        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-printer me-1"></i>Imprimir / PDF</button>
-                    </form>
-                    <form method="POST" action="{{ route('tools.calculadora-salario-liquido.export') }}">
-                        @csrf
-                        @foreach ($result->details['input'] as $name => $value)
-                            <input type="hidden" name="{{ $name }}" value="{{ $value }}">
-                        @endforeach
-                        <input type="hidden" name="confirm_assumptions" value="1">
-                        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-download me-1"></i>Exportar CSV</button>
-                    </form>
-                </div>
+                <div class="d-flex gap-2 flex-wrap">@foreach(['pdf'=>'Baixar PDF','xlsx'=>'Baixar Excel (.xlsx)'] as $format=>$label)<form method="POST" action="{{ route('tools.calculadora-salario-liquido.export',$format) }}">@csrf @foreach($result->details['input'] as $n=>$v)<input type="hidden" name="{{ $n }}" value="{{ is_bool($v)?($v?1:0):$v }}">@endforeach<input type="hidden" name="confirm_assumptions" value="1"><button class="btn btn-outline-primary" type="submit">{{ $label }}</button></form>@endforeach</div>
             </x-tools.result-panel>
         </div>
     @endisset

@@ -98,7 +98,8 @@
         <div class="d-flex flex-wrap gap-2 mb-3">
             <form method="post" action="{{ route('tools.calculadora-ferias.export', 'csv') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Exportar CSV <span class="badge text-bg-primary">Plus</span></button></form>
             <form method="post" action="{{ route('tools.calculadora-ferias.export', 'json') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Exportar JSON</button></form>
-            <form method="post" action="{{ route('tools.calculadora-ferias.export', 'pdf') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Relatório PDF</button></form>
+            <form method="post" action="{{ route('tools.calculadora-ferias.export', 'pdf') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Baixar PDF</button></form>
+            <form method="post" action="{{ route('tools.calculadora-ferias.export', 'xlsx') }}">@csrf @foreach(old() as $key=>$value) @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach<button class="btn btn-sm btn-outline-secondary">Baixar Excel (.xlsx)</button></form>
         </div>
         @php($summary = collect($result['summary'])->keyBy('key'))
         @php($remuneration = $result['details']['remuneration'])
