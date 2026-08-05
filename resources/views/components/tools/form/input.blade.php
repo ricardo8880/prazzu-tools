@@ -20,7 +20,7 @@
     <div class="input-group">
         @if ($prefix)<span class="input-group-text">{{ $prefix }}</span>@endif
         <input
-            {{ $attributes->class(['form-control', 'is-invalid' => $errors->has($name)]) }}
+            {{ $attributes->class(['form-control', 'is-invalid' => $errors->has($name)])->merge(['data-testid' => \App\Core\Quality\E2E\Support\TestId::field($name)]) }}
             type="{{ $type }}"
             id="{{ $fieldId }}"
             name="{{ $name }}"
@@ -32,7 +32,7 @@
     </div>
 @else
     <input
-        {{ $attributes->class(['form-control', 'is-invalid' => $errors->has($name)]) }}
+        {{ $attributes->class(['form-control', 'is-invalid' => $errors->has($name)])->merge(['data-testid' => \App\Core\Quality\E2E\Support\TestId::field($name)]) }}
         type="{{ $type }}"
         id="{{ $fieldId }}"
         name="{{ $name }}"

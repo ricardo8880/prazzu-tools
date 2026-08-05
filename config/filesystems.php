@@ -47,6 +47,14 @@ return [
             'report' => false,
         ],
 
+        'e2e' => [
+            'driver' => 'local',
+            'root' => base_path(env('E2E_STORAGE_PATH', 'storage/app/e2e')),
+            'serve' => false,
+            'throw' => true,
+            'report' => true,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

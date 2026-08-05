@@ -17,15 +17,15 @@ $renderInputs = function (array $values, string $prefix = '') use (&$renderInput
     return $html;
 };
 @endphp
-<div class="d-flex flex-wrap gap-2 mt-3" data-result-export-actions>
-    <form method="POST" action="{{ $pdfRoute }}" data-file-download>
+<div class="d-flex flex-wrap gap-2 mt-3" data-result-export-actions data-testid="download-actions">
+    <form method="POST" action="{{ $pdfRoute }}" data-file-download data-testid="download-form-pdf">
         @csrf
         {!! $renderInputs($input) !!}
-        <button type="submit" class="btn btn-outline-danger">Exportar PDF</button>
+        <button type="submit" class="btn btn-outline-danger" data-testid="download-pdf">Exportar PDF</button>
     </form>
-    <form method="POST" action="{{ $excelRoute }}" data-file-download>
+    <form method="POST" action="{{ $excelRoute }}" data-file-download data-testid="download-form-xlsx">
         @csrf
         {!! $renderInputs($input) !!}
-        <button type="submit" class="btn btn-outline-success">Baixar Excel</button>
+        <button type="submit" class="btn btn-outline-success" data-testid="download-xlsx">Baixar Excel</button>
     </form>
 </div>

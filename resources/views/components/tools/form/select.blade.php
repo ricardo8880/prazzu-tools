@@ -16,7 +16,7 @@
 
 <label class="form-label" for="{{ $fieldId }}">{{ $label }}</label>
 <select
-    {{ $attributes->class(['form-select', 'is-invalid' => $errors->has($name)]) }}
+    {{ $attributes->class(['form-select', 'is-invalid' => $errors->has($name)])->merge(['data-testid' => \App\Core\Quality\E2E\Support\TestId::field($name)]) }}
     id="{{ $fieldId }}"
     name="{{ $name }}"
     @required($required)

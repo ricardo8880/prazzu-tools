@@ -454,3 +454,73 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - Históricos e endpoints de compatibilidade foram migrados sem alteração dos slugs e nomes públicos de rota.
 - O exportador administrativo de Analytics também deixou de gerar SpreadsheetML e passou a entregar `.xlsx` real.
 - A documentação do lote final e a lista explícita de arquivos removidos acompanham o ZIP incremental.
+
+## Automação completa de qualidade — Lote 1 — Fundação e inventário E2E
+
+### Resultado
+
+- O estado foi reconstruído a partir do ZIP original e conferido contra README, `CORE_CANDIDATES.md`, inventário oficial e relatórios anteriores.
+- Foi criado `config/e2e_quality.php`, espelhando exatamente as 32 ferramentas oficiais e acrescentando somente metadados de qualidade.
+- Foram definidos os perfis smoke, regressão, completo e exploratório.
+- As superfícies de formulário, resultado, download, histórico, upload, lote, geração documental e ações secundárias foram inventariadas.
+- Um gate arquitetural impede omissões, duplicações, divergência de slug/módulo e metadados fora do contrato.
+- Playwright, ambiente E2E, instrumentação e alterações nas views não foram antecipados.
+
+### Continuidade obrigatória para o Lote 2 da automação E2E
+
+- Reconstruir novamente o projeto com o ZIP original e aplicar este patch incremental.
+- Reler README, `CORE_CANDIDATES.md`, este documento, `docs/quality/E2E-AUTOMATION-CONTRACT.md`, o relatório do Lote 1 e os inventários.
+- Preservar exatamente as 32 ferramentas e seus slugs.
+- Implementar o ambiente E2E isolado antes de instalar ou executar o navegador.
+- Não usar dados, credenciais, banco, storage ou integrações reais.
+
+## Automação completa de qualidade — Lote 2 — Ambiente E2E isolado
+
+### Resultado
+
+- O estado foi reconstruído a partir do ZIP original com reaplicação do Lote 1 antes das alterações.
+- Foi criado `.env.e2e.example` sem segredos reais e com rede externa desativada por padrão.
+- O ambiente utiliza exclusivamente `database/e2e.sqlite`, `storage/app/e2e`, mailer `array`, fila `sync`, cache e sessão `array`.
+- Foram criados perfis determinísticos de usuário gratuito, Plus e administrador em um seeder protegido contra execução fora de `APP_ENV=e2e`.
+- Os comandos `composer e2e:prepare`, `composer e2e:verify` e `composer e2e:clean` administram o ciclo de vida de forma idempotente e recusam caminhos inseguros.
+- O `.gitignore` passou a proteger ambientes, banco, artefatos, dependências, caches e logs locais.
+- Um gate arquitetural valida o contrato de isolamento.
+- Playwright, browser, seletores visuais, instrumentação e cenários das ferramentas não foram antecipados.
+
+### Continuidade obrigatória para o Lote 3 da automação E2E
+
+- Reconstruir novamente o projeto usando o ZIP original e aplicar, em ordem, os Lotes 1 e 2.
+- Reler README, `CORE_CANDIDATES.md`, este documento e os relatórios E2E dos lotes concluídos.
+- Preservar exatamente as 32 ferramentas e os slugs públicos.
+- Instalar e configurar Playwright sobre o ambiente E2E isolado.
+- Não modificar as views com `data-testid` antes do Lote 4.
+
+## Automação E2E — Lote 3 — Fundação Playwright
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação dos Lotes E2E 1 e 2.
+- Playwright Test `1.62.1` foi registrado como runner oficial do navegador.
+- Chromium desktop, servidor Laravel E2E, relatórios HTML/JSON e evidências de falha foram configurados.
+- Um piloto abre a Home e `custo-funcionario-clt` sem antecipar cenários de domínio.
+- A captura inicial reúne console, page errors, falhas de rede e respostas HTTP com erro.
+- O próximo lote deve criar seletores `data-testid` estáveis antes do smoke universal.
+
+## Automação E2E — Lote 4 — Contrato visual e seletores estáveis
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação dos Lotes E2E 1, 2 e 3.
+- Foi criado um normalizador de identificadores no Core de Qualidade.
+- Componentes compartilhados passaram a expor `data-testid` para página, formulário, resultado, validação, campos e downloads.
+- O teste piloto Playwright deixou de depender da ordem do primeiro formulário e botão.
+- Um gate arquitetural protege o contrato visual sem acoplar CSS, Analytics ou domínio aos seletores E2E.
+- O próximo lote deve descobrir automaticamente as 32 ferramentas e executar o smoke universal.
+
+## Resultado da Automação E2E — Lote 5
+
+- O catálogo oficial passou a ser exportado para um manifesto temporário consumido pelo Playwright.
+- A exportação confronta `config/product_tools.php` com `config/e2e_quality.php` e falha diante de contagem, slug, módulo ou contrato mínimo divergente.
+- O Playwright passou a executar um smoke parametrizado para todas as 32 ferramentas, sem lista manual de slugs no TypeScript.
+- Cada ferramenta tem rota, resposta HTTP, raiz visual e painel de formulário verificados, com diagnóstico e resumo JSON anexados.
+- O Lote 6 deve criar o motor declarativo de cenários, sem duplicar a descoberta consolidada neste lote.

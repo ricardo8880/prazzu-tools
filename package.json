@@ -4,13 +4,21 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "e2e:install": "playwright install chromium",
+        "e2e:test": "playwright test",
+        "e2e:test:headed": "playwright test --headed",
+        "e2e:test:debug": "playwright test --debug",
+        "e2e:report": "playwright show-report storage/app/e2e/artifacts/report",
+        "e2e:catalog": "php scripts/e2e-tool-catalog.php export",
+        "e2e:test:smoke": "playwright test tests/Browser/playwright/tool-smoke.spec.ts"
     },
     "devDependencies": {
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",
-        "vite": "^7.0.7"
+        "vite": "^7.0.7",
+        "@playwright/test": "1.62.1"
     },
     "dependencies": {
         "tinymce": "^7.9.3"

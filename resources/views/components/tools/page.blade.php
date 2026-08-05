@@ -20,7 +20,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['prazzu-page', 'tool-page']) }} data-tool="{{ $slug }}">
+<div {{ $attributes->class(['prazzu-page', 'tool-page'])->merge(['data-testid' => \App\Core\Quality\E2E\Support\TestId::make('tool-page', $slug)]) }} data-tool="{{ $slug }}">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>

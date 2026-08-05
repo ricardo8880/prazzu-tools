@@ -111,6 +111,24 @@
         ],
         "platform:check": [
             "@php scripts/check-platform.php"
+        ],
+        "e2e:prepare": "@php scripts/e2e-environment.php prepare",
+        "e2e:verify": "@php scripts/e2e-environment.php verify",
+        "e2e:clean": "@php scripts/e2e-environment.php clean",
+        "e2e:browser:install": "npm run e2e:install",
+        "e2e:browser:check": "@php scripts/e2e-browser.php check",
+        "e2e:browser:test": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "npm run e2e:test"
+        ],
+        "e2e:catalog": "@php scripts/e2e-tool-catalog.php export",
+        "e2e:catalog:check": "@php scripts/e2e-tool-catalog.php check",
+        "e2e:browser:smoke": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "@e2e:catalog:check",
+            "npm run e2e:test:smoke"
         ]
     },
     "extra": {

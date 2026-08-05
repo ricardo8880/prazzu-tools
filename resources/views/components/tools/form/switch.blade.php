@@ -3,7 +3,7 @@
 @php($fieldId = $id ?? str_replace(['[', ']', '.'], ['_', '', '_'], $name))
 <div class="form-check form-switch">
     <input
-        {{ $attributes->class(['form-check-input']) }}
+        {{ $attributes->class(['form-check-input'])->merge(['data-testid' => \App\Core\Quality\E2E\Support\TestId::field($name)]) }}
         type="checkbox"
         role="switch"
         id="{{ $fieldId }}"

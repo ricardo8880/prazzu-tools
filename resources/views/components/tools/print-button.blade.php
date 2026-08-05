@@ -5,7 +5,7 @@
 
 @php($buttonLabel = trim((string) $slot) !== '' ? $slot : $label)
 
-<button {{ $attributes->class(['btn btn-primary'])->merge(['data-browser-action' => 'print', 'data-analytics-client-only' => 'true']) }} type="button">
+<button {{ $attributes->class(['btn btn-primary'])->merge(['data-browser-action' => 'print', 'data-analytics-client-only' => 'true', 'data-testid' => 'print-result']) }} type="button">
     @if ($icon)
         <i class="bi {{ $icon }} me-1" aria-hidden="true"></i>
     @endif

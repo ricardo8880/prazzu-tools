@@ -1,6 +1,6 @@
-@props(['title', 'description' => null, 'headingId' => null, 'badge' => null])
+@props(['title', 'description' => null, 'headingId' => null, 'badge' => null, 'testId' => 'tool-form-panel'])
 
-<section {{ $attributes->class(['prazzu-form-panel']) }} @if($headingId) aria-labelledby="{{ $headingId }}" @endif>
+<section {{ $attributes->class(['prazzu-form-panel'])->merge(['data-testid' => $testId]) }} @if($headingId) aria-labelledby="{{ $headingId }}" @endif>
     <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-4">
         <div>
             <h2 @if($headingId) id="{{ $headingId }}" @endif class="prazzu-section-title mb-1">{{ $title }}</h2>
