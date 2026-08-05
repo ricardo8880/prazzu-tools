@@ -7,8 +7,6 @@ namespace App\Tools\LaborTerminationCalculator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Export\Contracts\PdfExporter;
-use App\Core\Export\Data\PdfDocument;
 use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
@@ -24,6 +22,7 @@ use App\Tools\LaborTerminationCalculator\Presentation\Requests\CalculateLaborTer
 use App\Tools\LaborTerminationCalculator\Tool;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Throwable;
@@ -85,20 +84,38 @@ final class LaborTerminationController extends Controller
     ): View {
         $input = $request->validated();
 
+        Log::info('Labor termination printable report requested.', [
+            'tool' => Tool::SLUG,
+            'termination_type' => $input['termination_type'] ?? null,
+            'notice_type' => $input['notice_type'] ?? null,
+            'user_id' => $request->user()?->getAuthIdentifier(),
+        ]);
+
         try {
             $result = $action->execute($input)->toArray();
-        } catch (InvalidValue $exception) {
-            throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
-        }
 
-        return view('exports.printable-document', [
-            'title' => 'Relatório de Rescisão Trabalhista',
-            'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
-            'contentData' => ['result' => $result, 'input' => $input],
-            'generatedAt' => now()->format('d/m/Y H:i'),
-            'summaryLabel' => 'Valor líquido estimado',
-            'summaryValue' => $result['net_total'] ?? null,
-        ]);
+            return view('exports.printable-document', [
+                'title' => 'Relatório de Rescisão Trabalhista',
+                'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
+                'contentData' => ['result' => $result, 'input' => $input],
+                'generatedAt' => now()->format('d/m/Y H:i'),
+                'summaryLabel' => 'Valor líquido estimado',
+                'summaryValue' => $result['net_total'] ?? null,
+            ]);
+        } catch (InvalidValue $exception) {
+            Log::warning('Labor termination printable report validation failed.', [
+                'tool' => Tool::SLUG,
+                'message' => $exception->getMessage(),
+            ]);
+            throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
+        } catch (Throwable $exception) {
+            Log::error('Labor termination printable report failed.', [
+                'tool' => Tool::SLUG,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+            throw $exception;
+        }
     }
 
 

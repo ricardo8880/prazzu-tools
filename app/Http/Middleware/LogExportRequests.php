@@ -52,6 +52,9 @@ final class LogExportRequests
             || str_contains($contentType, 'spreadsheet')
             || str_contains($contentType, 'application/octet-stream')
             || str_contains($contentType, 'text/csv');
+        $isPrintableHtml = $response->isSuccessful()
+            && str_contains(strtolower($contentType), 'text/html')
+            && $this->isPrintableRoute($request);
 
         $logContext = [
             ...$context,
@@ -59,15 +62,27 @@ final class LogExportRequests
             'content_type' => $contentType,
             'content_disposition' => $disposition,
             'is_file_response' => $isFile,
+            'is_printable_html' => $isPrintableHtml,
         ];
 
         if ($isFile) {
             Log::info('Exportação concluída com resposta de arquivo.', $logContext);
+        } elseif ($isPrintableHtml) {
+            Log::info('Exportação concluída com página de impressão.', $logContext);
         } else {
-            Log::warning('Exportação terminou sem retornar arquivo.', $logContext);
+            Log::warning('Exportação terminou sem retornar arquivo ou página de impressão.', $logContext);
         }
 
         return $response;
+    }
+
+
+    private function isPrintableRoute(Request $request): bool
+    {
+        $routeName = strtolower((string) ($request->route()?->getName() ?? ''));
+        $path = strtolower($request->path());
+
+        return preg_match('/(?:print|imprimir|pdf)/i', $routeName.' '.$path) === 1;
     }
 
     private function isExportRequest(Request $request): bool

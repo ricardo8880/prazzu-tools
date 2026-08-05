@@ -7,6 +7,8 @@ namespace App\Tools\MarginMarkupCalculator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
+use App\Core\Export\Contracts\PdfExporter;
+use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
 use App\Core\ToolIntegration\Contracts\ToolResultResolver;
@@ -35,8 +37,10 @@ use App\Tools\MarginMarkupCalculator\Presentation\Requests\SimulatePricingScenar
 use App\Tools\MarginMarkupCalculator\Tool;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -246,15 +250,41 @@ final class MarginMarkupController extends Controller
     public function exportPdf(
         CalculateMarginMarkupRequest $request,
         CalculateMarginMarkup $action,
-    ): View {
-        try {
-            $input = $request->validated();
-            $result = $action->execute($input)->toArray();
-        } catch (InvalidValue $exception) {
-            throw ValidationException::withMessages(['base_cost' => $exception->getMessage()]);
-        }
+        PdfExporter $exporter,
+        StructuredResultExportFactory $documents,
+    ): Response {
+        $input = $request->validated();
 
-        return $exporter->download($documents->pdf('Calculadora de Precificação de Produtos', 'margem-markup-'.now()->format('Y-m-d'), $result, $input));
+        Log::info('Margin/markup PDF export requested.', [
+            'tool' => Tool::SLUG,
+            'reference_date' => $input['reference_date'] ?? null,
+            'user_id' => $request->user()?->getAuthIdentifier(),
+        ]);
+
+        try {
+            $result = $action->execute($input)->toArray();
+            $document = $documents->pdf(
+                'Calculadora de Precificação de Produtos',
+                'margem-markup-'.now()->format('Y-m-d'),
+                $result,
+                $input,
+            );
+
+            return $exporter->download($document);
+        } catch (InvalidValue $exception) {
+            Log::warning('Margin/markup PDF export validation failed.', [
+                'tool' => Tool::SLUG,
+                'message' => $exception->getMessage(),
+            ]);
+            throw ValidationException::withMessages(['base_cost' => $exception->getMessage()]);
+        } catch (Throwable $exception) {
+            Log::error('Margin/markup PDF export failed.', [
+                'tool' => Tool::SLUG,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+            throw $exception;
+        }
     }
 
     public function exportBatch(
@@ -326,14 +356,33 @@ final class MarginMarkupController extends Controller
         Request $request,
         string $run,
         PrepareMarginMarkupHistoryReport $action,
+        StructuredResultExportFactory $documents,
     ): View {
-        $report = $action->execute($run, (int) $request->user()->getAuthIdentifier());
-
-        return view('exports.structured-result', [
-            'title' => 'Relatório de Margem, Markup e Formação de Preço',
-            'result' => $report['result'],
-            'input' => $report['input'],
+        Log::info('Margin/markup history PDF view requested.', [
+            'tool' => Tool::SLUG,
+            'run_id' => $run,
+            'user_id' => $request->user()?->getAuthIdentifier(),
         ]);
+
+        try {
+            $report = $action->execute($run, (int) $request->user()->getAuthIdentifier());
+            $document = $documents->pdf(
+                'Relatório de Margem, Markup e Formação de Preço',
+                'margem-markup-historico-'.$run,
+                $report['result'],
+                $report['input'],
+            );
+
+            return view($document->view, $document->data);
+        } catch (Throwable $exception) {
+            Log::error('Margin/markup history PDF view failed.', [
+                'tool' => Tool::SLUG,
+                'run_id' => $run,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+            throw $exception;
+        }
     }
 
     public function destroyHistory(

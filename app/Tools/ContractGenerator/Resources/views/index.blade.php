@@ -322,10 +322,17 @@
                                 type="submit"
                                 class="btn btn-outline-primary"
                                 formaction="{{ route('tools.gerador-de-contratos.export.pdf') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="pdf"
-                                formtarget="_blank"
                             >
                                 <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
                                 Exportar PDF
+                            </button>
+                            <button
+                                type="submit"
+                                class="btn btn-outline-success"
+                                formaction="{{ route('tools.gerador-de-contratos.export.xlsx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="xlsx"
+                            >
+                                <i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i>
+                                Baixar Excel
                             </button>
                             <button
                                 type="submit"

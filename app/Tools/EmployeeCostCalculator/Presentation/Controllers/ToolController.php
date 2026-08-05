@@ -35,6 +35,7 @@ use App\Tools\EmployeeCostCalculator\Tool;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -91,17 +92,34 @@ final class ToolController extends Controller
         ToolProfileManager $profiles,
     ): View {
         $input = $request->validated();
-        $company = $this->companyForReport($request, $profiles, $input);
-        $result = $action->execute($input)->toArray();
 
-        return view('exports.printable-document', [
-            'title' => 'Relatório de Custo de Funcionário CLT',
-            'contentView' => 'tools-custo-funcionario-clt::report',
-            'contentData' => ['input' => $input, 'result' => $result, 'company' => $company],
-            'generatedAt' => now()->format('d/m/Y H:i'),
-            'summaryLabel' => 'Custo anual projetado',
-            'summaryValue' => $result['annual_cost'] ?? null,
+        Log::info('Employee cost printable report requested.', [
+            'tool' => Tool::SLUG,
+            'has_company_profile' => ! empty($input['company_profile_id']),
+            'user_id' => $request->user()?->getAuthIdentifier(),
         ]);
+
+        try {
+            $company = $this->companyForReport($request, $profiles, $input);
+            $result = $action->execute($input)->toArray();
+
+            return view('exports.printable-document', [
+                'title' => 'Relatório de Custo de Funcionário CLT',
+                'contentView' => 'tools-custo-funcionario-clt::report',
+                'contentData' => ['input' => $input, 'result' => $result, 'company' => $company],
+                'generatedAt' => now()->format('d/m/Y H:i'),
+                'summaryLabel' => 'Custo anual projetado',
+                'summaryValue' => $result['annual_cost'] ?? null,
+            ]);
+        } catch (Throwable $exception) {
+            Log::error('Employee cost printable report failed.', [
+                'tool' => Tool::SLUG,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+
+            throw $exception;
+        }
     }
 
     public function exportCurrent(

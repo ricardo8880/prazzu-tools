@@ -7,8 +7,6 @@ namespace App\Tools\ContractGenerator\Presentation\Controllers;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
-use App\Core\Export\Contracts\PdfExporter;
-use App\Core\Export\Data\PdfDocument;
 use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Tools\ContractGenerator\Application\Actions\BuildContractDraft;
@@ -20,6 +18,7 @@ use App\Tools\ContractGenerator\Presentation\Requests\BuildContractDraftRequest;
 use App\Tools\ContractGenerator\Presentation\Requests\PreviewContractTextRequest;
 use App\Tools\ContractGenerator\Tool;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\View\View;
 
@@ -71,20 +70,37 @@ final class ContractGeneratorController
     ): View {
         $validated = $request->validated();
         $type = ContractType::from((string) $validated['contract_type']);
-        $title = $type->documentTitle();
 
-        $analytics->track(AnalyticsEvent::make(
-            AnalyticsEventName::ToolResultExported->value,
-            'tool',
-            ['subject_type' => 'tool', 'subject_slug' => Tool::SLUG, 'contract_type' => $type->value, 'format' => 'pdf'],
-        ), $request);
-
-        return view('exports.printable-document', [
-            'title' => 'Contrato para impressão',
-            'contentView' => 'tools-gerador-de-contratos::pdf.contract',
-            'contentData' => ['content' => (string) $validated['contract_text']],
-            'generatedAt' => now()->format('d/m/Y H:i'),
+        Log::info('Contract PDF printable view requested.', [
+            'tool' => Tool::SLUG,
+            'contract_type' => $type->value,
+            'content_length' => mb_strlen((string) $validated['contract_text']),
+            'user_id' => $request->user()?->getAuthIdentifier(),
         ]);
+
+        try {
+            $analytics->track(AnalyticsEvent::make(
+                AnalyticsEventName::ToolResultExported->value,
+                'tool',
+                ['subject_type' => 'tool', 'subject_slug' => Tool::SLUG, 'contract_type' => $type->value, 'format' => 'pdf'],
+            ), $request);
+
+            return view('exports.printable-document', [
+                'title' => 'Contrato para impressão',
+                'contentView' => 'tools-gerador-de-contratos::pdf.contract',
+                'contentData' => ['content' => (string) $validated['contract_text']],
+                'generatedAt' => now()->format('d/m/Y H:i'),
+            ]);
+        } catch (\Throwable $exception) {
+            Log::error('Contract PDF printable view failed.', [
+                'tool' => Tool::SLUG,
+                'contract_type' => $type->value,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+
+            throw $exception;
+        }
     }
 
     public function exportXlsx(PreviewContractTextRequest $request, SpreadsheetExporter $exporter, StructuredResultExportFactory $documents): Response
