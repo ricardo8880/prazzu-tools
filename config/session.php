@@ -2,6 +2,23 @@
 
 use Illuminate\Support\Str;
 
+$sessionFilesPath = env('SESSION_FILES_PATH', storage_path('framework/sessions'));
+
+// Caminhos relativos vindos do .env devem ser resolvidos a partir da raiz
+// da aplicação. O servidor embutido do PHP pode alterar o diretório corrente,
+// fazendo o driver de sessão procurar storage/app/e2e/sessions no lugar errado.
+$isWindowsAbsolutePath = strlen($sessionFilesPath) >= 3
+    && ctype_alpha($sessionFilesPath[0])
+    && $sessionFilesPath[1] === ':'
+    && in_array($sessionFilesPath[2], ['\\', '/'], true);
+
+$isRootedPath = str_starts_with($sessionFilesPath, '/')
+    || str_starts_with($sessionFilesPath, '\\');
+
+if (! $isWindowsAbsolutePath && ! $isRootedPath) {
+    $sessionFilesPath = base_path($sessionFilesPath);
+}
+
 return [
 
     /*
@@ -60,7 +77,7 @@ return [
     |
     */
 
-    'files' => env('SESSION_FILES_PATH', storage_path('framework/sessions')),
+    'files' => $sessionFilesPath,
 
     /*
     |--------------------------------------------------------------------------

@@ -2,8 +2,9 @@ import { expect, test, type Locator } from '@playwright/test';
 import { loadToolCatalog } from './helpers/tool-catalog';
 
 const catalog = loadToolCatalog();
-const seed = Number(process.env.E2E_EXPLORATION_SEED ?? '12012');
-const maxActions = Number(process.env.E2E_EXPLORATION_ACTIONS ?? '12');
+const environment = process.env;
+const seed = Number(environment.E2E_EXPLORATION_SEED ?? '12012');
+const maxActions = Number(environment.E2E_EXPLORATION_ACTIONS ?? '12');
 
 function hash(value: string): number {
     let result = seed;
@@ -14,17 +15,41 @@ function hash(value: string): number {
 async function safeAction(target: Locator, index: number): Promise<void> {
     const tag = await target.evaluate(element => element.tagName.toLowerCase());
     const type = (await target.getAttribute('type') ?? '').toLowerCase();
+
+    if (await target.getAttribute('readonly') !== null) return;
+
     if (tag === 'select') {
-        const options = await target.locator('option:not([disabled])').evaluateAll(items => items.map(item => (item as HTMLOptionElement).value).filter(Boolean));
+        const options = await target.locator('option:not([disabled])').evaluateAll(items => items
+            .map(item => (item as HTMLOptionElement).value)
+            .filter(Boolean));
         if (options.length > 0) await target.selectOption(options[index % options.length]);
         return;
     }
+
     if (type === 'checkbox' || type === 'radio') {
         await target.check({ force: true });
         return;
     }
-    if (['button', 'submit'].includes(type) || tag === 'button') return;
-    await target.fill(String((index + 1) * 17));
+
+    if (['button', 'submit', 'reset', 'file', 'image'].includes(type) || tag === 'button') return;
+
+    const numericValue = String((index + 1) * 17);
+    const valuesByType: Record<string, string> = {
+        date: '2026-08-06',
+        'datetime-local': '2026-08-06T12:00',
+        month: '2026-08',
+        week: '2026-W32',
+        time: '12:00',
+        email: `e2e-${index + 1}@example.test`,
+        url: `https://example.test/e2e/${index + 1}`,
+        tel: '11999999999',
+        color: '#336699',
+        password: `E2e-${index + 1}-Safe`,
+        number: numericValue,
+        range: numericValue,
+    };
+
+    await target.fill(valuesByType[type] ?? `e2e-${index + 1}`);
 }
 
 test.describe('Exploração controlada e não bloqueante', () => {
@@ -51,7 +76,7 @@ test.describe('Exploração controlada e não bloqueante', () => {
 
             await testInfo.attach('exploration-seed', {
                 contentType: 'application/json',
-                body: Buffer.from(JSON.stringify({ seed, maxActions, tool: tool.slug, errors }, null, 2)),
+                body: JSON.stringify({ seed, maxActions, tool: tool.slug, errors }, null, 2),
             });
             expect(errors, `A exploração de [${tool.slug}] encontrou falhas técnicas.`).toEqual([]);
         });

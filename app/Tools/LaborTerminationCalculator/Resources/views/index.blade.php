@@ -4,7 +4,7 @@
 @section('meta_description', 'Informe os dados do contrato para estimar saldo de salário, férias, 13º, aviso-prévio, FGTS e multa rescisória.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-de-rescisao">
+<div class="prazzu-page tool-page" data-tool="calculadora-de-rescisao" data-testid="tool-page-calculadora-de-rescisao">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -83,7 +83,7 @@
         </div>
     @endauth
 
-    <section class="prazzu-form-panel" aria-labelledby="termination-form-title">
+    <section class="prazzu-form-panel" aria-labelledby="termination-form-title" data-testid="tool-form-panel">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
             <div>
                 <h2 id="termination-form-title" class="prazzu-section-title mb-1">Dados da rescisão</h2>

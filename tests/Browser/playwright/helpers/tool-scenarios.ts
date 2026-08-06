@@ -107,14 +107,31 @@ async function invalidateRequired(scope: Locator): Promise<void> {
     else await required.fill('');
 }
 
-async function submitForm(scope: Locator): Promise<void> {
+async function submitForm(scope: Locator, expectsNavigation: boolean): Promise<void> {
     const form = await formWithin(scope);
+    const page = form.page();
     const submit = form.locator('button[type="submit"], input[type="submit"]').first();
+
     await expect(submit, 'O formulário precisa expor uma ação submit.').toBeVisible();
-    await Promise.allSettled([
-        form.page().waitForLoadState('domcontentloaded', { timeout: 5000 }),
-        submit.click(),
-    ]);
+
+    if (expectsNavigation) {
+        // Registra a espera antes do clique. Isso cobre POST para a mesma URL e
+        // redirecionamentos, sem permitir que as expectativas leiam page.url()
+        // durante a troca do documento.
+        await Promise.all([
+            page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30_000 }),
+            submit.click({ noWaitAfter: true }),
+        ]);
+        return;
+    }
+
+    // Cenários inválidos normalmente são bloqueados pela validação nativa e não
+    // navegam. Neles, o clique deve terminar sem inventar uma navegação obrigatória.
+    await submit.click({ noWaitAfter: true });
+    await expect.poll(
+        () => form.evaluate(element => (element as HTMLFormElement).checkValidity()),
+        { message: 'A validação nativa do formulário precisa estabilizar.', timeout: 5_000 },
+    ).toBe(false);
 }
 
 export async function executeScenario(page: Page, scenario: ToolScenario): Promise<void> {
@@ -129,7 +146,7 @@ export async function executeScenario(page: Page, scenario: ToolScenario): Promi
             case 'click': await target!.click(); break;
             case 'auto_fill_form': await autoFillForm(scope); break;
             case 'invalidate_required': await invalidateRequired(scope); break;
-            case 'submit': await submitForm(scope); break;
+            case 'submit': await submitForm(scope, scenario.kind !== 'invalid'); break;
         }
     }
 

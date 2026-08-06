@@ -4,7 +4,7 @@
 @section('meta_description', 'Calcule preço de venda, margem, markup, impostos, comissões, taxas e lucro.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-margem-markup">
+<div class="prazzu-page tool-page" data-tool="calculadora-margem-markup" data-testid="tool-page-calculadora-margem-markup">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -37,7 +37,7 @@
         </div>
     @endif
 
-    <section class="prazzu-tool-workspace text-start" aria-labelledby="tool-workspace-title">
+    <section class="prazzu-tool-workspace text-start" aria-labelledby="tool-workspace-title" data-testid="tool-form-panel">
         <div class="mb-4">
             <h2 id="tool-workspace-title" class="mb-1">Dados do cálculo</h2>
             <p class="text-body-secondary mb-0">Preencha somente os campos aplicáveis ao seu negócio.</p>

@@ -15,7 +15,7 @@ export default defineConfig({
     expect: { timeout: 5_000 },
     outputDir: `${artifacts}/results`,
     reporter: [
-        ['list'],
+        ['./tests/Browser/playwright/reporters/gpt-txt-reporter.ts'],
         ['html', { outputFolder: `${artifacts}/report`, open: 'never' }],
         ['json', { outputFile: `${artifacts}/results.json` }],
     ],
@@ -38,7 +38,7 @@ export default defineConfig({
         url: healthURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
-        stdout: 'pipe',
+        stdout: 'ignore',
         stderr: 'pipe',
     },
     projects: [

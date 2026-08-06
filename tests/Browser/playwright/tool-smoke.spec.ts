@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { attachBrowserDiagnostics, collectBrowserDiagnostics } from './helpers/diagnostics';
+import {
+    attachBrowserDiagnostics,
+    blockingBrowserDiagnostics,
+    collectBrowserDiagnostics,
+} from './helpers/diagnostics';
 import { applyE2ECorrelation, attachCorrelatedServerLogs } from './helpers/e2e-correlation';
 import { loadToolCatalog } from './helpers/tool-catalog';
 
@@ -14,35 +18,40 @@ test.describe('Smoke universal do catálogo oficial', () => {
         test(`${String(tool.id).padStart(2, '0')} · ${tool.slug} · carrega a página e o formulário`, async ({ page }, testInfo) => {
             const diagnostics = collectBrowserDiagnostics(page);
             const correlation = await applyE2ECorrelation(page, `${tool.slug}:page-load`);
-            const response = await page.goto(tool.path, { waitUntil: 'domcontentloaded' });
 
-            expect(response, `A ferramenta [${tool.slug}] deve produzir uma resposta HTTP.`).not.toBeNull();
-            expect(response?.status(), `A ferramenta [${tool.slug}] não pode responder com erro.`).toBeLessThan(400);
-            await expect(page.getByTestId(tool.test_ids.page)).toBeVisible();
-            await expect(page.getByTestId(tool.test_ids.form).first()).toBeVisible();
-            await expect(page.locator('body')).not.toBeEmpty();
+            try {
+                const response = await page.goto(tool.path, { waitUntil: 'domcontentloaded' });
 
-            await testInfo.attach('tool-smoke-summary', {
-                contentType: 'application/json',
-                body: Buffer.from(JSON.stringify({
-                    id: tool.id,
-                    slug: tool.slug,
-                    module: tool.module,
-                    risk: tool.risk,
-                    path: tool.path,
-                    status: response?.status(),
-                    title: await page.title(),
-                }, null, 2)),
-            });
-            await attachBrowserDiagnostics(testInfo, diagnostics);
-            await attachCorrelatedServerLogs(testInfo, correlation);
+                expect(response, `A ferramenta [${tool.slug}] deve produzir uma resposta HTTP.`).not.toBeNull();
+                expect(response?.status(), `A ferramenta [${tool.slug}] não pode responder com erro.`).toBeLessThan(400);
+                await expect(page.getByTestId(tool.test_ids.page)).toBeVisible();
+                await expect(page.getByTestId(tool.test_ids.form).first()).toBeVisible();
+                await expect(page.locator('body')).not.toBeEmpty();
 
-            const blockingDiagnostics = diagnostics.filter(item =>
-                item.type === 'page-error'
-                || item.type === 'request-failed'
-                || (item.type === 'http-error' && (item.status ?? 0) >= 500),
-            );
-            expect(blockingDiagnostics, `Falhas técnicas encontradas em [${tool.slug}].`).toEqual([]);
+                const blockingDiagnostics = blockingBrowserDiagnostics(diagnostics);
+                expect(
+                    blockingDiagnostics,
+                    `Falhas técnicas bloqueantes encontradas em [${tool.slug}].`,
+                ).toEqual([]);
+            } finally {
+                // Estes anexos precisam existir mesmo quando uma asserção de status,
+                // marcação ou visibilidade falhar. Assim a automação sempre entrega
+                // contexto suficiente para corrigir a aplicação posteriormente.
+                await testInfo.attach('tool-smoke-summary', {
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        id: tool.id,
+                        slug: tool.slug,
+                        module: tool.module,
+                        risk: tool.risk,
+                        path: tool.path,
+                        final_url: page.url(),
+                        title: await page.title().catch(() => ''),
+                    }, null, 2),
+                });
+                await attachBrowserDiagnostics(testInfo, diagnostics);
+                await attachCorrelatedServerLogs(testInfo, correlation);
+            }
         });
     }
 });

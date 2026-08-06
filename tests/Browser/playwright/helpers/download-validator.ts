@@ -1,4 +1,4 @@
-import { expect, type Download, type Page, type TestInfo } from '@playwright/test';
+import { expect, type Page, type Response, type TestInfo } from '@playwright/test';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { basename, extname, resolve } from 'node:path';
 
@@ -100,15 +100,22 @@ export async function executeAndValidateDownload(
     expectation: DownloadExpectation,
     testInfo: TestInfo,
 ): Promise<DownloadValidation> {
-    const responsePromise = page.waitForResponse(response => {
+    const trigger = page.getByTestId(expectation.test_id).first();
+    await expect(
+        trigger,
+        `Controle de download [${expectation.test_id}] não encontrado para ${expectation.id}.`,
+    ).toBeVisible();
+
+    const responsePromise: Promise<Response | null> = page.waitForResponse(response => {
         const disposition = response.headers()['content-disposition'] ?? '';
         return disposition.toLowerCase().includes('attachment');
-    });
-    const downloadPromise = page.waitForEvent('download');
+    }, { timeout: 10_000 }).catch(() => null);
 
-    await page.getByTestId(expectation.test_id).click();
-
-    const [download, response] = await Promise.all([downloadPromise, responsePromise]);
+    const [download] = await Promise.all([
+        page.waitForEvent('download'),
+        trigger.click(),
+    ]);
+    const response = await responsePromise;
     const suggestedFilename = download.suggestedFilename();
     const safeFilename = `${expectation.id}-${basename(suggestedFilename).replace(/[^a-zA-Z0-9._-]+/g, '-')}`;
     const directory = resolve(process.cwd(), 'storage/app/e2e/artifacts/downloads', testInfo.project.name);
@@ -127,8 +134,9 @@ export async function executeAndValidateDownload(
         checks.push(`filename-contains:${expectation.filename_contains}`);
     }
 
-    const mimeType = normalizedMime(response.headers()['content-type']);
+    const mimeType = normalizedMime(response?.headers()['content-type']);
     if (expectation.mime_type) {
+        expect(response, `Resposta HTTP do download ${expectation.id} não foi capturada.`).not.toBeNull();
         expect(mimeType, `MIME type divergente no download ${expectation.id}.`).toBe(expectation.mime_type.toLowerCase());
         checks.push(`mime:${mimeType}`);
     }

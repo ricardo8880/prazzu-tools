@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { attachBrowserDiagnostics, collectBrowserDiagnostics } from './helpers/diagnostics';
+import { attachBrowserDiagnostics, blockingBrowserDiagnostics, collectBrowserDiagnostics } from './helpers/diagnostics';
 import { applyE2ECorrelation, attachCorrelatedServerLogs } from './helpers/e2e-correlation';
 import { executeScenario, loadToolScenarios } from './helpers/tool-scenarios';
 
@@ -27,7 +27,7 @@ test.describe('Motor declarativo de cenários', () => {
                     contentType: 'application/json',
                     body: Buffer.from(JSON.stringify({ ...scenario, correlation }, null, 2)),
                 });
-                const blocking = diagnostics.filter(item => item.type === 'page-error' || item.type === 'request-failed' || (item.type === 'http-error' && (item.status ?? 0) >= 500));
+                const blocking = blockingBrowserDiagnostics(diagnostics);
                 expect(blocking, `Falhas técnicas durante [${scenario.tool_slug}:${scenario.id}].`).toEqual([]);
             } finally {
                 await attachBrowserDiagnostics(testInfo, diagnostics);

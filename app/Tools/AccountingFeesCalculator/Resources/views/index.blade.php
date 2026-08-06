@@ -4,7 +4,7 @@
 @section('meta_description', 'Estime honorários contábeis de acordo com o porte, regime tributário e complexidade da empresa.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-de-honorarios-contabeis">
+<div class="prazzu-page tool-page" data-tool="calculadora-de-honorarios-contabeis" data-testid="tool-page-calculadora-de-honorarios-contabeis">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -35,7 +35,7 @@
         </div>
     @endif
 
-    <section class="prazzu-tool-workspace text-start" aria-labelledby="pricing-data-title">
+    <section class="prazzu-tool-workspace text-start" aria-labelledby="pricing-data-title" data-testid="tool-form-panel">
         <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
             <div>
                 <h2 id="pricing-data-title" class="mb-1">Dados para precificação</h2>

@@ -120,6 +120,7 @@
         "e2e:browser:test": [
             "@e2e:verify",
             "@e2e:browser:check",
+            "node scripts/e2e-report-txt.mjs",
             "npm run e2e:test"
         ],
         "e2e:catalog": "@php scripts/e2e-tool-catalog.php export",
@@ -128,6 +129,7 @@
             "@e2e:verify",
             "@e2e:browser:check",
             "@e2e:catalog:check",
+            "node scripts/e2e-report-txt.mjs",
             "npm run e2e:test:smoke"
         ],
         "e2e:scenarios": "@php scripts/e2e-tool-scenarios.php export",
@@ -138,6 +140,7 @@
             "@e2e:catalog:check",
             "@e2e:scenarios:check",
             "@e2e:observability:check",
+            "node scripts/e2e-report-txt.mjs",
             "npm run e2e:test:scenarios"
         ],
         "e2e:observability:check": "@php scripts/e2e-observability.php check",
@@ -149,6 +152,7 @@
             "@e2e:scenarios:check",
             "@e2e:observability:check",
             "@e2e:downloads:check",
+            "node scripts/e2e-report-txt.mjs",
             "npm run e2e:test:downloads"
         ],
         "e2e:access:check": "@php scripts/e2e-access.php check",
@@ -159,6 +163,7 @@
             "@e2e:scenarios:check",
             "@e2e:observability:check",
             "@e2e:access:check",
+            "node scripts/e2e-report-txt.mjs",
             "npm run e2e:test:access"
         ],
         "e2e:coverage:check": "@php scripts/e2e-tool-scenarios.php check",
@@ -168,6 +173,7 @@
             "@e2e:catalog:check",
             "@e2e:coverage:check",
             "@e2e:observability:check",
+            "node scripts/e2e-report-txt.mjs",
             "npm run e2e:test:coverage"
         ],
         "e2e:report:summary": "@php scripts/e2e-report-history.php summarize storage/app/e2e/executive/current.json storage/app/e2e/artifacts/results.json",
@@ -188,6 +194,7 @@
         ],
         "e2e:governance:check": "@php scripts/e2e-governance.php check",
         "e2e:browser:complete": [
+            "Composer\\Config::disableProcessTimeout",
             "@e2e:verify",
             "@e2e:catalog:check",
             "@e2e:scenarios:check",
@@ -195,13 +202,15 @@
             "@e2e:downloads:check",
             "@e2e:access:check",
             "@e2e:governance:check",
-            "npm run e2e:test:complete"
+            "node scripts/e2e-report-txt.mjs",
+            "@php scripts/e2e-run-all.php"
         ],
         "e2e:browser:exploratory": [
             "@e2e:verify",
             "@e2e:catalog:check",
             "@e2e:scenarios:check",
             "@e2e:governance:check",
+            "node scripts/e2e-report-txt.mjs",
             "npm run e2e:test:exploratory"
         ],
         "e2e:dashboard": "@php scripts/e2e-governance.php dashboard storage/app/e2e/executive/current.json",

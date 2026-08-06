@@ -4,7 +4,7 @@
 @section('meta_description', 'Valide CPF e CNPJ gratuitamente, com detecção automática e diagnóstico dos dígitos verificadores.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="validador-de-cnpj">
+<div class="prazzu-page tool-page" data-tool="validador-de-cnpj" data-testid="tool-page-validador-de-cnpj">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ url('/') }}">Início</a></li>
@@ -27,7 +27,7 @@
         <div class="col-12 col-xl-8">
             <x-tools.validation-summary class="mb-4" />
 
-    <section class="prazzu-form-panel" aria-labelledby="individual-validation-title">
+    <section class="prazzu-form-panel" aria-labelledby="individual-validation-title" data-testid="tool-form-panel">
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-4">
                     <div>
                         <h2 id="individual-validation-title" class="prazzu-section-title mb-1">Validação individual</h2>

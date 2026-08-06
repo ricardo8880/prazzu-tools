@@ -4,7 +4,7 @@
 @section('meta_description', 'Calcule férias, terço constitucional, abono pecuniário, médias remuneratórias, descontos informados e prazos do período aquisitivo e concessivo.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-ferias">
+<div class="prazzu-page tool-page" data-tool="calculadora-ferias" data-testid="tool-page-calculadora-ferias">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -29,7 +29,7 @@
         <div><strong>Estimativa transparente.</strong> O cálculo considera as médias e os descontos informados, mas ainda não apura automaticamente INSS e IRRF. Confira o resultado com o responsável trabalhista antes do pagamento.</div>
     </div>
 
-    <section class="prazzu-form-panel" aria-labelledby="vacation-form-title">
+    <section class="prazzu-form-panel" aria-labelledby="vacation-form-title" data-testid="tool-form-panel">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
             <div>
                 <h2 id="vacation-form-title" class="prazzu-section-title mb-1">Dados das férias</h2>

@@ -5,18 +5,38 @@ import { AccessProfileName, authStatePath, loadAccessManifest } from './helpers/
 
 const profiles: AccessProfileName[] = ['free', 'plus', 'administrator'];
 
+// O servidor E2E local é deliberadamente simples. Serializar os perfis evita
+// que três submits de autenticação disputem a mesma instância durante o setup.
+setup.describe.configure({ mode: 'serial' });
+
 for (const profileName of profiles) {
     setup(`autentica e reutiliza a sessão ${profileName}`, async ({ page }) => {
         const profile = loadAccessManifest().profiles[profileName];
         const statePath = authStatePath(profileName);
         mkdirSync(dirname(statePath), { recursive: true });
 
-        await page.goto('/entrar');
-        await page.getByLabel(/e-mail/i).fill(profile.email);
-        await page.getByLabel(/senha/i).fill(profile.password);
-        await page.getByRole('button', { name: /entrar/i }).click();
+        await page.goto('/entrar', { waitUntil: 'domcontentloaded' });
 
-        await expect(page).not.toHaveURL(/\/entrar(?:\?|$)/);
+        const loginForm = page.locator('form').filter({ has: page.locator('#email') }).first();
+        await expect(loginForm, 'Formulário de login não encontrado.').toBeVisible();
+
+        await loginForm.locator('#email').fill(profile.email);
+        await loginForm.locator('#password').fill(profile.password);
+
+        const loginButton = loginForm.getByRole('button', { name: /^entrar$/i });
+        await expect(loginButton, 'Botão de login não encontrado.').toBeVisible();
+
+        // O login é um submit com navegação de documento. A espera é registrada
+        // antes do clique para não perder navegações rápidas e para impedir que a
+        // leitura da URL aconteça enquanto o documento anterior está sendo trocado.
+        await Promise.all([
+            page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30_000 }),
+            loginButton.click({ noWaitAfter: true }),
+        ]);
+
+        await expect(page, `O perfil ${profileName} permaneceu na página de login.`)
+            .not.toHaveURL(/\/entrar(?:\?|$)/, { timeout: 10_000 });
+
         await page.context().storageState({ path: statePath });
     });
 }
