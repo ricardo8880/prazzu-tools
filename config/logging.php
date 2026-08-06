@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Quality\E2E\Logging\ConfigureE2EJsonLogging;
 use App\Logging\SanitizeLogContext;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
@@ -57,6 +58,15 @@ return [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
+        ],
+
+
+        'e2e' => [
+            'driver' => 'single',
+            'path' => env('E2E_LOG_PATH', storage_path('app/e2e/logs/e2e.jsonl')),
+            'level' => 'debug',
+            'replace_placeholders' => true,
+            'tap' => [SanitizeLogContext::class, ConfigureE2EJsonLogging::class],
         ],
 
         'single' => [

@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Quality\E2E\Http\Middleware\CorrelateE2ERequest;
 use App\Core\Tools\Api\Http\Middleware\AuthenticateApiClient;
 use App\Core\Tools\Api\Http\Middleware\EnsureApiClientAbility;
 use App\Core\Tools\Api\Support\ApiExceptionRenderer;
@@ -24,6 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(CorrelateE2ERequest::class);
+
         $middleware->web(append: [
             LogExportRequests::class,
             ApplySecurityHeaders::class,

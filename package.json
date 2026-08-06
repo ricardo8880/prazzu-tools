@@ -1,26 +1,40 @@
 {
-    "$schema": "https://www.schemastore.org/package.json",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "build": "vite build",
-        "dev": "vite",
-        "e2e:install": "playwright install chromium",
-        "e2e:test": "playwright test",
-        "e2e:test:headed": "playwright test --headed",
-        "e2e:test:debug": "playwright test --debug",
-        "e2e:report": "playwright show-report storage/app/e2e/artifacts/report",
-        "e2e:catalog": "php scripts/e2e-tool-catalog.php export",
-        "e2e:test:smoke": "playwright test tests/Browser/playwright/tool-smoke.spec.ts"
-    },
-    "devDependencies": {
-        "axios": "^1.11.0",
-        "concurrently": "^9.0.1",
-        "laravel-vite-plugin": "^2.0.0",
-        "vite": "^7.0.7",
-        "@playwright/test": "1.62.1"
-    },
-    "dependencies": {
-        "tinymce": "^7.9.3"
-    }
+  "$schema": "https://www.schemastore.org/package.json",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "e2e:install": "playwright install chromium",
+    "e2e:test": "playwright test",
+    "e2e:test:headed": "playwright test --headed",
+    "e2e:test:debug": "playwright test --debug",
+    "e2e:report": "playwright show-report storage/app/e2e/artifacts/report",
+    "e2e:catalog": "php scripts/e2e-tool-catalog.php export",
+    "e2e:test:smoke": "playwright test tests/Browser/playwright/tool-smoke.spec.ts",
+    "e2e:scenarios": "php scripts/e2e-tool-scenarios.php export",
+    "e2e:test:scenarios": "playwright test tests/Browser/playwright/tool-scenarios.spec.ts",
+    "e2e:test:downloads": "playwright test tests/Browser/playwright/tool-downloads.spec.ts",
+    "e2e:access": "php scripts/e2e-access.php export",
+    "e2e:test:access": "playwright test --project=access-transversal",
+    "e2e:test:coverage": "playwright test tests/Browser/playwright/tool-scenarios.spec.ts",
+    "e2e:test:ci": "playwright test --project=chromium-desktop --project=access-transversal",
+    "e2e:report:summarize": "php scripts/e2e-report-history.php summarize storage/app/e2e/executive/current.json storage/app/e2e/artifacts/results.json",
+    "e2e:install:complete": "playwright install chromium firefox webkit",
+    "e2e:test:responsive": "playwright test --project=mobile-chromium --project=tablet-webkit",
+    "e2e:test:complete": "playwright test --project=chromium-desktop --project=firefox-desktop --project=webkit-desktop --project=mobile-chromium --project=tablet-webkit --project=access-transversal",
+    "e2e:test:exploratory": "playwright test --project=exploratory-controlled",
+    "e2e:governance": "php scripts/e2e-governance.php check",
+    "e2e:dashboard": "php scripts/e2e-governance.php dashboard storage/app/e2e/executive/current.json"
+  },
+  "devDependencies": {
+    "axios": "^1.11.0",
+    "concurrently": "^9.0.1",
+    "laravel-vite-plugin": "^2.0.0",
+    "vite": "^7.0.7",
+    "@playwright/test": "1.62.1"
+  },
+  "dependencies": {
+    "tinymce": "^7.9.3"
+  }
 }

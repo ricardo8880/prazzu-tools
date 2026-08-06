@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { attachBrowserDiagnostics, collectBrowserDiagnostics } from './helpers/diagnostics';
+import { applyE2ECorrelation, attachCorrelatedServerLogs } from './helpers/e2e-correlation';
 import { loadToolCatalog } from './helpers/tool-catalog';
 
 const catalog = loadToolCatalog();
@@ -12,6 +13,7 @@ test.describe('Smoke universal do catálogo oficial', () => {
     for (const tool of catalog.tools) {
         test(`${String(tool.id).padStart(2, '0')} · ${tool.slug} · carrega a página e o formulário`, async ({ page }, testInfo) => {
             const diagnostics = collectBrowserDiagnostics(page);
+            const correlation = await applyE2ECorrelation(page, `${tool.slug}:page-load`);
             const response = await page.goto(tool.path, { waitUntil: 'domcontentloaded' });
 
             expect(response, `A ferramenta [${tool.slug}] deve produzir uma resposta HTTP.`).not.toBeNull();
@@ -33,6 +35,7 @@ test.describe('Smoke universal do catálogo oficial', () => {
                 }, null, 2)),
             });
             await attachBrowserDiagnostics(testInfo, diagnostics);
+            await attachCorrelatedServerLogs(testInfo, correlation);
 
             const blockingDiagnostics = diagnostics.filter(item =>
                 item.type === 'page-error'

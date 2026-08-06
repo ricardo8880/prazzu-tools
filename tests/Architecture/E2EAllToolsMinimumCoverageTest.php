@@ -1,0 +1,39 @@
+<?php
+
+namespace Tests\Architecture;
+
+use App\Core\Quality\E2E\Data\ToolScenario;
+use Tests\TestCase;
+
+final class E2EAllToolsMinimumCoverageTest extends TestCase
+{
+    public function test_all_official_tools_have_valid_and_invalid_scenarios(): void
+    {
+        $product = require base_path('config/product_tools.php');
+        $config = require base_path('config/e2e_scenarios.php');
+        $official = array_column($product['official'] ?? [], 'slug');
+
+        self::assertCount(32, $official);
+        self::assertSameCanonicalizing($official, array_keys($config['tools'] ?? []));
+
+        foreach ($official as $slug) {
+            $scenarios = $config['tools'][$slug] ?? [];
+            self::assertNotEmpty($scenarios, "Ferramenta [{$slug}] sem cenários E2E.");
+            self::assertContainsOnlyInstancesOf(ToolScenario::class, $scenarios);
+            $kinds = array_map(static fn (ToolScenario $scenario): string => $scenario->kind, $scenarios);
+            self::assertContains('valid', $kinds, "Ferramenta [{$slug}] sem cenário válido.");
+            self::assertContains('invalid', $kinds, "Ferramenta [{$slug}] sem cenário inválido.");
+        }
+    }
+
+    public function test_lot_10_runner_enforces_full_minimum_coverage(): void
+    {
+        $script = (string) file_get_contents(base_path('scripts/e2e-tool-scenarios.php'));
+        $helper = (string) file_get_contents(base_path('tests/Browser/playwright/helpers/tool-scenarios.ts'));
+
+        self::assertStringContainsString("minimum_coverage", (string) file_get_contents(base_path('config/e2e_scenarios.php')));
+        self::assertStringContainsString('Cobertura incompleta', $script);
+        self::assertStringContainsString('auto_fill_form', $helper);
+        self::assertStringContainsString('invalidate_required', $helper);
+    }
+}

@@ -524,3 +524,76 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - O Playwright passou a executar um smoke parametrizado para todas as 32 ferramentas, sem lista manual de slugs no TypeScript.
 - Cada ferramenta tem rota, resposta HTTP, raiz visual e painel de formulário verificados, com diagnóstico e resumo JSON anexados.
 - O Lote 6 deve criar o motor declarativo de cenários, sem duplicar a descoberta consolidada neste lote.
+
+## Automação E2E — Lote 6 — Motor declarativo de cenários
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação sequencial dos Lotes E2E 1 a 5.
+- Foi criado um DTO imutável de cenário no Core de Qualidade e um contrato opcional para declaração modular futura.
+- `config/e2e_scenarios.php` registra os pilotos sem duplicar a descoberta oficial das ferramentas.
+- Um exportador valida slugs, identificadores, ações e expectativas e produz manifesto temporário para o Playwright.
+- O executor genérico suporta preenchimento, seleção, checkboxes, cliques, submit e expectativas reutilizáveis.
+- A Calculadora de Custo de Funcionário CLT possui cenários piloto válido e inválido.
+- O próximo lote deve implementar instrumentação, correlação e logs estruturados; downloads permanecem para o Lote 8.
+
+## Automação E2E — Lote 7 — Instrumentação, correlação e logs
+
+### Resultado
+
+- Foi criada correlação por execução e cenário usando cabeçalhos estáveis enviados pelo Playwright.
+- O middleware E2E adiciona os identificadores ao contexto de logging e aos cabeçalhos de resposta, permanecendo inerte fora do ambiente `e2e`.
+- O canal `e2e` grava JSON Lines no storage isolado e reutiliza a sanitização de contexto existente.
+- Requisições concluídas, exceções e queries lentas passam a produzir registros diagnósticos sem capturar payloads ou bindings sensíveis.
+- Os testes de fundação, smoke e cenários anexaram os logs Laravel correspondentes ao relatório do Playwright.
+- O arquivo de log é reiniciado no global setup e removido junto com os demais artefatos pelo comando de limpeza do ambiente.
+
+### Continuidade para o Lote 8
+
+- Reaplicar o ZIP original e os Lotes 1 a 7 em ordem antes de qualquer alteração.
+- Reutilizar `X-E2E-Run-Id` e `X-E2E-Scenario-Id` na validação de downloads.
+- Validar conteúdo real de PDF, XLSX, CSV, DOCX e ZIP sem considerar o clique isolado como sucesso.
+- Preservar a política de não registrar payloads, tokens ou documentos completos nos logs.
+
+## Automação E2E — Lote 8 — Validação profunda de downloads
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação sequencial dos Lotes E2E 1 a 7.
+- O contrato declarativo passou a aceitar downloads tipados por cenário, sem condicionais específicas por ferramenta no Playwright.
+- O runner valida nome, extensão, MIME type, tamanho mínimo, assinatura e estrutura interna do arquivo recebido.
+- PDF exige cabeçalho e final válidos; XLSX e DOCX exigem estrutura OOXML; CSV exige conteúdo tabular; ZIP exige diretório central legível.
+- HTML retornado como arquivo é rejeitado mesmo quando o endpoint responde com sucesso.
+- Arquivos e resumos JSON são anexados às evidências e permanecem associados aos logs correlacionados do Lote 7.
+- O piloto de `custo-funcionario-clt` cobre PDF e XLSX reais após um cálculo válido.
+
+### Continuidade para o Lote 9
+
+- Reaplicar o ZIP original e os Lotes 1 a 8 em ordem antes de qualquer alteração.
+- Reutilizar cenário, observabilidade, storage e validadores existentes.
+- Cobrir visitante, usuário gratuito, Plus e administrador sem alterar a filosofia pública de acesso descrita no README.
+- Validar proteção de endpoints, persistência, histórico e demais fluxos transversais sem duplicar autenticação ou autorização no Core E2E.
+
+## Automação de qualidade — resultado do Lote 9
+
+- Foram adicionadas sessões Playwright reutilizáveis para os perfis gratuito, Plus e administrador.
+- As sessões E2E passaram a ser persistidas exclusivamente em `storage/app/e2e/sessions`.
+- Foi criado um manifesto validável de perfis e caminhos protegidos para evitar credenciais e URLs duplicadas nos testes.
+- A suíte transversal cobre visitante, usuário gratuito, usuário Plus e administrador.
+- Foram incluídas validações de conta autenticada, histórico protegido, bloqueio administrativo, persistência de sessão e rejeição CSRF.
+- O comando `composer e2e:browser:access` executa o lote com as verificações acumuladas dos lotes anteriores.
+
+## Automação de qualidade — resultado do Lote 10
+
+- As 32 ferramentas oficiais possuem cenário válido e inválido no manifesto declarativo.
+- O executor genérico preenche formulários e cria invalidação determinística sem listas duplicadas no Playwright.
+- O gate arquitetural impede perda da cobertura mínima e preserva downloads específicos já existentes.
+
+## Automação de qualidade — resultado do Lote 11
+
+- O estado foi reconstruído do projeto-base com aplicação dos Lotes 9 e 10 antes das alterações.
+- Commits executam gate de qualidade e smoke; pull requests e pré-releases executam E2E em quatro shards.
+- Dependências e browsers usam caches separados e os artefatos são publicados mesmo quando há falha.
+- Resultados Playwright são consolidados em JSON executivo e comparados por fingerprint.
+- Falhas são classificadas como novas, conhecidas ou resolvidas; regressões novas bloqueiam a integração.
+- O Lote 12 deve adicionar exploração controlada, múltiplos navegadores, responsividade e métricas sem misturar fuzzing ao gate determinístico.

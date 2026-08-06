@@ -39,7 +39,45 @@ export default defineConfig({
     },
     projects: [
         {
+            name: 'auth-setup',
+            testMatch: /auth\.setup\.spec\.ts/,
+            use: { ...devices['Desktop Chrome'] },
+        },
+        {
             name: 'chromium-desktop',
+            testIgnore: [/auth\.setup\.spec\.ts/, /tool-access\.spec\.ts/, /tool-responsive\.spec\.ts/, /tool-exploratory\.spec\.ts/],
+            use: { ...devices['Desktop Chrome'] },
+        },
+        {
+            name: 'firefox-desktop',
+            testIgnore: [/auth\.setup\.spec\.ts/, /tool-access\.spec\.ts/, /tool-responsive\.spec\.ts/, /tool-exploratory\.spec\.ts/],
+            use: { ...devices['Desktop Firefox'] },
+        },
+        {
+            name: 'webkit-desktop',
+            testIgnore: [/auth\.setup\.spec\.ts/, /tool-access\.spec\.ts/, /tool-responsive\.spec\.ts/, /tool-exploratory\.spec\.ts/],
+            use: { ...devices['Desktop Safari'] },
+        },
+        {
+            name: 'mobile-chromium',
+            testMatch: /tool-responsive\.spec\.ts/,
+            use: { ...devices['Pixel 7'] },
+        },
+        {
+            name: 'tablet-webkit',
+            testMatch: /tool-responsive\.spec\.ts/,
+            use: { ...devices['iPad (gen 7)'] },
+        },
+        {
+            name: 'exploratory-controlled',
+            testMatch: /tool-exploratory\.spec\.ts/,
+            retries: 0,
+            use: { ...devices['Desktop Chrome'] },
+        },
+        {
+            name: 'access-transversal',
+            testMatch: /tool-access\.spec\.ts/,
+            dependencies: ['auth-setup'],
             use: { ...devices['Desktop Chrome'] },
         },
     ],

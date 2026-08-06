@@ -66,3 +66,18 @@ O schema concreto e o executor serão implementados no lote específico do motor
 ## Critério para ferramenta nova
 
 Uma ferramenta nova somente poderá ser considerada pronta quando estiver no inventário oficial e no inventário E2E, possuir cenários mínimos e cumprir os gates arquiteturais vigentes no lote correspondente.
+
+## Contrato declarativo de cenários — versão 1.0.0
+
+O Lote 6 separa dados de domínio do motor de navegador. Cada cenário declara `id`, `title`, `kind`, `tool_slug`, `access_profile`, `tags`, `steps` e `expectations`. O runner somente interpreta o schema; ele não deve conter condicionais por ferramenta.
+
+Ações suportadas nesta versão: `fill`, `select`, `check`, `uncheck`, `click` e `submit`.
+Expectativas suportadas: `visible`, `hidden`, `text`, `url` e `field_value`.
+
+Qualquer ampliação do schema deve ser motivada por cenário real, manter compatibilidade ou alterar explicitamente `schema_version`.
+
+## Downloads declarativos
+
+Downloads devem ser associados ao cenário que produz o resultado necessário e usar `ToolDownloadExpectation`. O sucesso exige validação do arquivo recebido: nome, extensão, MIME, tamanho, assinatura e, quando aplicável, estrutura interna. Um clique, uma resposta 200 ou a simples existência do botão não comprovam a exportação.
+
+O runner oficial suporta PDF, XLSX, CSV, DOCX e ZIP. Arquivos HTML disfarçados devem falhar. Evidências ficam no storage E2E e nunca no repositório.

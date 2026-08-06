@@ -105,13 +105,14 @@ function assertSafeEnvironment(string $root, array $environment): void
         'APP_ENV' => 'e2e',
         'DB_CONNECTION' => 'sqlite',
         'CACHE_STORE' => 'array',
-        'SESSION_DRIVER' => 'array',
+        'SESSION_DRIVER' => 'file',
         'QUEUE_CONNECTION' => 'sync',
         'QUEUE_FAILED_DRIVER' => 'null',
         'MAIL_MAILER' => 'array',
         'FILESYSTEM_DISK' => 'e2e',
         'E2E_ENABLED' => 'true',
         'E2E_EXTERNAL_NETWORK' => 'false',
+        'E2E_OBSERVABILITY_ENABLED' => 'true',
     ];
 
     foreach ($expected as $key => $value) {
@@ -166,6 +167,8 @@ function e2eDirectories(string $root, array $environment): array
         absolutePath($root, requiredValue($environment, 'E2E_ARTIFACTS_PATH')),
         absolutePath($root, requiredValue($environment, 'E2E_DOWNLOADS_PATH')),
         absolutePath($root, requiredValue($environment, 'E2E_FIXTURES_PATH')),
+        absolutePath($root, requiredValue($environment, 'SESSION_FILES_PATH')),
+        dirname(absolutePath($root, requiredValue($environment, 'E2E_LOG_PATH'))),
     ]));
 }
 
