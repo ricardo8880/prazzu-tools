@@ -16,8 +16,13 @@ if (version_compare(PHP_VERSION, '8.2.0', '<')) {
 }
 if (! commandExists('node')) {
     $failures[] = 'Node.js não encontrado.';
-} elseif (version_compare(trim((string) shell_exec('node --version 2>&1')), 'v18.0.0', '<')) {
-    $failures[] = 'Node.js 18 ou superior é obrigatório.';
+} else {
+    $nodeVersionOutput = trim((string) shell_exec('node --version 2>&1'));
+    $nodeVersion = preg_replace('/^v/i', '', $nodeVersionOutput);
+
+    if ($nodeVersion === null || $nodeVersion === '' || version_compare($nodeVersion, '18.0.0', '<')) {
+        $failures[] = 'Node.js 18 ou superior é obrigatório.';
+    }
 }
 if (! is_file($root.'/.env.e2e')) {
     $failures[] = '.env.e2e ausente; execute composer e2e:prepare.';
@@ -43,7 +48,15 @@ fwrite(STDOUT, "[E2E Browser] Runner, ambiente e diretório de artefatos verific
 
 function commandExists(string $command): bool
 {
-    $probe = PHP_OS_FAMILY === 'Windows' ? "where {$command}" : "command -v {$command}";
-    exec($probe.' 2>/dev/null', $output, $status);
-    return $status === 0;
+    $escapedCommand = escapeshellarg($command);
+
+    if (PHP_OS_FAMILY === 'Windows') {
+        $probe = "where.exe {$escapedCommand} 2>NUL";
+    } else {
+        $probe = "command -v {$escapedCommand} 2>/dev/null";
+    }
+
+    exec($probe, $output, $status);
+
+    return $status === 0 && $output !== [];
 }

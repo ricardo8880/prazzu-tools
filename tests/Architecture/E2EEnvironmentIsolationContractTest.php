@@ -16,7 +16,8 @@ final class E2EEnvironmentIsolationContractTest extends TestCase
         $this->assertSame('sqlite', $environment['DB_CONNECTION']);
         $this->assertSame('database/e2e.sqlite', $environment['DB_DATABASE']);
         $this->assertSame('array', $environment['CACHE_STORE']);
-        $this->assertSame('array', $environment['SESSION_DRIVER']);
+        $this->assertSame('file', $environment['SESSION_DRIVER']);
+        $this->assertSame('storage/app/e2e/sessions', $environment['SESSION_FILES_PATH']);
         $this->assertSame('sync', $environment['QUEUE_CONNECTION']);
         $this->assertSame('null', $environment['QUEUE_FAILED_DRIVER']);
         $this->assertSame('array', $environment['MAIL_MAILER']);

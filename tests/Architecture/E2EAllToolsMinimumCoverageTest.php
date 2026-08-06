@@ -14,7 +14,11 @@ final class E2EAllToolsMinimumCoverageTest extends TestCase
         $official = array_column($product['official'] ?? [], 'slug');
 
         self::assertCount(32, $official);
-        self::assertSameCanonicalizing($official, array_keys($config['tools'] ?? []));
+        $configured = array_keys($config['tools'] ?? []);
+        sort($official);
+        sort($configured);
+
+        self::assertSame($official, $configured);
 
         foreach ($official as $slug) {
             $scenarios = $config['tools'][$slug] ?? [];

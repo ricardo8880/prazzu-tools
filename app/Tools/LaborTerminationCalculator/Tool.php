@@ -33,6 +33,8 @@ use App\Tools\LaborTerminationCalculator\Api\Actions\CalculateApiAction;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
+    public const SLUG = 'calculadora-de-rescisao';
+
     public function apiActions(): array
     {
         return [CalculateApiAction::class];

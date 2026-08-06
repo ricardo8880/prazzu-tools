@@ -9,9 +9,9 @@ final class E2EVisualContractTest extends TestCase
     public function test_shared_tool_components_expose_stable_test_ids(): void
     {
         $contracts = [
-            'resources/views/components/tools/page.blade.php' => ["TestId::make('tool-page', $slug)", 'data-tool="{{ $slug }}"'],
-            'resources/views/components/tools/form-panel.blade.php' => ["'testId' => 'tool-form-panel'", "'data-testid' => $testId"],
-            'resources/views/components/tools/result-panel.blade.php' => ["'testId' => 'tool-result'", "'data-testid' => $testId"],
+            'resources/views/components/tools/page.blade.php' => ['TestId::make(\'tool-page\', $slug)', 'data-tool="{{ $slug }}"'],
+            'resources/views/components/tools/form-panel.blade.php' => ["'testId' => 'tool-form-panel'", '\'data-testid\' => $testId'],
+            'resources/views/components/tools/result-panel.blade.php' => ["'testId' => 'tool-result'", '\'data-testid\' => $testId'],
             'resources/views/components/tools/validation-summary.blade.php' => ["'data-testid' => 'validation-summary'"],
             'resources/views/components/tools/export-buttons.blade.php' => ['data-testid="download-actions"', 'data-testid="download-pdf"', 'data-testid="download-xlsx"'],
             'resources/views/components/tools/form/input.blade.php' => ['TestId::field($name)'],

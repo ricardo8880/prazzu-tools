@@ -33,6 +33,8 @@ use App\Tools\MarginMarkupCalculator\Api\Actions\CalculateApiAction;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
+    public const SLUG = 'calculadora-margem-markup';
+
     public function apiActions(): array
     {
         return [CalculateApiAction::class];

@@ -43,14 +43,22 @@ final class CorrelateE2ERequest
         $response->headers->set(E2ECorrelation::RUN_HEADER, $context['e2e_run_id']);
         $response->headers->set(E2ECorrelation::SCENARIO_HEADER, $context['e2e_scenario_id']);
 
-        Log::channel('e2e')->info('e2e.request.completed', $context + [
+        $completionContext = $context + [
             'method' => $request->method(),
             'path' => $request->path(),
             'route' => $request->route()?->getName(),
             'status' => $response->getStatusCode(),
             'duration_ms' => $this->durationMs($startedAt),
             'user_id' => $request->user()?->getAuthIdentifier(),
-        ]);
+        ];
+
+        Log::channel('e2e')->info('e2e.request.completed', $completionContext);
+
+        if ($response->getStatusCode() >= 500) {
+            Log::channel('single')->error('e2e.http.server_error', $completionContext + [
+                'content_type' => $response->headers->get('Content-Type'),
+            ]);
+        }
 
         return $response;
     }

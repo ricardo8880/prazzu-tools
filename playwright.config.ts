@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:8010';
+const healthURL = process.env.E2E_HEALTH_URL ?? `${baseURL.replace(/\/$/, '')}/up`;
 const artifacts = 'storage/app/e2e/artifacts';
 
 export default defineConfig({
@@ -31,7 +32,10 @@ export default defineConfig({
     },
     webServer: {
         command: 'php artisan serve --env=e2e --host=127.0.0.1 --port=8010',
-        url: baseURL,
+        // Use Laravel's lightweight health endpoint instead of the homepage.
+        // The homepage can be slow or return an application error while optional
+        // services are still booting, which would make Playwright wait until timeout.
+        url: healthURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
         stdout: 'pipe',

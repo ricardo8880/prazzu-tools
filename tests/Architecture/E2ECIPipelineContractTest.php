@@ -2,23 +2,41 @@
 
 declare(strict_types=1);
 
-it('mantém o contrato de CI, paralelismo e relatório executivo do lote 11', function (): void {
-    $workflow = file_get_contents(base_path('.github/workflows/quality.yml'));
-    $package = json_decode(file_get_contents(base_path('package.json')), true, flags: JSON_THROW_ON_ERROR);
-    $composer = json_decode(file_get_contents(base_path('composer.json')), true, flags: JSON_THROW_ON_ERROR);
+namespace Tests\Architecture;
 
-    expect($workflow)
-        ->toContain('Smoke de commit')
-        ->toContain('pull_request:')
-        ->toContain("tags: ['v*']")
-        ->toContain('matrix:')
-        ->toContain('shard: [1, 2, 3, 4]')
-        ->toContain('actions/cache@v4')
-        ->toContain('actions/upload-artifact@v4')
-        ->toContain('Relatório executivo')
-        ->toContain('e2e-report-history.php compare');
+use Tests\TestCase;
 
-    expect($package['scripts'])->toHaveKeys(['e2e:test:ci', 'e2e:report:summarize']);
-    expect($composer['scripts'])->toHaveKeys(['e2e:ci:smoke', 'e2e:ci:complete', 'e2e:report:summary']);
-    expect(base_path('scripts/e2e-report-history.php'))->toBeFile();
-});
+final class E2ECIPipelineContractTest extends TestCase
+{
+    public function test_ci_parallelism_and_executive_reporting_contract_is_preserved(): void
+    {
+        $workflow = (string) file_get_contents(base_path('.github/workflows/quality.yml'));
+        $package = json_decode(
+            (string) file_get_contents(base_path('package.json')),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+        $composer = json_decode(
+            (string) file_get_contents(base_path('composer.json')),
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        );
+
+        self::assertStringContainsString('Smoke de commit', $workflow);
+        self::assertStringContainsString('pull_request:', $workflow);
+        self::assertStringContainsString("tags: ['v*']", $workflow);
+        self::assertStringContainsString('matrix:', $workflow);
+        self::assertStringContainsString('shard: [1, 2, 3, 4]', $workflow);
+        self::assertStringContainsString('actions/cache@v4', $workflow);
+        self::assertStringContainsString('actions/upload-artifact@v4', $workflow);
+        self::assertStringContainsString('Relatório executivo', $workflow);
+        self::assertStringContainsString('e2e-report-history.php compare', $workflow);
+
+        self::assertArrayHasKey('e2e:test:ci', $package['scripts']);
+        self::assertArrayHasKey('e2e:report:summarize', $package['scripts']);
+        self::assertArrayHasKey('e2e:ci:smoke', $composer['scripts']);
+        self::assertArrayHasKey('e2e:ci:complete', $composer['scripts']);
+        self::assertArrayHasKey('e2e:report:summary', $composer['scripts']);
+        self::assertFileExists(base_path('scripts/e2e-report-history.php'));
+    }
+}

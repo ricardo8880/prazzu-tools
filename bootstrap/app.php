@@ -16,6 +16,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -44,5 +45,28 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->report(function (Throwable $exception): void {
+            if (! app()->environment('e2e')) {
+                return;
+            }
+
+            $request = app()->bound('request') ? request() : null;
+
+            Log::channel('single')->error('e2e.unhandled_exception', [
+                'method' => $request?->method(),
+                'url' => $request?->fullUrl(),
+                'path' => $request?->path(),
+                'route' => $request?->route()?->getName(),
+                'user_id' => $request?->user()?->getAuthIdentifier(),
+                'e2e_run_id' => $request?->attributes->get('e2e_run_id'),
+                'e2e_scenario_id' => $request?->attributes->get('e2e_scenario_id'),
+                'exception_class' => $exception::class,
+                'exception_message' => $exception->getMessage(),
+                'exception_file' => $exception->getFile(),
+                'exception_line' => $exception->getLine(),
+                'exception' => $exception,
+            ]);
+        });
+
         $exceptions->render(fn (Throwable $exception, Request $request) => app(ApiExceptionRenderer::class)->render($exception, $request));
     })->create();
