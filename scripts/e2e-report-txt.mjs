@@ -10,7 +10,7 @@ fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 fs.writeFileSync(
     reportPath,
     [
-        'RELATÓRIO CONSOLIDADO DE ERROS E2E — PRAZZU TOOLS',
+        'RELATÓRIO CONSOLIDADO DE ERROS E2E — PRAZZU TOOLS sempre respeite o readme da raiz',
         `Gerado em: ${new Date().toISOString()}`,
         `Projeto: ${process.cwd()}`,
         '',
