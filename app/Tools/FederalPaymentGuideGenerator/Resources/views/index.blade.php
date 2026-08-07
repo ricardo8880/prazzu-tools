@@ -4,6 +4,7 @@
 @section('meta_description', 'Calcule de forma orientativa multa e juros de DARF e GPS com memória transparente e conferência obrigatória nas fontes oficiais.')
 
 @section('content')
+<div data-testid="tool-page-gerador-darf-gps">
     @php($result = $result ?? session('guide_result'))
     @php($recentHistory = $recentHistory ?? [])
     <div class="container py-5">
@@ -31,7 +32,7 @@
 
                 <div class="card shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <form method="POST" action="{{ route('tools.gerador-darf-gps.calculate') }}" class="row g-3">
+                        <form data-testid="tool-form-panel" method="POST" action="{{ route('tools.gerador-darf-gps.calculate') }}" class="row g-3">
                             @csrf
                             <div class="col-md-4">
                                 <label for="guide_type" class="form-label">Tipo de guia</label>
@@ -164,4 +165,5 @@
             });
         </script>
     @endpush
+</div>
 @endsection

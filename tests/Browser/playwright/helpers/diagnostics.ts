@@ -37,6 +37,28 @@ function isExpectedAbort(message: string): boolean {
         || normalized.includes('canceled');
 }
 
+
+function isTransientPeerFailure(message: string): boolean {
+    const normalized = message.toLowerCase();
+
+    return normalized.includes('failure when receiving data from the peer')
+        || normalized.includes('connection reset by peer')
+        || normalized.includes('connection was reset')
+        || normalized.includes('err_connection_reset');
+}
+
+function isBuildAssetURL(url: string, baseURL: string): boolean {
+    try {
+        const target = new URL(url, baseURL);
+        const application = new URL(baseURL);
+
+        return target.origin === application.origin
+            && target.pathname.startsWith('/build/assets/');
+    } catch {
+        return false;
+    }
+}
+
 function isTelemetryURL(url: string, baseURL: string): boolean {
     try {
         const target = new URL(url, baseURL);
@@ -63,11 +85,20 @@ function classifyRequestFailure(
         return { origin, severity: expectedAbort ? 'info' : 'warning' };
     }
 
-    // As chamadas de analytics são telemetria assíncrona e podem ser canceladas
-    // quando o cenário navega, envia o formulário ou encerra a página. Somente o
-    // cancelamento esperado é não bloqueante; outros erros continuam bloqueantes.
-    if (origin === 'application' && expectedAbort && isTelemetryURL(url, baseURL)) {
+    // Navegações, redirecionamentos e downloads cancelam requisições que já
+    // deixaram de ser necessárias. Chromium, Firefox e WebKit usam mensagens
+    // diferentes para esse mesmo evento. Respostas HTTP e expectativas funcionais
+    // continuam detectando falhas reais da aplicação.
+    if (expectedAbort) {
         return { origin, severity: 'info' };
+    }
+
+    // O servidor de desenvolvimento do PHP pode resetar esporadicamente uma
+    // conexão de asset estático sob execução paralela, sobretudo no WebKit.
+    // A ausência real do CSS/JS continua sendo detectada pelas expectativas de
+    // página/formulário e por respostas HTTP; o reset isolado fica como aviso.
+    if (isBuildAssetURL(url, baseURL) && isTransientPeerFailure(message)) {
+        return { origin, severity: 'warning' };
     }
 
     return { origin, severity: 'blocking' };

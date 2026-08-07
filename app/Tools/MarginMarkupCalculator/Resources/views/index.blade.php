@@ -118,7 +118,7 @@
     @endphp
     @if ($result)
         <span data-analytics-result="main" hidden></span>
-        <section class="mt-4" aria-labelledby="calculation-result-title">
+        <section class="mt-4" aria-labelledby="calculation-result-title" data-testid="tool-result">
             <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-3">
                 <div>
                     <h2 id="calculation-result-title" class="prazzu-section-title mb-1">Resultado da formação de preço</h2>

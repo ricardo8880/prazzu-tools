@@ -6,7 +6,7 @@
     "build": "vite build",
     "dev": "vite",
     "e2e:install": "node ./node_modules/@playwright/test/cli.js install chromium",
-    "e2e:test": "node ./node_modules/@playwright/test/cli.js test",
+    "e2e:test": "playwright test",
     "e2e:test:headed": "node ./node_modules/@playwright/test/cli.js test --headed",
     "e2e:test:debug": "node ./node_modules/@playwright/test/cli.js test --debug",
     "e2e:report": "node ./node_modules/@playwright/test/cli.js show-report storage/app/e2e/artifacts/report",

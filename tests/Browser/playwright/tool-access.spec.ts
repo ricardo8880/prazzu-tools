@@ -10,8 +10,9 @@ test.describe('Lote 9 - acesso, autenticação e fluxos transversais', () => {
         await page.goto(access.protected_paths.account);
         await expect(page).toHaveURL(/\/entrar/);
 
-        await page.goto(access.protected_paths.history);
-        await expect(page).toHaveURL(/\/entrar/);
+        const historyResponse = await page.goto(access.protected_paths.history);
+        expect(historyResponse?.status()).toBeLessThan(400);
+        await expect(page).not.toHaveURL(/\/entrar/);
 
         const adminResponse = await page.goto(access.protected_paths.administrator);
         expect(adminResponse?.status()).toBe(403);

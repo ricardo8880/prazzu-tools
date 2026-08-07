@@ -104,7 +104,7 @@
         @php($summary = collect($result['summary'])->keyBy('key'))
         @php($remuneration = $result['details']['remuneration'])
         @php($periods = $result['details']['periods'])
-        <section class="prazzu-form-panel mt-4" aria-labelledby="vacation-result-title">
+        <section class="prazzu-form-panel mt-4" aria-labelledby="vacation-result-title" data-testid="tool-result">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div><span class="badge text-bg-success mb-2">Estimativa calculada</span><h2 id="vacation-result-title" class="prazzu-section-title mb-1">Resultado das férias</h2><p class="text-body-secondary mb-0">Memória baseada na remuneração e nas condições informadas.</p></div>
                 <div class="text-lg-end"><small class="text-body-secondary d-block">Total líquido estimado</small><strong class="fs-3 text-success">{{ $summary['net_total']['value'] }}</strong></div>

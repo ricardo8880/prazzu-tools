@@ -7,7 +7,7 @@
 @section('content')
     <x-tools.page title="Simulador de Pró-Labore Ideal" description="Simule pró-labore, INSS, IRRF, valor líquido e custo empresarial com memória transparente." icon="bi-person-badge" slug="simulador-pro-labore-ideal">
 
-        <form method="post" action="{{ route('tools.simulador-pro-labore-ideal.calculate') }}" class="row g-3">
+        <form data-testid="tool-form-panel" method="post" action="{{ route('tools.simulador-pro-labore-ideal.calculate') }}" class="row g-3">
             @csrf
             <div class="col-md-4">
                 <label class="form-label" for="competence">Competência</label>

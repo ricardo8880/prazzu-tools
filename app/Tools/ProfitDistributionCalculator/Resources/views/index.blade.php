@@ -7,7 +7,7 @@
 @section('content')
     <x-tools.page title="Calculadora de Distribuição de Lucros" description="Calcule o lucro disponível, a distribuição por participação societária e o saldo remanescente." icon="bi-pie-chart" slug="distribuicao-de-lucros">
 
-        <form method="post" action="{{ route('tools.distribuicao-de-lucros.calculate') }}" class="row g-3">
+        <form data-testid="tool-form-panel" method="post" action="{{ route('tools.distribuicao-de-lucros.calculate') }}" class="row g-3">
             @csrf
             <div class="col-md-4">
                 <label class="form-label" for="partner_label">Sócio</label>

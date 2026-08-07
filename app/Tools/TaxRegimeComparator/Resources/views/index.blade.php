@@ -32,7 +32,7 @@
         </div>
     @endif
 
-    <form method="post" action="{{ route('tools.comparador-tributario.compare') }}" class="card border-0 shadow-sm" data-analytics-form="comparison">
+    <form data-testid="tool-form-panel" method="post" action="{{ route('tools.comparador-tributario.compare') }}" class="card border-0 shadow-sm" data-analytics-form="comparison">
         @csrf
         <div class="card-body p-4">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-2 mb-4">

@@ -93,16 +93,16 @@
             </div>
             <div class="d-flex flex-wrap gap-2 mt-3">
                 @foreach([
-                    ['tools.custo-funcionario-clt.print', 'Imprimir / PDF', 'btn-primary', 'bi-printer'],
-                    ['tools.custo-funcionario-clt.export.csv', 'Exportar CSV · Plus', 'btn-outline-primary', 'bi-filetype-csv'],
-                    ['tools.custo-funcionario-clt.export.xlsx', 'Exportar XLSX · Plus', 'btn-outline-primary', 'bi-file-earmark-excel'],
-                ] as [$routeName, $label, $class, $icon])
+                    ['tools.custo-funcionario-clt.download.pdf', 'Baixar PDF', 'btn-primary', 'bi-file-earmark-pdf', 'download-pdf'],
+                    ['tools.custo-funcionario-clt.export.csv', 'Exportar CSV · Plus', 'btn-outline-primary', 'bi-filetype-csv', 'download-csv'],
+                    ['tools.custo-funcionario-clt.export.xlsx', 'Exportar XLSX · Plus', 'btn-outline-primary', 'bi-file-earmark-excel', 'download-xlsx'],
+                ] as [$routeName, $label, $class, $icon, $testId])
                     <form method="post" action="{{ route($routeName) }}">
                         @csrf
                         @foreach($calculationInput as $name => $value)
                             @if(is_scalar($value) || $value === null)<input type="hidden" name="{{ $name }}" value="{{ $value }}">@endif
                         @endforeach
-                        <button class="btn {{ $class }}" type="submit"><i class="bi {{ $icon }} me-1"></i>{{ $label }}</button>
+                        <button class="btn {{ $class }}" type="submit" data-testid="{{ $testId }}"><i class="bi {{ $icon }} me-1"></i>{{ $label }}</button>
                     </form>
                 @endforeach
             </div>

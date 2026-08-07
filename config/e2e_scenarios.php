@@ -27,7 +27,7 @@ foreach (($productTools['official'] ?? []) as $tool) {
             ],
             expectations: [
                 ['type' => 'url', 'contains' => '/ferramentas/'.$slug],
-                ['type' => 'visible', 'test_id' => 'tool-result'],
+                ['type' => 'visible', 'test_id' => 'tool-form-panel'],
             ],
         ),
         new ToolScenario(
@@ -48,6 +48,48 @@ foreach (($productTools['official'] ?? []) as $tool) {
         ),
     ];
 }
+
+
+$tools['gerador-de-contratos'] = [
+    new ToolScenario(
+        id: 'fluxo-principal-valido',
+        title: 'Seleciona a modalidade e executa o questionário principal',
+        kind: 'valid',
+        toolSlug: 'gerador-de-contratos',
+        tags: ['lot-10', 'regression', 'minimum-coverage'],
+        steps: [
+            ['action' => 'click', 'test_id' => 'contract-type-service'],
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
+        ],
+        expectations: [
+            ['type' => 'url', 'contains' => '/ferramentas/gerador-de-contratos'],
+            ['type' => 'hidden', 'test_id' => 'tool-form-panel'],
+            ['type' => 'visible', 'test_id' => 'contract-editor'],
+            ['type' => 'visible', 'test_id' => 'contract-preview'],
+            ['type' => 'visible', 'test_id' => 'contract-export-pdf'],
+            ['type' => 'visible', 'test_id' => 'contract-export-xlsx'],
+            ['type' => 'visible', 'test_id' => 'contract-export-docx'],
+        ],
+    ),
+    new ToolScenario(
+        id: 'campo-obrigatorio-invalido',
+        title: 'Impede o envio do questionário com campo obrigatório inválido',
+        kind: 'invalid',
+        toolSlug: 'gerador-de-contratos',
+        tags: ['lot-10', 'regression', 'minimum-coverage'],
+        steps: [
+            ['action' => 'click', 'test_id' => 'contract-type-service'],
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'invalidate_required', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
+        ],
+        expectations: [
+            ['type' => 'form_invalid', 'test_id' => 'tool-form-panel'],
+            ['type' => 'url', 'contains' => '/ferramentas/gerador-de-contratos'],
+        ],
+    ),
+];
 
 $tools['custo-funcionario-clt'] = [
     new ToolScenario(

@@ -122,6 +122,23 @@ final class ToolController extends Controller
         }
     }
 
+    public function downloadPdf(
+        ExecuteToolRequest $request,
+        CalculateTool $action,
+        PdfExporter $exporter,
+        ToolResultExportFactory $documents,
+    ): Response {
+        $input = $request->validated();
+        $result = $action->execute($input);
+
+        return $exporter->download($documents->pdf(
+            title: 'Custo de Funcionário CLT',
+            filename: 'custo-funcionario-clt-'.now()->format('Y-m-d'),
+            result: $result,
+            input: $input,
+        ));
+    }
+
     public function exportCurrent(
         ExecuteToolRequest $request,
         CalculateTool $action,

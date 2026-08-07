@@ -7,11 +7,16 @@ const artifacts = 'storage/app/e2e/artifacts';
 export default defineConfig({
     testDir: './tests/Browser/playwright',
     globalSetup: './tests/Browser/playwright/global-setup.ts',
-    fullyParallel: true,
+    fullyParallel: false,
     forbidOnly: Boolean(process.env.CI),
     retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 2 : undefined,
-    timeout: 30_000,
+    // O servidor embutido do PHP é o gargalo local. Quatro workers provocavam
+    // resets de conexão de assets e encerramentos em cascata no WebKit/Firefox.
+    // No Windows, dois workers também podem esgotar o buffer de sockets após muitas
+    // navegações (net::ERR_NO_BUFFER_SPACE). A execução local usa um worker por
+    // padrão e continua permitindo sobrescrita explícita com E2E_WORKERS.
+    workers: process.env.CI ? 2 : Math.max(1, Number(process.env.E2E_WORKERS ?? 1)),
+    timeout: 45_000,
     expect: { timeout: 5_000 },
     outputDir: `${artifacts}/results`,
     reporter: [

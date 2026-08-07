@@ -10,7 +10,7 @@
         <span data-analytics-result="main" hidden></span>
     @endif
 
-    <div class="container py-5">
+    <div class="container py-5" data-testid="tool-page-emissor-de-recibos">
         <div class="row justify-content-center">
             <div class="col-xl-10">
                 <x-tools.intro icon="receipt" tone="green" title="Emissor de Recibos" description="Preencha, revise e gere um recibo completo sem depender de modelos improvisados." badge="Em desenvolvimento" />
@@ -38,7 +38,7 @@
                     </div>
                 @endif
 
-                <div class="card shadow-sm mb-4">
+                <div class="card shadow-sm mb-4" data-testid="tool-form-panel">
                     <div class="card-body p-4">
                         <h2 class="h4 mb-3">Dados do recibo</h2>
                         <form method="POST" action="{{ route('tools.emissor-de-recibos.issue') }}" class="row g-3">

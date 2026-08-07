@@ -261,7 +261,7 @@
         @php($result = $calculationResult ?? session('calculation_result'))
         <span data-analytics-result="main" hidden></span>
         @php($exportInput = ! empty($calculationInput ?? []) ? $calculationInput : session('calculation_input', []))
-        <section class="prazzu-form-panel mt-4" aria-labelledby="termination-result-title">
+        <section class="prazzu-form-panel mt-4" aria-labelledby="termination-result-title" data-testid="tool-result">
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div>
                     <span class="badge text-bg-success mb-2">Estimativa calculada</span>

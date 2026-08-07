@@ -141,7 +141,7 @@
         <span data-analytics-result="main" hidden></span>
         @php($complexityVariant = match ($result['complexity_level']) { 'Baixa' => 'success', 'Média' => 'warning', 'Alta', 'Muito alta' => 'danger', default => 'secondary' })
 
-        <section class="mt-4" aria-labelledby="calculation-result-title">
+        <section class="mt-4" aria-labelledby="calculation-result-title" data-testid="tool-result">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-3">
                 <div>
                     <h2 id="calculation-result-title" class="prazzu-section-title mb-1">Resultado da precificação</h2>

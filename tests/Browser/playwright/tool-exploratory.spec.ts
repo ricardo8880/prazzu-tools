@@ -63,7 +63,11 @@ test.describe('Exploração controlada e não bloqueante', () => {
 
             const response = await page.goto(tool.path, { waitUntil: 'domcontentloaded' });
             expect(response?.status()).toBeLessThan(500);
-            const form = page.getByTestId(tool.test_ids.form).first().locator('form').first();
+            const panel = page.getByTestId(tool.test_ids.form).first();
+            await expect(panel).toBeVisible();
+            const form = await panel.evaluate(element => element instanceof HTMLFormElement)
+                ? panel
+                : panel.locator('form').first();
             await expect(form).toBeVisible();
             const controls = form.locator('input:not([type="hidden"]), textarea, select');
             const count = Math.min(await controls.count(), maxActions);

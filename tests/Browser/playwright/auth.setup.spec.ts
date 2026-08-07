@@ -26,16 +26,28 @@ for (const profileName of profiles) {
         const loginButton = loginForm.getByRole('button', { name: /^entrar$/i });
         await expect(loginButton, 'Botão de login não encontrado.').toBeVisible();
 
-        // O login é um submit com navegação de documento. A espera é registrada
-        // antes do clique para não perder navegações rápidas e para impedir que a
-        // leitura da URL aconteça enquanto o documento anterior está sendo trocado.
-        await Promise.all([
-            page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 30_000 }),
-            loginButton.click({ noWaitAfter: true }),
+        // Sincronize o submit com a resposta real do endpoint. Isso evita validar
+        // uma URL vazia quando a execução é encerrada enquanto a navegação ainda ocorre.
+        const [loginResponse] = await Promise.all([
+            page.waitForResponse(response => (
+                response.request().method() === 'POST'
+                && new URL(response.url()).pathname === '/entrar'
+            )),
+            loginButton.click(),
         ]);
 
+        expect(
+            loginResponse.status(),
+            `O login do perfil ${profileName} retornou HTTP ${loginResponse.status()}.`,
+        ).toBeLessThan(400);
+
+        await page.waitForURL(url => url.pathname !== '/entrar', {
+            timeout: 10_000,
+            waitUntil: 'domcontentloaded',
+        });
+
         await expect(page, `O perfil ${profileName} permaneceu na página de login.`)
-            .not.toHaveURL(/\/entrar(?:\?|$)/, { timeout: 10_000 });
+            .not.toHaveURL(/\/entrar(?:\?|$)/);
 
         await page.context().storageState({ path: statePath });
     });

@@ -25,7 +25,7 @@ if ($command === 'export') {
         'protected_paths' => [
             'account' => '/minha-conta',
             'administrator' => '/admin',
-            'history' => '/ferramentas/calculo-ferias/historico',
+            'history' => '/ferramentas/calculadora-ferias/historico',
         ],
     ];
 

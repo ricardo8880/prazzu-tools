@@ -30,6 +30,23 @@ final class E2EAllToolsMinimumCoverageTest extends TestCase
         }
     }
 
+    public function test_contract_generator_valid_scenario_requires_the_generated_contract(): void
+    {
+        $config = require base_path('config/e2e_scenarios.php');
+        $scenarios = $config['tools']['gerador-de-contratos'] ?? [];
+        $valid = collect($scenarios)->first(
+            static fn (ToolScenario $scenario): bool => $scenario->kind === 'valid',
+        );
+
+        self::assertInstanceOf(ToolScenario::class, $valid);
+        self::assertContains(['type' => 'hidden', 'test_id' => 'tool-form-panel'], $valid->expectations);
+        self::assertContains(['type' => 'visible', 'test_id' => 'contract-editor'], $valid->expectations);
+        self::assertContains(['type' => 'visible', 'test_id' => 'contract-preview'], $valid->expectations);
+        self::assertContains(['type' => 'visible', 'test_id' => 'contract-export-pdf'], $valid->expectations);
+        self::assertContains(['type' => 'visible', 'test_id' => 'contract-export-xlsx'], $valid->expectations);
+        self::assertContains(['type' => 'visible', 'test_id' => 'contract-export-docx'], $valid->expectations);
+    }
+
     public function test_lot_10_runner_enforces_full_minimum_coverage(): void
     {
         $script = (string) file_get_contents(base_path('scripts/e2e-tool-scenarios.php'));

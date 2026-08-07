@@ -142,7 +142,8 @@ body.prazzu-app .text-body-secondary {
 }
 
 .prazzu-footer > .container-fluid > .row {
-    width: calc(100% + var(--bs-gutter-x));
+    width: auto;
+    flex: 1 1 auto;
     align-items: center;
     margin-top: 0;
     margin-bottom: 0;

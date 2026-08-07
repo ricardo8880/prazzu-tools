@@ -1,0 +1,1794 @@
+RELATÓRIO CONSOLIDADO DE ERROS E2E — PRAZZU TOOLS sempre respeite o readme da raiz
+Gerado em: 2026-08-06T20:34:55.992Z
+Projeto: C:\xampp\htdocs\prazzu-tools
+
+INSTRUÇÕES PARA ANÁLISE POR GPT:
+1. Considere cada bloco ERRO separadamente.
+2. Use Arquivo do teste, mensagem, stack e artefatos para localizar a causa.
+3. Diferencie falha da automação de defeito funcional da aplicação.
+4. Priorize a primeira causa; erros posteriores podem ser consequência.
+
+====================================================================================================
+EXECUÇÃO E2E — 2026-08-06T20:34:58.757Z
+====================================================================================================
+Status geral: failed
+Diretório do projeto: C:\xampp\htdocs\prazzu-tools
+Quantidade planejada: 364
+Aprovados nesta execução: 308
+Falhas nesta execução: 56
+Ignorados nesta execução: 0
+Duração aproximada: 1258s
+Workers: 1
+
+ERRO 1
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › calculadora-de-rescisao · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4201 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Selecione
+                                            Trabalhado
+                                            Indenizado
+                                            Não cumprido / passível de desconto
+                                            Não se aplica | Dados de término antecipado só podem ser usados nessa modalidade.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 2
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › calculadora-simples-nacional · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4400 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    Informe o RBT12 no formato 1.234,56.Informe a folha de salários no formato 1.234,56. | Informe o RBT12 no formato 1.234,56. | Informe a folha de salários no formato 1.234,56.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 3
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › comparador-clt-pj-autonomo · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4203 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo clt gross deve ser um valor monetário válido.O campo clt gross não atende ao valor mínimo permitido.O campo pj invoice deve ser um valor monetário válido.O campo pj invoice não atende ao valor mínimo permitido.O campo autonomous gross deve ser um valor monetário válido.O campo autonomous gross não atende ao valor mínimo permitido. | O campo clt gross deve ser um valor monetário válido. | O campo pj invoice deve ser um valor monetário válido. | O campo autonomous gross deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 4
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › conversor-fiscal-xml · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 8776 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    validation.min.array | validation.min.array
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 5
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › das-em-atraso · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4112 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo principal deve ser um valor monetário válido.O campo principal não atende ao valor mínimo permitido. | O campo principal deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 6
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › declaracao-trabalho-renda · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 3381 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo monthly income deve ser um valor monetário válido.O campo monthly income não atende ao valor mínimo permitido. | O campo monthly income deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 7
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › gerador-de-contratos · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 17849 ms
+
+ERRO ENCONTRADO:
+Error: expect(locator).toBeHidden() failed
+
+Locator:  getByTestId('tool-form-panel').first()
+Expected: hidden
+Received: visible
+Timeout:  5000ms
+
+Call log:
+  - Expect "toBeHidden" with timeout 5000ms
+  - waiting for getByTestId('tool-form-panel').first()
+    14 × locator resolved to <section data-testid="tool-form-panel" class="prazzu-form-panel mb-4">…</section>
+       - unexpected value "visible"
+
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:325:65)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Verifique se a ação realmente termina, se há requisição pendente ou seletor incorreto. Evite apenas aumentar o timeout sem localizar a causa.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 8
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › inss-patronal · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 3681 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo payroll deve ser um valor monetário válido.O campo payroll não atende ao valor mínimo permitido. | O campo payroll deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 9
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › ponto-de-equilibrio · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 3565 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo sale price deve ser um valor monetário válido.O campo sale price não atende ao valor mínimo permitido. | O campo sale price deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 10
+Projeto/navegador: chromium-desktop
+Teste: chromium-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › validador-de-cnpj · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 3907 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    Use somente números e os caracteres de máscara ponto, traço ou barra. | Use somente números e os caracteres de máscara ponto, traço ou barra.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-chromium-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-chromium-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-chromium-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-chromium-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="chromium-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 11
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › calculadora-de-rescisao · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 5434 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Selecione
+                                            Trabalhado
+                                            Indenizado
+                                            Não cumprido / passível de desconto
+                                            Não se aplica | Dados de término antecipado só podem ser usados nessa modalidade.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 12
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › calculadora-simples-nacional · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4089 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    Informe o RBT12 no formato 1.234,56.Informe a folha de salários no formato 1.234,56. | Informe o RBT12 no formato 1.234,56. | Informe a folha de salários no formato 1.234,56.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 13
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › comparador-clt-pj-autonomo · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 3876 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo clt gross deve ser um valor monetário válido.O campo clt gross não atende ao valor mínimo permitido.O campo pj invoice deve ser um valor monetário válido.O campo pj invoice não atende ao valor mínimo permitido.O campo autonomous gross deve ser um valor monetário válido.O campo autonomous gross não atende ao valor mínimo permitido. | O campo clt gross deve ser um valor monetário válido. | O campo pj invoice deve ser um valor monetário válido. | O campo autonomous gross deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 14
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › conversor-fiscal-xml · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 8717 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    validation.min.array | validation.min.array
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 15
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › das-em-atraso · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4175 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo principal deve ser um valor monetário válido.O campo principal não atende ao valor mínimo permitido. | O campo principal deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 16
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › declaracao-trabalho-renda · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 3938 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo monthly income deve ser um valor monetário válido.O campo monthly income não atende ao valor mínimo permitido. | O campo monthly income deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 17
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › gerador-de-contratos · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 20638 ms
+
+ERRO ENCONTRADO:
+Error: expect(locator).toBeHidden() failed
+
+Locator:  getByTestId('tool-form-panel').first()
+Expected: hidden
+Received: visible
+Timeout:  5000ms
+
+Call log:
+  - Expect "toBeHidden" with timeout 5000ms
+  - waiting for getByTestId('tool-form-panel').first()
+    14 × locator resolved to <section data-testid="tool-form-panel" class="prazzu-form-panel mb-4">…</section>
+       - unexpected value "visible"
+
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:325:65)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Verifique se a ação realmente termina, se há requisição pendente ou seletor incorreto. Evite apenas aumentar o timeout sem localizar a causa.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 18
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › inss-patronal · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4186 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo payroll deve ser um valor monetário válido.O campo payroll não atende ao valor mínimo permitido. | O campo payroll deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 19
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › ponto-de-equilibrio · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 4555 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo sale price deve ser um valor monetário válido.O campo sale price não atende ao valor mínimo permitido. | O campo sale price deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 20
+Projeto/navegador: firefox-desktop
+Teste: firefox-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › validador-de-cnpj · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 7585 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    Use somente números e os caracteres de máscara ponto, traço ou barra. | Use somente números e os caracteres de máscara ponto, traço ou barra.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-firefox-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-firefox-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-firefox-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-firefox-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="firefox-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 21
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › calculadora-de-rescisao · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 11447 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Selecione
+                                            Trabalhado
+                                            Indenizado
+                                            Não cumprido / passível de desconto
+                                            Não se aplica | Dados de término antecipado só podem ser usados nessa modalidade.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-c7deb-ao-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 22
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › calculadora-simples-nacional · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 8183 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    Informe o RBT12 no formato 1.234,56.Informe a folha de salários no formato 1.234,56. | Informe o RBT12 no formato 1.234,56. | Informe a folha de salários no formato 1.234,56.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-352f8-al-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 23
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › comparador-clt-pj-autonomo · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 8690 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo clt gross deve ser um valor monetário válido.O campo clt gross não atende ao valor mínimo permitido.O campo pj invoice deve ser um valor monetário válido.O campo pj invoice não atende ao valor mínimo permitido.O campo autonomous gross deve ser um valor monetário válido.O campo autonomous gross não atende ao valor mínimo permitido. | O campo clt gross deve ser um valor monetário válido. | O campo pj invoice deve ser um valor monetário válido. | O campo autonomous gross deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0443e-mo-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 24
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › comparador-tributario · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 15412 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    Informe a folha dos últimos 12 meses no formato 300.000,00.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0fb39-io-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0fb39-io-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0fb39-io-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-0fb39-io-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 25
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › conversor-fiscal-xml · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 12374 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    validation.min.array | validation.min.array
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-5adc8-ml-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 26
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › das-em-atraso · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 6993 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo principal deve ser um valor monetário válido.O campo principal não atende ao valor mínimo permitido. | O campo principal deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-fbb0b-so-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 27
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › declaracao-rendimentos · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 15144 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo gross deve ser um valor monetário válido.O campo gross não atende ao valor mínimo permitido. | O campo gross deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-55756-os-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-55756-os-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-55756-os-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-55756-os-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 28
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › declaracao-trabalho-renda · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 8788 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo monthly income deve ser um valor monetário válido.O campo monthly income não atende ao valor mínimo permitido. | O campo monthly income deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-81028-da-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 29
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › gerador-de-contratos · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 26508 ms
+
+ERRO ENCONTRADO:
+Error: expect(locator).toBeHidden() failed
+
+Locator:  getByTestId('tool-form-panel').first()
+Expected: hidden
+Received: visible
+Timeout:  5000ms
+
+Call log:
+  - Expect "toBeHidden" with timeout 5000ms
+  - waiting for getByTestId('tool-form-panel').first()
+    13 × locator resolved to <section data-testid="tool-form-panel" class="prazzu-form-panel mb-4">…</section>
+       - unexpected value "visible"
+
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:325:65)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Verifique se a ação realmente termina, se há requisição pendente ou seletor incorreto. Evite apenas aumentar o timeout sem localizar a causa.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-3fa38-os-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 30
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › inss-patronal · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 7723 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo payroll deve ser um valor monetário válido.O campo payroll não atende ao valor mínimo permitido. | O campo payroll deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-2d179-al-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 31
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › ponto-de-equilibrio · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 7423 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    O campo sale price deve ser um valor monetário válido.O campo sale price não atende ao valor mínimo permitido. | O campo sale price deve ser um valor monetário válido.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-d0ff4-io-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 32
+Projeto/navegador: webkit-desktop
+Teste: webkit-desktop › tool-scenarios.spec.ts › Motor declarativo de cenários › validador-de-cnpj · fluxo-principal-valido
+Arquivo do teste: tests/Browser/playwright/tool-scenarios.spec.ts:17:9
+Duração: 7029 ms
+
+ERRO ENCONTRADO:
+Error: O envio válido retornou erros de validação: Revise os campos informados.
+                
+                    Use somente números e os caracteres de máscara ponto, traço ou barra. | Use somente números e os caracteres de máscara ponto, traço ou barra.
+    at submitForm (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:284:19)
+    at executeScenario (C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\helpers\tool-scenarios.ts:314:28)
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-scenarios.spec.ts:25:17
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-webkit-desktop/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-webkit-desktop/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-webkit-desktop/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-scenarios-Motor-decla-ad712-pj-·-fluxo-principal-valido-webkit-desktop/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-scenarios.spec.ts:17" --project="webkit-desktop"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 33
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › custo-funcionario-clt mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1376 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [custo-funcionario-clt] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4db17-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4db17-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4db17-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4db17-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 34
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › simulador-fator-r mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1803 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [simulador-fator-r] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4af3b-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4af3b-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4af3b-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4af3b-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 35
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › das-em-atraso mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1862 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [das-em-atraso] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4bf7a-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4bf7a-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4bf7a-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-4bf7a-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 36
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › encargos-trabalhistas mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1891 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [encargos-trabalhistas] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-14508-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-14508-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-14508-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-14508-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 37
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › comparador-clt-pj-autonomo mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 2201 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [comparador-clt-pj-autonomo] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fb023-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fb023-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fb023-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fb023-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 38
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › inss-patronal mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 2062 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [inss-patronal] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d0762-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d0762-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d0762-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d0762-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 39
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › simulador-pro-labore-ideal mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1850 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [simulador-pro-labore-ideal] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-b5a48-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-b5a48-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-b5a48-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-b5a48-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 40
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › gerador-holerite mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1796 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [gerador-holerite] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-1ec40-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-1ec40-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-1ec40-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-1ec40-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 41
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › simulador-admissao mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 2176 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [simulador-admissao] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-93b5c-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-93b5c-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-93b5c-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-93b5c-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 42
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › calculadora-de-rescisao mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1875 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [calculadora-de-rescisao] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-5f6f1-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-5f6f1-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-5f6f1-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-5f6f1-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 43
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › reajuste-salarial mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1880 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [reajuste-salarial] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8558f-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8558f-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8558f-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8558f-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 44
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › distribuicao-de-lucros mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1869 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [distribuicao-de-lucros] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d7bc0-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d7bc0-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d7bc0-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-d7bc0-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 45
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › declaracao-rendimentos mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1858 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [declaracao-rendimentos] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-ba549-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-ba549-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-ba549-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-ba549-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 46
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › comparador-tributario mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1829 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [comparador-tributario] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-3adee-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-3adee-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-3adee-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-3adee-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 47
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › calculadora-salario-liquido mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1879 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [calculadora-salario-liquido] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fa41e-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fa41e-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fa41e-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-fa41e-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 48
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › calculadora-hora-extra mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1771 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [calculadora-hora-extra] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8066e-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8066e-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8066e-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8066e-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 49
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › calculadora-difal-icms mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1933 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [calculadora-difal-icms] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-23a5b-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-23a5b-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-23a5b-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-23a5b-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 50
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › calculadora-pro-labore-distribuicao-lucros mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1894 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [calculadora-pro-labore-distribuicao-lucros] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9f07a-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9f07a-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9f07a-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9f07a-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 51
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › validador-de-cnpj mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1928 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [validador-de-cnpj] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-a2aef-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-a2aef-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-a2aef-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-a2aef-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 52
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › gerador-de-contratos mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1805 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [gerador-de-contratos] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8ecc4-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8ecc4-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8ecc4-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-8ecc4-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 53
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › conversor-fiscal-xml mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 2526 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [conversor-fiscal-xml] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-2b460-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-2b460-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-2b460-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-2b460-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 54
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › calculadora-simples-nacional mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1736 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [calculadora-simples-nacional] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9d2d2-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9d2d2-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9d2d2-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-9d2d2-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 55
+Projeto/navegador: mobile-chromium
+Teste: mobile-chromium › tool-responsive.spec.ts › Responsividade crítica do catálogo › calculadora-ferias mantém página e formulário utilizáveis
+Arquivo do teste: tests/Browser/playwright/tool-responsive.spec.ts:13:9
+Duração: 1939 ms
+
+ERRO ENCONTRADO:
+Error: A ferramenta [calculadora-ferias] não deve criar estouro horizontal relevante.
+
+expect(received).toBeLessThanOrEqual(expected)
+
+Expected: <= 420
+Received:    441
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-responsive.spec.ts:24:22
+
+COMO INVESTIGAR/CORRIGIR:
+Abra o trace e o error-context indicados, reproduza o cenário isoladamente e corrija a primeira causa apresentada antes dos erros derivados.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-de8e1-na-e-formulário-utilizáveis-mobile-chromium/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-de8e1-na-e-formulário-utilizáveis-mobile-chromium/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-de8e1-na-e-formulário-utilizáveis-mobile-chromium/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-responsive-Responsivi-de8e1-na-e-formulário-utilizáveis-mobile-chromium/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-responsive.spec.ts:13" --project="mobile-chromium"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 56
+Projeto/navegador: access-transversal
+Teste: access-transversal › tool-access.spec.ts › Lote 9 - acesso, autenticação e fluxos transversais › visitante é redirecionado ao tentar acessar conta, histórico e administração
+Arquivo do teste: tests/Browser/playwright/tool-access.spec.ts:7:5
+Duração: 9098 ms
+
+ERRO ENCONTRADO:
+Error: expect(page).not.toHaveURL(expected) failed
+
+Expected pattern: not /\/entrar/
+Received string: "http://127.0.0.1:8010/entrar"
+Timeout: 5000ms
+
+Call log:
+  - Expect "not toHaveURL" with timeout 5000ms
+    13 × locator resolved to <html lang="pt-BR" class="js-enabled" data-bs-theme="light">…</html>
+       - unexpected value "http://127.0.0.1:8010/entrar"
+
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-access.spec.ts:15:32
+
+COMO INVESTIGAR/CORRIGIR:
+Revise a rota esperada e sincronize a ação que dispara a navegação antes de validar a URL.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-access-Lote-9---acess-d3ca6-a-histórico-e-administração-access-transversal/test-failed-1.png
+- error-context: storage/app/e2e/artifacts/results/tool-access-Lote-9---acess-d3ca6-a-histórico-e-administração-access-transversal/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-access-Lote-9---acess-d3ca6-a-histórico-e-administração-access-transversal/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-access.spec.ts:7" --project="access-transversal"
+
+====================================================================================================
+EXECUÇÃO E2E — 2026-08-06T20:56:00.657Z
+====================================================================================================
+Status geral: failed
+Diretório do projeto: C:\xampp\htdocs\prazzu-tools
+Quantidade planejada: 32
+Aprovados nesta execução: 28
+Falhas nesta execução: 4
+Ignorados nesta execução: 0
+Duração aproximada: 110s
+Workers: 1
+
+ERRO 1
+Projeto/navegador: exploratory-controlled
+Teste: exploratory-controlled › tool-exploratory.spec.ts › Exploração controlada e não bloqueante › calculadora-salario-liquido suporta sequência exploratória reproduzível
+Arquivo do teste: tests/Browser/playwright/tool-exploratory.spec.ts:57:9
+Duração: 10728 ms
+
+ERRO ENCONTRADO:
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByTestId('tool-form-panel').first().locator('form').first()
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByTestId('tool-form-panel').first().locator('form').first()
+
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-exploratory.spec.ts:71:32
+
+COMO INVESTIGAR/CORRIGIR:
+Confirme se o elemento existe na view, se o data-testid esperado está correto e se ele só aparece após alguma ação assíncrona.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-95428-a-exploratória-reproduzível-exploratory-controlled/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-95428-a-exploratória-reproduzível-exploratory-controlled/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-95428-a-exploratória-reproduzível-exploratory-controlled/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-95428-a-exploratória-reproduzível-exploratory-controlled/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-exploratory.spec.ts:57" --project="exploratory-controlled"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 2
+Projeto/navegador: exploratory-controlled
+Teste: exploratory-controlled › tool-exploratory.spec.ts › Exploração controlada e não bloqueante › calculadora-hora-extra suporta sequência exploratória reproduzível
+Arquivo do teste: tests/Browser/playwright/tool-exploratory.spec.ts:57:9
+Duração: 6660 ms
+
+ERRO ENCONTRADO:
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByTestId('tool-form-panel').first().locator('form').first()
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByTestId('tool-form-panel').first().locator('form').first()
+
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-exploratory.spec.ts:71:32
+
+COMO INVESTIGAR/CORRIGIR:
+Confirme se o elemento existe na view, se o data-testid esperado está correto e se ele só aparece após alguma ação assíncrona.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-c6687-a-exploratória-reproduzível-exploratory-controlled/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-c6687-a-exploratória-reproduzível-exploratory-controlled/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-c6687-a-exploratória-reproduzível-exploratory-controlled/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-c6687-a-exploratória-reproduzível-exploratory-controlled/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-exploratory.spec.ts:57" --project="exploratory-controlled"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 3
+Projeto/navegador: exploratory-controlled
+Teste: exploratory-controlled › tool-exploratory.spec.ts › Exploração controlada e não bloqueante › calculadora-difal-icms suporta sequência exploratória reproduzível
+Arquivo do teste: tests/Browser/playwright/tool-exploratory.spec.ts:57:9
+Duração: 6658 ms
+
+ERRO ENCONTRADO:
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByTestId('tool-form-panel').first().locator('form').first()
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByTestId('tool-form-panel').first().locator('form').first()
+
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-exploratory.spec.ts:71:32
+
+COMO INVESTIGAR/CORRIGIR:
+Confirme se o elemento existe na view, se o data-testid esperado está correto e se ele só aparece após alguma ação assíncrona.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-32fa1-a-exploratória-reproduzível-exploratory-controlled/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-32fa1-a-exploratória-reproduzível-exploratory-controlled/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-32fa1-a-exploratória-reproduzível-exploratory-controlled/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-32fa1-a-exploratória-reproduzível-exploratory-controlled/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-exploratory.spec.ts:57" --project="exploratory-controlled"
+
+----------------------------------------------------------------------------------------------------
+
+ERRO 4
+Projeto/navegador: exploratory-controlled
+Teste: exploratory-controlled › tool-exploratory.spec.ts › Exploração controlada e não bloqueante › gerador-de-contratos suporta sequência exploratória reproduzível
+Arquivo do teste: tests/Browser/playwright/tool-exploratory.spec.ts:57:9
+Duração: 7693 ms
+
+ERRO ENCONTRADO:
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByTestId('tool-form-panel').first().locator('form').first()
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByTestId('tool-form-panel').first().locator('form').first()
+
+    at C:\xampp\htdocs\prazzu-tools\tests\Browser\playwright\tool-exploratory.spec.ts:71:32
+
+COMO INVESTIGAR/CORRIGIR:
+Confirme se o elemento existe na view, se o data-testid esperado está correto e se ele só aparece após alguma ação assíncrona.
+
+ARTEFATOS PARA DIAGNÓSTICO:
+- screenshot: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-21833-a-exploratória-reproduzível-exploratory-controlled/test-failed-1.png
+- video: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-21833-a-exploratória-reproduzível-exploratory-controlled/video.webm
+- error-context: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-21833-a-exploratória-reproduzível-exploratory-controlled/error-context.md
+- trace: storage/app/e2e/artifacts/results/tool-exploratory-Exploraçã-21833-a-exploratória-reproduzível-exploratory-controlled/trace.zip
+
+COMANDO PARA REPETIR APENAS ESTE TESTE:
+npx playwright test "tests/Browser/playwright/tool-exploratory.spec.ts:57" --project="exploratory-controlled"

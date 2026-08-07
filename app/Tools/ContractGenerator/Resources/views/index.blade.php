@@ -34,6 +34,7 @@
                         <div class="col-12 col-md-6">
                             <a
                                 href="{{ route('tools.gerador-de-contratos.index', ['tipo' => $contractType->value]) }}"
+                                data-testid="contract-type-{{ $contractType->value === 'prestacao-servicos' ? 'service' : 'sale' }}"
                                 class="card h-100 text-decoration-none {{ $selectedType === $contractType ? 'border-primary' : '' }}"
                                 @if($selectedType === $contractType) aria-current="true" @endif
                             >
@@ -61,7 +62,7 @@
             </x-tools.form-panel>
 
             @if ($selectedType !== null && $contractText === null)
-                <form method="POST" action="{{ route('tools.gerador-de-contratos.build') }}" aria-label="Questionário para gerar contrato" data-analytics-form="draft">
+                <form data-testid="tool-form-panel" method="POST" action="{{ route('tools.gerador-de-contratos.build') }}" aria-label="Questionário para gerar contrato" data-analytics-form="draft">
                     @csrf
                     <input type="hidden" name="contract_type" value="{{ $selectedType->value }}">
 
@@ -298,7 +299,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('tools.gerador-de-contratos.preview') }}" aria-label="Editor e exportação do contrato" data-analytics-form="editor">
+                    <form data-testid="contract-editor" method="POST" action="{{ route('tools.gerador-de-contratos.preview') }}" aria-label="Editor e exportação do contrato" data-analytics-form="editor">
                         @csrf
                         <input type="hidden" name="contract_type" value="{{ $selectedType?->value }}">
                         <label for="contract_text" class="form-label">Texto completo do contrato</label>
@@ -321,6 +322,7 @@
                             <button
                                 type="submit"
                                 class="btn btn-outline-primary"
+                                data-testid="contract-export-pdf"
                                 formaction="{{ route('tools.gerador-de-contratos.export.pdf') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="pdf"
                             >
                                 <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
@@ -329,6 +331,7 @@
                             <button
                                 type="submit"
                                 class="btn btn-outline-success"
+                                data-testid="contract-export-xlsx"
                                 formaction="{{ route('tools.gerador-de-contratos.export.xlsx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="xlsx"
                             >
                                 <i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i>
@@ -337,6 +340,7 @@
                             <button
                                 type="submit"
                                 class="btn btn-outline-primary"
+                                data-testid="contract-export-docx"
                                 formaction="{{ route('tools.gerador-de-contratos.export.docx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="docx"
                             >
                                 <i class="bi bi-file-earmark-word me-1" aria-hidden="true"></i>
@@ -352,7 +356,7 @@
                     data-analytics-result="editor"
                     description="Esta prévia usa exatamente o conteúdo atual do editor."
                 >
-                    <pre class="border rounded bg-body-tertiary p-3 p-md-4 mb-0 text-wrap overflow-auto" tabindex="0" aria-label="Prévia textual do contrato">{{ $contractText['content'] }}</pre>
+                    <pre data-testid="contract-preview" class="border rounded bg-body-tertiary p-3 p-md-4 mb-0 text-wrap overflow-auto" tabindex="0" aria-label="Prévia textual do contrato">{{ $contractText['content'] }}</pre>
                 </x-tools.result-panel>
             @endif
         </x-tools.page>
