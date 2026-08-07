@@ -315,11 +315,34 @@ async function submitIdentity(submit: Locator, form: Locator, page: Page): Promi
 }
 
 async function validationMessages(page: Page): Promise<string[]> {
-    return page.locator([
+    const selector = [
         '.is-invalid', '.invalid-feedback:visible', '[data-testid="validation-summary"]:visible',
-    ].join(', ')).evaluateAll(elements => Array.from(new Set(elements
-        .map(element => (element.textContent ?? '').replace(/\s+/g, ' ').trim())
-        .filter(Boolean))).slice(0, 8));
+    ].join(', ');
+
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+            return await page.locator(selector).evaluateAll(elements => Array.from(new Set(elements
+                .map(element => (element.textContent ?? '').replace(/\s+/g, ' ').trim())
+                .filter(Boolean))).slice(0, 8));
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            const navigationRace = /Execution context was destroyed|Cannot find context with specified id|Target page, context or browser has been closed/i.test(message);
+            if (!navigationRace || attempt === 2 || page.isClosed()) throw error;
+
+            await page.waitForLoadState('domcontentloaded', { timeout: 5_000 }).catch(() => undefined);
+            await page.locator('body').waitFor({ state: 'attached', timeout: 5_000 }).catch(() => undefined);
+            await page.waitForTimeout(100);
+        }
+    }
+
+    return [];
+}
+
+async function settleNavigationResponse(page: Page, response: Response | null): Promise<void> {
+    if (!response?.request().isNavigationRequest()) return;
+
+    await page.waitForLoadState('domcontentloaded', { timeout: 10_000 }).catch(() => undefined);
+    await page.locator('body').waitFor({ state: 'attached', timeout: 5_000 }).catch(() => undefined);
 }
 
 async function submittedValues(form: Locator): Promise<string[]> {
@@ -596,6 +619,9 @@ export async function auditVisibleResultActions(page: Page, scenario: ToolScenar
                 `Dados enviados: ${sentValues.join(' | ')}`,
             ]);
         }
+
+        await settleNavigationResponse(page, response);
+
         if (response.status() >= 400) {
             throw actionFailure(scenario, identity, beforeUrl, page.url(), response, `a ação respondeu HTTP ${response.status()}.`, [
                 `Dados enviados: ${sentValues.join(' | ')}`,

@@ -41,6 +41,18 @@ final class ToolPageTest extends TestCase
             ->assertSee('Gerar contrato completo');
     }
 
+    public function test_service_questionnaire_exposes_a_single_e2e_form_contract(): void
+    {
+        $response = $this->get(route('tools.gerador-de-contratos.index', ['tipo' => 'prestacao-servicos']))
+            ->assertOk()
+            ->assertSee('data-testid="contract-type-panel"', false)
+            ->assertSee('data-testid="contract-parties-panel"', false)
+            ->assertSee('data-testid="contract-terms-panel"', false)
+            ->assertSee('data-testid="contract-closing-panel"', false);
+
+        self::assertSame(1, substr_count((string) $response->getContent(), 'data-testid="tool-form-panel"'));
+    }
+
 
     public function test_generation_analytics_does_not_receive_contract_personal_data(): void
     {

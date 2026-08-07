@@ -4,7 +4,11 @@ import { applyE2ECorrelation, attachCorrelatedServerLogs } from './helpers/e2e-c
 import { auditVisibleResultActions, executeScenario, loadToolScenarios } from './helpers/tool-scenarios';
 
 const manifest = loadToolScenarios();
-const scenarios = manifest.scenarios.filter(scenario => scenario.kind === 'valid');
+const requestedToolSlug = process.env.E2E_TOOL_SLUG?.trim() || null;
+const validScenarios = manifest.scenarios.filter(scenario => scenario.kind === 'valid');
+const scenarios = requestedToolSlug
+    ? validScenarios.filter(scenario => scenario.tool_slug === requestedToolSlug)
+    : validScenarios;
 
 function expectedResultSummary(scenario: (typeof scenarios)[number]): string {
     const visible = scenario.expectations
@@ -14,7 +18,19 @@ function expectedResultSummary(scenario: (typeof scenarios)[number]): string {
 }
 
 test.describe('Auditoria operacional rápida de formulários e botões', () => {
-    test(`carregou ${manifest.tool_count} fluxos válidos para teste rápido`, async () => {
+    test(requestedToolSlug
+        ? `carregou a ferramenta solicitada: ${requestedToolSlug}`
+        : `carregou ${manifest.tool_count} fluxos válidos para teste rápido`, async () => {
+        if (requestedToolSlug) {
+            const availableSlugs = validScenarios.map(scenario => scenario.tool_slug).sort();
+            expect(
+                scenarios,
+                `[E2E TOOL] Ferramenta \"${requestedToolSlug}\" não encontrada no manifesto.\n` +
+                `Slugs disponíveis: ${availableSlugs.join(', ')}`,
+            ).toHaveLength(1);
+            return;
+        }
+
         expect(scenarios).toHaveLength(manifest.tool_count);
     });
 

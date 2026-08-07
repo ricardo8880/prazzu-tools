@@ -25,6 +25,7 @@
             </div>
 
             <x-tools.form-panel
+                data-testid="contract-type-panel"
                 title="1. Escolha o tipo de contrato"
                 description="Cada modalidade apresenta somente as perguntas necessárias ao seu contexto."
                 class="mb-4"
@@ -67,6 +68,7 @@
                     <input type="hidden" name="contract_type" value="{{ $selectedType->value }}">
 
                     <x-tools.form-panel
+                        data-testid="contract-parties-panel"
                         title="2. Identifique as partes"
                         description="Informe os dados que identificam quem participa do contrato."
                         class="mb-4"
@@ -136,6 +138,7 @@
                     </x-tools.form-panel>
 
                     <x-tools.form-panel
+                        data-testid="contract-terms-panel"
                         title="3. Defina o objeto e as condições"
                         description="As respostas abaixo serão usadas para redigir as cláusulas do contrato."
                         class="mb-4"
@@ -204,6 +207,7 @@
                     </x-tools.form-panel>
 
                     <x-tools.form-panel
+                        data-testid="contract-closing-panel"
                         title="4. Fechamento do contrato"
                         description="Defina foro, local e data de assinatura e, se necessário, condições adicionais."
                         class="mb-4"
@@ -289,6 +293,7 @@
 
             @if ($contractText !== null)
                 <x-tools.form-panel
+                    data-testid="contract-editor-panel"
                     title="5. Revise e edite o contrato"
                     description="O texto abaixo é totalmente editável. Ajuste qualquer cláusula antes da exportação."
                     class="mb-4"
