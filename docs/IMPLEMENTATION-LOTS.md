@@ -455,11 +455,215 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - O exportador administrativo de Analytics também deixou de gerar SpreadsheetML e passou a entregar `.xlsx` real.
 - A documentação do lote final e a lista explícita de arquivos removidos acompanham o ZIP incremental.
 
-## Automação E2E atual
+## Automação completa de qualidade — Lote 1 — Fundação e inventário E2E
 
-A automação de navegador foi reduzida aos fluxos ainda utilizados no projeto:
+### Resultado
 
-- `npm run e2e:test:actions` para auditar formulários, ações e resultados das ferramentas.
-- `npm run e2e:test:tool <slug>` para executar a auditoria direcionada de uma ferramenta, incluindo seus downloads declarados.
+- O estado foi reconstruído a partir do ZIP original e conferido contra README, `CORE_CANDIDATES.md`, inventário oficial e relatórios anteriores.
+- Foi criado `config/e2e_quality.php`, espelhando exatamente as 32 ferramentas oficiais e acrescentando somente metadados de qualidade.
+- Foram definidos os perfis smoke, regressão, completo e exploratório.
+- As superfícies de formulário, resultado, download, histórico, upload, lote, geração documental e ações secundárias foram inventariadas.
+- Um gate arquitetural impede omissões, duplicações, divergência de slug/módulo e metadados fora do contrato.
+- Playwright, ambiente E2E, instrumentação e alterações nas views não foram antecipados.
 
-A implementação mantida usa apenas Chromium, o manifesto declarativo de `config/e2e_scenarios.php`, o ambiente isolado `.env.e2e`, os helpers necessários às ações/downloads e a correlação de logs usada durante essas execuções. A infraestrutura histórica de smoke, acesso transversal, responsividade, exploração, múltiplos navegadores, governança e relatórios executivos foi removida.
+### Continuidade obrigatória para o Lote 2 da automação E2E
+
+- Reconstruir novamente o projeto com o ZIP original e aplicar este patch incremental.
+- Reler README, `CORE_CANDIDATES.md`, este documento, `docs/quality/E2E-AUTOMATION-CONTRACT.md`, o relatório do Lote 1 e os inventários.
+- Preservar exatamente as 32 ferramentas e seus slugs.
+- Implementar o ambiente E2E isolado antes de instalar ou executar o navegador.
+- Não usar dados, credenciais, banco, storage ou integrações reais.
+
+## Automação completa de qualidade — Lote 2 — Ambiente E2E isolado
+
+### Resultado
+
+- O estado foi reconstruído a partir do ZIP original com reaplicação do Lote 1 antes das alterações.
+- Foi criado `.env.e2e.example` sem segredos reais e com rede externa desativada por padrão.
+- O ambiente utiliza exclusivamente `database/e2e.sqlite`, `storage/app/e2e`, mailer `array`, fila `sync`, cache e sessão `array`.
+- Foram criados perfis determinísticos de usuário gratuito, Plus e administrador em um seeder protegido contra execução fora de `APP_ENV=e2e`.
+- Os comandos `composer e2e:prepare`, `composer e2e:verify` e `composer e2e:clean` administram o ciclo de vida de forma idempotente e recusam caminhos inseguros.
+- O `.gitignore` passou a proteger ambientes, banco, artefatos, dependências, caches e logs locais.
+- Um gate arquitetural valida o contrato de isolamento.
+- Playwright, browser, seletores visuais, instrumentação e cenários das ferramentas não foram antecipados.
+
+### Continuidade obrigatória para o Lote 3 da automação E2E
+
+- Reconstruir novamente o projeto usando o ZIP original e aplicar, em ordem, os Lotes 1 e 2.
+- Reler README, `CORE_CANDIDATES.md`, este documento e os relatórios E2E dos lotes concluídos.
+- Preservar exatamente as 32 ferramentas e os slugs públicos.
+- Instalar e configurar Playwright sobre o ambiente E2E isolado.
+- Não modificar as views com `data-testid` antes do Lote 4.
+
+## Automação E2E — Lote 3 — Fundação Playwright
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação dos Lotes E2E 1 e 2.
+- Playwright Test `1.62.1` foi registrado como runner oficial do navegador.
+- Chromium desktop, servidor Laravel E2E, relatórios HTML/JSON e evidências de falha foram configurados.
+- Um piloto abre a Home e `custo-funcionario-clt` sem antecipar cenários de domínio.
+- A captura inicial reúne console, page errors, falhas de rede e respostas HTTP com erro.
+- O próximo lote deve criar seletores `data-testid` estáveis antes do smoke universal.
+
+## Automação E2E — Lote 4 — Contrato visual e seletores estáveis
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação dos Lotes E2E 1, 2 e 3.
+- Foi criado um normalizador de identificadores no Core de Qualidade.
+- Componentes compartilhados passaram a expor `data-testid` para página, formulário, resultado, validação, campos e downloads.
+- O teste piloto Playwright deixou de depender da ordem do primeiro formulário e botão.
+- Um gate arquitetural protege o contrato visual sem acoplar CSS, Analytics ou domínio aos seletores E2E.
+- O próximo lote deve descobrir automaticamente as 32 ferramentas e executar o smoke universal.
+
+## Resultado da Automação E2E — Lote 5
+
+- O catálogo oficial passou a ser exportado para um manifesto temporário consumido pelo Playwright.
+- A exportação confronta `config/product_tools.php` com `config/e2e_quality.php` e falha diante de contagem, slug, módulo ou contrato mínimo divergente.
+- O Playwright passou a executar um smoke parametrizado para todas as 32 ferramentas, sem lista manual de slugs no TypeScript.
+- Cada ferramenta tem rota, resposta HTTP, raiz visual e painel de formulário verificados, com diagnóstico e resumo JSON anexados.
+- O Lote 6 deve criar o motor declarativo de cenários, sem duplicar a descoberta consolidada neste lote.
+
+## Automação E2E — Lote 6 — Motor declarativo de cenários
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação sequencial dos Lotes E2E 1 a 5.
+- Foi criado um DTO imutável de cenário no Core de Qualidade e um contrato opcional para declaração modular futura.
+- `config/e2e_scenarios.php` registra os pilotos sem duplicar a descoberta oficial das ferramentas.
+- Um exportador valida slugs, identificadores, ações e expectativas e produz manifesto temporário para o Playwright.
+- O executor genérico suporta preenchimento, seleção, checkboxes, cliques, submit e expectativas reutilizáveis.
+- A Calculadora de Custo de Funcionário CLT possui cenários piloto válido e inválido.
+- O próximo lote deve implementar instrumentação, correlação e logs estruturados; downloads permanecem para o Lote 8.
+
+## Automação E2E — Lote 7 — Instrumentação, correlação e logs
+
+### Resultado
+
+- Foi criada correlação por execução e cenário usando cabeçalhos estáveis enviados pelo Playwright.
+- O middleware E2E adiciona os identificadores ao contexto de logging e aos cabeçalhos de resposta, permanecendo inerte fora do ambiente `e2e`.
+- O canal `e2e` grava JSON Lines no storage isolado e reutiliza a sanitização de contexto existente.
+- Requisições concluídas, exceções e queries lentas passam a produzir registros diagnósticos sem capturar payloads ou bindings sensíveis.
+- Os testes de fundação, smoke e cenários anexaram os logs Laravel correspondentes ao relatório do Playwright.
+- O arquivo de log é reiniciado no global setup e removido junto com os demais artefatos pelo comando de limpeza do ambiente.
+
+### Continuidade para o Lote 8
+
+- Reaplicar o ZIP original e os Lotes 1 a 7 em ordem antes de qualquer alteração.
+- Reutilizar `X-E2E-Run-Id` e `X-E2E-Scenario-Id` na validação de downloads.
+- Validar conteúdo real de PDF, XLSX, CSV, DOCX e ZIP sem considerar o clique isolado como sucesso.
+- Preservar a política de não registrar payloads, tokens ou documentos completos nos logs.
+
+## Automação E2E — Lote 8 — Validação profunda de downloads
+
+### Resultado
+
+- O estado foi reconstruído do ZIP original com aplicação sequencial dos Lotes E2E 1 a 7.
+- O contrato declarativo passou a aceitar downloads tipados por cenário, sem condicionais específicas por ferramenta no Playwright.
+- O runner valida nome, extensão, MIME type, tamanho mínimo, assinatura e estrutura interna do arquivo recebido.
+- PDF exige cabeçalho e final válidos; XLSX e DOCX exigem estrutura OOXML; CSV exige conteúdo tabular; ZIP exige diretório central legível.
+- HTML retornado como arquivo é rejeitado mesmo quando o endpoint responde com sucesso.
+- Arquivos e resumos JSON são anexados às evidências e permanecem associados aos logs correlacionados do Lote 7.
+- O piloto de `custo-funcionario-clt` cobre PDF e XLSX reais após um cálculo válido.
+
+### Continuidade para o Lote 9
+
+- Reaplicar o ZIP original e os Lotes 1 a 8 em ordem antes de qualquer alteração.
+- Reutilizar cenário, observabilidade, storage e validadores existentes.
+- Cobrir visitante, usuário gratuito, Plus e administrador sem alterar a filosofia pública de acesso descrita no README.
+- Validar proteção de endpoints, persistência, histórico e demais fluxos transversais sem duplicar autenticação ou autorização no Core E2E.
+
+## Automação de qualidade — resultado do Lote 9
+
+- Foram adicionadas sessões Playwright reutilizáveis para os perfis gratuito, Plus e administrador.
+- As sessões E2E passaram a ser persistidas exclusivamente em `storage/app/e2e/sessions`.
+- Foi criado um manifesto validável de perfis e caminhos protegidos para evitar credenciais e URLs duplicadas nos testes.
+- A suíte transversal cobre visitante, usuário gratuito, usuário Plus e administrador.
+- Foram incluídas validações de conta autenticada, histórico protegido, bloqueio administrativo, persistência de sessão e rejeição CSRF.
+- O comando `composer e2e:browser:access` executa o lote com as verificações acumuladas dos lotes anteriores.
+
+## Automação de qualidade — resultado do Lote 10
+
+- As 32 ferramentas oficiais possuem cenário válido e inválido no manifesto declarativo.
+- O executor genérico preenche formulários e cria invalidação determinística sem listas duplicadas no Playwright.
+- O gate arquitetural impede perda da cobertura mínima e preserva downloads específicos já existentes.
+
+## Automação de qualidade — resultado do Lote 11
+
+- O estado foi reconstruído do projeto-base com aplicação dos Lotes 9 e 10 antes das alterações.
+- Commits executam gate de qualidade e smoke; pull requests e pré-releases executam E2E em quatro shards.
+- Dependências e browsers usam caches separados e os artefatos são publicados mesmo quando há falha.
+- Resultados Playwright são consolidados em JSON executivo e comparados por fingerprint.
+- Falhas são classificadas como novas, conhecidas ou resolvidas; regressões novas bloqueiam a integração.
+- O Lote 12 deve adicionar exploração controlada, múltiplos navegadores, responsividade e métricas sem misturar fuzzing ao gate determinístico.
+
+---
+
+# Evolução multi-nicho
+
+Esta trilha evolutiva parte do projeto atual já estabilizado. Ela não substitui
+os lotes históricos acima e deve obedecer às mesmas regras de reconstrução,
+continuidade, compatibilidade e validação.
+
+## Plano aprovado da evolução multi-nicho
+
+| Lote | Escopo | Estado |
+|---:|---|---|
+| 1 | Constituição, contratos arquiteturais e regras Global x Vertical | Concluído |
+| 2 | Fundação genérica de Vertical e VerticalContext | Concluído |
+| 3 | Ferramentas e conteúdo contextual por vertical | Pendente |
+| 4 | Home e experiência contextual | Pendente |
+| 5 | Serviços globais conscientes de vertical | Pendente |
+| 6 | Segunda vertical mínima como prova arquitetural | Pendente |
+
+## Evolução multi-nicho — Resultado do Lote 1
+
+- O `README.md` deixou de definir o Prazzu Tools como uma plataforma exclusiva de Contabilidade.
+- Contabilidade foi definida como primeira vertical oficial e implementação de referência, sem alteração do comportamento público atual.
+- Foram formalizados os conceitos arquiteturais de `Vertical` e `VerticalContext`.
+- Foi definido `VerticalContext = null` como fallback conceitual da experiência geral da plataforma.
+- `VerticalContext` e `AcquisitionContext` foram explicitamente separados; o segundo permanece preservado e poderá contribuir para resolver o primeiro em lote futuro.
+- Infraestrutura global e dados específicos por vertical foram diferenciados formalmente.
+- A regra de não duplicação passou a impedir infraestrutura paralela por nicho quando a diferença puder ser resolvida por contexto, configuração, associação de dados ou composição.
+- `docs/ARCHITECTURE.md` foi alinhado à nova constituição.
+- Foi adicionado um gate arquitetural básico para proteger essas decisões constitucionais.
+- Nenhuma rota, controller, view, ferramenta, manifesto, migration, serviço de runtime ou comportamento público foi alterado neste lote.
+- O relatório detalhado do lote está em `docs/MULTI-VERTICAL-LOT-1-CONSTITUTION.md`.
+
+## Continuidade obrigatória para o Lote 2 multi-nicho
+
+1. Reconstruir o estado a partir do ZIP original.
+2. Aplicar integralmente o ZIP entregue pelo Lote 1 antes de qualquer nova alteração.
+3. Reler `README.md`, `CORE_CANDIDATES.md`, este documento, `docs/ARCHITECTURE.md` e `docs/MULTI-VERTICAL-LOT-1-CONSTITUTION.md`.
+4. Conferir novamente `config/product_tools.php` e o estado real dos 32 módulos.
+5. Não alterar comportamento público de Contabilidade sem necessidade explícita e compatibilidade documentada.
+6. Implementar a fundação genérica de `Vertical` e `VerticalContext`, sem lista fechada de nichos e sem criar infraestrutura paralela.
+7. Preservar `AcquisitionContext` como conceito independente e integrá-lo somente como uma possível fonte de resolução.
+8. Manter fallback para ausência de vertical válida.
+
+
+
+## Evolução multi-nicho — Resultado do Lote 2
+
+- O estado foi reconstruído do ZIP original com aplicação integral do Lote 1 antes das alterações.
+- Foi criado `Vertical` como dado de negócio e `VerticalRegistry` como contrato aberto, sem enum ou lista fechada no Core.
+- `config/verticals.php` registra `contabilidade` como primeira vertical e padrão atual, preservando a experiência existente.
+- `VerticalContext` passou a existir como estado scoped por requisição e aceita `null` como fallback global.
+- A resolução é composta por fontes ordenadas: sessão explícita, `AcquisitionContext` mapeado e vertical padrão.
+- `AcquisitionContext` não foi alterado nem fundido com `VerticalContext`; ele atua somente como sinal opcional através de mapeamento configurável.
+- Slugs inválidos persistidos em sessão são descartados com fallback seguro.
+- O middleware transversal compartilha a vertical ativa sem filtrar Home, ferramentas, Blog, recursos, SEO ou Analytics neste lote.
+- Nenhum dos 32 módulos, slugs, rotas, manifests ou regras de domínio foi modificado.
+- O relatório detalhado está em `docs/MULTI-VERTICAL-LOT-2-FOUNDATION.md`.
+
+## Continuidade obrigatória para o Lote 3 multi-nicho
+
+1. Reconstruir o projeto a partir do ZIP original.
+2. Aplicar integralmente, em ordem, os ZIPs dos Lotes 1 e 2.
+3. Reler `README.md`, `CORE_CANDIDATES.md`, este documento, `docs/ARCHITECTURE.md` e os relatórios dos Lotes 1 e 2.
+4. Conferir novamente `config/product_tools.php`, os 32 módulos e os contratos de catálogo antes de alterar manifests.
+5. Tornar Contabilidade explícita nas ferramentas e conteúdos atuais antes de cadastrar uma segunda vertical real.
+6. Não transformar categorias como Fiscal/Trabalhista em substitutos de Vertical; domínio e tipo/categoria continuam conceitos distintos.
+7. Preservar URLs, slugs, rotas, Analytics, E2E, Auth, Blog engine e infraestrutura compartilhada.
+8. Não contextualizar a Home além do necessário para o escopo do Lote 3; a experiência inicial pertence ao Lote 4.

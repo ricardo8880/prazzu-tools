@@ -2,12 +2,13 @@
 
 ## O que é o Prazzu Tools
 
-O **Prazzu Tools** é uma plataforma de ferramentas profissionais voltada a
-contadores, profissionais contábeis e escritórios de contabilidade de todos os
-portes e especialidades.
+O **Prazzu Tools** é uma plataforma de ferramentas profissionais organizada
+por **verticais de negócio**. Contabilidade é a primeira vertical oficial e a
+implementação de referência da plataforma, mas não representa o Core nem limita
+a evolução futura a um único nicho.
 
-Seu propósito é reunir ferramentas realmente úteis para a rotina contábil,
-como calculadoras, validadores, simuladores, conversores, geradores,
+Seu propósito é reunir ferramentas realmente úteis para problemas reais de cada
+vertical, como calculadoras, validadores, simuladores, conversores, geradores,
 comparadores e utilitários técnicos. Cada ferramenta deve resolver um problema
 real de forma completa, objetiva, confiável e transparente.
 
@@ -19,8 +20,8 @@ Prazzu.
 
 A identidade deste projeto é simples:
 
-> O Prazzu Tools é uma plataforma especializada em ferramentas 100% úteis para
-> contadores e escritórios de contabilidade.
+> O Prazzu Tools deve parecer uma plataforma especializada para cada vertical
+> atendida, permanecendo tecnicamente uma única plataforma compartilhada.
 
 Cada ferramenta possui estrutura, domínio, regras, interface e testes próprios.
 Uma ferramenta não deve depender de outra nem interferir em seu funcionamento.
@@ -113,15 +114,15 @@ A filosofia deste projeto é evoluir a arquitetura baseada em necessidades reais
 
 # Nossa visão
 
-Acreditamos que o profissional da contabilidade deve encontrar, em um
-único lugar, ferramentas confiáveis para resolver rapidamente problemas
-reais e bem delimitados.
+Acreditamos que profissionais de diferentes áreas de negócio devem encontrar,
+em um único lugar, ferramentas confiáveis para resolver rapidamente problemas
+reais e bem delimitados de sua vertical.
 
 O objetivo do Prazzu Tools não é apenas reduzir o tempo gasto em
 cálculos.
 
-O objetivo é construir o melhor catálogo de soluções pontuais para a
-rotina contábil, sem transformar a plataforma em sistema de gestão.
+O objetivo é construir um catálogo de soluções pontuais capaz de atender
+múltiplas verticais, sem transformar a plataforma em sistema de gestão.
 
 Conforme a plataforma evolui, novas ferramentas passam a fazer parte
 desse ecossistema, mantendo sempre a mesma experiência de uso, a mesma
@@ -190,8 +191,8 @@ Essa filosofia orienta todas as ferramentas da plataforma.
 # Papel do Prazzu Tools no Ecossistema
 
 O Prazzu Tools faz parte do ecossistema Prazzu, porém possui uma missão
-específica: resolver rapidamente problemas através de ferramentas para
-profissionais da contabilidade.
+específica: resolver rapidamente problemas através de ferramentas profissionais
+organizadas por verticais de negócio.
 
 Cada produto do ecossistema possui responsabilidades próprias:
 
@@ -240,10 +241,103 @@ Todo o restante é responsabilidade da infraestrutura compartilhada.
 
 ---
 
+# Verticais e contexto da plataforma
+
+A expansão do Prazzu Tools para múltiplos nichos é uma evolução incremental da
+plataforma atual. Ela não representa uma reescrita, a criação de aplicações
+separadas ou a duplicação da infraestrutura existente.
+
+## Vertical
+
+**Vertical** representa o universo de negócio ao qual uma ferramenta, conteúdo,
+recurso ou configuração pertence. Contabilidade é a primeira vertical oficial,
+mas nomes como Contabilidade, RH, Financeiro ou Jurídico são dados de negócio e
+não ramificações rígidas do Core.
+
+O código compartilhado não deve manter uma lista fechada de verticais nem
+assumir que `Prazzu = Contabilidade`. Quando uma regra for específica de uma
+vertical, essa especialização deve permanecer explícita no domínio correspondente.
+
+## VerticalContext
+
+**VerticalContext** representa a vertical ativa para a experiência atual. Ele é
+um conceito transversal a ser introduzido de forma incremental e poderá ser
+consultado por Home, Ferramentas, Blog, Recursos, SEO, Analytics, busca,
+recomendações, navegação e E2E quando aplicável.
+
+A fundação técnica de `VerticalContext` utiliza um registro genérico de verticais,
+fontes ordenadas de resolução e estado scoped por requisição. Contabilidade é a
+vertical padrão atual, preservando a experiência existente sem tornar seu nome uma
+ramificação rígida do Core. Associação de ferramentas e conteúdo pertence aos lotes
+seguintes.
+
+Quando nenhuma vertical válida estiver ativa, o sistema deverá suportar o
+fallback conceitual:
+
+```text
+VerticalContext = null
+```
+
+Esse estado representa a experiência geral do Prazzu e não pode quebrar a
+plataforma.
+
+## Global x Vertical
+
+Permanecem **globais e compartilhados** sempre que não houver necessidade
+arquitetural comprovada em contrário:
+
+- autenticação e usuários;
+- planos, assinatura e autorização;
+- Analytics e observabilidade;
+- Blog e infraestrutura de conteúdo;
+- SEO e sitemap;
+- Admin;
+- busca e recursos compartilhados;
+- E2E e infraestrutura de qualidade;
+- componentes visuais e serviços do Core técnico.
+
+Podem variar por **vertical**:
+
+- identidade e conteúdo;
+- ferramentas;
+- categorias de domínio;
+- recomendações;
+- configurações específicas;
+- conteúdo e estratégia de SEO específicos do domínio.
+
+A diferença de conteúdo, configuração ou seleção de dados não autoriza copiar
+controllers, serviços, componentes, Analytics, Blog, Auth, Billing, Admin, E2E
+ou qualquer outra infraestrutura compartilhada.
+
+## Relação com AcquisitionContext
+
+`VerticalContext` e `AcquisitionContext` são conceitos diferentes.
+
+- `VerticalContext` responde qual universo de negócio está ativo;
+- `AcquisitionContext` responde por qual intenção, campanha, palavra-chave ou
+  origem específica o usuário chegou.
+
+O `AcquisitionContext` existente deve ser preservado e poderá futuramente
+contribuir para resolver a vertical ativa, sem ser substituído ou confundido
+com ela.
+
+## Regra de evolução
+
+Antes de criar qualquer estrutura específica para uma nova vertical, deve-se
+verificar se a diferença pode ser resolvida por contexto, configuração,
+associação de dados, composição ou contrato compartilhado. Uma nova vertical
+deve implementar somente aquilo que realmente difere por domínio.
+
+A inclusão de uma nova vertical não pode exigir um novo Core, Analytics, Blog,
+sistema de planos, autenticação, Admin, E2E ou infraestrutura paralela.
+
+---
+
 # Limites do Produto
 
-O Prazzu Tools é exclusivamente uma plataforma de ferramentas para o universo
-contábil.
+O Prazzu Tools é uma plataforma de ferramentas para múltiplas verticais de
+negócio. Contabilidade é a primeira vertical oficial, e novas verticais devem
+reutilizar a mesma infraestrutura compartilhada.
 
 Ele não implementa funcionalidades de ERP, CRM, gestão de clientes, gestão de
 escritório, workflow empresarial, departamentos, tarefas, processos internos,
@@ -655,10 +749,10 @@ O blog não é apenas uma área de notícias.
 
 Ele faz parte da estratégia da plataforma.
 
-Seu objetivo é produzir conteúdo técnico de alta qualidade para
-responder dúvidas reais de profissionais da contabilidade, melhorar o
-posicionamento orgânico da plataforma e conectar naturalmente o leitor
-às ferramentas relacionadas.
+Seu objetivo é produzir conteúdo técnico de alta qualidade para responder
+dúvidas reais dos públicos atendidos por cada vertical, melhorar o
+posicionamento orgânico da plataforma e conectar naturalmente o leitor às
+ferramentas relacionadas.
 
 Cada artigo deve gerar valor por si só, ao mesmo tempo em que apresenta
 as soluções disponíveis dentro do ecossistema Prazzu Tools.
@@ -695,7 +789,7 @@ princípios:
 -   infraestrutura compartilhada para funcionalidades comuns;
 -   código limpo e de fácil manutenção;
 -   evolução contínua da plataforma;
--   foco em problemas reais, pontuais e bem delimitados da rotina contábil;
+-   foco em problemas reais, pontuais e bem delimitados de cada vertical;
 -   nenhuma evolução em direção a ERP, CRM ou SaaS de gestão;
 -   separação inequívoca entre o Core técnico deste projeto e o produto Prazzu Core.
 
@@ -706,8 +800,8 @@ evolução do produto.
 
 # Objetivo final
 
-O objetivo do Prazzu Tools é tornar-se a principal plataforma de
-ferramentas para contabilidade no Brasil.
+O objetivo do Prazzu Tools é tornar-se uma plataforma de referência no Brasil
+para ferramentas profissionais organizadas por múltiplas verticais de negócio.
 
 A proposta é reunir calculadoras, validadores, geradores, conversores e
 outras soluções pontuais confiáveis, acompanhadas de conteúdo técnico de

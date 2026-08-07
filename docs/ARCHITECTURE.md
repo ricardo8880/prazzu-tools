@@ -11,6 +11,43 @@ dados, executam uma capacidade e entregam um resultado; CRM, ERP, workflow,
 gestão de clientes, colaboração e compartilhamento de cálculos pertencem a outro
 produto do ecossistema.
 
+A plataforma passa a ser arquiteturalmente **multi-nicho**. Contabilidade é a
+primeira vertical oficial e a implementação atual de referência, não a definição
+do Core compartilhado. Novas verticais devem reutilizar o mesmo monólito, os
+mesmos contratos e a mesma infraestrutura.
+
+## Vertical e VerticalContext
+
+`Vertical` representa um domínio de negócio cadastrado na plataforma. O Core não
+deve conhecer uma lista fechada de nichos nem possuir ramificações estruturais
+como `Contabilidade*`, `RH*` ou `Financeiro*` quando a diferença for apenas
+conteúdo, configuração ou seleção de dados.
+
+`VerticalContext` representa a vertical ativa da experiência. A fundação técnica
+é composta por registro de verticais baseado em configuração, fontes ordenadas de
+resolução, persistência opcional em sessão e estado scoped por requisição. Quando
+não houver contexto válido, `VerticalContext = null` mantém a plataforma funcional
+em modo geral.
+
+O `AcquisitionContext` existente permanece independente. Ele descreve intenção,
+campanha ou origem de aquisição e poderá contribuir para a resolução de uma
+vertical, mas não substitui `VerticalContext`.
+
+### Infraestrutura global
+
+Auth, usuários, planos, Billing, Analytics, Blog, Admin, E2E, observabilidade,
+SEO compartilhado, busca, componentes e demais serviços transversais permanecem
+únicos. Uma vertical pode fornecer conteúdo, ferramentas, categorias,
+recomendações, identidade e configuração específicas sem duplicar essa
+infraestrutura.
+
+### Regra de não duplicação
+
+Uma nova vertical deve ser principalmente configuração, conteúdo e ferramentas.
+Antes de criar uma classe ou infraestrutura específica, deve existir uma
+diferença comportamental real e comprovada que não possa ser resolvida por
+contexto, composição, associação de dados ou contrato compartilhado.
+
 ## Contrato mínimo
 
 Todo módulo implementa `ToolModule` e fornece um `ToolManifest` imutável. O

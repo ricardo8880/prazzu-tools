@@ -2,9 +2,9 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "prazzu/prazzu-tools",
     "type": "project",
-    "description": "Plataforma modular de ferramentas para profissionais da contabilidade.",
+    "description": "Plataforma modular de ferramentas profissionais organizada por verticais de negócio.",
     "keywords": [
-        "contabilidade",
+        "verticais",
         "ferramentas",
         "laravel",
         "prazzu"
@@ -111,7 +111,110 @@
         ],
         "platform:check": [
             "@php scripts/check-platform.php"
-        ]
+        ],
+        "e2e:prepare": "@php scripts/e2e-environment.php prepare",
+        "e2e:verify": "@php scripts/e2e-environment.php verify",
+        "e2e:clean": "@php scripts/e2e-environment.php clean",
+        "e2e:browser:install": "npm run e2e:install",
+        "e2e:browser:check": "@php scripts/e2e-browser.php check",
+        "e2e:browser:test": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "node scripts/e2e-report-txt.mjs",
+            "npm run e2e:test"
+        ],
+        "e2e:catalog": "@php scripts/e2e-tool-catalog.php export",
+        "e2e:catalog:check": "@php scripts/e2e-tool-catalog.php check",
+        "e2e:browser:smoke": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "@e2e:catalog:check",
+            "node scripts/e2e-report-txt.mjs",
+            "npm run e2e:test:smoke"
+        ],
+        "e2e:scenarios": "@php scripts/e2e-tool-scenarios.php export",
+        "e2e:scenarios:check": "@php scripts/e2e-tool-scenarios.php check",
+        "e2e:browser:scenarios": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "@e2e:catalog:check",
+            "@e2e:scenarios:check",
+            "@e2e:observability:check",
+            "node scripts/e2e-report-txt.mjs",
+            "npm run e2e:test:scenarios"
+        ],
+        "e2e:observability:check": "@php scripts/e2e-observability.php check",
+        "e2e:downloads:check": "@php scripts/e2e-downloads.php check",
+        "e2e:browser:downloads": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "@e2e:catalog:check",
+            "@e2e:scenarios:check",
+            "@e2e:observability:check",
+            "@e2e:downloads:check",
+            "node scripts/e2e-report-txt.mjs",
+            "npm run e2e:test:downloads"
+        ],
+        "e2e:access:check": "@php scripts/e2e-access.php check",
+        "e2e:browser:access": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "@e2e:catalog:check",
+            "@e2e:scenarios:check",
+            "@e2e:observability:check",
+            "@e2e:access:check",
+            "node scripts/e2e-report-txt.mjs",
+            "npm run e2e:test:access"
+        ],
+        "e2e:coverage:check": "@php scripts/e2e-tool-scenarios.php check",
+        "e2e:browser:coverage": [
+            "@e2e:verify",
+            "@e2e:browser:check",
+            "@e2e:catalog:check",
+            "@e2e:coverage:check",
+            "@e2e:observability:check",
+            "node scripts/e2e-report-txt.mjs",
+            "npm run e2e:test:coverage"
+        ],
+        "e2e:report:summary": "@php scripts/e2e-report-history.php summarize storage/app/e2e/executive/current.json storage/app/e2e/artifacts/results.json",
+        "e2e:ci:smoke": [
+            "@e2e:verify",
+            "@e2e:catalog:check",
+            "@e2e:scenarios:check",
+            "npm run e2e:test:smoke"
+        ],
+        "e2e:ci:complete": [
+            "@e2e:verify",
+            "@e2e:catalog:check",
+            "@e2e:scenarios:check",
+            "@e2e:observability:check",
+            "@e2e:downloads:check",
+            "@e2e:access:check",
+            "npm run e2e:test:ci"
+        ],
+        "e2e:governance:check": "@php scripts/e2e-governance.php check",
+        "e2e:browser:complete": [
+            "Composer\\Config::disableProcessTimeout",
+            "@e2e:verify",
+            "@e2e:catalog:check",
+            "@e2e:scenarios:check",
+            "@e2e:observability:check",
+            "@e2e:downloads:check",
+            "@e2e:access:check",
+            "@e2e:governance:check",
+            "node scripts/e2e-report-txt.mjs",
+            "@php scripts/e2e-run-all.php"
+        ],
+        "e2e:browser:exploratory": [
+            "@e2e:verify",
+            "@e2e:catalog:check",
+            "@e2e:scenarios:check",
+            "@e2e:governance:check",
+            "node scripts/e2e-report-txt.mjs",
+            "npm run e2e:test:exploratory"
+        ],
+        "e2e:dashboard": "@php scripts/e2e-governance.php dashboard storage/app/e2e/executive/current.json",
+        "e2e:retention": "@php scripts/e2e-governance.php prune"
     },
     "extra": {
         "laravel": {
