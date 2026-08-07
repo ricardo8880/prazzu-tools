@@ -20,27 +20,4 @@ return [
 
     'external_network' => (bool) env('E2E_EXTERNAL_NETWORK', false),
 
-    'profiles' => [
-        'free' => [
-            'name' => 'E2E Free User',
-            'email' => 'e2e.free@prazzu.test',
-            'password' => 'E2E-Free-Only-2026!',
-            'role' => 'user',
-            'subscription_plan' => 'free',
-        ],
-        'plus' => [
-            'name' => 'E2E Plus User',
-            'email' => 'e2e.plus@prazzu.test',
-            'password' => 'E2E-Plus-Only-2026!',
-            'role' => 'user',
-            'subscription_plan' => 'plus',
-        ],
-        'administrator' => [
-            'name' => 'E2E Administrator',
-            'email' => 'e2e.admin@prazzu.test',
-            'password' => 'E2E-Admin-Only-2026!',
-            'role' => 'administrator',
-            'subscription_plan' => 'plus',
-        ],
-    ],
 ];

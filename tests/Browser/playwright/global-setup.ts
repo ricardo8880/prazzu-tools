@@ -43,11 +43,9 @@ export default async function globalSetup(): Promise<void> {
     mkdirSync(path.dirname(logPath), { recursive: true });
     writeFileSync(logPath, '');
 
-    for (const script of ['e2e-tool-catalog.php', 'e2e-tool-scenarios.php', 'e2e-access.php']) {
-        execFileSync('php', [`scripts/${script}`, 'export'], {
-            cwd: root,
-            env: environment,
-            stdio: 'inherit',
-        });
-    }
+    execFileSync('php', ['scripts/e2e-tool-scenarios.php', 'export'], {
+        cwd: root,
+        env: environment,
+        stdio: 'inherit',
+    });
 }

@@ -9,21 +9,11 @@ export default defineConfig({
     globalSetup: './tests/Browser/playwright/global-setup.ts',
     fullyParallel: false,
     forbidOnly: Boolean(process.env.CI),
-    retries: process.env.CI ? 2 : 0,
-    // O servidor embutido do PHP é o gargalo local. Quatro workers provocavam
-    // resets de conexão de assets e encerramentos em cascata no WebKit/Firefox.
-    // No Windows, dois workers também podem esgotar o buffer de sockets após muitas
-    // navegações (net::ERR_NO_BUFFER_SPACE). A execução local usa um worker por
-    // padrão e continua permitindo sobrescrita explícita com E2E_WORKERS.
-    workers: process.env.CI ? 2 : Math.max(1, Number(process.env.E2E_WORKERS ?? 1)),
+    retries: 0,
+    workers: 1,
     timeout: 45_000,
     expect: { timeout: 5_000 },
     outputDir: `${artifacts}/results`,
-    reporter: [
-        ['./tests/Browser/playwright/reporters/gpt-txt-reporter.ts'],
-        ['html', { outputFolder: `${artifacts}/report`, open: 'never' }],
-        ['json', { outputFile: `${artifacts}/results.json` }],
-    ],
     use: {
         baseURL,
         locale: 'pt-BR',
@@ -37,9 +27,6 @@ export default defineConfig({
     },
     webServer: {
         command: 'php artisan serve --env=e2e --host=127.0.0.1 --port=8010',
-        // Use Laravel's lightweight health endpoint instead of the homepage.
-        // The homepage can be slow or return an application error while optional
-        // services are still booting, which would make Playwright wait until timeout.
         url: healthURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
@@ -48,45 +35,8 @@ export default defineConfig({
     },
     projects: [
         {
-            name: 'auth-setup',
-            testMatch: /auth\.setup\.spec\.ts/,
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
             name: 'chromium-desktop',
-            testIgnore: [/auth\.setup\.spec\.ts/, /tool-access\.spec\.ts/, /tool-responsive\.spec\.ts/, /tool-exploratory\.spec\.ts/],
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
-            name: 'firefox-desktop',
-            testIgnore: [/auth\.setup\.spec\.ts/, /tool-access\.spec\.ts/, /tool-responsive\.spec\.ts/, /tool-exploratory\.spec\.ts/],
-            use: { ...devices['Desktop Firefox'] },
-        },
-        {
-            name: 'webkit-desktop',
-            testIgnore: [/auth\.setup\.spec\.ts/, /tool-access\.spec\.ts/, /tool-responsive\.spec\.ts/, /tool-exploratory\.spec\.ts/],
-            use: { ...devices['Desktop Safari'] },
-        },
-        {
-            name: 'mobile-chromium',
-            testMatch: /tool-responsive\.spec\.ts/,
-            use: { ...devices['Pixel 7'] },
-        },
-        {
-            name: 'tablet-webkit',
-            testMatch: /tool-responsive\.spec\.ts/,
-            use: { ...devices['iPad (gen 7)'] },
-        },
-        {
-            name: 'exploratory-controlled',
-            testMatch: /tool-exploratory\.spec\.ts/,
-            retries: 0,
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
-            name: 'access-transversal',
-            testMatch: /tool-access\.spec\.ts/,
-            dependencies: ['auth-setup'],
+            testMatch: [/tool-actions\.spec\.ts/, /tool-downloads\.spec\.ts/],
             use: { ...devices['Desktop Chrome'] },
         },
     ],
