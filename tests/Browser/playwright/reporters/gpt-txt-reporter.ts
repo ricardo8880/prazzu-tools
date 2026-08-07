@@ -28,6 +28,9 @@ function clean(value: string, maxLength = 8_000): string {
 function suggestion(message: string): string {
     const text = message.toLowerCase();
 
+    if (text.includes('[e2e_action_failure]')) {
+        return 'A ação principal da ferramenta falhou. Use os campos Botão, Formulário, Resposta e URL antes/depois do próprio erro para corrigir o ponto exato; reload sem resultado é tratado como falha.';
+    }
     if (text.includes('element(s) not found') || text.includes('to be visible') || text.includes('tobevisible')) {
         return 'Confirme se o elemento existe na view, se o data-testid esperado está correto e se ele só aparece após alguma ação assíncrona.';
     }
