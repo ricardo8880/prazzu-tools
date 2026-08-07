@@ -431,7 +431,7 @@
                     </div>
                 </section>
             @endif
-            <section class="prazzu-form-panel mt-4" aria-labelledby="batch-import-title">
+            <section class="prazzu-form-panel mt-4" aria-labelledby="batch-import-title" data-testid="batch-import-panel">
                 <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-4">
                     <div>
                         <h2 id="batch-import-title" class="prazzu-section-title mb-1">Validação e consulta em lote</h2>
@@ -488,7 +488,7 @@
                             </div>
 
                             <h3 class="h6">Mapeamento das colunas</h3>
-                            <form method="post" action="{{ route('tools.validador-de-cnpj.batch.process') }}" class="row g-3">
+                            <form method="post" action="{{ route('tools.validador-de-cnpj.batch.process') }}" class="row g-3" data-testid="batch-process-form">
                                 @csrf
                                 <input type="hidden" name="import_token" value="{{ $preview['token'] }}">
                                 @php($mapping = $preview['suggested_mapping'] ?? [])
@@ -533,7 +533,7 @@
 
             @php($batch = $batchValidationResult ?? session('batch_validation_result'))
             @if ($batch)
-                <section class="mt-4" aria-labelledby="batch-result-title">
+                <section class="mt-4" aria-labelledby="batch-result-title" data-testid="tool-result">
                     <div class="card shadow-sm">
                         <div class="card-header">
                             <h2 id="batch-result-title" class="h5 mb-1">Resultado do processamento em lote</h2>
@@ -559,11 +559,11 @@
                                 <div class="alert alert-success"><i class="bi bi-clock-history me-1" aria-hidden="true"></i>Resumo salvo no seu histórico, sem armazenar documentos ou dados cadastrais.</div>
                             @endif
 
-                            <div class="d-flex flex-wrap gap-2 mb-3" aria-label="Exportações do resultado">
+                            <div class="d-flex flex-wrap gap-2 mb-3" aria-label="Exportações do resultado" data-testid="download-actions">
+                                <a class="btn btn-outline-secondary" data-testid="download-pdf" href="{{ route('tools.validador-de-cnpj.batch.export.official', ['format' => 'pdf', 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-file-earmark-pdf me-1"></i>Baixar PDF</a>
+                                <a class="btn btn-outline-primary" data-testid="download-csv" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'csv', 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-filetype-csv me-1"></i>Baixar CSV</a>
                                 <a class="btn btn-outline-success" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'excel', 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
-                                <a class="btn btn-outline-primary" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'csv', 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-filetype-csv me-1"></i>CSV</a>
                                 <a class="btn btn-outline-warning" href="{{ route('tools.validador-de-cnpj.batch.export', ['format' => 'excel', 'only_issues' => 1, 'result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-exclamation-triangle me-1"></i>Somente problemas</a>
-                                <a class="btn btn-outline-secondary" target="_blank" rel="noopener" href="{{ route('tools.validador-de-cnpj.batch.print', ['result_token' => $batchResultToken ?? '']) }}"><i class="bi bi-printer me-1"></i>Imprimir / PDF</a>
                             </div>
 
                             <div class="table-responsive border rounded">

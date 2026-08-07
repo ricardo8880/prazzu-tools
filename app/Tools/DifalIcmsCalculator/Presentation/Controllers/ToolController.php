@@ -24,7 +24,7 @@ final class ToolController extends Controller {
  public function calculate(ExecuteToolRequest $request, Calculator $calculator, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module): View {
   $input=$this->input($request->validated()); $run=$this->startRun($request,$recorder,$persistence,$module,$input);
   try { $result=$calculator->calculate($input); if($run!==null)$recorder->succeed($run,$result->toPersistenceArray()); } catch(Throwable $e) { if($run!==null)$recorder->fail($run,'calculadora-difal-icms.calculation_failed'); throw $e; }
-  $request->flash(); return view('tools-calculadora-difal-icms::index',['result'=>$result,'historySaved'=>$run!==null]);
+  $request->flash(); return view('tools-calculadora-difal-icms::index',['result'=>$result,'historySaved'=>$run!==null,'calculationInput'=>$request->validated()]);
  }
  public function exportCurrent(ExecuteToolRequest $request, Calculator $calculator, ToolResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): Response {
   abort_unless(in_array($format,['pdf','xlsx'],true),404); $input=$this->input($request->validated()); $result=$calculator->calculate($input); $filename='difal-icms-'.now()->format('Y-m-d');

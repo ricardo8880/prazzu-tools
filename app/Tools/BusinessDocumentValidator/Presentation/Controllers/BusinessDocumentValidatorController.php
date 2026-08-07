@@ -33,9 +33,9 @@ use App\Tools\BusinessDocumentValidator\Presentation\Requests\ValidateStateRegis
 use App\Tools\BusinessDocumentValidator\Tool;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 

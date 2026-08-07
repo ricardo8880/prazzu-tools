@@ -144,9 +144,9 @@ final class LaborTerminationToolTest extends TestCase
         $this->assertDatabaseCount('tool_runs', 0);
     }
 
-    public function test_current_calculation_can_be_exported_as_printable_pdf_report(): void
+    public function test_current_calculation_can_be_exported_as_pdf_download(): void
     {
-        $this->post(route('tools.calculadora-de-rescisao.export'), [
+        $response = $this->post(route('tools.calculadora-de-rescisao.export'), [
             'monthly_salary' => '3.000,00',
             'admission_date' => '2024-01-10',
             'termination_date' => '2026-07-14',
@@ -165,10 +165,12 @@ final class LaborTerminationToolTest extends TestCase
             'recurring_additions' => '0,00',
             'article_480_discount' => '0,00',
             'extraordinary_indemnities' => '0,00',
-        ])->assertOk()
-            ->assertSee('Relatório de Rescisão Trabalhista')
-            ->assertDontSee('Imprimir / Salvar como PDF')
-            ->assertSee('R$ 3.000,00');
+        ]);
+
+        $response->assertOk()->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringContainsString('attachment;', (string) $response->headers->get('Content-Disposition'));
+        $this->assertStringContainsString('rescisao-', (string) $response->headers->get('Content-Disposition'));
+        $this->assertStringStartsWith('%PDF', $response->getContent());
     }
 
     public function test_user_can_export_owned_history_report(): void

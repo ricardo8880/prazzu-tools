@@ -146,7 +146,7 @@ async function downloadFormResponse(form, submitter) {
     }
 
     try {
-        const method = (form.method || 'POST').toUpperCase();
+        const method = (form.getAttribute('method') || 'POST').toUpperCase();
         const formData = new FormData(form);
         const target = new URL(submitter?.getAttribute('formaction') || form.action, window.location.href);
         if (method === 'GET') {
@@ -218,7 +218,7 @@ document.addEventListener('submit', (event) => {
     }
 
     const toolPage = form.closest('[data-tool]');
-    if (toolPage && (form.method || 'get').toLowerCase() === 'post') {
+    if (toolPage && (form.getAttribute('method') || 'get').toLowerCase() === 'post') {
         try { sessionStorage.setItem(TOOL_GENERATION_KEY, toolPage.dataset.tool || 'tool'); } catch {}
     }
 });

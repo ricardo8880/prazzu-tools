@@ -43,6 +43,7 @@
                     label="Anexo"
                     :options="collect($annexes)->mapWithKeys(fn ($annex) => [$annex->value => $annex->label()])->all()"
                     placeholder="Selecione"
+                    required
                 />
             </div>
 
@@ -100,7 +101,11 @@
                             @foreach(old() as $key => $value)
                                 @if(!is_array($value) && $key !== '_token')<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif
                             @endforeach
-                            <button class="btn btn-sm btn-outline-secondary" type="submit">{{ $label }}</button>
+                            <button
+                                class="btn btn-sm btn-outline-secondary"
+                                type="submit"
+                                data-testid="download-{{ $format }}"
+                            >{{ $label }}</button>
                         </form>
                     @endforeach
                 </div>

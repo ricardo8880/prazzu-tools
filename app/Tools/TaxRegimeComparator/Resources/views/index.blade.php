@@ -125,7 +125,7 @@
                     @foreach (['pdf'=>'Baixar PDF','xlsx'=>'Baixar Excel'] as $format=>$label)
                     <form method="post" action="{{ route('tools.comparador-tributario.document',$format) }}">@csrf
                     @foreach(old() as $key=>$value) @if(is_scalar($value))<input type="hidden" name="{{ $key }}" value="{{ $value }}">@endif @endforeach
-                    <button class="btn btn-primary btn-sm" type="submit" data-analytics-action="export" data-analytics-format="{{ $format }}">{{ $label }}</button></form>
+                    <button class="btn btn-primary btn-sm" type="submit" data-testid="download-{{ $format }}" data-analytics-action="export" data-analytics-format="{{ $format }}">{{ $label }}</button></form>
                     @endforeach
                 </div>
             </div>

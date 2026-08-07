@@ -14,6 +14,206 @@ foreach (($productTools['official'] ?? []) as $tool) {
         continue;
     }
 
+    $downloads = match ($slug) {
+        'calculadora-de-honorarios-contabeis' => [
+            new ToolDownloadExpectation(
+                id: 'honorarios-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'honorarios-contabeis',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'honorarios-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'honorarios-contabeis',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-simples-nacional' => [
+            new ToolDownloadExpectation(
+                id: 'simples-nacional-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'simples-nacional',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'simples-nacional-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'simples-nacional',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-de-rescisao' => [
+            new ToolDownloadExpectation(
+                id: 'rescisao-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'rescisao',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'rescisao-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'rescisao',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-hora-extra' => [
+            new ToolDownloadExpectation(
+                id: 'hora-extra-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'hora-extra',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'hora-extra-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'hora-extra',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-salario-liquido' => [
+            new ToolDownloadExpectation(
+                id: 'salario-liquido-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'salario-liquido',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'salario-liquido-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'salario-liquido',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-margem-markup' => [
+            new ToolDownloadExpectation(
+                id: 'margem-markup-csv',
+                testId: 'download-csv',
+                format: 'csv',
+                extension: 'csv',
+                minimumBytes: 100,
+                filenameContains: 'margem-markup',
+                mimeType: 'text/csv',
+            ),
+            new ToolDownloadExpectation(
+                id: 'margem-markup-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'margem-markup',
+                mimeType: 'application/pdf',
+            ),
+        ],
+        'comparador-tributario' => [
+            new ToolDownloadExpectation(
+                id: 'comparador-tributario-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'comparacao-tributaria',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'comparador-tributario-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'comparacao-tributaria',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'validador-de-cnpj' => [
+            new ToolDownloadExpectation(
+                id: 'validador-documentos-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'validacao-documentos-lote',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'validador-documentos-csv',
+                testId: 'download-csv',
+                format: 'csv',
+                extension: 'csv',
+                minimumBytes: 80,
+                filenameContains: 'validacao-documentos-completo',
+                mimeType: 'text/csv',
+            ),
+        ],
+        'conversor-fiscal-xml' => [
+            new ToolDownloadExpectation(
+                id: 'xml-fiscal-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'xml-fiscal',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'xml-fiscal-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'xml-fiscal',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+            new ToolDownloadExpectation(
+                id: 'xml-fiscal-csv',
+                testId: 'download-csv',
+                format: 'csv',
+                extension: 'csv',
+                minimumBytes: 100,
+                filenameContains: 'xml-fiscal',
+                mimeType: 'text/csv',
+            ),
+        ],
+        default => [],
+    };
+
     $tools[$slug] = [
         new ToolScenario(
             id: 'fluxo-principal-valido',
@@ -29,6 +229,7 @@ foreach (($productTools['official'] ?? []) as $tool) {
                 ['type' => 'url', 'contains' => '/ferramentas/'.$slug],
                 ['type' => 'visible', 'test_id' => 'tool-form-panel'],
             ],
+            downloads: $downloads,
         ),
         new ToolScenario(
             id: 'campo-obrigatorio-invalido',
@@ -49,6 +250,126 @@ foreach (($productTools['official'] ?? []) as $tool) {
     ];
 }
 
+
+
+$tools['validador-de-cnpj'] = [
+    new ToolScenario(
+        id: 'fluxo-principal-valido',
+        title: 'Valida um documento e conclui o fluxo em lote com exportações reais',
+        kind: 'valid',
+        toolSlug: 'validador-de-cnpj',
+        tags: ['lot-13', 'regression', 'minimum-coverage', 'downloads'],
+        steps: [
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'batch-import-panel'],
+            ['action' => 'submit', 'scope_test_id' => 'batch-import-panel'],
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'batch-process-form'],
+            ['action' => 'submit', 'scope_test_id' => 'batch-process-form'],
+        ],
+        expectations: [
+            ['type' => 'url', 'contains' => '/ferramentas/validador-de-cnpj'],
+            ['type' => 'visible', 'test_id' => 'tool-result'],
+            ['type' => 'visible', 'test_id' => 'download-actions'],
+            ['type' => 'visible', 'test_id' => 'download-pdf'],
+            ['type' => 'visible', 'test_id' => 'download-csv'],
+        ],
+        downloads: [
+            new ToolDownloadExpectation(
+                id: 'validador-documentos-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'validacao-documentos-lote',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'validador-documentos-csv',
+                testId: 'download-csv',
+                format: 'csv',
+                extension: 'csv',
+                minimumBytes: 80,
+                filenameContains: 'validacao-documentos-completo',
+                mimeType: 'text/csv',
+            ),
+        ],
+    ),
+    new ToolScenario(
+        id: 'campo-obrigatorio-invalido',
+        title: 'Impede o envio quando um campo obrigatório está inválido',
+        kind: 'invalid',
+        toolSlug: 'validador-de-cnpj',
+        tags: ['lot-13', 'regression', 'minimum-coverage'],
+        steps: [
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'invalidate_required', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
+        ],
+        expectations: [
+            ['type' => 'form_invalid', 'test_id' => 'tool-form-panel'],
+            ['type' => 'url', 'contains' => '/ferramentas/validador-de-cnpj'],
+        ],
+    ),
+];
+
+$tools['calculadora-difal-icms'] = [
+    new ToolScenario(
+        id: 'fluxo-principal-valido',
+        title: 'Calcula o DIFAL e valida as exportações do resultado',
+        kind: 'valid',
+        toolSlug: 'calculadora-difal-icms',
+        tags: ['lot-13', 'regression', 'minimum-coverage', 'downloads'],
+        steps: [
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
+        ],
+        expectations: [
+            ['type' => 'url', 'contains' => '/ferramentas/calculadora-difal-icms'],
+            ['type' => 'visible', 'test_id' => 'tool-result'],
+            ['type' => 'visible', 'test_id' => 'download-actions'],
+            ['type' => 'visible', 'test_id' => 'download-pdf'],
+            ['type' => 'visible', 'test_id' => 'download-xlsx'],
+        ],
+        downloads: [
+            new ToolDownloadExpectation(
+                id: 'difal-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'difal-icms',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'difal-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'difal-icms',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+    ),
+    new ToolScenario(
+        id: 'campo-obrigatorio-invalido',
+        title: 'Impede o envio quando um campo obrigatório está inválido',
+        kind: 'invalid',
+        toolSlug: 'calculadora-difal-icms',
+        tags: ['lot-13', 'regression', 'minimum-coverage'],
+        steps: [
+            ['action' => 'auto_fill_form', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'invalidate_required', 'scope_test_id' => 'tool-form-panel'],
+            ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
+        ],
+        expectations: [
+            ['type' => 'form_invalid', 'test_id' => 'tool-form-panel'],
+            ['type' => 'url', 'contains' => '/ferramentas/calculadora-difal-icms'],
+        ],
+    ),
+];
 
 $tools['gerador-de-contratos'] = [
     new ToolScenario(

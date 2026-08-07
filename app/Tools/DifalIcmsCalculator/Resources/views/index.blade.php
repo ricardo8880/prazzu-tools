@@ -30,6 +30,18 @@
 <div class="table-responsive"><table class="table table-sm"><tbody><tr><th>ICMS origem</th><td class="text-end">{{ $money($result->details['origin_icms_minor']) }}</td></tr><tr><th>Base no destino</th><td class="text-end">{{ $money($result->details['destination_base_minor']) }}</td></tr><tr><th>ICMS destino</th><td class="text-end">{{ $money($result->details['destination_icms_minor']) }}</td></tr><tr><th>DIFAL</th><td class="text-end fw-bold">{{ $money($result->details['difal_minor']) }}</td></tr><tr><th>FCP</th><td class="text-end">{{ $money($result->details['fcp_minor']) }}</td></tr><tr class="table-light"><th>Total destino</th><td class="text-end fw-bold">{{ $money($result->details['total_minor']) }}</td></tr></tbody></table></div>
 <h3 class="h5 mt-4">Memória fiscal</h3><div class="accordion mb-4" id="difal-memory">@foreach($result->calculationMemory->steps as $step)<div class="accordion-item"><h4 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#difal-memory-{{ $loop->index }}">{{ $step->label }}</button></h4><div id="difal-memory-{{ $loop->index }}" class="accordion-collapse collapse"><div class="accordion-body"><strong>Fórmula:</strong> {{ $step->formula }}</div></div></div>@endforeach</div>
 @if(!empty($historySaved))<div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>@endif
-<div class="d-flex gap-2 flex-wrap">@foreach(['pdf'=>'Baixar PDF','xlsx'=>'Baixar Excel (.xlsx)'] as $format=>$label)<form method="POST" action="{{ route('tools.calculadora-difal-icms.export',$format) }}">@csrf @foreach($result->details['input'] as $n=>$v)<input type="hidden" name="{{ $n }}" value="{{ is_bool($v)?($v?1:0):$v }}">@endforeach<input type="hidden" name="confirm_rates" value="1"><button class="btn btn-outline-primary" type="submit">{{ $label }}</button></form>@endforeach</div>
+@php($exportInput = array_merge($calculationInput ?? [], ['confirm_rates' => 1]))
+<div class="d-flex flex-wrap gap-2 mt-3" data-result-export-actions data-testid="download-actions">
+    <a
+        class="btn btn-outline-danger"
+        data-testid="download-pdf"
+        href="{{ route('tools.calculadora-difal-icms.export', array_merge(['format' => 'pdf'], $exportInput)) }}"
+    >Exportar PDF</a>
+    <a
+        class="btn btn-outline-success"
+        data-testid="download-xlsx"
+        href="{{ route('tools.calculadora-difal-icms.export', array_merge(['format' => 'xlsx'], $exportInput)) }}"
+    >Baixar Excel</a>
+</div>
 </x-tools.result-panel></div>@endisset
 </x-tools.page>@endsection

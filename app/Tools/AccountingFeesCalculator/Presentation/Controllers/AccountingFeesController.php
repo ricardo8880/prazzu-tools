@@ -61,6 +61,7 @@ final class AccountingFeesController extends Controller
         return view('tools-calculadora-de-honorarios-contabeis::index', [
             'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
             'calculationResult' => $outcome['result'],
+            'calculationInput' => $validated,
             'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Cálculo'),
         ]);
     }

@@ -140,7 +140,7 @@
                     <div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>
                 @endif
 
-                <div class="d-flex gap-2 flex-wrap">@foreach(['pdf'=>'Baixar PDF','xlsx'=>'Baixar Excel (.xlsx)'] as $format=>$label)<form method="POST" action="{{ route('tools.calculadora-salario-liquido.export',$format) }}">@csrf @foreach($result->details['input'] as $n=>$v)<input type="hidden" name="{{ $n }}" value="{{ is_bool($v)?($v?1:0):$v }}">@endforeach<input type="hidden" name="confirm_assumptions" value="1"><button class="btn btn-outline-primary" type="submit">{{ $label }}</button></form>@endforeach</div>
+                <div class="d-flex gap-2 flex-wrap">@foreach(['pdf'=>'Baixar PDF','xlsx'=>'Baixar Excel (.xlsx)'] as $format=>$label)<form method="POST" action="{{ route('tools.calculadora-salario-liquido.export',$format) }}">@csrf @foreach($result->details['input'] as $n=>$v)<input type="hidden" name="{{ $n }}" value="{{ is_bool($v)?($v?1:0):$v }}">@endforeach<input type="hidden" name="confirm_assumptions" value="1"><button class="btn btn-outline-primary" type="submit" data-testid="download-{{ $format }}">{{ $label }}</button></form>@endforeach</div>
             </x-tools.result-panel>
         </div>
     @endisset

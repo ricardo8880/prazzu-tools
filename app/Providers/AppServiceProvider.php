@@ -35,6 +35,7 @@ use App\Core\Tools\ToolRegistry;
 use App\Core\Validation\BrazilianMoneyValidator;
 use App\Core\Validation\BrazilianPercentageValidator;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\RateLimiter;
@@ -57,8 +58,28 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ToolRunRecorder::class, DatabaseToolRunRecorder::class);
         $this->app->bind(ToolRunHistory::class, DatabaseToolRunHistory::class);
         $this->app->bind(ToolRunFavorites::class, DatabaseToolRunFavorites::class);
-        $this->app->bind(ImportDatasetStore::class, CacheImportDatasetStore::class);
-        $this->app->bind(TemporaryPayloadStore::class, CacheTemporaryPayloadStore::class);
+        $this->app->bind(ImportDatasetStore::class, function ($app): CacheImportDatasetStore {
+            $cache = config('e2e_environment.enabled')
+                ? $app['cache']->build([
+                    'driver' => 'file',
+                    'path' => config('e2e_environment.paths.storage').'/import-dataset-cache',
+                    'lock_path' => config('e2e_environment.paths.storage').'/import-dataset-cache',
+                ])
+                : $app['cache']->store();
+
+            return new CacheImportDatasetStore($cache, $app->make(Encrypter::class));
+        });
+        $this->app->bind(TemporaryPayloadStore::class, function ($app): CacheTemporaryPayloadStore {
+            $cache = config('e2e_environment.enabled')
+                ? $app['cache']->build([
+                    'driver' => 'file',
+                    'path' => config('e2e_environment.paths.storage').'/temporary-payload-cache',
+                    'lock_path' => config('e2e_environment.paths.storage').'/temporary-payload-cache',
+                ])
+                : $app['cache']->store();
+
+            return new CacheTemporaryPayloadStore($cache);
+        });
         $this->app->bind(EnterpriseAccessResolver::class, DatabaseEnterpriseAccessResolver::class);
         $this->app->bind(OrganizationSeatCounter::class, DatabaseOrganizationSeatCounter::class);
         $this->app->singleton(CompositeTabularFileReader::class, static fn (): CompositeTabularFileReader => new CompositeTabularFileReader([

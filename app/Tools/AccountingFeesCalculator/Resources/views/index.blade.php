@@ -284,6 +284,11 @@
                 <div><strong>Referência gerencial:</strong> ajuste o preço conforme custos internos, escopo contratado, região, responsabilidade técnica, prazo de atendimento e posicionamento do escritório.</div>
             </div>
 
+            <x-tools.export-buttons
+                :pdf-route="route('tools.calculadora-de-honorarios-contabeis.export', ['format' => 'pdf'])"
+                :excel-route="route('tools.calculadora-de-honorarios-contabeis.export', ['format' => 'xlsx'])"
+                :input="$calculationInput ?? []"
+            />
 
             <div class="card border-0 shadow-sm mt-3">
                 <div class="card-header bg-body d-flex flex-column flex-lg-row justify-content-between gap-2">

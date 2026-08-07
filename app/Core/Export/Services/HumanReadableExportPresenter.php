@@ -170,6 +170,10 @@ final class HumanReadableExportPresenter
             return implode('; ', array_map(fn (mixed $item): string => $this->formatValue($key, $item), $value));
         }
 
+        if (is_object($value)) {
+            return get_debug_type($value);
+        }
+
         return (string) $value;
     }
 
@@ -178,6 +182,13 @@ final class HumanReadableExportPresenter
     {
         foreach ($data as $key => $value) {
             $key = (string) $key;
+
+            if (is_object($value) && method_exists($value, 'toArray')) {
+                $converted = $value->toArray();
+                if (is_array($converted)) {
+                    $value = $converted;
+                }
+            }
 
             if ($skipDuplicatedInput && $key === 'input') {
                 continue;

@@ -27,7 +27,9 @@
 <div><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-2"></i>Calcular</button></div></form>
 @isset($result)
     <span data-analytics-result="main" hidden></span>
-@php($money=static fn(int $v)=>\App\Core\Money\Money::fromMinor($v)->formatPtBr())
+@php
+$money = static fn (int $v) => \App\Core\Money\Money::fromMinor($v)->formatPtBr();
+@endphp
 <div class="mt-5"><x-tools.result-panel title="Resultado" description="Estimativa baseada nos dados e parâmetros informados."><div class="row g-3 mb-4">@foreach($result->summary as $item)<div class="col-12 col-md-6 col-xl"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="clock-history" /></div>@endforeach</div>
 @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach
 <div class="table-responsive"><table class="table table-sm"><tbody>
@@ -36,6 +38,29 @@
 </tbody></table></div>
 <h3 class="h5 mt-4">Memória de cálculo</h3><div class="accordion mb-4" id="ot-memory">@foreach($result->calculationMemory->steps as $step)<div class="accordion-item"><h4 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ot-memory-{{ $loop->index }}">{{ $step->label }}</button></h4><div id="ot-memory-{{ $loop->index }}" class="accordion-collapse collapse"><div class="accordion-body"><strong>Fórmula:</strong> {{ $step->formula }}</div></div></div>@endforeach</div>
 @if(!empty($historySaved))<div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>@endif
-<div class="d-flex gap-2 flex-wrap">@foreach(['pdf'=>'Baixar PDF','xlsx'=>'Baixar Excel (.xlsx)'] as $format=>$label)<form method="POST" action="{{ route('tools.calculadora-hora-extra.export',$format) }}">@csrf @foreach($result->details['input'] as $n=>$v)<input type="hidden" name="{{ $n }}" value="{{ is_bool($v)?($v?1:0):$v }}">@endforeach<input type="hidden" name="confirm_assumptions" value="1"><button class="btn btn-outline-primary" type="submit">{{ $label }}</button></form>@endforeach</div>
+@php
+$exportInput = [
+    'competence' => $result->details['input']['competence'],
+    'base_salary' => $result->details['input']['baseSalary'],
+    'monthly_hours' => $result->details['input']['monthlyHours'],
+    'overtime_50_hours' => $result->details['input']['overtime50Hours'],
+    'overtime_100_hours' => $result->details['input']['overtime100Hours'],
+    'custom_overtime_hours' => $result->details['input']['customOvertimeHours'],
+    'custom_premium' => $result->details['input']['customPremium'],
+    'night_clock_hours' => $result->details['input']['nightClockHours'],
+    'night_overtime_hours' => $result->details['input']['nightOvertimeHours'],
+    'night_overtime_premium' => $result->details['input']['nightOvertimePremium'],
+    'working_days' => $result->details['input']['workingDays'],
+    'rest_days' => $result->details['input']['restDays'],
+    'include_dsr' => $result->details['input']['includeDsr'],
+    'include_reflexes' => $result->details['input']['includeReflexes'],
+    'confirm_assumptions' => 1,
+];
+@endphp
+<x-tools.export-buttons
+    :pdf-route="route('tools.calculadora-hora-extra.export', 'pdf')"
+    :excel-route="route('tools.calculadora-hora-extra.export', 'xlsx')"
+    :input="$exportInput"
+/>
 </x-tools.result-panel></div>@endisset
 </x-tools.page>@endsection

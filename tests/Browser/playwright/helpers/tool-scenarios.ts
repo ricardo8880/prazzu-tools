@@ -103,13 +103,15 @@ function deterministicValue(name: string, type: string, min?: string | null, max
         ownership_percentage: '100', internal_rate: '18', interstate_rate: '12', fcp_rate: '2',
         first_party_document: '52998224725', second_party_document: '52998224725',
         first_party_state: 'SP', second_party_state: 'RJ', jurisdiction_state: 'SP',
+        document_number: '52998224725',
     };
     const decimalText = inputMode === 'decimal' || /\d+[.,]\d+/.test(placeholder ?? '');
     const formatDecimal = (value: string): string => decimalText && type !== 'number'
         ? Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         : value;
 
-    if (exact[key]) return formatDecimal(exact[key]);
+    const identifierLike = key.includes('document') || key.includes('cnpj') || key.includes('cpf') || key.includes('cep');
+    if (exact[key]) return identifierLike ? exact[key] : formatDecimal(exact[key]);
     if (type === 'email' || key.includes('email')) return 'e2e@example.test';
     if (type === 'date' || key.includes('date') || key.includes('data_')) return '2025-01-15';
     if (type === 'month') return '2025-01';
@@ -139,8 +141,12 @@ async function interactiveContainer(scope: Locator): Promise<Locator> {
     await expect(scope, 'O painel da ferramenta precisa estar visível.').toBeVisible();
     const isForm = await scope.evaluate(element => element instanceof HTMLFormElement);
     if (isForm) return scope;
-    const form = scope.locator('form').first();
-    return await form.count() > 0 ? form : scope;
+
+    const ancestorForm = scope.locator('xpath=ancestor::form[1]');
+    if (await ancestorForm.count() > 0) return ancestorForm;
+
+    const nestedForm = scope.locator('form').first();
+    return await nestedForm.count() > 0 ? nestedForm : scope;
 }
 
 async function autoFillForm(scope: Locator): Promise<string[]> {
@@ -164,22 +170,35 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
             const max = await control.getAttribute('max');
             const inputMode = await control.getAttribute('inputmode');
             const placeholder = await control.getAttribute('placeholder');
+            const required = await control.getAttribute('required') !== null;
 
             if (type === 'file') {
-                if ((await control.inputValue()) !== '') continue;
+                if (!required || (await control.inputValue()) !== '') continue;
                 const accept = (await control.getAttribute('accept') ?? '').toLowerCase();
                 const isXml = accept.includes('xml') || name.toLowerCase().includes('xml');
-                await control.setInputFiles({
-                    name: isXml ? 'documento-e2e.xml' : 'arquivo-e2e.txt',
-                    mimeType: isXml ? 'application/xml' : 'text/plain',
-                    buffer: Buffer.from(isXml ? '<?xml version="1.0" encoding="UTF-8"?><documento><valor>100</valor></documento>' : 'arquivo de teste e2e'),
+                const multiple = await control.getAttribute('multiple') !== null;
+                const fiscalXml = (suffix = '') => {
+                    const number = suffix === '-2' ? '2' : '1';
+                    const accessKey = suffix === '-2'
+                        ? '35123456789012345678550010000000021000000020'
+                        : '35123456789012345678550010000000011000000010';
+
+                    return `<?xml version="1.0" encoding="UTF-8"?><NFe xmlns="http://www.portalfiscal.inf.br/nfe"><infNFe Id="NFe${accessKey}"><ide><mod>55</mod><serie>1</serie><nNF>${number}</nNF><dhEmi>2026-07-21T09:00:00-03:00</dhEmi></ide><emit><CNPJ>12345678000190</CNPJ><xNome>Emitente E2E</xNome><IE>123</IE></emit><dest><CPF>12345678909</CPF><xNome>Destinatário E2E</xNome></dest><det nItem="1"><prod><cProd>A${number}</cProd><xProd>Produto E2E ${number}</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>2.0000</qCom><vUnCom>50.0000</vUnCom><vProd>100.00</vProd></prod><imposto><ICMS><ICMS00><vICMS>18.00</vICMS></ICMS00></ICMS><PIS><PISAliq><vPIS>1.65</vPIS></PISAliq></PIS><COFINS><COFINSAliq><vCOFINS>7.60</vCOFINS></COFINSAliq></COFINS></imposto></det><total><ICMSTot><vProd>100.00</vProd><vFrete>0</vFrete><vDesc>0</vDesc><vICMS>18.00</vICMS><vIPI>0</vIPI><vPIS>1.65</vPIS><vCOFINS>7.60</vCOFINS><vNF>100.00</vNF></ICMSTot></total></infNFe></NFe>`;
+                };
+                const isBatchDocumentFile = name.toLowerCase() === 'batch_file';
+                const batchCsv = 'documento,razao social\n11222333000181,Empresa E2E\n52998224725,Pessoa E2E\n';
+                const file = (suffix = '') => ({
+                    name: isXml ? `documento-e2e${suffix}.xml` : isBatchDocumentFile ? 'documentos-e2e.csv' : `arquivo-e2e${suffix}.txt`,
+                    mimeType: isXml ? 'application/xml' : isBatchDocumentFile ? 'text/csv' : 'text/plain',
+                    buffer: Buffer.from(isXml ? fiscalXml(suffix) : isBatchDocumentFile ? batchCsv : 'arquivo de teste e2e'),
                 });
-                filled.add(`${name || '(arquivo)'}=[arquivo e2e]`);
+                await control.setInputFiles(multiple ? [file('-1'), file('-2')] : file());
+                filled.add(`${name || '(arquivo)'}=${multiple ? '[2 arquivos e2e]' : '[arquivo e2e]'}`);
                 changed = true;
                 continue;
             }
             if (tag === 'select') {
-                if ((await control.inputValue()) !== '') continue;
+                if (!required || (await control.inputValue()) !== '') continue;
                 const values = await control.locator('option:not([disabled])').evaluateAll(options => options
                     .map(option => (option as HTMLOptionElement).value)
                     .filter(value => value !== ''));
@@ -191,6 +210,7 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
                 continue;
             }
             if (type === 'radio') {
+                if (!required) continue;
                 if (name !== '' && !processedRadioGroups.has(name)) {
                     processedRadioGroups.add(name);
                     const checked = container.locator(`input[type="radio"][name="${name}"]:checked`);
@@ -206,6 +226,7 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
                 continue;
             }
             if (type === 'checkbox') {
+                if (!required) continue;
                 if (!await control.isChecked()) {
                     await control.check();
                     filled.add(`${name || '(checkbox)'}=checked`);
@@ -213,7 +234,7 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
                 }
                 continue;
             }
-            if (!(await control.isEditable())) continue;
+            if (!(await control.isEditable()) || !required) continue;
             if ((await control.inputValue()).trim() === '') {
                 const generated = deterministicValue(name, type, min, max, inputMode, placeholder);
                 await control.fill(generated);
@@ -377,7 +398,7 @@ function actionFailure(scenario: ToolScenario, identity: SubmitIdentity, beforeU
     ].join('\n'));
 }
 
-async function submitForm(scope: Locator, scenario: ToolScenario): Promise<ActionAuditEntry | null> {
+async function submitForm(scope: Locator, scenario: ToolScenario, enforceScenarioExpectations = true): Promise<ActionAuditEntry | null> {
     const container = await interactiveContainer(scope);
     const page = container.page();
     const invalidScenario = scenario.kind === 'invalid';
@@ -395,9 +416,11 @@ async function submitForm(scope: Locator, scenario: ToolScenario): Promise<Actio
     const identity = await submitIdentity(submit, form, page);
     const sentValues = await submittedValues(form);
     const beforeUrl = page.url();
-    const expectedVisibleIds = scenario.expectations
-        .filter(expectation => expectation.type === 'visible' && expectation.test_id)
-        .map(expectation => expectation.test_id!);
+    const expectedVisibleIds = enforceScenarioExpectations
+        ? scenario.expectations
+            .filter(expectation => expectation.type === 'visible' && expectation.test_id)
+            .map(expectation => expectation.test_id!)
+        : [];
     const beforeVisibleEvidence = await page.locator(RESULT_EVIDENCE_SELECTOR).filter({ visible: true }).count();
     const clientInvalid = await invalidControls(form);
     if (!invalidScenario && clientInvalid.length > 0) {
@@ -429,14 +452,16 @@ async function submitForm(scope: Locator, scenario: ToolScenario): Promise<Actio
     await page.waitForLoadState('domcontentloaded', { timeout: 10_000 }).catch(() => undefined);
     await page.locator('body').waitFor({ state: 'attached', timeout: 5_000 }).catch(() => undefined);
 
-    const expectedResultWaits = expectedVisibleIds.map(testId =>
-        page.getByTestId(testId).first().waitFor({ state: 'visible', timeout: 8_000 }).catch(() => undefined),
-    );
-    await Promise.race([
-        ...expectedResultWaits,
-        page.locator(RESULT_EVIDENCE_SELECTOR).filter({ visible: true }).first().waitFor({ state: 'visible', timeout: 8_000 }),
-        page.locator('.invalid-feedback:visible, [data-testid="validation-summary"]:visible').first().waitFor({ state: 'visible', timeout: 8_000 }),
-    ]).catch(() => undefined);
+    if (enforceScenarioExpectations) {
+        const expectedResultWaits = expectedVisibleIds.map(testId =>
+            page.getByTestId(testId).first().waitFor({ state: 'visible', timeout: 8_000 }).catch(() => undefined),
+        );
+        await Promise.race([
+            ...expectedResultWaits,
+            page.locator(RESULT_EVIDENCE_SELECTOR).filter({ visible: true }).first().waitFor({ state: 'visible', timeout: 8_000 }),
+            page.locator('.invalid-feedback:visible, [data-testid="validation-summary"]:visible').first().waitFor({ state: 'visible', timeout: 8_000 }),
+        ]).catch(() => undefined);
+    }
 
     const afterUrl = page.url();
     const finalResponse = navigationResponse ?? response;
@@ -473,7 +498,7 @@ async function submitForm(scope: Locator, scenario: ToolScenario): Promise<Actio
     }
 
     const afterVisibleEvidence = await page.locator(RESULT_EVIDENCE_SELECTOR).filter({ visible: true }).count();
-    if (expectedVisibleIds.length === 0 && afterVisibleEvidence <= beforeVisibleEvidence) {
+    if (enforceScenarioExpectations && expectedVisibleIds.length === 0 && afterVisibleEvidence <= beforeVisibleEvidence) {
         throw actionFailure(scenario, identity, beforeUrl, afterUrl, response, 'o clique terminou sem produzir evidência visível de resultado. Um simples reload da página NÃO é considerado sucesso.', [
             `Dados enviados: ${sentValues.join(' | ')}`,
             `Evidências procuradas: ${RESULT_EVIDENCE_SELECTOR}`,
@@ -523,7 +548,8 @@ export async function executeScenario(page: Page, scenario: ToolScenario): Promi
         main_action: null,
     };
 
-    for (const step of scenario.steps) {
+    for (let stepIndex = 0; stepIndex < scenario.steps.length; stepIndex += 1) {
+        const step = scenario.steps[stepIndex];
         const target = step.test_id ? page.getByTestId(step.test_id) : null;
         const scope = await resolveInteractiveScope(page, step.scope_test_id ?? 'tool-form-panel');
         const targetDescription = step.test_id ? ` data-testid=${step.test_id}` : step.scope_test_id ? ` scope=${step.scope_test_id}` : '';
@@ -548,7 +574,11 @@ export async function executeScenario(page: Page, scenario: ToolScenario): Promi
             }
             case 'auto_fill_form': audit.filled_fields.push(...await autoFillForm(scope)); break;
             case 'invalidate_required': await invalidateRequired(scope); break;
-            case 'submit': audit.main_action = await submitForm(scope, scenario); break;
+            case 'submit': {
+                const hasLaterSubmit = scenario.steps.slice(stepIndex + 1).some(candidate => candidate.action === 'submit');
+                audit.main_action = await submitForm(scope, scenario, !hasLaterSubmit);
+                break;
+            }
         }
     }
 
@@ -601,6 +631,7 @@ export async function auditVisibleResultActions(page: Page, scenario: ToolScenar
 
         const form = button.locator('xpath=ancestor::form[1]');
         if (await form.count() === 0) continue;
+        await autoFillForm(form);
         const identity = await submitIdentity(button, form, page);
         const beforeUrl = page.url();
         const sentValues = await submittedValues(form);

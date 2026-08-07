@@ -34,6 +34,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Throwable;
 
 final class ToolController extends Controller
@@ -104,7 +105,7 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function document(CompareTaxRegimesRequest $request, CompareTaxRegimes $compare, TaxComparisonResultPresenter $presenter, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): Response
+    public function document(CompareTaxRegimesRequest $request, CompareTaxRegimes $compare, TaxComparisonResultPresenter $presenter, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): SymfonyResponse
     {
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         try { $input=$request->validated(); $result=$presenter->present($compare->execute($this->input($input))); }

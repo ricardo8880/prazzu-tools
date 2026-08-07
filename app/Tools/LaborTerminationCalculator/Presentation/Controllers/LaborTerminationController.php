@@ -7,7 +7,9 @@ namespace App\Tools\LaborTerminationCalculator\Presentation\Controllers;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
+use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Data\PdfDocument;
 use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
@@ -81,10 +83,11 @@ final class LaborTerminationController extends Controller
     public function export(
         CalculateLaborTerminationRequest $request,
         CalculateLaborTermination $action,
-    ): View {
+        PdfExporter $exporter,
+    ): \Symfony\Component\HttpFoundation\Response {
         $input = $request->validated();
 
-        Log::info('Labor termination printable report requested.', [
+        Log::info('Labor termination PDF report requested.', [
             'tool' => Tool::SLUG,
             'termination_type' => $input['termination_type'] ?? null,
             'notice_type' => $input['notice_type'] ?? null,
@@ -94,22 +97,26 @@ final class LaborTerminationController extends Controller
         try {
             $result = $action->execute($input)->toArray();
 
-            return view('exports.printable-document', [
-                'title' => 'Relatório de Rescisão Trabalhista',
-                'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
-                'contentData' => ['result' => $result, 'input' => $input],
-                'generatedAt' => now()->format('d/m/Y H:i'),
-                'summaryLabel' => 'Valor líquido estimado',
-                'summaryValue' => $result['net_total'] ?? null,
-            ]);
+            return $exporter->download(new PdfDocument(
+                filename: 'rescisao-'.now()->format('Y-m-d'),
+                view: 'exports.printable-document',
+                data: [
+                    'title' => 'Relatório de Rescisão Trabalhista',
+                    'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
+                    'contentData' => ['result' => $result, 'input' => $input],
+                    'generatedAt' => now()->format('d/m/Y H:i'),
+                    'summaryLabel' => 'Valor líquido estimado',
+                    'summaryValue' => $result['net_total'] ?? null,
+                ],
+            ));
         } catch (InvalidValue $exception) {
-            Log::warning('Labor termination printable report validation failed.', [
+            Log::warning('Labor termination PDF report validation failed.', [
                 'tool' => Tool::SLUG,
                 'message' => $exception->getMessage(),
             ]);
             throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
         } catch (Throwable $exception) {
-            Log::error('Labor termination printable report failed.', [
+            Log::error('Labor termination PDF report failed.', [
                 'tool' => Tool::SLUG,
                 'exception' => $exception::class,
                 'message' => $exception->getMessage(),
