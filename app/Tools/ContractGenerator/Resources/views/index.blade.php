@@ -367,3 +367,21 @@
         </x-tools.page>
     </div>
 @endsection
+
+@if ($contractText !== null)
+    @push('scripts')
+        <script>
+            (() => {
+                const editor = document.querySelector('[data-testid="contract-editor"]');
+
+                if (!(editor instanceof HTMLElement)) {
+                    return;
+                }
+
+                requestAnimationFrame(() => {
+                    editor.scrollIntoView({ block: 'start', inline: 'nearest', behavior: 'auto' });
+                });
+            })();
+        </script>
+    @endpush
+@endif

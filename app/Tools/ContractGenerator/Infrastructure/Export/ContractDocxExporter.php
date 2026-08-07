@@ -66,7 +66,7 @@ XML,
             'docProps/app.xml' => <<<'XML'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-  <Application>Prazzu Tools</Application>
+  <Application></Application>
 </Properties>
 XML,
         ];
@@ -129,7 +129,7 @@ XML;
 
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
             .'<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-            .'<dc:title>'.$title.'</dc:title><dc:creator>Prazzu Tools</dc:creator>'
+            .'<dc:title>'.$title.'</dc:title>'
             .'<dcterms:created xsi:type="dcterms:W3CDTF">'.$createdAt.'</dcterms:created>'
             .'</cp:coreProperties>';
     }

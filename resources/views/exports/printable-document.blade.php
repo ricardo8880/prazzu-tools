@@ -25,14 +25,10 @@
         .print-warning { border: 1px solid #d39e00; background: #fff3cd; padding: 7px; margin-top: 10px; }
         .print-footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #adb5bd; color: #6c757d; font-size: 8px; }
         .alert { border: 1px solid #d39e00; background: #fff3cd; padding: 8px; }
-        .print-action { display: none; }
-        @media screen { .print-action { display: inline-block; margin: 0 0 12px; } }
     </style>
 </head>
 <body>
-<button class="print-action" type="button" onclick="window.print()">Imprimir / Salvar como PDF</button>
 <header>
-    <div class="muted">Prazzu Tools</div>
     <h1>{{ $title }}</h1>
     @if (!empty($generatedAt))<div class="muted">Gerado em {{ $generatedAt }}</div>@endif
     @if (!empty($summaryValue))

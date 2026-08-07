@@ -105,18 +105,19 @@ final class ToolPageTest extends TestCase
             ->assertSee('10 de agosto de 2026');
     }
 
-    public function test_contract_can_be_exported_as_printable_pdf_view(): void
+    public function test_contract_can_be_downloaded_as_pdf(): void
     {
         $text = "CONTRATO PARA PDF\n\nCláusula preparada para impressão.";
 
-        $this->post(route('tools.gerador-de-contratos.export.pdf'), [
+        $response = $this->post(route('tools.gerador-de-contratos.export.pdf'), [
             'contract_type' => 'prestacao-servicos',
             'contract_text' => $text,
-        ])
-            ->assertOk()
-            ->assertSee('Imprimir / Salvar como PDF')
-            ->assertSee('CONTRATO PARA PDF')
-            ->assertSee('Cláusula preparada para impressão.');
+        ]);
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/pdf');
+        self::assertStringContainsString('.pdf', (string) $response->headers->get('content-disposition'));
+        self::assertStringStartsWith('%PDF', (string) $response->getContent());
     }
 
     public function test_contract_can_be_downloaded_as_docx(): void

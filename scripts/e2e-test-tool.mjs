@@ -22,6 +22,7 @@ const result = spawnSync(process.execPath, [
     playwrightCli,
     'test',
     'tests/Browser/playwright/tool-actions.spec.ts',
+    'tests/Browser/playwright/tool-downloads.spec.ts',
     '--project=chromium-desktop',
     '--workers=1',
     '--retries=0',

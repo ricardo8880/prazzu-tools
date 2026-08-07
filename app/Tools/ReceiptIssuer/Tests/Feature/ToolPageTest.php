@@ -56,7 +56,7 @@ final class ToolPageTest extends TestCase
             'city' => 'São Paulo',
         ])->assertOk()
             ->assertSee('Recibo nº REC-2026-003')
-            ->assertSee('Imprimir / Salvar como PDF')
+            ->assertDontSee('Imprimir / Salvar como PDF')
             ->assertSee('Empresa Pagadora Ltda.')
             ->assertSee('mil duzentos e cinquenta reais e noventa centavos')
             ->assertSee('529.982.247-25');

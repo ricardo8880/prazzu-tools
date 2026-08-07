@@ -11,7 +11,7 @@ export type ScenarioStep = {
 };
 
 export type ScenarioExpectation = {
-    type: 'visible' | 'hidden' | 'text' | 'url' | 'field_value' | 'form_invalid';
+    type: 'visible' | 'hidden' | 'text' | 'url' | 'field_value' | 'form_invalid' | 'in_viewport';
     test_id?: string;
     value?: string;
     contains?: string;
@@ -413,15 +413,21 @@ async function submitForm(scope: Locator, scenario: ToolScenario): Promise<Actio
         const responseUrl = new URL(response.url());
         return request.method().toUpperCase() === identity.method
             && responseUrl.pathname === actionUrl.pathname;
-    }, { timeout: 15_000 }).then(response => ({ type: 'response' as const, response })).catch(() => null);
+    }, { timeout: 15_000 }).catch(() => null);
     const navigationPromise = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15_000 })
-        .then(response => ({ type: 'navigation' as const, response })).catch(() => null);
+        .catch(() => null);
 
     await submit.click({ noWaitAfter: true });
-    const submitOutcome = await Promise.race([responsePromise, navigationPromise]);
-    const response: Response | null = submitOutcome?.response ?? null;
+    const [response, navigationResponse] = await Promise.all([responsePromise, navigationPromise]);
 
     if (invalidScenario) return null;
+
+    if (!response && !navigationResponse) {
+        throw actionFailure(scenario, identity, beforeUrl, page.url(), null, 'o envio não produziu resposta HTTP nem navegação observável.');
+    }
+
+    await page.waitForLoadState('domcontentloaded', { timeout: 10_000 }).catch(() => undefined);
+    await page.locator('body').waitFor({ state: 'attached', timeout: 5_000 }).catch(() => undefined);
 
     const expectedResultWaits = expectedVisibleIds.map(testId =>
         page.getByTestId(testId).first().waitFor({ state: 'visible', timeout: 8_000 }).catch(() => undefined),
@@ -433,6 +439,12 @@ async function submitForm(scope: Locator, scenario: ToolScenario): Promise<Actio
     ]).catch(() => undefined);
 
     const afterUrl = page.url();
+    const finalResponse = navigationResponse ?? response;
+    if (finalResponse && finalResponse.status() >= 400) {
+        throw actionFailure(scenario, identity, beforeUrl, afterUrl, finalResponse, `a navegação final respondeu HTTP ${finalResponse.status()}.`, [
+            `Dados enviados: ${sentValues.join(' | ')}`,
+        ]);
+    }
     if (response && response.status() >= 400) {
         throw actionFailure(scenario, identity, beforeUrl, afterUrl, response, `o endpoint respondeu HTTP ${response.status()}.`, [
             `Dados enviados: ${sentValues.join(' | ')}`,
@@ -474,7 +486,7 @@ async function submitForm(scope: Locator, scenario: ToolScenario): Promise<Actio
         test_id: identity.testId,
         method: identity.method,
         action: identity.action,
-        status: response?.status() ?? null,
+        status: response?.status() ?? navigationResponse?.status() ?? null,
         before_url: beforeUrl,
         after_url: afterUrl,
         outcome: expectedVisibleIds.length > 0 ? `resultado confirmado (${expectedVisibleIds.length} contrato(s) visual(is))` : `resultado visível confirmado (${afterVisibleEvidence - beforeVisibleEvidence} nova(s) evidência(s))`,
@@ -490,6 +502,9 @@ async function assertExpectation(page: Page, scenario: ToolScenario, expectation
     const target = page.getByTestId(testId).first();
     const context = `[${scenario.tool_slug}:${scenario.id}] expectativa ${expectation.type} em data-testid="${testId}"`;
     if (expectation.type === 'visible') await expect(target, `${context}: o resultado/controle esperado não apareceu após a ação.`).toBeVisible({ timeout: 10_000 });
+    if (expectation.type === 'in_viewport') {
+        await expect(target, `${context}: o resultado existe no DOM, mas ficou fora da área visível após a ação. Para o usuário, isso se comporta como um simples reload da página.`).toBeInViewport({ ratio: 0.1, timeout: 10_000 });
+    }
     if (expectation.type === 'hidden') await expect(target, `${context}: o elemento deveria desaparecer após a ação.`).toBeHidden();
     if (expectation.type === 'text') await expect(target, `${context}: conteúdo inesperado.`).toContainText(expectation.value ?? '');
     if (expectation.type === 'field_value') await expect(target, `${context}: valor inesperado.`).toHaveValue(expectation.value ?? '');
@@ -541,6 +556,23 @@ export async function executeScenario(page: Page, scenario: ToolScenario): Promi
     return audit;
 }
 
+function expectedExportExtension(identity: SubmitIdentity): string | null {
+    const descriptor = `${identity.testId ?? ''} ${identity.label} ${identity.action}`.toLowerCase();
+    if (/\bpdf\b/.test(descriptor)) return 'pdf';
+    if (/xlsx|excel/.test(descriptor)) return 'xlsx';
+    if (/docx|word/.test(descriptor)) return 'docx';
+    if (/\bcsv\b/.test(descriptor)) return 'csv';
+    if (/\bjson\b/.test(descriptor)) return 'json';
+    if (/\bzip\b/.test(descriptor)) return 'zip';
+    return null;
+}
+
+function filenameExtension(filename: string): string {
+    const clean = filename.split(/[?#]/, 1)[0];
+    const dot = clean.lastIndexOf('.');
+    return dot >= 0 ? clean.slice(dot + 1).toLowerCase() : '';
+}
+
 export async function auditVisibleResultActions(page: Page, scenario: ToolScenario): Promise<ActionAuditEntry[]> {
     const resultRoots = page.locator([
         '[data-testid="contract-editor"]',
@@ -577,31 +609,29 @@ export async function auditVisibleResultActions(page: Page, scenario: ToolScenar
             || /^download-/i.test(identity.testId ?? '')
             || /export|baixar|download|pdf|excel|xlsx|csv|json|word|docx/i.test(`${identity.label} ${identity.action}`);
 
-        type ButtonOutcome =
-            | { type: 'response'; response: Response }
-            | { type: 'navigation'; response: Response | null }
-            | { type: 'download'; download: Download }
-            | null;
-        const responsePromise: Promise<ButtonOutcome> = page.waitForResponse(response => {
+        const responsePromise = page.waitForResponse(response => {
             const request = response.request();
             const responseUrl = new URL(response.url());
             return request.method().toUpperCase() === identity.method && responseUrl.pathname === actionUrl.pathname;
-        }, { timeout: 10_000 }).then(response => ({ type: 'response' as const, response })).catch(() => null);
-        const navigationPromise: Promise<ButtonOutcome> = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10_000 })
-            .then(response => ({ type: 'navigation' as const, response })).catch(() => null);
-        const downloadPromise: Promise<ButtonOutcome> | null = isExport
-            ? page.waitForEvent('download', { timeout: 10_000 }).then(download => ({ type: 'download' as const, download })).catch(() => null)
-            : null;
+        }, { timeout: 10_000 }).catch(() => null);
+        const navigationPromise = !isExport
+            ? page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 10_000 }).catch(() => null)
+            : Promise.resolve(null);
+        const downloadPromise = isExport
+            ? page.waitForEvent('download', { timeout: 10_000 }).catch(() => null)
+            : Promise.resolve(null);
 
         await button.click({ noWaitAfter: true });
-        const contenders: Promise<ButtonOutcome>[] = [responsePromise, navigationPromise];
-        if (downloadPromise) contenders.push(downloadPromise);
-        const firstOutcome = await Promise.race(contenders);
+        const [response, navigationResponse, download] = await Promise.all([
+            responsePromise,
+            navigationPromise,
+            downloadPromise,
+        ]);
 
-        let response: Response | null = null;
-        let download: Download | null = null;
-        if (firstOutcome?.type === 'download') download = firstOutcome.download;
-        else if (firstOutcome && 'response' in firstOutcome) response = firstOutcome.response;
+        if (!isExport && navigationResponse) {
+            await page.waitForLoadState('domcontentloaded', { timeout: 10_000 }).catch(() => undefined);
+            await page.locator('body').waitFor({ state: 'attached', timeout: 5_000 }).catch(() => undefined);
+        }
 
         if (download) {
             const failure = await download.failure();
@@ -610,29 +640,48 @@ export async function auditVisibleResultActions(page: Page, scenario: ToolScenar
                     `Dados enviados: ${sentValues.join(' | ')}`,
                 ]);
             }
-            audited.push({ kind: 'result-action', label: identity.label, test_id: identity.testId, method: identity.method, action: identity.action, status: response?.status() ?? null, before_url: beforeUrl, after_url: page.url(), outcome: `download OK: ${download.suggestedFilename()}` });
+
+            const suggestedFilename = download.suggestedFilename();
+            const expectedExtension = expectedExportExtension(identity);
+            const actualExtension = filenameExtension(suggestedFilename);
+            if (expectedExtension && actualExtension !== expectedExtension) {
+                throw actionFailure(scenario, identity, beforeUrl, page.url(), response, `o botão exportou um formato diferente do declarado pela própria ação.`, [
+                    `Arquivo recebido: ${suggestedFilename}`,
+                    `Extensão esperada: .${expectedExtension}`,
+                    `Extensão recebida: ${actualExtension ? `.${actualExtension}` : '(ausente)'}`,
+                ]);
+            }
+
+            if (response && response.status() >= 400) {
+                throw actionFailure(scenario, identity, beforeUrl, page.url(), response, `o download respondeu HTTP ${response.status()}.`, [
+                    `Arquivo recebido: ${suggestedFilename}`,
+                ]);
+            }
+
+            audited.push({ kind: 'result-action', label: identity.label, test_id: identity.testId, method: identity.method, action: identity.action, status: response?.status() ?? null, before_url: beforeUrl, after_url: page.url(), outcome: `download OK: ${suggestedFilename}` });
             continue;
         }
 
-        if (!response) {
+        const effectiveResponse = response ?? navigationResponse;
+        if (!effectiveResponse) {
             throw actionFailure(scenario, identity, beforeUrl, page.url(), null, 'o botão do formulário não gerou download nem resposta HTTP observável.', [
                 `Dados enviados: ${sentValues.join(' | ')}`,
             ]);
         }
 
-        await settleNavigationResponse(page, response);
+        await settleNavigationResponse(page, effectiveResponse);
 
-        if (response.status() >= 400) {
-            throw actionFailure(scenario, identity, beforeUrl, page.url(), response, `a ação respondeu HTTP ${response.status()}.`, [
+        if (effectiveResponse.status() >= 400) {
+            throw actionFailure(scenario, identity, beforeUrl, page.url(), effectiveResponse, `a ação respondeu HTTP ${effectiveResponse.status()}.`, [
                 `Dados enviados: ${sentValues.join(' | ')}`,
             ]);
         }
 
         if (isExport) {
-            const disposition = response.headers()['content-disposition'] ?? '';
-            const contentType = response.headers()['content-type'] ?? '';
+            const disposition = effectiveResponse.headers()['content-disposition'] ?? '';
+            const contentType = effectiveResponse.headers()['content-type'] ?? '';
             if (!/attachment|filename=/i.test(disposition) && !/(pdf|spreadsheet|excel|csv|json|word|officedocument|octet-stream)/i.test(contentType)) {
-                throw actionFailure(scenario, identity, beforeUrl, page.url(), response, 'o botão de exportação respondeu, mas não entregou um arquivo reconhecível.', [
+                throw actionFailure(scenario, identity, beforeUrl, page.url(), effectiveResponse, 'o botão de exportação respondeu, mas não entregou um arquivo reconhecível.', [
                     `Dados enviados: ${sentValues.join(' | ')}`,
                     `Content-Type: ${contentType || '(ausente)'}`,
                     `Content-Disposition: ${disposition || '(ausente)'}`,
@@ -641,7 +690,7 @@ export async function auditVisibleResultActions(page: Page, scenario: ToolScenar
         } else {
             const messages = await validationMessages(page);
             if (messages.length > 0) {
-                throw actionFailure(scenario, identity, beforeUrl, page.url(), response, 'o botão secundário do formulário respondeu, mas deixou erros de validação.', [
+                throw actionFailure(scenario, identity, beforeUrl, page.url(), effectiveResponse, 'o botão secundário do formulário respondeu, mas deixou erros de validação.', [
                     `Dados enviados: ${sentValues.join(' | ')}`,
                     `Validação: ${messages.join(' | ')}`,
                 ]);
@@ -654,7 +703,7 @@ export async function auditVisibleResultActions(page: Page, scenario: ToolScenar
             test_id: identity.testId,
             method: identity.method,
             action: identity.action,
-            status: response.status(),
+            status: effectiveResponse.status(),
             before_url: beforeUrl,
             after_url: page.url(),
             outcome: isExport ? 'arquivo HTTP reconhecido' : 'ação HTTP concluída sem erro de validação',

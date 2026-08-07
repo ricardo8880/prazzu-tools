@@ -4,10 +4,20 @@ import { executeAndValidateDownload } from './helpers/download-validator';
 import { applyE2ECorrelation, attachCorrelatedServerLogs } from './helpers/e2e-correlation';
 import { executeScenario, loadToolScenarios } from './helpers/tool-scenarios';
 
-const scenarios = loadToolScenarios().scenarios.filter(scenario => scenario.downloads.length > 0);
+const requestedToolSlug = process.env.E2E_TOOL_SLUG?.trim() || null;
+const downloadScenarios = loadToolScenarios().scenarios.filter(scenario => scenario.downloads.length > 0);
+const scenarios = requestedToolSlug
+    ? downloadScenarios.filter(scenario => scenario.tool_slug === requestedToolSlug)
+    : downloadScenarios;
 
 test.describe('Validação profunda de downloads', () => {
-    test(`carregou ${scenarios.length} cenários com downloads`, async () => {
+    test(requestedToolSlug
+        ? `carregou downloads declarados para ${requestedToolSlug}`
+        : `carregou ${scenarios.length} cenários com downloads`, async () => {
+        if (requestedToolSlug) {
+            expect(scenarios.length, `[E2E TOOL] ${requestedToolSlug} não possui cenário válido com downloads declarados.`).toBeGreaterThanOrEqual(1);
+            return;
+        }
         expect(scenarios.length).toBeGreaterThanOrEqual(1);
     });
 

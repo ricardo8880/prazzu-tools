@@ -167,7 +167,7 @@ final class LaborTerminationToolTest extends TestCase
             'extraordinary_indemnities' => '0,00',
         ])->assertOk()
             ->assertSee('Relatório de Rescisão Trabalhista')
-            ->assertSee('Imprimir / Salvar como PDF')
+            ->assertDontSee('Imprimir / Salvar como PDF')
             ->assertSee('R$ 3.000,00');
     }
 

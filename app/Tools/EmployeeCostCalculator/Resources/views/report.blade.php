@@ -67,6 +67,5 @@
 </p>
 
 <footer class="print-footer">
-    Relatório gerado pelo Prazzu Tools. Não substitui a folha de pagamento,
-    o eSocial ou a análise do profissional responsável.
+    Não substitui a folha de pagamento, o eSocial ou a análise do profissional responsável.
 </footer>

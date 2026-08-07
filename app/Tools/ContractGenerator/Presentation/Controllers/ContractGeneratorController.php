@@ -7,7 +7,9 @@ namespace App\Tools\ContractGenerator\Presentation\Controllers;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
+use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Data\PdfDocument;
 use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Tools\ContractGenerator\Application\Actions\BuildContractDraft;
 use App\Tools\ContractGenerator\Domain\Enums\ContractType;
@@ -66,12 +68,13 @@ final class ContractGeneratorController
 
     public function exportPdf(
         PreviewContractTextRequest $request,
+        PdfExporter $exporter,
         PlatformAnalytics $analytics,
-    ): View {
+    ): Response {
         $validated = $request->validated();
         $type = ContractType::from((string) $validated['contract_type']);
 
-        Log::info('Contract PDF printable view requested.', [
+        Log::info('Contract PDF download requested.', [
             'tool' => Tool::SLUG,
             'contract_type' => $type->value,
             'content_length' => mb_strlen((string) $validated['contract_text']),
@@ -85,14 +88,18 @@ final class ContractGeneratorController
                 ['subject_type' => 'tool', 'subject_slug' => Tool::SLUG, 'contract_type' => $type->value, 'format' => 'pdf'],
             ), $request);
 
-            return view('exports.printable-document', [
-                'title' => 'Contrato para impressão',
-                'contentView' => 'tools-gerador-de-contratos::pdf.contract',
-                'contentData' => ['content' => (string) $validated['contract_text']],
-                'generatedAt' => now()->format('d/m/Y H:i'),
-            ]);
+            return $exporter->download(new PdfDocument(
+                filename: 'contrato-'.now()->format('Y-m-d'),
+                view: 'exports.printable-document',
+                data: [
+                    'title' => $type->documentTitle(),
+                    'contentView' => 'tools-gerador-de-contratos::pdf.contract',
+                    'contentData' => ['content' => (string) $validated['contract_text']],
+                    'generatedAt' => now()->format('d/m/Y H:i'),
+                ],
+            ));
         } catch (\Throwable $exception) {
-            Log::error('Contract PDF printable view failed.', [
+            Log::error('Contract PDF download failed.', [
                 'tool' => Tool::SLUG,
                 'contract_type' => $type->value,
                 'exception' => $exception::class,

@@ -14,7 +14,11 @@ function expectedResultSummary(scenario: (typeof scenarios)[number]): string {
     const visible = scenario.expectations
         .filter(expectation => expectation.type === 'visible' && expectation.test_id)
         .map(expectation => expectation.test_id);
-    return visible.length > 0 ? visible.join(', ') : 'contrato semântico padrão de resultado';
+    const viewport = scenario.expectations
+        .filter(expectation => expectation.type === 'in_viewport' && expectation.test_id)
+        .map(expectation => `${expectation.test_id} (na tela do usuário)`);
+    const expected = [...visible, ...viewport];
+    return expected.length > 0 ? expected.join(', ') : 'contrato semântico padrão de resultado';
 }
 
 test.describe('Auditoria operacional rápida de formulários e botões', () => {
