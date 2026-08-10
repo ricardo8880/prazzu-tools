@@ -120,6 +120,27 @@ foreach (($productTools['official'] ?? []) as $tool) {
                 requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
             ),
         ],
+        'gerador-holerite' => [
+            new ToolDownloadExpectation(
+                id: 'holerite-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'holerite',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'holerite-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'holerite',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
         'calculadora-margem-markup' => [
             new ToolDownloadExpectation(
                 id: 'margem-markup-csv',
