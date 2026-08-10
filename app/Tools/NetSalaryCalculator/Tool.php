@@ -74,6 +74,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Labor,
             icon: 'bi-cash-coin',
             routeName: 'tools.calculadora-salario-liquido.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

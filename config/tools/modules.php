@@ -34,6 +34,7 @@ return [
         App\Tools\SalaryAdjustmentCalculator\Tool::class,
         App\Tools\NetSalaryCalculator\Tool::class,
         App\Tools\OvertimeCalculator\Tool::class,
+        App\Tools\TurnoverCalculator\Tool::class,
         // <tools:labor>
     ],
     'corporate' => [

@@ -66,6 +66,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Documents,
             icon: 'bi-file-earmark-person',
             routeName: 'tools.gerador-holerite.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

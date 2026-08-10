@@ -69,6 +69,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Calculators,
             icon: 'bi-cash-stack',
             routeName: 'tools.capital-de-giro.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

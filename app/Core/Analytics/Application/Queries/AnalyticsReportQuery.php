@@ -49,6 +49,7 @@ final class AnalyticsReportQuery
             'device_breakdown' => $this->breakdown(clone $current, 'device_type', $conversionEvents),
             'medium_breakdown' => $this->breakdown(clone $current, 'medium', $conversionEvents),
             'campaign_breakdown' => $this->breakdown(clone $current, 'campaign', $conversionEvents),
+            'vertical_breakdown' => $this->breakdown(clone $current, 'vertical_slug', $conversionEvents),
             'browser_breakdown' => $this->breakdown(clone $current, 'browser', $conversionEvents),
             'os_breakdown' => $this->breakdown(clone $current, 'operating_system', $conversionEvents),
             'language_breakdown' => $this->breakdown(clone $current, 'language', $conversionEvents),
@@ -98,7 +99,7 @@ final class AnalyticsReportQuery
         $total = (clone $query)->count();
         $fields = [
             'visitor_id', 'analytics_session_id', 'channel', 'source', 'path', 'device_type',
-            'browser', 'operating_system', 'country_code', 'region', 'city', 'language',
+            'browser', 'operating_system', 'country_code', 'region', 'city', 'language', 'vertical_slug',
         ];
         $coverage = [];
         foreach ($fields as $field) {
@@ -267,7 +268,7 @@ final class AnalyticsReportQuery
         $query = PlatformAnalyticsEvent::query()
             ->whereBetween('platform_analytics_events.occurred_at', [$period->start, $period->end]);
 
-        foreach (['channel', 'source', 'city', 'region', 'device_type', 'operating_system'] as $field) {
+        foreach (['channel', 'source', 'city', 'region', 'device_type', 'operating_system', 'vertical_slug'] as $field) {
             if (($filters[$field] ?? null) !== null && $filters[$field] !== '') {
                 $query->where("platform_analytics_events.$field", $filters[$field]);
             }
@@ -343,6 +344,7 @@ final class AnalyticsReportQuery
             'regions' => $distinct('region'),
             'devices' => $distinct('device_type'),
             'operating_systems' => $distinct('operating_system'),
+            'verticals' => $distinct('vertical_slug'),
             'tools' => PlatformAnalyticsEvent::query()->where('subject_type', 'tool')->whereNotNull('subject_slug')->distinct()->orderBy('subject_slug')->pluck('subject_slug'),
             'events' => $distinct('event_name'),
             'categories' => DB::table('blog_posts')->distinct()->orderBy('category')->pluck('category'),

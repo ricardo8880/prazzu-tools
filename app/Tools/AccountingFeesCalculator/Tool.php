@@ -103,6 +103,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.calculadora-de-honorarios-contabeis.index',
+            vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

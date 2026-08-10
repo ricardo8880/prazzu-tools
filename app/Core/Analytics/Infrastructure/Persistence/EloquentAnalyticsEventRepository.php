@@ -48,6 +48,7 @@ final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
                 'source' => $context->source,
                 'medium' => $context->medium,
                 'campaign' => $context->campaign,
+                'vertical_slug' => $context->verticalSlug,
                 'acquisition_context_id' => $context->acquisition?->contextId,
                 'acquisition_keyword' => $context->acquisition?->keyword,
                 'acquisition_campaign_identifier' => $context->acquisition?->campaignIdentifier,

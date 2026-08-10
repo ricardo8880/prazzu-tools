@@ -88,6 +88,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Fiscal,
             icon: 'bi-arrow-left-right',
             routeName: 'tools.comparador-tributario.index',
+            vertical: 'contabilidade',
             version: '0.8.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

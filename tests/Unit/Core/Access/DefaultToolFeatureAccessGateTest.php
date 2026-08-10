@@ -128,6 +128,7 @@ final class DefaultToolFeatureAccessGateTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.ferramenta-teste.index',
+            vertical: 'contabilidade',
             features: [
                 new ToolFeature('calculate', 'Cálculo completo', ToolFeatureTier::Essential),
                 new ToolFeature('scenarios', 'Cenários avançados', ToolFeatureTier::Plus),

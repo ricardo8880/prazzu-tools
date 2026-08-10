@@ -10,6 +10,15 @@
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
         <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label" for="vertical_slug">Vertical</label>
+                <select class="form-select" id="vertical_slug" name="vertical_slug" required>
+                    @foreach ($verticals as $vertical)
+                        <option value="{{ $vertical->slug }}" @selected(old('vertical_slug', $category->vertical_slug ?: config('verticals.default')) === $vertical->slug)>{{ $vertical->name }}</option>
+                    @endforeach
+                </select>
+                <div class="form-text">Filtra e organiza a categoria sem criar um Blog separado.</div>
+            </div>
             <div class="col-md-7">
                 <label class="form-label" for="name">Nome</label>
                 <input class="form-control" id="name" name="name" required maxlength="100" value="{{ old('name', $category->name) }}" autofocus>

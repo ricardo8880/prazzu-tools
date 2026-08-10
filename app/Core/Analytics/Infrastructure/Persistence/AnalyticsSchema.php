@@ -17,7 +17,7 @@ final class AnalyticsSchema
         ],
         'analytics_sessions' => [
             'id', 'visitor_id', 'user_id', 'started_at', 'last_activity_at',
-            'landing_url', 'landing_path', 'referrer', 'source', 'medium', 'campaign',
+            'landing_url', 'landing_path', 'referrer', 'source', 'medium', 'campaign', 'vertical_slug',
             'acquisition_context_id', 'acquisition_keyword', 'acquisition_campaign_identifier',
             'acquisition_primary_tool_slug', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
             'device_type', 'browser', 'operating_system', 'language', 'timezone',
@@ -26,7 +26,7 @@ final class AnalyticsSchema
         'platform_analytics_events' => [
             'event_id', 'event_name', 'schema_version', 'channel',
             'subject_type', 'subject_id', 'subject_slug', 'visitor_id', 'analytics_session_id',
-            'user_id', 'session_id', 'url', 'path', 'referrer', 'source', 'medium', 'campaign',
+            'user_id', 'session_id', 'url', 'path', 'referrer', 'source', 'medium', 'campaign', 'vertical_slug',
             'acquisition_context_id', 'acquisition_keyword', 'acquisition_campaign_identifier',
             'acquisition_primary_tool_slug', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
             'device_type', 'browser', 'operating_system', 'language', 'timezone',

@@ -22,6 +22,7 @@ final class ToolDefinitionTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.calculadora-exemplo.index',
+            vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
@@ -53,6 +54,7 @@ final class ToolDefinitionTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.calculadora-exemplo.index',
+            vertical: 'contabilidade',
         );
     }
 
@@ -67,6 +69,7 @@ final class ToolDefinitionTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'calculadora.index',
+            vertical: 'contabilidade',
         );
     }
 }

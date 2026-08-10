@@ -3,9 +3,9 @@
 return [
     'pages' => [
         'blog' => [
-            'title' => 'Conteúdos para a rotina contábil',
+            'title' => 'Conteúdos profissionais por vertical',
             'eyebrow' => 'Blog Prazzu',
-            'description' => 'Guias, atualizações e boas práticas para tornar o trabalho contábil mais simples e seguro.',
+            'description' => 'Guias, atualizações e boas práticas conectados às diferentes verticais da plataforma.',
             'icon' => 'bi-journal-text',
         ],
         'planos' => [
@@ -39,7 +39,7 @@ return [
             ],
         ],
         'sobre' => [
-            'title' => 'Ferramentas contábeis que resolvem de verdade',
+            'title' => 'Ferramentas profissionais que resolvem de verdade',
             'eyebrow' => 'Sobre o projeto',
             'description' => 'O Prazzu Tools nasce para reunir soluções gratuitas e profissionais em uma plataforma simples, confiável e preparada para crescer.',
             'icon' => 'bi-info-circle',
@@ -59,7 +59,7 @@ return [
         'prazzu' => [
             'title' => 'Conheça a plataforma Prazzu',
             'eyebrow' => 'Ecossistema Prazzu',
-            'description' => 'Esta página receberá a apresentação do sistema completo para contadores.',
+            'description' => 'Esta página receberá a apresentação do ecossistema Prazzu para diferentes áreas de negócio.',
             'icon' => 'bi-boxes',
         ],
     ],

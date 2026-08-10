@@ -1,20 +1,21 @@
-# Inventário oficial das 32 ferramentas
+# Inventário oficial das ferramentas
 
 A fonte executável deste inventário é `config/product_tools.php`. O README da raiz continua sendo a regra máxima do projeto.
 
 ## Estado consolidado no Lote Cirúrgico 1
 
-O projeto possui **exatamente 32 módulos em `app/Tools`** e os 32 passam a integrar um único inventário oficial. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
+Após o Lote 6 multi-nicho, o projeto possui **33 módulos em `app/Tools`**, todos integrantes de um único inventário oficial. Os 32 módulos anteriores permanecem associados à vertical `contabilidade` e `TurnoverCalculator` inaugura a vertical `rh`. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
 
-Este lote não remove módulos nem altera slugs públicos. A ferramenta combinada `ProLaboreProfitDistributionCalculator` permanece temporariamente no inventário com o estado `implemented`, porque apresenta sobreposição funcional com `ProLaboreSimulator` e `ProfitDistributionCalculator`. A sua retirada só pode ocorrer num lote de migração dedicado, com compatibilidade de rotas, histórico e métricas e sem reduzir o catálogo abaixo das 32 ferramentas definidas pelo produto.
+Este lote não remove módulos nem altera slugs públicos. A ferramenta combinada `ProLaboreProfitDistributionCalculator` permanece temporariamente no inventário com o estado `implemented`, porque apresenta sobreposição funcional com `ProLaboreSimulator` e `ProfitDistributionCalculator`. A sua retirada só pode ocorrer num lote de migração dedicado, com compatibilidade de rotas, histórico e métricas e sem reduzir a quantidade oficial vigente declarada no inventário.
 
 ## Regras obrigatórias do inventário
 
-- O diretório `app/Tools` deve conter exatamente 32 módulos enquanto não houver lote explícito de expansão ou substituição.
+- O diretório `app/Tools` deve conter a quantidade declarada por `expected_module_count`. O Lote 6 é o lote explícito de expansão que elevou essa quantidade de 32 para 33.
 - Cada módulo deve aparecer exatamente uma vez em `config/product_tools.php`.
+- Cada entrada oficial deve declarar uma `vertical` registrada e coincidir com a vertical do respectivo `ToolManifest`.
 - IDs, chaves, nomes e slugs do inventário devem ser únicos.
 - Cada módulo deve possuir `Tool.php` e estar registado em `config/tools/modules.php`.
-- Todas as 32 ferramentas devem estar visíveis na página de ferramentas.
+- Todas as ferramentas da vertical ativa devem estar visíveis na página de ferramentas; no fallback global, o catálogo pode exibir todas as ferramentas oficiais.
 - Nenhum módulo pode ficar escondido por classificação documental paralela.
 - Nenhuma ferramenta pode ser apagada apenas por semelhança de nome; remoções exigem auditoria funcional e estratégia de compatibilidade.
 - A Home é tratada separadamente: deve mostrar exatamente as 8 ferramentas mais recentes, sem alterar a visibilidade do catálogo completo.
@@ -43,4 +44,4 @@ Toda alteração deve atualizar conjuntamente:
 
 ## Resolução da sobreposição funcional — Lote Cirúrgico 4
 
-O módulo `ProLaboreProfitDistributionCalculator` foi mantido com o slug histórico, porém reposicionado como **Planejador de Retirada de Sócios**. O escopo público agora é a composição consolidada da retirada e a comparação de cenários; os módulos `ProLaboreSimulator` e `ProfitDistributionCalculator` continuam responsáveis pelos cálculos especializados isolados. Assim, as 32 entradas permanecem visíveis sem uma ferramenta escondida ou um terceiro formulário com propósito idêntico.
+O módulo `ProLaboreProfitDistributionCalculator` foi mantido com o slug histórico, porém reposicionado como **Planejador de Retirada de Sócios**. O escopo público agora é a composição consolidada da retirada e a comparação de cenários; os módulos `ProLaboreSimulator` e `ProfitDistributionCalculator` continuam responsáveis pelos cálculos especializados isolados. Assim, as 32 entradas históricas permanecem preservadas sem uma ferramenta escondida ou um terceiro formulário com propósito idêntico; o Lote 6 adiciona a 33ª entrada em RH.

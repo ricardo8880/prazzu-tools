@@ -28,6 +28,7 @@ final class TransversalToolInfrastructureTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'calculator',
             routeName: 'tools.legacy-tool.index',
+            vertical: 'contabilidade',
         ));
 
         self::assertNull($legacy->manifest()->persistence);
@@ -82,6 +83,7 @@ final class TransversalToolInfrastructureTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'calculator',
             routeName: 'tools.transversal-test.index',
+            vertical: 'contabilidade',
             version: '1.5.0',
             supportsHistory: true,
             storesSensitiveData: true,

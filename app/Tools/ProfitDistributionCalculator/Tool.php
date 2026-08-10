@@ -65,6 +65,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
             category: ToolCategory::Fiscal,
             icon: 'bi-pie-chart',
             routeName: 'tools.distribuicao-de-lucros.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

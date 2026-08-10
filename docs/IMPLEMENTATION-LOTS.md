@@ -612,10 +612,10 @@ continuidade, compatibilidade e validação.
 |---:|---|---|
 | 1 | Constituição, contratos arquiteturais e regras Global x Vertical | Concluído |
 | 2 | Fundação genérica de Vertical e VerticalContext | Concluído |
-| 3 | Ferramentas e conteúdo contextual por vertical | Pendente |
-| 4 | Home e experiência contextual | Pendente |
-| 5 | Serviços globais conscientes de vertical | Pendente |
-| 6 | Segunda vertical mínima como prova arquitetural | Pendente |
+| 3 | Ferramentas e conteúdo contextual por vertical | Concluído |
+| 4 | Home e experiência contextual | Concluído |
+| 5 | Serviços globais conscientes de vertical | Concluído |
+| 6 | Segunda vertical mínima como prova arquitetural | Concluído |
 
 ## Evolução multi-nicho — Resultado do Lote 1
 
@@ -667,3 +667,115 @@ continuidade, compatibilidade e validação.
 6. Não transformar categorias como Fiscal/Trabalhista em substitutos de Vertical; domínio e tipo/categoria continuam conceitos distintos.
 7. Preservar URLs, slugs, rotas, Analytics, E2E, Auth, Blog engine e infraestrutura compartilhada.
 8. Não contextualizar a Home além do necessário para o escopo do Lote 3; a experiência inicial pertence ao Lote 4.
+
+
+## Evolução multi-nicho — Resultado do Lote 3
+
+- O estado foi reconstruído do ZIP original e conferido contra os Lotes 1 e 2 antes das alterações.
+- Os 32 `ToolManifest` passaram a declarar explicitamente `vertical = contabilidade`.
+- `config/product_tools.php` permanece inventário executável e agora registra a mesma vertical das 32 ferramentas, protegida por gate arquitetural.
+- `ToolCatalog` passou a respeitar `VerticalContext` em catálogo, busca, categorias, recomendações e listagens; `VerticalContext = null` continua exibindo o catálogo global.
+- Os recursos existentes em `config/resources.php` passaram a declarar `vertical = contabilidade` e suas listagens respeitam o contexto ativo sem alterar URLs ou views.
+- Blog posts e categorias ganharam `vertical_slug`; a migration retrocompatível associa os registros existentes a `contabilidade`, e consultas públicas de Blog respeitam a vertical ativa.
+- Novos posts/categorias preservam a vertical já atribuída ou usam a vertical ativa/padrão, sem adicionar interface específica por nicho.
+- Categorias de ferramenta continuam sendo taxonomia de apresentação/domínio e não foram transformadas em substitutos de Vertical.
+- Home, Analytics, SEO, sitemap, breadcrumbs, Admin contextual e observabilidade não foram antecipados além do necessário para catalogar os dados.
+- Nenhum slug público, rota de ferramenta, regra de domínio ou quantidade oficial de módulos foi alterado.
+- O relatório detalhado está em `docs/MULTI-VERTICAL-LOT-3-CATALOGING.md`.
+
+## Continuidade obrigatória para o Lote 4 multi-nicho
+
+1. Reconstruir novamente o projeto a partir do ZIP original e reaplicar, em ordem, os Lotes 1, 2 e 3.
+2. Reler README, `CORE_CANDIDATES.md`, este documento e os três relatórios multi-vertical.
+3. Confirmar que os 32 manifests e o inventário continuam associados a `contabilidade`.
+4. Implementar a Home contextual usando `VerticalContext` e as fontes já catalogadas, sem criar Home/controllers paralelos por nicho.
+5. Preservar o fallback global quando `VerticalContext = null`.
+6. Não antecipar a segunda vertical real nem duplicar Analytics, SEO, Blog, Auth, Admin ou E2E.
+
+## Evolução multi-nicho — Resultado do Lote 4
+
+- O estado foi reconstruído do ZIP original e recebeu integralmente as alterações do Lote 3 antes deste trabalho, preservando os resultados constitucionais e de fundação dos Lotes 1 e 2 já incorporados nesse pacote incremental.
+- A rota `/`, `HomeController`, `welcome.blade.php` e o builder compartilhado permanecem únicos; não foram criadas Homes, controllers ou engines por nicho.
+- `config/home.php` ganhou uma experiência global para `VerticalContext = null` e bases configuráveis por slug de vertical, mantendo o contrato histórico de Contabilidade por compatibilidade.
+- Contabilidade continua apresentando o mesmo Hero, CTA, título e descrição anteriores porque permanece a vertical padrão atual.
+- `BuildContextualHome` seleciona primeiro a base correspondente ao `VerticalContext`; uma vertical sem configuração própria cai no fallback global.
+- `AcquisitionContext` continua independente e é aplicado somente depois da seleção da base por vertical, preservando personalizações de campanha já existentes.
+- Ferramentas e categorias da Home continuam vindo do `ToolCatalog`, portanto herdam a filtragem por vertical implementada no Lote 3 e a regra das 8 maiores `release_order`.
+- A view deixou de fixar metadados de Contabilidade e passa a renderizar título e descrição fornecidos pela base da Home, sem introduzir uma engine SEO paralela.
+- Foram adicionados testes para o fallback `VerticalContext = null`, para vertical registrada sem Home específica e para impedir controllers de Home específicos por nicho.
+- Nenhuma segunda vertical real, Analytics contextual, SEO engine contextual, sitemap, breadcrumbs, Admin ou observabilidade foi antecipada.
+- O relatório detalhado está em `docs/MULTI-VERTICAL-LOT-4-CONTEXTUAL-HOME.md`.
+
+## Continuidade obrigatória para o Lote 5 multi-nicho
+
+1. Reconstruir novamente o projeto a partir do ZIP original e reaplicar, em ordem, os lotes multi-vertical já entregues até o Lote 4.
+2. Reler README, `CORE_CANDIDATES.md`, este documento e os relatórios dos Lotes 1 a 4.
+3. Confirmar que Contabilidade continua sendo a experiência pública padrão e que `VerticalContext = null` renderiza a Home global sem vazamento de conteúdo contábil.
+4. Tornar Analytics, SEO, sitemap, breadcrumbs, busca, Admin e observabilidade conscientes de vertical apenas onde aplicável, mantendo uma única infraestrutura global.
+5. Não criar serviços `AnalyticsRH`, `SEORH`, `AdminRH` ou equivalentes; vertical deve ser dimensão/contexto.
+6. Não cadastrar a segunda vertical real antes do Lote 6, salvo fixtures/configurações estritamente necessárias para teste arquitetural.
+
+
+
+## Evolução multi-nicho — Resultado do Lote 5
+
+- O estado foi reconstruído do ZIP original e os pacotes incrementais dos Lotes 3 e 4 foram reaplicados dentro da raiz real `prazzu-tools/` antes das alterações.
+- Analytics continua único e ganhou `vertical_slug` em sessões e eventos, resolvido pelo `VerticalContext` ativo antes da captura de Analytics.
+- Relatórios estratégicos do Analytics podem filtrar e decompor métricas por vertical sem criar pipelines ou bancos separados.
+- O SEO continua compartilhado: `VerticalSeoContext` seleciona defaults globais ou por vertical a partir de configuração, preservando overrides específicos das páginas.
+- O sitemap de ferramentas continua derivado do `ToolCatalog`, que já respeita `VerticalContext`; o sitemap do Blog passou a aplicar o mesmo contexto aos posts publicados.
+- Breadcrumbs compartilhados podem consultar a vertical ativa; os pontos centrais reutilizáveis de ferramentas, Blog e recursos passaram a expor essa dimensão sem criar componentes por nicho.
+- O Admin do Blog continua único e agora permite filtrar postagens/categorias por vertical e selecionar explicitamente a vertical ao editar conteúdo.
+- A busca não recebeu uma segunda implementação: ela continua usando `ToolCatalog::search()`, já vertical-aware desde o Lote 3.
+- A observabilidade recebe a vertical ativa no contexto compartilhado de logs por requisição.
+- Nenhuma segunda vertical real foi cadastrada e nenhum serviço `AnalyticsRH`, `SEORH`, `AdminRH` ou equivalente foi criado.
+- O relatório detalhado está em `docs/MULTI-VERTICAL-LOT-5-GLOBAL-SERVICES.md`.
+
+## Continuidade obrigatória para o Lote 6 multi-nicho
+
+1. Reconstruir o projeto a partir do ZIP original e reaplicar, em ordem, todos os pacotes incrementais necessários até o Lote 5.
+2. Reler README, `CORE_CANDIDATES.md`, este documento e os relatórios multi-vertical já concluídos.
+3. Confirmar que `contabilidade` permanece funcionando e que Analytics, SEO, Blog, Admin, Auth, Billing, E2E e infraestrutura continuam únicos.
+4. Registrar uma segunda vertical mínima (preferencialmente RH apenas como prova arquitetural), sem alterar o Core para conhecer seu nome.
+5. Criar somente conteúdo/configuração e 1 ou 2 ferramentas mínimas necessárias para provar a expansão.
+6. Validar que Home, catálogo, Blog, SEO, Analytics e filtros respeitam a segunda vertical sem vazamento de Contabilidade.
+7. Se adicionar a segunda vertical exigir copiar infraestrutura, interromper a expansão funcional e corrigir a generalização antes de continuar.
+
+
+## Evolução multi-nicho — Resultado do Lote 5
+
+- Analytics, SEO, sitemap, breadcrumbs, busca, Admin e observabilidade permaneceram infraestruturas globais e passaram a carregar/consultar vertical quando aplicável.
+- `vertical_slug` passou a integrar sessões/eventos e filtros do Analytics sem criar stacks por nicho.
+- SEO e navegação passaram a receber defaults/contexto de vertical com fallback global.
+- Blog/Admin e sitemaps passaram a respeitar a vertical ativa sem duplicar controllers ou engines.
+- O relatório detalhado está em `docs/MULTI-VERTICAL-LOT-5-GLOBAL-SERVICES.md`.
+
+## Evolução multi-nicho — Resultado do Lote 6
+
+- `rh` foi registrada como segunda vertical por configuração, sem enum fechado ou alteração do Core de verticais.
+- Foi criada uma única ferramenta mínima de RH, `calculadora-turnover`, registrada pelo mesmo `ToolRegistry`, catálogo, rotas, Analytics e E2E das ferramentas existentes.
+- O inventário oficial passou explicitamente de 32 para 33 ferramentas; os 32 módulos históricos continuam associados a `contabilidade` e a nova ferramenta pertence a `rh`.
+- Home e SEO ganharam conteúdo de RH via configuração compartilhada, sem `HomeRH`, `SEORH` ou infraestrutura paralela.
+- Foi adicionado conteúdo mínimo de Blog de RH com dois artigos, incluindo conteúdo relacionado à ferramenta, usando a mesma engine e as mesmas tabelas existentes.
+- A cobertura E2E declarativa passou a esperar 33 ferramentas e inclui a nova ferramenta por descoberta automática do inventário.
+- Analytics permanece único; a ferramenta declara a jornada padrão e herda `vertical_slug = rh` pelo contexto compartilhado.
+- O relatório detalhado está em `docs/MULTI-VERTICAL-LOT-6-RH-PROOF.md`.
+
+## Continuidade após a prova multi-nicho
+
+1. Reconstruir sempre o ZIP original e reaplicar os Lotes multi-vertical 3, 4, 5 e 6 em ordem antes de novas alterações.
+2. Reler README e todos os relatórios multi-vertical antes de expandir RH ou criar outra vertical.
+3. Não promover código específico de RH ao Core sem reutilização transversal comprovada.
+4. Usar `rh` como prova de que novas verticais entram por dados, conteúdo e ferramentas, preservando a infraestrutura compartilhada.
+5. Antes de qualquer nova expansão, auditar suposições históricas de Contabilidade e gates numéricos que representem o estado atual, sem reescrever documentos históricos.
+
+
+## Evolução multi-nicho — Resultado do Lote 7 (Consolidação)
+
+- O estado foi reconstruído do ZIP original com os deltas multi-vertical dos Lotes 3, 4, 5 e 6 reaplicados em ordem.
+- Foi auditado o projeto inteiro em busca de suposições implícitas de Contabilidade, vazamento de conteúdo entre verticais, números atuais obsoletos e duplicação de infraestrutura.
+- O Admin do Blog foi corrigido para montar categorias e ferramentas pela vertical da postagem, validar relações de ferramenta da mesma vertical e manter preview/relacionados isolados por vertical.
+- Catálogo, Blog, Recursos e Sobre deixaram de apresentar Contabilidade como identidade global; Contabilidade continua preservada como conteúdo explícito da primeira vertical.
+- A documentação arquitetural atual registra 33 ferramentas no total (32 de Contabilidade e 1 de RH), sem reescrever os trechos históricos dos lotes anteriores.
+- Foi adicionado um gate arquitetural de consolidação para proteger as superfícies compartilhadas contra regressões multi-vertical.
+- A partir deste ponto, novas verticais devem entrar por registro, configuração, conteúdo e ferramentas; não existe um Lote 8 obrigatório da trilha multi-nicho.

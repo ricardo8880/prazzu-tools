@@ -2,15 +2,20 @@
 
 <html lang="pt-BR" data-bs-theme="dark">
 <head>
+    @php($verticalSeo = app(\App\Core\Seo\Application\VerticalSeoContext::class)->defaults())
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'Prazzu Tools'))</title>
+    <title>@yield('title', $verticalSeo['title'])</title>
     <meta
         name="description"
-        content="@yield('meta_description', 'Ferramentas contábeis práticas, confiáveis e acessíveis.')"
+        content="@yield('meta_description', $verticalSeo['description'])"
     >
+    @if ($verticalSeo['keywords'] !== [])
+        <meta name="keywords" content="{{ implode(', ', $verticalSeo['keywords']) }}">
+    @endif
+    <meta name="vertical" content="{{ $verticalSeo['vertical'] ?? 'global' }}">
     <meta name="robots" content="@yield('meta_robots', 'index,follow')">
     <link rel="canonical" href="@yield('canonical_url', url()->current())">
 
@@ -19,11 +24,11 @@
     <meta property="og:site_name" content="{{ config('app.name', 'Prazzu Tools') }}">
     <meta
         property="og:title"
-        content="@yield('og_title', trim($__env->yieldContent('title', config('app.name', 'Prazzu Tools'))))"
+        content="@yield('og_title', trim($__env->yieldContent('title', $verticalSeo['title'])))"
     >
     <meta
         property="og:description"
-        content="@yield('og_description', trim($__env->yieldContent('meta_description', 'Ferramentas contábeis práticas, confiáveis e acessíveis.')))"
+        content="@yield('og_description', trim($__env->yieldContent('meta_description', $verticalSeo['description'])))"
     >
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
 
@@ -39,11 +44,11 @@
 
     <meta
         name="twitter:title"
-        content="@yield('og_title', trim($__env->yieldContent('title', config('app.name', 'Prazzu Tools'))))"
+        content="@yield('og_title', trim($__env->yieldContent('title', $verticalSeo['title'])))"
     >
     <meta
         name="twitter:description"
-        content="@yield('og_description', trim($__env->yieldContent('meta_description', 'Ferramentas contábeis práticas, confiáveis e acessíveis.')))"
+        content="@yield('og_description', trim($__env->yieldContent('meta_description', $verticalSeo['description'])))"
     >
 
     @hasSection('og_image')
@@ -64,14 +69,8 @@
 
     @stack('head')
 
-    @php
-        $analyticsRouteName = request()->route()?->getName();
-        $analyticsToolSlug = is_string($analyticsRouteName) && str_starts_with($analyticsRouteName, 'tools.')
-            ? (explode('.', $analyticsRouteName)[1] ?? null)
-            : null;
-    @endphp
     <meta name="analytics-audience-endpoint" content="{{ route('analytics.audience.capture') }}">
-    @if($analyticsToolSlug)
+    @if(! empty($analyticsToolSlug))
         <meta name="analytics-tool-endpoint" content="{{ route('analytics.tools.track') }}">
         <meta name="analytics-presence-endpoint" content="{{ route('analytics.tools.presence') }}">
         <meta name="analytics-tool-slug" content="{{ $analyticsToolSlug }}">

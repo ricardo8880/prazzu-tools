@@ -45,6 +45,7 @@ final class ExampleToolModule implements ToolModule
             category: ToolCategory::Other,
             icon: 'bi-tools',
             routeName: 'tools.ferramenta-exemplo.index',
+            vertical: 'contabilidade',
             features: [
                 new ToolFeature('calculate', 'Cálculo completo', ToolFeatureTier::Essential),
                 new ToolFeature('history', 'Histórico de cálculos', ToolFeatureTier::Plus),

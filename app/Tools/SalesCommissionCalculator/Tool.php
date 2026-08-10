@@ -69,6 +69,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Calculators,
             icon: 'bi-person-check',
             routeName: 'tools.comissao-vendedores.index',
+            vertical: 'contabilidade',
             version: '0.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

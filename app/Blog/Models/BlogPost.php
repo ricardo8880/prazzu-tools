@@ -20,6 +20,7 @@ final class BlogPost extends Model
         'content',
         'category_id',
         'category',
+        'vertical_slug',
         'cover_image_path',
         'cover_image_alt',
         'status',
@@ -43,6 +44,11 @@ final class BlogPost extends Model
     public function blogCategory(): BelongsTo
     {
         return $this->belongsTo(BlogCategory::class, 'category_id');
+    }
+
+    public function scopeForVertical(Builder $query, ?string $vertical): Builder
+    {
+        return $vertical === null ? $query : $query->where('vertical_slug', $vertical);
     }
 
     public function scopePubliclyAvailable(Builder $query, ?\DateTimeInterface $now = null): Builder

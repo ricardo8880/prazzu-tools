@@ -18,6 +18,7 @@ final readonly class AnalyticsContext
         public ?string $source = null,
         public ?string $medium = null,
         public ?string $campaign = null,
+        public ?string $verticalSlug = null,
         public ?AcquisitionAnalyticsSnapshot $acquisition = null,
         public array $utm = [],
         public ?string $deviceType = null,

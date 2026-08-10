@@ -18,9 +18,18 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form class="row g-3" method="get">
-                <div class="col-lg-7">
+                <div class="col-lg-5">
                     <label class="form-label" for="q">Buscar</label>
                     <input class="form-control" id="q" name="q" value="{{ $search }}" placeholder="Título, slug ou categoria">
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label" for="vertical">Vertical</label>
+                    <select class="form-select" id="vertical" name="vertical">
+                        <option value="">Todas</option>
+                        @foreach ($verticals as $vertical)
+                            <option value="{{ $vertical->slug }}" @selected($selectedVertical === $vertical->slug)>{{ $vertical->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-lg-3">
                     <label class="form-label" for="status">Status</label>
@@ -45,6 +54,7 @@
                     <tr>
                         <th class="ps-4">Postagem</th>
                         <th>Categoria</th>
+                        <th>Vertical</th>
                         <th>Status</th>
                         <th>Publicação</th>
                         <th class="text-end pe-4">Ações</th>
@@ -61,6 +71,7 @@
                                 @endif
                             </td>
                             <td>{{ $post->blogCategory?->name ?? $post->category }}</td>
+                            <td>{{ $post->vertical_slug ?? 'global' }}</td>
                             <td>
                                 <span class="badge {{ $post->status->value === 'published' ? 'text-bg-success' : ($post->status->value === 'scheduled' ? 'text-bg-info' : 'text-bg-secondary') }}">
                                     {{ $post->status->label() }}
@@ -87,7 +98,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5">
+                            <td colspan="6" class="text-center py-5">
                                 <i class="bi bi-journal-text display-5 text-body-secondary" aria-hidden="true"></i>
                                 <h2 class="h5 mt-3">Nenhuma postagem encontrada</h2>
                                 <p class="text-body-secondary">Comece criando o primeiro conteúdo do blog.</p>

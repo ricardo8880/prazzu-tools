@@ -74,6 +74,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Labor,
             icon: 'bi-arrow-left-right',
             routeName: 'tools.comparador-clt-pj-autonomo.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

@@ -76,6 +76,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Labor,
             icon: 'bi-calendar2-check',
             routeName: 'tools.calculadora-ferias.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

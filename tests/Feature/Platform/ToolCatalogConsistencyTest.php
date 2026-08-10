@@ -28,6 +28,7 @@ final class ToolCatalogConsistencyTest extends TestCase
             $this->assertNotEmpty($tool['description']);
             $this->assertNotEmpty($tool['icon']);
             $this->assertNotEmpty($tool['version']);
+            $this->assertContains($tool['vertical'], array_keys(config('verticals.registered', [])));
             $this->assertStringStartsWith('tools.', $tool['route_name']);
             $this->assertNotEmpty($tool['capabilities']);
             $this->assertSame(count($tool['capabilities']), count(array_unique($tool['capabilities'])));

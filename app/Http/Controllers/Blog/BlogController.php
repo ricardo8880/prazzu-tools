@@ -6,6 +6,7 @@ use App\Blog\Models\BlogPost;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Tools\ToolCatalog;
+use App\Core\Verticals\Application\VerticalContext;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -14,12 +15,13 @@ use Illuminate\View\View;
 
 final class BlogController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, VerticalContext $verticalContext): View
     {
+        $vertical = $verticalContext->slug();
         $search = trim((string) $request->string('q'));
         $category = trim((string) $request->string('categoria'));
 
-        $query = BlogPost::query()->publiclyAvailable();
+        $query = BlogPost::query()->forVertical($vertical)->publiclyAvailable();
 
         if ($search !== '') {
             $query->where(function (Builder $query) use ($search): void {
@@ -39,6 +41,7 @@ final class BlogController extends Controller
         $posts = $query->paginate(9)->withQueryString();
 
         $categories = BlogPost::query()
+            ->forVertical($vertical)
             ->publiclyAvailable()
             ->selectRaw('category, COUNT(*) as posts_count')
             ->groupBy('category')
@@ -46,6 +49,7 @@ final class BlogController extends Controller
             ->get();
 
         $featured = BlogPost::query()
+            ->forVertical($vertical)
             ->publiclyAvailable()
             ->where('is_featured', true)
             ->first();
@@ -53,9 +57,11 @@ final class BlogController extends Controller
         return view('blog.index', compact('posts', 'categories', 'featured', 'search', 'category'));
     }
 
-    public function show(string $slug, Request $request, ToolCatalog $toolCatalog, PlatformAnalytics $analytics): View
+    public function show(string $slug, Request $request, ToolCatalog $toolCatalog, PlatformAnalytics $analytics, VerticalContext $verticalContext): View
     {
+        $vertical = $verticalContext->slug();
         $post = BlogPost::query()
+            ->forVertical($vertical)
             ->publiclyAvailable()
             ->where('slug', $slug)
             ->firstOrFail();
@@ -67,6 +73,7 @@ final class BlogController extends Controller
         ]);
 
         $relatedPosts = BlogPost::query()
+            ->forVertical($post->vertical_slug)
             ->publiclyAvailable()
             ->whereKeyNot($post->getKey())
             ->where('category', $post->category)

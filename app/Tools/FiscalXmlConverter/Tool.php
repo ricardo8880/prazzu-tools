@@ -83,6 +83,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Fiscal,
             icon: 'bi-file-earmark-code',
             routeName: 'tools.conversor-fiscal-xml.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

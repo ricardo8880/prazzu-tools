@@ -30,6 +30,9 @@ return [
         'contabilidade' => [
             'name' => 'Contabilidade',
         ],
+        'rh' => [
+            'name' => 'Recursos Humanos',
+        ],
     ],
 
     /*

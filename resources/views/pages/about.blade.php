@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Sobre o Prazzu Tools — Plataforma de ferramentas contábeis')
-@section('meta_description', 'Conheça o Prazzu Tools, uma plataforma criada para reunir ferramentas contábeis confiáveis, gratuitas e preparadas para evoluir com a rotina dos profissionais da contabilidade.')
+@section('title', 'Sobre o Prazzu Tools — Plataforma de ferramentas profissionais')
+@section('meta_description', 'Conheça o Prazzu Tools, uma plataforma de ferramentas profissionais organizada por verticais de negócio e preparada para evoluir sem duplicar infraestrutura.')
 
 @section('content')
     <div class="prazzu-page prazzu-about">
@@ -11,12 +11,12 @@
             </span>
 
             <h1 id="about-title" class="display-5 fw-bold mb-3">
-                Ferramentas contábeis que resolvem de verdade
+                Ferramentas profissionais que resolvem de verdade
             </h1>
 
             <p class="lead text-body-secondary mx-auto mb-4" style="max-width: 840px;">
-                O Prazzu Tools nasceu para reunir, em uma única plataforma, soluções confiáveis para a rotina de
-                contadores, escritórios contábeis e profissionais que precisam tomar decisões com mais segurança e agilidade.
+                O Prazzu Tools reúne, em uma única plataforma, soluções confiáveis para profissionais de diferentes
+                áreas de negócio que precisam resolver tarefas pontuais e tomar decisões com mais segurança e agilidade.
             </p>
 
             <div class="d-flex flex-wrap justify-content-center gap-2">
@@ -33,10 +33,10 @@
             <div class="row g-4 align-items-center">
                 <div class="col-12 col-lg-6">
                     <span class="prazzu-eyebrow">O problema que queremos resolver</span>
-                    <h2 id="problem-title" class="h1 fw-bold mb-3">A rotina contábil não deveria depender de soluções espalhadas</h2>
+                    <h2 id="problem-title" class="h1 fw-bold mb-3">O trabalho profissional não deveria depender de soluções espalhadas</h2>
                     <p class="text-body-secondary fs-5">
-                        Cálculos, conferências, simulações e decisões fazem parte do trabalho diário de quem atua com
-                        contabilidade. Muitas vezes, essas tarefas dependem de planilhas antigas, sistemas caros ou
+                        Cálculos, conferências, simulações e decisões fazem parte do trabalho diário em diferentes áreas de
+                        negócio. Muitas vezes, essas tarefas dependem de planilhas antigas, sistemas caros ou
                         ferramentas incompletas encontradas em diferentes lugares.
                     </p>
                     <p class="text-body-secondary mb-0">
@@ -63,7 +63,7 @@
                                 <div class="col-6">
                                     <i class="bi bi-journal-check fs-2 prazzu-about__icon" aria-hidden="true"></i>
                                     <h3 class="h5 mt-3">Conteúdo</h3>
-                                    <p class="small text-body-secondary mb-0">Informação contábil útil conectada às ferramentas.</p>
+                                    <p class="small text-body-secondary mb-0">Informação útil de cada vertical conectada às ferramentas.</p>
                                 </div>
                                 <div class="col-6">
                                     <i class="bi bi-graph-up-arrow fs-2 prazzu-about__icon" aria-hidden="true"></i>
@@ -181,7 +181,7 @@
                     ['icon' => 'bi-lightning-charge', 'title' => 'Facilidade', 'text' => 'Interfaces diretas, responsivas e focadas na tarefa que precisa ser resolvida.'],
                     ['icon' => 'bi-arrow-repeat', 'title' => 'Evolução', 'text' => 'Ferramentas preparadas para receber melhorias sem comprometer as demais.'],
                     ['icon' => 'bi-shield-check', 'title' => 'Confiabilidade', 'text' => 'A confiança do profissional é o principal ativo da plataforma.'],
-                    ['icon' => 'bi-people', 'title' => 'Foco contábil', 'text' => 'Decisões orientadas pela rotina real de quem trabalha com contabilidade.'],
+                    ['icon' => 'bi-people', 'title' => 'Foco por vertical', 'text' => 'Cada área recebe conteúdo e ferramentas coerentes com seu próprio contexto de negócio.'],
                 ] as $commitment)
                     <div class="col-12 col-md-6 col-xl-4">
                         <article class="card h-100 shadow-sm prazzu-about__card">
@@ -200,7 +200,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-12 col-lg-5">
                     <span class="prazzu-eyebrow">Para quem foi criada</span>
-                    <h2 id="audience-title" class="h1 fw-bold mb-3">Soluções pontuais para a rotina contábil</h2>
+                    <h2 id="audience-title" class="h1 fw-bold mb-3">Soluções pontuais para diferentes rotinas profissionais</h2>
                     <p class="text-body-secondary mb-0">
                         O Prazzu Tools atende diferentes perfis, mantendo a mesma preocupação com clareza, qualidade e praticidade.
                     </p>
@@ -209,12 +209,12 @@
                 <div class="col-12 col-lg-7">
                     <div class="row g-3">
                         @foreach ([
-                            ['icon' => 'bi-briefcase', 'label' => 'Escritórios contábeis'],
-                            ['icon' => 'bi-person-workspace', 'label' => 'Contadores autônomos'],
-                            ['icon' => 'bi-building', 'label' => 'Departamentos financeiros'],
-                            ['icon' => 'bi-mortarboard', 'label' => 'Estudantes da área'],
-                            ['icon' => 'bi-person-lines-fill', 'label' => 'Consultores'],
-                            ['icon' => 'bi-shop', 'label' => 'Empresários'],
+                            ['icon' => 'bi-calculator', 'label' => 'Profissionais de Contabilidade'],
+                            ['icon' => 'bi-people', 'label' => 'Profissionais de Recursos Humanos'],
+                            ['icon' => 'bi-building', 'label' => 'Departamentos empresariais'],
+                            ['icon' => 'bi-person-workspace', 'label' => 'Consultores e especialistas'],
+                            ['icon' => 'bi-mortarboard', 'label' => 'Estudantes e pesquisadores'],
+                            ['icon' => 'bi-shop', 'label' => 'Empresários e gestores'],
                         ] as $audience)
                             <div class="col-12 col-sm-6">
                                 <div class="d-flex align-items-center gap-3 border rounded-3 p-3 h-100 prazzu-about__audience-item">
@@ -234,10 +234,10 @@
             <div class="card-body p-4 p-lg-5 text-center">
                 <i class="bi bi-rocket-takeoff fs-1" aria-hidden="true"></i>
                 <span class="d-block text-uppercase small fw-semibold mt-3 mb-2">O futuro da plataforma</span>
-                <h2 id="future-title" class="display-6 fw-bold mb-3">Construída para evoluir junto com a contabilidade</h2>
+                <h2 id="future-title" class="display-6 fw-bold mb-3">Construída para evoluir com novas verticais</h2>
                 <p class="lead mx-auto mb-4" style="max-width: 800px;">
-                    Novas ferramentas, conteúdos e recursos serão adicionados continuamente. Nosso objetivo é transformar
-                    o Prazzu Tools na plataforma de referência para quem trabalha com contabilidade.
+                    Novas ferramentas, conteúdos e recursos podem ser adicionados continuamente em diferentes verticais.
+                    O objetivo é oferecer experiências especializadas sem deixar de ser uma única plataforma por baixo.
                 </p>
                 <a class="btn btn-light" href="{{ route('tools.index') }}">
                     Conhecer as ferramentas

@@ -79,6 +79,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
             category: ToolCategory::Generators,
             icon: 'bi-receipt',
             routeName: 'tools.emissor-de-recibos.index',
+            vertical: 'contabilidade',
             version: '0.6.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

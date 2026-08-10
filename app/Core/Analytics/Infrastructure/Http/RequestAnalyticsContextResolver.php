@@ -10,6 +10,7 @@ use App\Core\Analytics\Domain\ValueObjects\AnalyticsContext;
 use App\Core\Analytics\Infrastructure\Persistence\AnalyticsSchema;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsVisitor;
+use App\Core\Verticals\Application\VerticalContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -21,6 +22,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         private readonly AcquisitionResolver $acquisitionResolver,
         private readonly AnalyticsSchema $schema,
         private readonly AcquisitionAnalyticsContextResolver $acquisitionContextResolver,
+        private readonly VerticalContext $verticalContext,
     ) {}
 
     public function resolve(?Request $request = null): AnalyticsContext
@@ -39,6 +41,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         $acquisitionContext = $this->acquisitionContextResolver->resolve($request);
         $agent = $this->userAgentParser->parse($request->userAgent());
         $userId = $request->user()?->getAuthIdentifier();
+        $verticalSlug = $this->verticalContext->slug();
         $now = now();
 
         $sessionId = DB::transaction(function () use (
@@ -48,6 +51,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             $acquisition,
             $acquisitionContext,
             $agent,
+            $verticalSlug,
             $now,
         ): string {
             $this->persistVisitor(
@@ -65,6 +69,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
                 acquisition: $acquisition,
                 acquisitionContext: $acquisitionContext,
                 agent: $agent,
+                verticalSlug: $verticalSlug,
                 now: $now,
             );
         }, 3);
@@ -82,6 +87,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             source: $acquisition->source,
             medium: $acquisition->medium,
             campaign: $acquisition->campaign,
+            verticalSlug: $verticalSlug,
             acquisition: $acquisitionContext,
             utm: $utm,
             deviceType: $agent['device_type'],
@@ -165,6 +171,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         Acquisition $acquisition,
         ?AcquisitionAnalyticsSnapshot $acquisitionContext,
         array $agent,
+        ?string $verticalSlug,
         mixed $now,
     ): string {
         $attribute = $request->attributes->get('analytics.session_id');
@@ -175,7 +182,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
                 ->first();
 
             if ($existingSession !== null) {
-                $this->touchSession($existingSession, $request, $userId, $acquisitionContext, $now);
+                $this->touchSession($existingSession, $request, $userId, $acquisitionContext, $verticalSlug, $now);
 
                 return $attribute;
             }
@@ -189,7 +196,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             ->first();
 
         if ($session !== null) {
-            $this->touchSession($session, $request, $userId, $acquisitionContext, $now);
+            $this->touchSession($session, $request, $userId, $acquisitionContext, $verticalSlug, $now);
 
             return (string) $session->getKey();
         }
@@ -207,6 +214,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             'source' => $acquisition->source,
             'medium' => $acquisition->medium,
             'campaign' => $acquisition->campaign,
+            'vertical_slug' => $verticalSlug,
             'acquisition_context_id' => $acquisitionContext?->contextId,
             'acquisition_keyword' => $acquisitionContext?->keyword,
             'acquisition_campaign_identifier' => $acquisitionContext?->campaignIdentifier,
@@ -235,6 +243,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         Request $request,
         int|string|null $userId,
         ?AcquisitionAnalyticsSnapshot $acquisitionContext,
+        ?string $verticalSlug,
         mixed $now,
     ): void {
         if ($userId !== null) {
@@ -242,6 +251,7 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         }
 
         $session->last_activity_at = $now;
+        $session->vertical_slug = $verticalSlug;
 
         if ($acquisitionContext !== null) {
             $session->acquisition_context_id = $acquisitionContext->contextId;

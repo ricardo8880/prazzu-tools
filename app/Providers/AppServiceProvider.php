@@ -131,6 +131,16 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(max(1, (int) config('tools-api.rate_limit', 120)))->by($key);
         });
 
+        View::composer('layouts.app', function ($view): void {
+            $routeName = request()->route()?->getName();
+            $segments = is_string($routeName) ? explode('.', $routeName) : [];
+            $analyticsToolSlug = ($segments[0] ?? null) === 'tools'
+                ? ($segments[1] ?? null)
+                : null;
+
+            $view->with('analyticsToolSlug', $analyticsToolSlug);
+        });
+
         View::composer('components.layout.right-sidebar', function ($view): void {
             try {
                 $recentBlogPosts = Schema::hasTable('blog_posts')

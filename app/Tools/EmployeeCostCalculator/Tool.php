@@ -74,6 +74,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Labor,
             icon: 'bi-person-vcard',
             routeName: 'tools.custo-funcionario-clt.index',
+            vertical: 'contabilidade',
             version: '1.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

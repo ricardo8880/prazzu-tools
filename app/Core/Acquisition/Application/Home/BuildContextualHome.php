@@ -5,6 +5,7 @@ namespace App\Core\Acquisition\Application\Home;
 use App\Core\Acquisition\Application\ResolveAcquisitionContext;
 use App\Core\Acquisition\Domain\Data\AcquisitionContext;
 use App\Core\Tools\ToolCatalog;
+use App\Core\Verticals\Application\VerticalContext;
 use Illuminate\Support\Collection;
 
 final readonly class BuildContextualHome
@@ -12,6 +13,7 @@ final readonly class BuildContextualHome
     public function __construct(
         private ResolveAcquisitionContext $resolveContext,
         private ToolCatalog $tools,
+        private VerticalContext $verticalContext,
     ) {}
 
     /**
@@ -20,18 +22,62 @@ final readonly class BuildContextualHome
      */
     public function execute(mixed $keyword, array $defaultHome): array
     {
+        $home = $this->verticalHome($defaultHome);
         $context = $this->resolveContext->execute(is_string($keyword) ? $keyword : null);
 
         if ($context === null) {
-            return $this->defaultPayload($defaultHome);
+            return $this->defaultPayload($home);
         }
 
         return [
-            'home' => $this->contextualHome($defaultHome, $context),
+            'home' => $this->contextualHome($home, $context),
             'categories' => $this->tools->categories(),
             'featuredTools' => $this->homeTools(),
             'acquisitionContext' => $context,
         ];
+    }
+
+
+    /**
+     * @param array<string, mixed> $configuredHome
+     * @return array<string, mixed>
+     */
+    private function verticalHome(array $configuredHome): array
+    {
+        $activeVertical = $this->verticalContext->slug();
+
+        if ($activeVertical === null) {
+            return is_array($configuredHome['global'] ?? null)
+                ? $configuredHome['global']
+                : $this->legacyHome($configuredHome);
+        }
+
+        $verticals = is_array($configuredHome['verticals'] ?? null)
+            ? $configuredHome['verticals']
+            : [];
+        $verticalHome = $verticals[$activeVertical] ?? null;
+
+        if (is_array($verticalHome)) {
+            return $verticalHome;
+        }
+
+        return is_array($configuredHome['global'] ?? null)
+            ? $configuredHome['global']
+            : $this->legacyHome($configuredHome);
+    }
+
+    /**
+     * Remove apenas as chaves de configuração contextual adicionadas ao contrato
+     * da Home, preservando compatibilidade com o formato histórico.
+     *
+     * @param array<string, mixed> $configuredHome
+     * @return array<string, mixed>
+     */
+    private function legacyHome(array $configuredHome): array
+    {
+        unset($configuredHome['global'], $configuredHome['verticals']);
+
+        return $configuredHome;
     }
 
     /** @param array<string, mixed> $defaultHome */

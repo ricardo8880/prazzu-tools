@@ -1,7 +1,10 @@
 @extends('layouts.app')
+@php($pageSeo = app(\App\Core\Seo\Application\VerticalSeoContext::class)->defaults('tools'))
+@section('title', $pageSeo['title'])
+@section('meta_description', $pageSeo['description'])
 
-@section('title', ($activeCategory['name'] ?? 'Todas as ferramentas').' — Prazzu Tools')
-@section('meta_description', 'Encontre ferramentas contábeis gratuitas por categoria ou busca.')
+
+@php($activeVerticalName = app(\App\Core\Verticals\Application\VerticalContext::class)->active()?->name)
 
 @section('content')
     <div class="prazzu-page prazzu-tools-catalog">
@@ -10,7 +13,7 @@
             <div>
                 <span class="prazzu-eyebrow">Catálogo Prazzu</span>
                 <h1>{{ $activeCategory['name'] ?? 'Todas as ferramentas' }}</h1>
-                <p>Busque e acesse soluções criadas para simplificar a rotina contábil.</p>
+                <p>{{ $activeVerticalName ? 'Busque e acesse soluções para '. $activeVerticalName .'.' : 'Busque e acesse soluções profissionais de diferentes áreas de negócio.' }}</p>
             </div>
         </header>
 

@@ -15,7 +15,7 @@ final class ToolAnalyticsExpansionCoverageTest extends TestCase
         $registry = $this->app->make(ToolRegistry::class);
         $modules = $registry->modules();
 
-        self::assertCount(32, $modules);
+        self::assertCount(33, $modules);
 
         foreach ($modules as $slug => $module) {
             self::assertInstanceOf(HasAnalyticsJourney::class, $module, "A ferramenta [{$slug}] não declara jornada de Analytics.");

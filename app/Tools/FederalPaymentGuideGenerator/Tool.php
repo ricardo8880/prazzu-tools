@@ -79,6 +79,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Generators,
             icon: 'bi-receipt-cutoff',
             routeName: 'tools.gerador-darf-gps.index',
+            vertical: 'contabilidade',
             version: '1.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

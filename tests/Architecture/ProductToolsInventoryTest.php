@@ -17,16 +17,16 @@ final class ProductToolsInventoryTest extends TestCase
         $this->inventory = require dirname(__DIR__, 2).'/config/product_tools.php';
     }
 
-    public function test_official_inventory_has_exactly_thirty_two_ordered_unique_tools(): void
+    public function test_official_inventory_has_the_current_ordered_unique_tools(): void
     {
         $tools = $this->inventory['official'];
 
-        self::assertSame(32, $this->inventory['expected_module_count']);
-        self::assertCount(32, $tools);
-        self::assertSame(range(1, 32), array_column($tools, 'id'));
+        self::assertSame(33, $this->inventory['expected_module_count']);
+        self::assertCount(33, $tools);
+        self::assertSame(range(1, 33), array_column($tools, 'id'));
 
         foreach (['key', 'name', 'slug', 'module'] as $field) {
-            self::assertCount(32, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
+            self::assertCount(33, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
         }
     }
 
@@ -36,14 +36,15 @@ final class ProductToolsInventoryTest extends TestCase
         $tools = $this->inventory['official'];
         $releaseOrders = array_column($tools, 'release_order');
 
-        self::assertCount(32, array_unique($releaseOrders));
+        self::assertCount(33, array_unique($releaseOrders));
         sort($releaseOrders);
-        self::assertSame(range(1, 32), $releaseOrders);
+        self::assertSame(range(1, 33), $releaseOrders);
 
         usort($tools, static fn (array $left, array $right): int => $right['release_order'] <=> $left['release_order']);
         $latest = array_column(array_slice($tools, 0, 8), 'slug');
 
         self::assertSame([
+            'calculadora-turnover',
             'calculadora-difal-icms',
             'calculadora-hora-extra',
             'calculadora-salario-liquido',
@@ -51,7 +52,6 @@ final class ProductToolsInventoryTest extends TestCase
             'declaracao-rendimentos',
             'comissao-vendedores',
             'calculadora-margem-markup',
-            'ponto-de-equilibrio',
         ], $latest);
     }
 
@@ -65,7 +65,7 @@ final class ProductToolsInventoryTest extends TestCase
         sort($officialModules);
 
         self::assertSame($actualModules, $officialModules);
-        self::assertCount(32, array_unique($officialModules));
+        self::assertCount(33, array_unique($officialModules));
         self::assertArrayNotHasKey('additional_modules', $this->inventory);
     }
 

@@ -68,6 +68,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Fiscal,
             icon: 'bi-calendar-x',
             routeName: 'tools.das-em-atraso.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

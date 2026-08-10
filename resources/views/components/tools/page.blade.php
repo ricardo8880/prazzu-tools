@@ -22,8 +22,12 @@
 
 <div {{ $attributes->class(['prazzu-page', 'tool-page'])->merge(['data-testid' => \App\Core\Quality\E2E\Support\TestId::make('tool-page', $slug)]) }} data-tool="{{ $slug }}">
     <nav aria-label="Breadcrumb" class="mb-3">
+        @php($breadcrumbVertical = app(\App\Core\Navigation\Application\VerticalBreadcrumbContext::class)->active())
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
+            @if ($breadcrumbVertical['name'])
+                <li class="breadcrumb-item"><span>{{ $breadcrumbVertical['name'] }}</span></li>
+            @endif
             <li class="breadcrumb-item"><a href="{{ route('tools.index') }}">Ferramentas</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
         </ol>

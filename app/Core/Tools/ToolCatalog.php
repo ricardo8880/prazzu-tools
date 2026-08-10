@@ -2,6 +2,7 @@
 
 namespace App\Core\Tools;
 
+use App\Core\Verticals\Application\VerticalContext;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -13,12 +14,29 @@ use Illuminate\Support\Str;
 
 final class ToolCatalog
 {
-    public function __construct(private readonly ToolRegistry $registry) {}
+    public function __construct(
+        private readonly ToolRegistry $registry,
+        private readonly ?VerticalContext $verticalContext = null,
+    ) {}
 
     /** @return Collection<int, array<string, mixed>> */
     public function all(bool $onlyCatalogVisible = true): Collection
     {
         return collect($this->registry->manifests($onlyCatalogVisible))
+            ->filter(fn (ToolManifest $tool): bool => $this->belongsToActiveVertical($tool))
+            ->map(fn (ToolManifest $tool): array => $this->present($tool))
+            ->sortBy('position')
+            ->values();
+    }
+
+
+    /** @return Collection<int, array<string, mixed>> */
+    public function forVertical(?string $vertical, bool $onlyCatalogVisible = true): Collection
+    {
+        $vertical = $vertical === null ? null : trim($vertical);
+
+        return collect($this->registry->manifests($onlyCatalogVisible))
+            ->filter(static fn (ToolManifest $tool): bool => $vertical === null || $tool->vertical === $vertical)
             ->map(fn (ToolManifest $tool): array => $this->present($tool))
             ->sortBy('position')
             ->values();
@@ -212,6 +230,14 @@ final class ToolCatalog
             'badge' => $hasPlusFeatures ? 'Grátis + Plus' : 'Grátis',
             'badge_tone' => $hasPlusFeatures ? 'purple' : 'green',
         ]);
+    }
+
+
+    private function belongsToActiveVertical(ToolManifest $manifest): bool
+    {
+        $active = $this->verticalContext?->active();
+
+        return $active === null || $manifest->vertical === $active->slug;
     }
 
     private function releaseOrder(string $slug): int

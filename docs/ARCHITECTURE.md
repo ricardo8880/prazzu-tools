@@ -56,6 +56,7 @@ manifesto contém apenas metadados estáticos e tipados:
 - slug, nome e descrição;
 - categoria;
 - ícone e rota principal;
+- vertical de negócio explícita;
 - versão semântica;
 - acesso;
 - status do ciclo de vida;
@@ -117,12 +118,35 @@ organização do registro; a categoria oficial continua no manifesto.
 
 Não há varredura de diretórios durante requisições.
 
+## Home contextual por VerticalContext
+
+A rota pública `/` continua usando um único `HomeController`, uma única view e o
+mesmo builder compartilhado. A configuração de Home possui uma experiência global
+para `VerticalContext = null` e bases específicas por slug de vertical. Contabilidade
+permanece como a primeira configuração de referência e preserva o conteúdo público
+anterior.
+
+A seleção segue esta ordem conceitual:
+
+```text
+VerticalContext
+    -> base global ou base da vertical
+    -> AcquisitionContext opcional
+    -> Hero / CTA / ferramentas já filtradas pelo contexto ativo
+```
+
+`AcquisitionContext` não escolhe uma aplicação diferente: ele apenas personaliza a
+base já determinada por `VerticalContext`. Uma vertical registrada sem configuração
+própria de Home cai com segurança na experiência global, evitando condicionais ou
+classes específicas como `HomeRH` e `HomeContabilidade`.
+
 ## Catálogo real
 
 `ToolCatalog` continua sendo a fonte única para home, busca, filtros, páginas e
 barras laterais. Ele projeta exclusivamente os manifestos reais registrados no
-`ToolRegistry`; configurações provisórias e números demonstrativos não fazem
-parte do catálogo público.
+`ToolRegistry` e respeita a vertical ativa quando existe `VerticalContext`; no fallback
+`null`, o catálogo permanece global. Configurações provisórias e números demonstrativos
+não fazem parte do catálogo público.
 
 A configuração mantém somente a taxonomia e o registro de módulos:
 
@@ -212,3 +236,41 @@ Continuam sendo evoluções futuras, entre outras:
 - novos formatos de exportação, como PDF e XLSX nativos;
 - processamento assíncrono especializado por capacidade;
 - integração com a identidade central do ecossistema Prazzu.
+
+
+## Serviços globais conscientes de vertical
+
+A infraestrutura transversal permanece única. `VerticalContext` funciona como dimensão
+adicional nos serviços que precisam segmentar experiência ou dados:
+
+```text
+VerticalContext
+    ├── Analytics -> vertical_slug em sessão/evento e filtros
+    ├── SEO -> defaults configuráveis por vertical
+    ├── Sitemap -> catálogo/conteúdo já filtrados pelo contexto
+    ├── Breadcrumbs -> rótulo contextual compartilhado
+    ├── Search -> ToolCatalog compartilhado
+    ├── Admin -> filtros/associação de conteúdo
+    └── Observability -> contexto de log
+```
+
+Nenhum desses serviços pertence a uma vertical específica. A ausência de contexto
+continua válida e representa a visão global. Configurações de conteúdo podem variar
+por slug, mas contratos, queries, controllers e infraestrutura permanecem compartilhados.
+Analytics persiste `vertical_slug` como dimensão de negócio quando aplicável; isso não
+substitui `AcquisitionContext`, que continua representando origem/intenção de aquisição.
+
+
+## Prova de expansão: segunda vertical
+
+O Lote 6 registra `rh` como segunda vertical real e adiciona `calculadora-turnover` como módulo normal de ferramenta. A prova não introduz namespace de aplicação, Analytics, Blog, SEO, Admin ou E2E específicos de RH.
+
+A distribuição atual do inventário oficial é:
+
+```text
+contabilidade -> 32 ferramentas
+rh            -> 1 ferramenta
+total         -> 33 ferramentas
+```
+
+A Home e o SEO de RH são configuração de conteúdo; Blog usa as mesmas tabelas com `vertical_slug`; Analytics recebe a vertical pelo contexto transversal; E2E descobre a ferramenta pelo mesmo inventário oficial. Assim, o Core não conhece uma lista fechada de nichos e uma terceira vertical deve seguir exatamente o mesmo modelo.

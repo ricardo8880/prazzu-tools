@@ -69,6 +69,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Labor,
             icon: 'bi-briefcase',
             routeName: 'tools.encargos-trabalhistas.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

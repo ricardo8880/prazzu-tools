@@ -88,6 +88,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Fiscal,
             icon: 'bi-cash-coin',
             routeName: 'tools.calculadora-pro-labore-distribuicao-lucros.index',
+            vertical: 'contabilidade',
             version: '3.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

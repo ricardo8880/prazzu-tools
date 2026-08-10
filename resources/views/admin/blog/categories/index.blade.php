@@ -27,9 +27,18 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form class="row g-3" method="get">
-                <div class="col-lg-10">
+                <div class="col-lg-7">
                     <label class="form-label" for="q">Buscar</label>
                     <input class="form-control" id="q" name="q" value="{{ $search }}" placeholder="Nome ou slug">
+                </div>
+                <div class="col-lg-3">
+                    <label class="form-label" for="vertical">Vertical</label>
+                    <select class="form-select" id="vertical" name="vertical">
+                        <option value="">Todas</option>
+                        @foreach ($verticals as $vertical)
+                            <option value="{{ $vertical->slug }}" @selected($selectedVertical === $vertical->slug)>{{ $vertical->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-lg-2 d-flex align-items-end">
                     <button class="btn btn-outline-primary w-100" type="submit">Filtrar</button>
@@ -44,6 +53,7 @@
                 <thead>
                     <tr>
                         <th class="ps-4">Categoria</th>
+                        <th>Vertical</th>
                         <th>Status</th>
                         <th class="text-end">Postagens</th>
                         <th class="text-end pe-4">Ações</th>
@@ -56,6 +66,7 @@
                                 <div class="fw-semibold">{{ $category->name }}</div>
                                 <small class="text-body-secondary">/{{ $category->slug }}</small>
                             </td>
+                            <td>{{ $category->vertical_slug ?? 'global' }}</td>
                             <td><span class="badge {{ $category->is_active ? 'text-bg-success' : 'text-bg-secondary' }}">{{ $category->is_active ? 'Ativa' : 'Inativa' }}</span></td>
                             <td class="text-end">{{ $category->posts_count }}</td>
                             <td class="text-end pe-4">
@@ -70,7 +81,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="text-center py-5"><i class="bi bi-tags display-5 text-body-secondary"></i><h2 class="h5 mt-3">Nenhuma categoria cadastrada</h2><p class="text-body-secondary">Cadastre a primeira categoria editorial do blog.</p><a class="btn btn-primary" href="{{ route('admin.blog.categories.create') }}">Criar categoria</a></td></tr>
+                        <tr><td colspan="5" class="text-center py-5"><i class="bi bi-tags display-5 text-body-secondary"></i><h2 class="h5 mt-3">Nenhuma categoria cadastrada</h2><p class="text-body-secondary">Cadastre a primeira categoria editorial do blog.</p><a class="btn btn-primary" href="{{ route('admin.blog.categories.create') }}">Criar categoria</a></td></tr>
                     @endforelse
                 </tbody>
             </table>

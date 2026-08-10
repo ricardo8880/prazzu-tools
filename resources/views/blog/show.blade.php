@@ -59,6 +59,9 @@
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb small">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
+            @if(isset($activeVertical) && $activeVertical)
+                <li class="breadcrumb-item"><span>{{ $activeVertical->name }}</span></li>
+            @endif
             <li class="breadcrumb-item"><a href="{{ route('blog.index') }}">Blog</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ $post->title }}</li>
         </ol>

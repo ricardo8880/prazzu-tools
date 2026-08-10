@@ -56,6 +56,7 @@ final class DefaultToolAccessGateTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.ferramenta-teste.index',
+            vertical: 'contabilidade',
             access: ToolAccess::Free,
             status: ToolStatus::Maintenance,
         );
@@ -72,6 +73,7 @@ final class DefaultToolAccessGateTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.ferramenta-teste.index',
+            vertical: 'contabilidade',
             access: $access,
             status: ToolStatus::Active,
         );

@@ -84,8 +84,8 @@ export function loadToolScenarios(): ScenarioManifest {
     const manifest = JSON.parse(readFileSync(path, 'utf8')) as ScenarioManifest;
     if (manifest.schema_version !== '1.2.0') throw new Error(`Versão desconhecida de cenários E2E: ${manifest.schema_version}`);
     if (manifest.scenario_count !== manifest.scenarios.length) throw new Error('Contagem de cenários E2E divergente.');
-    if (manifest.tool_count !== 32 || manifest.coverage.valid_tools !== 32 || manifest.coverage.invalid_tools !== 32) {
-        throw new Error('O manifesto não possui cobertura mínima válida e inválida para as 32 ferramentas.');
+    if (manifest.tool_count !== 33 || manifest.coverage.valid_tools !== 33 || manifest.coverage.invalid_tools !== 33) {
+        throw new Error('O manifesto não possui cobertura mínima válida e inválida para as 33 ferramentas.');
     }
     return manifest;
 }
@@ -96,7 +96,7 @@ function deterministicValue(name: string, type: string, min?: string | null, max
         admission_date: '2024-01-01', termination_date: '2025-06-30', contract_end_date: '2025-12-31',
         acquisition_start_date: '2024-01-01', vacation_start_date: '2025-02-01', start_date: '2025-01-15',
         competence: '2026-07', reference_date: '2026-01-15', origin_uf: 'SP', destination_uf: 'RJ',
-        monthly_salary: '5000', base_salary: '5000', base_cost: '100', monthly_revenue: '50000', payroll: '50000',
+        admissions: '10', terminations: '6', average_headcount: '80', monthly_salary: '5000', base_salary: '5000', base_cost: '100', monthly_revenue: '50000', payroll: '50000',
         revenue_last_twelve_months: '600000', payroll_last_twelve_months: '180000', monthly_operating_costs: '15000',
         monthly_deductible_expenses: '5000', accounting_profit: '50000', gross_pro_labore: '5000', intended_distribution: '10000',
         principal: '1000', amount: '1000', monthly_hours: '220', working_days: '22', rest_days: '8', due_day: '10', duration_months: '12',

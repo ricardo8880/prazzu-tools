@@ -18,6 +18,7 @@ final class SaveBlogCategoryRequest extends FormRequest
         $categoryId = $this->route('category')?->getKey();
 
         return [
+            'vertical_slug' => ['nullable', 'string', Rule::in(array_keys((array) config('verticals.registered', [])))],
             'name' => ['required', 'string', 'max:100', Rule::unique('blog_categories', 'name')->ignore($categoryId)],
             'slug' => ['nullable', 'string', 'max:120', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('blog_categories', 'slug')->ignore($categoryId)],
             'description' => ['nullable', 'string', 'max:1000'],

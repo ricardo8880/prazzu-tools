@@ -40,8 +40,8 @@ final class MultiVerticalConstitutionTest extends TestCase
         self::assertStringContainsString('# Evolução multi-nicho', $continuity);
         self::assertStringContainsString('| 1 | Constituição, contratos arquiteturais e regras Global x Vertical | Concluído |', $continuity);
         self::assertStringContainsString('docs/MULTI-VERTICAL-LOT-1-CONSTITUTION.md', $continuity);
-        self::assertSame(32, $inventory['expected_module_count']);
-        self::assertCount(32, $inventory['official']);
+        self::assertSame(33, $inventory['expected_module_count']);
+        self::assertCount(33, $inventory['official']);
     }
 
     private function read(string $relativePath): string

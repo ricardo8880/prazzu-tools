@@ -13,7 +13,7 @@ return [
             'title' => 'Guias práticos',
             'singular' => 'Guia',
             'eyebrow' => 'Recursos para aplicar',
-            'description' => 'Conteúdos aprofundados para executar tarefas, interpretar resultados e evitar erros na rotina contábil.',
+            'description' => 'Conteúdos aprofundados para executar tarefas, interpretar resultados e evitar erros na vertical ativa.',
             'icon' => 'bi-journal-check',
             'route' => 'resources.show',
             'empty_message' => 'Os primeiros guias estão sendo preparados com revisão técnica e aplicação prática.',
@@ -32,6 +32,7 @@ return [
     'items' => [
         [
             'type' => 'guias',
+            'vertical' => 'contabilidade',
             'slug' => 'precificacao-de-honorarios-contabeis',
             'title' => 'Guia profissional para precificação de honorários contábeis',
             'summary' => 'Método prático para levantar esforço, complexidade, risco e escopo antes de definir ou reajustar honorários.',
@@ -56,6 +57,7 @@ return [
         ],
         [
             'type' => 'modelos',
+            'vertical' => 'contabilidade',
             'slug' => 'levantamento-para-precificacao-de-honorarios',
             'title' => 'Modelo de levantamento para precificação de honorários',
             'summary' => 'Estrutura para reunir dados da empresa, volume operacional, serviços contratados e fatores de complexidade.',

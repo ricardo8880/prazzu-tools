@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Platform;
 
+use App\Core\Verticals\Application\VerticalContext;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,7 +17,7 @@ final class ContentPageController extends Controller
     public function resources(): View
     {
         $sections = config('resources.sections', []);
-        $items = collect(config('resources.items', []));
+        $items = $this->resourceItems();
 
         return view('pages.resources.index', compact('sections', 'items'));
     }
@@ -29,7 +30,7 @@ final class ContentPageController extends Controller
             throw new NotFoundHttpException('Página não encontrada.');
         }
 
-        $items = collect(config('resources.items', []))
+        $items = $this->resourceItems()
             ->where('type', $resource)
             ->values();
 
@@ -39,7 +40,7 @@ final class ContentPageController extends Controller
     public function resourceItem(string $resource, string $slug): View
     {
         $section = config("resources.sections.{$resource}");
-        $item = collect(config('resources.items', []))
+        $item = $this->resourceItems()
             ->first(fn (array $candidate): bool => $candidate['type'] === $resource && $candidate['slug'] === $slug);
 
         if (! is_array($section) || ! is_array($item) || $item['status'] !== 'published' || empty($item['view'])) {
@@ -47,7 +48,7 @@ final class ContentPageController extends Controller
         }
 
         $relatedSlugs = $item['related_slugs'] ?? [];
-        $relatedItems = collect(config('resources.items', []))
+        $relatedItems = $this->resourceItems()
             ->filter(fn (array $candidate): bool => in_array($candidate['slug'], $relatedSlugs, true))
             ->where('status', 'published')
             ->values();

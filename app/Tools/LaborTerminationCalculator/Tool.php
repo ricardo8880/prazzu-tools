@@ -113,6 +113,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Labor,
             icon: 'bi-briefcase',
             routeName: 'tools.calculadora-de-rescisao.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

@@ -68,6 +68,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             category: ToolCategory::Documents,
             icon: 'bi-file-earmark-check',
             routeName: 'tools.declaracao-trabalho-renda.index',
+            vertical: 'contabilidade',
             version: '1.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

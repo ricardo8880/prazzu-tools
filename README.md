@@ -64,11 +64,13 @@ Antes de iniciar qualquer lote, também é obrigatório ler [`docs/IMPLEMENTATIO
 
 Cada lote deve partir do estado real deixado pelos anteriores. Não se deve recriar decisões já consolidadas, alterar slugs públicos, remover módulos existentes ou mudar o escopo oficial sem registrar a decisão, preservar compatibilidade e atualizar as verificações automatizadas.
 
-O catálogo oficial atual está documentado em [`docs/PRODUCT-TOOLS-INVENTORY.md`](docs/PRODUCT-TOOLS-INVENTORY.md). Após o Lote Cirúrgico 1, o inventário consolidado possui exatamente 32 ferramentas oficiais, correspondentes aos 32 módulos existentes em `app/Tools`. Nenhum módulo pode permanecer escondido por classificação paralela. Expansões, substituições ou remoções futuras exigem lote explícito, preservação de compatibilidade e atualização dos gates automatizados.
+O catálogo oficial atual está documentado em [`docs/PRODUCT-TOOLS-INVENTORY.md`](docs/PRODUCT-TOOLS-INVENTORY.md). O Lote Cirúrgico 1 consolidou os 32 módulos históricos; o Lote 6 multi-nicho é uma expansão explícita e eleva o inventário atual para 33 ferramentas oficiais, mantendo os 32 módulos anteriores e adicionando `TurnoverCalculator` na vertical `rh`. Nenhum módulo pode permanecer escondido por classificação paralela. Expansões, substituições ou remoções futuras exigem lote explícito, preservação de compatibilidade e atualização dos gates automatizados.
 
 A Home utiliza `release_order` do inventário executável para mostrar exatamente as 8 ferramentas mais recentes. O campo `position` continua reservado à ordenação editorial do catálogo, e `featured` não pode ampliar a lista principal da Home. Toda nova publicação deve receber uma nova ordem de lançamento em lote explícito.
 
-A URL combinada de Pró-Labore e Distribuição de Lucros funciona temporariamente como ponte de compatibilidade e não deve voltar a expor um terceiro cálculo duplicado. A remoção física depende de substituição explícita que preserve as 32 ferramentas e migre histórico, métricas e integrações.
+A URL combinada de Pró-Labore e Distribuição de Lucros funciona temporariamente como ponte de compatibilidade e não deve voltar a expor um terceiro cálculo duplicado. A remoção física depende de substituição explícita que preserve a quantidade oficial vigente do catálogo e migre histórico, métricas e integrações.
+
+A consolidação multi-vertical dos Lotes 1 a 7 está concluída. O estado de referência atual possui `contabilidade` e `rh` registradas, 33 ferramentas oficiais e infraestrutura compartilhada para Home, Blog, Analytics, SEO, Admin, busca, observabilidade e E2E. Superfícies globais não podem assumir Contabilidade implicitamente; conteúdo específico deve declarar ou receber sua vertical.
 
 Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
 
@@ -258,6 +260,8 @@ O código compartilhado não deve manter uma lista fechada de verticais nem
 assumir que `Prazzu = Contabilidade`. Quando uma regra for específica de uma
 vertical, essa especialização deve permanecer explícita no domínio correspondente.
 
+A prova arquitetural do Lote 6 registra `rh` como segunda vertical e adiciona uma ferramenta específica de RH sem duplicar infraestrutura. O inventário oficial passa a 33 módulos: 32 de `contabilidade` e `calculadora-turnover` como primeira ferramenta de `rh`. Home, Blog, SEO, Analytics, Admin e E2E continuam compartilhados.
+
 ## VerticalContext
 
 **VerticalContext** representa a vertical ativa para a experiência atual. Ele é
@@ -268,8 +272,15 @@ recomendações, navegação e E2E quando aplicável.
 A fundação técnica de `VerticalContext` utiliza um registro genérico de verticais,
 fontes ordenadas de resolução e estado scoped por requisição. Contabilidade é a
 vertical padrão atual, preservando a experiência existente sem tornar seu nome uma
-ramificação rígida do Core. Associação de ferramentas e conteúdo pertence aos lotes
-seguintes.
+ramificação rígida do Core. As ferramentas oficiais, os recursos atuais e o conteúdo
+do Blog já declaram sua vertical; catálogo, busca e conteúdo usam essa associação sem
+duplicar infraestrutura. A Home usa o mesmo `VerticalContext` para selecionar uma base
+de experiência configurável por vertical e mantém uma experiência global quando o
+contexto é `null`. `AcquisitionContext` continua sendo uma camada independente e pode
+personalizar Hero e CTA por cima da base já selecionada, sem criar Homes paralelas.
+Analytics, SEO, sitemap, breadcrumbs, Admin e observabilidade continuam globais e
+passam a carregar ou consultar a dimensão de vertical quando aplicável. A vertical é
+contexto/filtro desses serviços, nunca motivo para criar engines paralelas por nicho.
 
 Quando nenhuma vertical válida estiver ativa, o sistema deverá suportar o
 fallback conceitual:
@@ -869,4 +880,4 @@ Toda nova página deve nascer com sua documentação oficial. Toda página remov
 
 ## Estado do saneamento cirúrgico do catálogo
 
-Após o Lote Cirúrgico 4, o catálogo mantém exatamente 32 ferramentas visíveis. O antigo módulo combinado foi reposicionado como `Planejador de Retirada de Sócios`, com propósito distinto de consolidação e comparação de cenários. Os simuladores especializados de Pró-Labore e Distribuição de Lucros permanecem independentes. A Home continua limitada às 8 maiores ordens de lançamento.
+Após o Lote Cirúrgico 4, o catálogo histórico mantinha 32 ferramentas visíveis. O Lote 6 multi-nicho expande explicitamente esse catálogo para 33, sem remover nenhuma das 32 anteriores. O antigo módulo combinado permanece reposicionado como `Planejador de Retirada de Sócios`, com propósito distinto de consolidação e comparação de cenários. Os simuladores especializados de Pró-Labore e Distribuição de Lucros permanecem independentes. A Home continua limitada às 8 maiores ordens de lançamento da vertical ativa.

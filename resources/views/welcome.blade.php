@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Prazzu Tools — Ferramentas para contabilidade')
-@section('meta_description', 'Ferramentas contábeis gratuitas e profissionais para facilitar a rotina de contadores e empresas.')
+@section('title', $home['page_title'] ?? 'Prazzu Tools')
+@section('meta_description', $home['meta_description'] ?? 'Ferramentas práticas para o seu dia a dia.')
 
 @section('content')
     <div class="prazzu-home" @if($acquisitionContext) data-acquisition-endpoint="{{ route('analytics.acquisition.track') }}" @endif>

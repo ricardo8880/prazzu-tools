@@ -49,7 +49,7 @@
                 <div class="col-md-3 {{ $selected_period === 'custom' ? '' : 'd-none' }}" data-custom-period><label class="form-label" for="start">De</label><input class="form-control" type="date" id="start" name="start" value="{{ request('start', $period->start->toDateString()) }}"></div>
                 <div class="col-md-3 {{ $selected_period === 'custom' ? '' : 'd-none' }}" data-custom-period><label class="form-label" for="end">Até</label><input class="form-control" type="date" id="end" name="end" value="{{ request('end', $period->end->toDateString()) }}"></div>
                 @foreach([
-                    'channel'=>['Canal',$dimensions['channels']], 'source'=>['Origem',$dimensions['sources']],
+                    'channel'=>['Canal',$dimensions['channels']], 'source'=>['Origem',$dimensions['sources']], 'vertical_slug'=>['Vertical',$dimensions['verticals']],
                     'category'=>['Categoria',$dimensions['categories']], 'author_id'=>['Autor',$dimensions['authors']],
                     'tool'=>['Ferramenta',$dimensions['tools']], 'device_type'=>['Dispositivo',$dimensions['devices']],
                     'operating_system'=>['Sistema operacional',$dimensions['operating_systems']], 'region'=>['Estado',$dimensions['regions']],
@@ -170,7 +170,7 @@
             @php
                 $eventDefinition = $eventCatalog->describe($row->event_name);
             @endphp
-            <tr><td class="text-nowrap">{{ $row->occurred_at?->format('d/m/Y H:i') }}</td><td><div class="fw-semibold" title="{{ $eventDefinition['description'] }} {{ $eventDefinition['business_meaning'] }}">{{ $eventDefinition['label'] }}</div><code class="small">{{ $row->event_name }}</code></td><td>{{ $row->channel ?: '—' }}</td><td>{{ $row->subject_slug ?: '—' }}</td><td>{{ $row->source ?: 'Direto' }}</td><td>{{ $row->device_type ?: '—' }}</td><td>{{ collect([$row->city,$row->region])->filter()->implode(' / ') ?: '—' }}</td><td class="text-truncate" style="max-width:280px" title="{{ $row->path }}">{{ $row->path ?: '—' }}</td></tr>@empty<tr><td colspan="8" class="text-center text-body-secondary py-5">Nenhum evento encontrado para os filtros.</td></tr>@endforelse
+            <tr><td class="text-nowrap">{{ $row->occurred_at?->format('d/m/Y H:i') }}</td><td><div class="fw-semibold" title="{{ $eventDefinition['description'] }} {{ $eventDefinition['business_meaning'] }}">{{ $eventDefinition['label'] }}</div><code class="small">{{ $row->event_name }}</code></td><td>{{ $row->channel ?: '—' }}</td><td>{{ $row->vertical_slug ?: 'global' }}</td><td>{{ $row->subject_slug ?: '—' }}</td><td>{{ $row->source ?: 'Direto' }}</td><td>{{ $row->device_type ?: '—' }}</td><td>{{ collect([$row->city,$row->region])->filter()->implode(' / ') ?: '—' }}</td><td class="text-truncate" style="max-width:280px" title="{{ $row->path }}">{{ $row->path ?: '—' }}</td></tr>@empty<tr><td colspan="9" class="text-center text-body-secondary py-5">Nenhum evento encontrado para os filtros.</td></tr>@endforelse
         </tbody></table></div>
         @if($total_rows > $rows->count())<div class="card-footer bg-transparent small text-body-secondary">A tela exibe os 100 registros mais recentes. As exportações incluem até {{ number_format(config('analytics.reports.export_limit',10000),0,',','.') }} registros.</div>@endif
     </div>

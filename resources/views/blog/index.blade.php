@@ -1,10 +1,11 @@
 @extends('layouts.app')
+@php($pageSeo = app(\App\Core\Seo\Application\VerticalSeoContext::class)->defaults('blog'))
+@section('title', $pageSeo['title'])
+@section('meta_description', $pageSeo['description'])
 
-@section('title', 'Blog de contabilidade — Prazzu Tools')
-@section('meta_description', 'Conteúdos práticos sobre contabilidade, fiscal, tributário, departamento pessoal e gestão para profissionais e escritórios contábeis.')
 @section('canonical_url', route('blog.index'))
-@section('og_title', 'Blog de contabilidade — Prazzu Tools')
-@section('og_description', 'Conteúdos práticos sobre contabilidade, fiscal, tributário, departamento pessoal e gestão para profissionais e escritórios contábeis.')
+@section('og_title', $pageSeo['title'])
+@section('og_description', $pageSeo['description'])
 @if ($search !== '' || $category !== '' || $posts->currentPage() > 1)
     @section('meta_robots', 'noindex,follow')
 @endif
@@ -13,7 +14,7 @@
 <div class="container-fluid py-4 px-3 px-lg-4">
     <header class="mb-4">
         <span class="prazzu-eyebrow">Blog Prazzu</span>
-        <h1 class="display-6 fw-bold mt-2 mb-2">Conteúdo para uma rotina contábil melhor</h1>
+        <h1 class="display-6 fw-bold mt-2 mb-2">Conteúdo para {{ $pageSeo['vertical'] ? (app(\App\Core\Verticals\Application\VerticalContext::class)->active()?->name ?? 'sua área') : 'diferentes áreas de negócio' }}</h1>
         <p class="text-body-secondary fs-5 mb-0">Guias, atualizações e explicações práticas conectadas às ferramentas da plataforma.</p>
     </header>
 
@@ -24,7 +25,7 @@
                     <label for="blog-search" class="form-label">Buscar conteúdo</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
-                        <input id="blog-search" class="form-control" type="search" name="q" value="{{ $search }}" placeholder="Ex.: Simples Nacional, DAS, rescisão">
+                        <input id="blog-search" class="form-control" type="search" name="q" value="{{ $search }}" placeholder="Ex.: indicador, cálculo, processo">
                     </div>
                 </div>
                 <div class="col-12 col-md-8 col-lg-3">

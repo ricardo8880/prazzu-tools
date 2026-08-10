@@ -19,6 +19,7 @@ final class SaveBlogPostRequest extends FormRequest
         $postId = $this->route('post')?->getKey();
 
         return [
+            'vertical_slug' => ['nullable', 'string', Rule::in(array_keys((array) config('verticals.registered', [])))],
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('blog_posts', 'slug')->ignore($postId)],
             'excerpt' => ['required', 'string', 'max:1000'],

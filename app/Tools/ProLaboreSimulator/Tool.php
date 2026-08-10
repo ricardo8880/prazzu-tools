@@ -62,6 +62,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
             category: ToolCategory::Fiscal,
             icon: 'bi-person-badge',
             routeName: 'tools.simulador-pro-labore-ideal.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

@@ -81,6 +81,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Calculators,
             icon: 'bi-percent',
             routeName: 'tools.calculadora-margem-markup.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,

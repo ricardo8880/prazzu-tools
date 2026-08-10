@@ -512,7 +512,7 @@ return [
     'allowed_step_actions' => ['fill', 'select', 'check', 'uncheck', 'click', 'submit', 'auto_fill_form', 'invalidate_required'],
     'allowed_expectations' => ['visible', 'hidden', 'text', 'url', 'field_value', 'form_invalid', 'in_viewport'],
     'minimum_coverage' => [
-        'expected_tool_count' => 32,
+        'expected_tool_count' => 33,
         'required_kinds' => ['valid', 'invalid'],
     ],
     'tools' => $tools,

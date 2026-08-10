@@ -9,6 +9,7 @@ use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Support\ToolModuleValidator;
 use App\Core\Tools\ToolCatalog;
 use App\Core\Tools\ToolRegistry;
+use App\Core\Verticals\Application\VerticalContext;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -45,8 +46,9 @@ final class ToolServiceProvider extends ServiceProvider
             return new ToolRegistry($app, $modules);
         });
 
-        $this->app->singleton(ToolCatalog::class, fn ($app): ToolCatalog => new ToolCatalog(
+        $this->app->scoped(ToolCatalog::class, fn ($app): ToolCatalog => new ToolCatalog(
             $app->make(ToolRegistry::class),
+            $app->make(VerticalContext::class),
         ));
     }
 

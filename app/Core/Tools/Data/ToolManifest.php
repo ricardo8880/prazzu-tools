@@ -27,6 +27,7 @@ final readonly class ToolManifest
         public ToolCategory $category,
         public string $icon,
         public string $routeName,
+        public string $vertical,
         public string $version = '1.0.0',
         public ToolAccess $access = ToolAccess::Free,
         public ToolStatus $status = ToolStatus::Active,
@@ -52,6 +53,10 @@ final readonly class ToolManifest
 
         if (! preg_match('/^tools\.[a-z0-9.-]+$/', $this->routeName)) {
             throw new InvalidArgumentException('A rota principal da ferramenta deve usar o prefixo [tools.].');
+        }
+
+        if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $this->vertical)) {
+            throw new InvalidArgumentException('A vertical da ferramenta deve usar um slug válido.');
         }
 
         if (! preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/', $this->version)) {
@@ -132,6 +137,7 @@ final readonly class ToolManifest
             category: ToolCategory::from((string) ($data['category'] ?? '')),
             icon: (string) ($data['icon'] ?? ''),
             routeName: (string) ($data['route_name'] ?? ''),
+            vertical: (string) ($data['vertical'] ?? ''),
             version: (string) ($data['version'] ?? '1.0.0'),
             access: ToolAccess::from((string) ($data['access'] ?? ToolAccess::Free->value)),
             status: ToolStatus::from((string) ($data['status'] ?? ToolStatus::Active->value)),
@@ -165,6 +171,7 @@ final readonly class ToolManifest
             'category' => $this->category->value,
             'icon' => $this->icon,
             'route_name' => $this->routeName,
+            'vertical' => $this->vertical,
             'version' => $this->version,
             'access' => $this->access->value,
             'status' => $this->status->value,

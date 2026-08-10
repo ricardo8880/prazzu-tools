@@ -10,7 +10,7 @@
             <div>
                 <span class="prazzu-eyebrow">Central de recursos</span>
                 <h1>Recursos para aplicar, conferir e decidir melhor</h1>
-                <p>Uma biblioteca enxuta de materiais práticos, criada para complementar ferramentas reais da rotina contábil.</p>
+                <p>Uma biblioteca enxuta de materiais práticos, criada para complementar as ferramentas disponíveis na vertical ativa.</p>
             </div>
         </header>
 

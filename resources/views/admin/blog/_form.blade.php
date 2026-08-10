@@ -24,6 +24,15 @@
             <div class="card-body p-4">
                 <h2 class="h5 mb-3">Conteúdo</h2>
                 <div class="mb-3">
+                    <label class="form-label" for="vertical_slug">Vertical</label>
+                    <select class="form-select" id="vertical_slug" name="vertical_slug" required>
+                        @foreach ($verticals as $vertical)
+                            <option value="{{ $vertical->slug }}" @selected(old('vertical_slug', $post->vertical_slug ?: config('verticals.default')) === $vertical->slug)>{{ $vertical->name }}</option>
+                        @endforeach
+                    </select>
+                    <div class="form-text">A vertical organiza o conteúdo; a engine do Blog continua única.</div>
+                </div>
+                <div class="mb-3">
                     <label class="form-label" for="title">Título</label>
                     <input class="form-control form-control-lg" id="title" name="title" required maxlength="255" value="{{ old('title', $post->title) }}">
                 </div>

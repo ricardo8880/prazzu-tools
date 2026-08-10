@@ -25,6 +25,7 @@ class AnalyticsDashboardRequest extends FormRequest
             'tool' => ['nullable', 'string', 'max:160'],
             'category' => ['nullable', 'string', 'max:160'],
             'source' => ['nullable', 'string', 'max:120'],
+            'vertical_slug' => ['nullable', 'string', 'max:120'],
             'device_type' => ['nullable', 'string', 'max:30'],
             'browser' => ['nullable', 'string', 'max:80'],
             'country_code' => ['nullable', 'string', 'size:2'],

@@ -21,6 +21,7 @@ final class ToolCapabilityTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.ferramenta-teste.index',
+            vertical: 'contabilidade',
             features: [new ToolFeature('calculate', 'Calcular', ToolFeatureTier::Essential)],
             capabilities: [ToolCapability::History],
         );
@@ -41,6 +42,7 @@ final class ToolCapabilityTest extends TestCase
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
             routeName: 'tools.ferramenta-teste.index',
+            vertical: 'contabilidade',
             features: [new ToolFeature('calculate', 'Calcular', ToolFeatureTier::Essential)],
             capabilities: [ToolCapability::History, ToolCapability::History],
         );

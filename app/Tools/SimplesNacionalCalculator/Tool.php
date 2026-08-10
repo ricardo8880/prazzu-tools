@@ -88,6 +88,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Fiscal,
             icon: 'bi-calculator',
             routeName: 'tools.calculadora-simples-nacional.index',
+            vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,

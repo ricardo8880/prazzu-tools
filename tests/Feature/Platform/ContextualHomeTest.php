@@ -19,6 +19,33 @@ final class ContextualHomeTest extends TestCase
             ->assertSee(config('home.cta.label'));
     }
 
+    public function test_home_uses_global_fallback_when_vertical_context_is_null(): void
+    {
+        config(['verticals.default' => null]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee(config('home.global.hero.description'))
+            ->assertSee(config('home.global.tools_section_title'))
+            ->assertDontSee(config('home.verticals.contabilidade.hero.description'));
+    }
+
+    public function test_registered_vertical_without_specific_home_uses_global_fallback(): void
+    {
+        config([
+            'verticals.default' => 'rh',
+            'verticals.registered.rh' => ['name' => 'RH'],
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertOk()
+            ->assertSee(config('home.global.hero.description'))
+            ->assertSee(config('home.global.tools_section_title'));
+
+        self::assertSame([], $response->viewData('featuredTools')->pluck('slug')->all());
+    }
+
     public function test_active_context_replaces_content_but_keeps_the_latest_eight_tools(): void
     {
         $tools = app(\App\Core\Tools\ToolCatalog::class)->all(false)->take(3)->values();

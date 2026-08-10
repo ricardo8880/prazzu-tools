@@ -89,6 +89,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             category: ToolCategory::Validators,
             icon: 'bi-shield-check',
             routeName: 'tools.validador-de-cnpj.index',
+            vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
             status: ToolStatus::Active,
