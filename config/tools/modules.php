@@ -21,6 +21,7 @@ return [
         App\Tools\FactorRSimulator\Tool::class,
         App\Tools\LateDasCalculator\Tool::class,
         App\Tools\DifalIcmsCalculator\Tool::class,
+        \App\Tools\PresumedProfitIrpjCsllCalculator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [

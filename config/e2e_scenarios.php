@@ -181,6 +181,27 @@ foreach (($productTools['official'] ?? []) as $tool) {
                 mimeType: 'text/csv',
             ),
         ],
+        'calculadora-irpj-csll-lucro-presumido' => [
+            new ToolDownloadExpectation(
+                id: 'irpj-csll-pdf',
+                testId: 'download-pdf',
+                format: 'pdf',
+                extension: 'pdf',
+                minimumBytes: 800,
+                filenameContains: 'irpj-csll-lucro-presumido',
+                mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'irpj-csll-xlsx',
+                testId: 'download-xlsx',
+                format: 'xlsx',
+                extension: 'xlsx',
+                minimumBytes: 1000,
+                filenameContains: 'irpj-csll-lucro-presumido',
+                mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
         'conversor-fiscal-xml' => [
             new ToolDownloadExpectation(
                 id: 'xml-fiscal-pdf',
@@ -512,7 +533,7 @@ return [
     'allowed_step_actions' => ['fill', 'select', 'check', 'uncheck', 'click', 'submit', 'auto_fill_form', 'invalidate_required'],
     'allowed_expectations' => ['visible', 'hidden', 'text', 'url', 'field_value', 'form_invalid', 'in_viewport'],
     'minimum_coverage' => [
-        'expected_tool_count' => 33,
+        'expected_tool_count' => 34,
         'required_kinds' => ['valid', 'invalid'],
     ],
     'tools' => $tools,

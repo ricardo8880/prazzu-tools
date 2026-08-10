@@ -14,8 +14,8 @@ final class MultiVerticalExpansionProofTest extends TestCase
         $inventory = require dirname(__DIR__, 2).'/config/product_tools.php';
 
         self::assertSame('Recursos Humanos', $verticals['registered']['rh']['name']);
-        self::assertSame(33, $inventory['expected_module_count']);
-        self::assertCount(32, array_filter($inventory['official'], static fn (array $tool): bool => $tool['vertical'] === 'contabilidade'));
+        self::assertSame(34, $inventory['expected_module_count']);
+        self::assertCount(33, array_filter($inventory['official'], static fn (array $tool): bool => $tool['vertical'] === 'contabilidade'));
         self::assertCount(1, array_filter($inventory['official'], static fn (array $tool): bool => $tool['vertical'] === 'rh'));
 
         $root = dirname(__DIR__, 2).'/app';

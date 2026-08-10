@@ -4,13 +4,13 @@ A fonte executável deste inventário é `config/product_tools.php`. O README da
 
 ## Estado consolidado no Lote Cirúrgico 1
 
-Após o Lote 6 multi-nicho, o projeto possui **33 módulos em `app/Tools`**, todos integrantes de um único inventário oficial. Os 32 módulos anteriores permanecem associados à vertical `contabilidade` e `TurnoverCalculator` inaugura a vertical `rh`. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
+Após a expansão fiscal de IRPJ/CSLL, o projeto possui **34 módulos em `app/Tools`**, todos integrantes de um único inventário oficial. Os 33 módulos anteriores permanecem preservados; `PresumedProfitIrpjCsllCalculator` entra como a 33ª ferramenta de `contabilidade`, enquanto `TurnoverCalculator` permanece na vertical `rh`. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
 
 Este lote não remove módulos nem altera slugs públicos. A ferramenta combinada `ProLaboreProfitDistributionCalculator` permanece temporariamente no inventário com o estado `implemented`, porque apresenta sobreposição funcional com `ProLaboreSimulator` e `ProfitDistributionCalculator`. A sua retirada só pode ocorrer num lote de migração dedicado, com compatibilidade de rotas, histórico e métricas e sem reduzir a quantidade oficial vigente declarada no inventário.
 
 ## Regras obrigatórias do inventário
 
-- O diretório `app/Tools` deve conter a quantidade declarada por `expected_module_count`. O Lote 6 é o lote explícito de expansão que elevou essa quantidade de 32 para 33.
+- O diretório `app/Tools` deve conter a quantidade declarada por `expected_module_count`. O Lote 6 elevou essa quantidade de 32 para 33; a expansão fiscal de IRPJ/CSLL é o lote explícito que eleva a quantidade atual para 34.
 - Cada módulo deve aparecer exatamente uma vez em `config/product_tools.php`.
 - Cada entrada oficial deve declarar uma `vertical` registrada e coincidir com a vertical do respectivo `ToolManifest`.
 - IDs, chaves, nomes e slugs do inventário devem ser únicos.
@@ -45,3 +45,14 @@ Toda alteração deve atualizar conjuntamente:
 ## Resolução da sobreposição funcional — Lote Cirúrgico 4
 
 O módulo `ProLaboreProfitDistributionCalculator` foi mantido com o slug histórico, porém reposicionado como **Planejador de Retirada de Sócios**. O escopo público agora é a composição consolidada da retirada e a comparação de cenários; os módulos `ProLaboreSimulator` e `ProfitDistributionCalculator` continuam responsáveis pelos cálculos especializados isolados. Assim, as 32 entradas históricas permanecem preservadas sem uma ferramenta escondida ou um terceiro formulário com propósito idêntico; o Lote 6 adiciona a 33ª entrada em RH.
+
+
+## Expansão fiscal — IRPJ e CSLL no Lucro Presumido
+
+- ID oficial: `34`.
+- Módulo: `PresumedProfitIrpjCsllCalculator`.
+- Slug: `calculadora-irpj-csll-lucro-presumido`.
+- Vertical: `contabilidade`.
+- Estado: `implemented` / manifesto `beta`.
+- Ordem de lançamento: `34`.
+- Escopo normativo inicial: ano-calendário de 2026, com regras versionadas e fontes oficiais registradas no próprio módulo.

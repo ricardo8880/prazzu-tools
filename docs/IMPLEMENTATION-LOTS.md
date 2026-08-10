@@ -779,3 +779,13 @@ continuidade, compatibilidade e validação.
 - A documentação arquitetural atual registra 33 ferramentas no total (32 de Contabilidade e 1 de RH), sem reescrever os trechos históricos dos lotes anteriores.
 - Foi adicionado um gate arquitetural de consolidação para proteger as superfícies compartilhadas contra regressões multi-vertical.
 - A partir deste ponto, novas verticais devem entrar por registro, configuração, conteúdo e ferramentas; não existe um Lote 8 obrigatório da trilha multi-nicho.
+
+
+## Expansão fiscal pós-consolidação — IRPJ e CSLL no Lucro Presumido
+
+- O inventário oficial é expandido de 33 para 34 ferramentas sem remoção, substituição ou mudança de slug dos módulos existentes.
+- Foi criado `PresumedProfitIrpjCsllCalculator`, na vertical `contabilidade`, com cálculo trimestral de IRPJ, adicional de IRPJ e CSLL para o Lucro Presumido no escopo normativo de 2026.
+- O módulo usa `Money`, `Percentage`, `IntegerRounding`, `NormativeRuleResolver`, contratos padronizados de cálculo, histórico e exportadores compartilhados do Core; não importa classes internas de outras ferramentas.
+- A regra fiscal é versionada como `lucro_presumido.irpj_csll:2026.1.0`, com referências oficiais e casos dourados de cenário típico, fronteira, entrada inválida, arredondamento, não aplicabilidade, transição normativa e regressão.
+- O Essencial entrega o cálculo do trimestre e memória fiscal; o Plus adiciona múltiplas atividades, ajuste dos limites acumulados, créditos/retenções confirmados, histórico e PDF/XLSX.
+- Os gates numéricos atuais de inventário, Analytics e E2E passam a esperar 34 ferramentas; trechos históricos dos lotes anteriores permanecem como registro de evolução.

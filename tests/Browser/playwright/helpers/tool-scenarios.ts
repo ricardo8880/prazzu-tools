@@ -92,8 +92,8 @@ export function loadToolScenarios(): ScenarioManifest {
     const manifest = JSON.parse(readFileSync(path, 'utf8')) as ScenarioManifest;
     if (manifest.schema_version !== '1.2.0') throw new Error(`Versão desconhecida de cenários E2E: ${manifest.schema_version}`);
     if (manifest.scenario_count !== manifest.scenarios.length) throw new Error('Contagem de cenários E2E divergente.');
-    if (manifest.tool_count !== 33 || manifest.coverage.valid_tools !== 33 || manifest.coverage.invalid_tools !== 33) {
-        throw new Error('O manifesto não possui cobertura mínima válida e inválida para as 33 ferramentas.');
+    if (manifest.tool_count !== 34 || manifest.coverage.valid_tools !== 34 || manifest.coverage.invalid_tools !== 34) {
+        throw new Error('O manifesto não possui cobertura mínima válida e inválida para as 34 ferramentas.');
     }
     return manifest;
 }

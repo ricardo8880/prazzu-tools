@@ -107,6 +107,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 - [Calculadora de Férias — Prazzu Tools](app/Tools/VacationCalculator/pages/index.blade.md) — `app/Tools/VacationCalculator/Resources/views/index.blade.php`
 - [Planejamento de férias](app/Tools/VacationCalculator/pages/planner.blade.md) — `app/Tools/VacationCalculator/Resources/views/planner.blade.php`
 
+- [Calculadora de IRPJ e CSLL — Lucro Presumido](app/Tools/PresumedProfitIrpjCsllCalculator/pages/index.blade.md) — `app/Tools/PresumedProfitIrpjCsllCalculator/Resources/views/index.blade.php`
+
 ### Página de histórico
 
 - [Histórico de custos CLT](app/Tools/EmployeeCostCalculator/pages/history/index.blade.md) — `app/Tools/EmployeeCostCalculator/Resources/views/history/index.blade.php`
