@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { attachBrowserDiagnostics, blockingBrowserDiagnostics, collectBrowserDiagnostics } from './helpers/diagnostics';
 import { executeAndValidateDownload } from './helpers/download-validator';
 import { applyE2ECorrelation, attachCorrelatedServerLogs } from './helpers/e2e-correlation';
-import { executeScenario, loadToolScenarios } from './helpers/tool-scenarios';
+import { executeScenario, loadToolScenarios, toolPublicPath } from './helpers/tool-scenarios';
 
 const requestedToolSlug = process.env.E2E_TOOL_SLUG?.trim() || null;
 const downloadScenarios = loadToolScenarios().scenarios.filter(scenario => scenario.downloads.length > 0);
@@ -27,7 +27,7 @@ test.describe('Validação profunda de downloads', () => {
             const correlation = await applyE2ECorrelation(page, `${scenario.tool_slug}:${scenario.id}:downloads`);
 
             try {
-                const response = await page.goto(`/ferramentas/${scenario.tool_slug}`, { waitUntil: 'domcontentloaded' });
+                const response = await page.goto(toolPublicPath(scenario), { waitUntil: 'domcontentloaded' });
                 expect(response?.status()).toBeLessThan(400);
                 await executeScenario(page, scenario);
 

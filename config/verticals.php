@@ -29,9 +29,11 @@ return [
     'registered' => [
         'contabilidade' => [
             'name' => 'Contabilidade',
+            'public_slug' => 'contabil',
         ],
         'rh' => [
             'name' => 'Recursos Humanos',
+            'public_slug' => 'rh',
         ],
     ],
 

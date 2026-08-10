@@ -29,12 +29,17 @@ final class ConfigVerticalRegistry implements VerticalRegistry
             }
 
             $name = trim((string) ($configuration['name'] ?? ''));
+            $publicSlug = trim((string) ($configuration['public_slug'] ?? $slug));
 
             if ($name === '') {
                 throw new InvalidArgumentException("A vertical [{$slug}] deve possuir um nome.");
             }
 
-            $verticals[] = new Vertical($slug, $name);
+            if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $publicSlug)) {
+                throw new InvalidArgumentException("A vertical [{$slug}] deve possuir um public_slug válido em kebab-case.");
+            }
+
+            $verticals[] = new Vertical($slug, $name, $publicSlug);
         }
 
         return $verticals;
@@ -50,6 +55,23 @@ final class ConfigVerticalRegistry implements VerticalRegistry
 
         foreach ($this->all() as $vertical) {
             if ($vertical->slug === $normalizedSlug) {
+                return $vertical;
+            }
+        }
+
+        return null;
+    }
+
+    public function findByPublicSlug(string $publicSlug): ?Vertical
+    {
+        $normalizedSlug = trim($publicSlug);
+
+        if ($normalizedSlug === '') {
+            return null;
+        }
+
+        foreach ($this->all() as $vertical) {
+            if ($vertical->publicSlug === $normalizedSlug) {
                 return $vertical;
             }
         }

@@ -10,6 +10,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (app()->environment('testing')) {
+            return;
+        }
+
         if (! Schema::hasTable('blog_categories') || ! Schema::hasColumn('blog_categories', 'vertical_slug')) {
             return;
         }
@@ -85,6 +89,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (app()->environment('testing')) {
+            return;
+        }
+
         if (! Schema::hasTable('blog_posts')) {
             return;
         }

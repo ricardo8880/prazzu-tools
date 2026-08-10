@@ -11,5 +11,7 @@ interface VerticalRegistry
 
     public function find(string $slug): ?Vertical;
 
+    public function findByPublicSlug(string $publicSlug): ?Vertical;
+
     public function default(): ?Vertical;
 }

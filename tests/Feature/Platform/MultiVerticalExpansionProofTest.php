@@ -20,13 +20,13 @@ final class MultiVerticalExpansionProofTest extends TestCase
         $catalog = $this->app->make(ToolCatalog::class);
         self::assertSame(['calculadora-turnover'], $catalog->all()->pluck('slug')->all());
 
-        $this->get(route('home'))
+        $this->get(route('home', ['vertical' => 'rh']))
             ->assertOk()
             ->assertSee('gestão de pessoas')
             ->assertSee('Calculadora de Turnover')
             ->assertDontSee('Calculadora DIFAL');
 
-        $this->get(route('tools.index'))
+        $this->get(route('tools.index', ['vertical' => 'rh']))
             ->assertOk()
             ->assertSee('Calculadora de Turnover')
             ->assertDontSee('Calculadora de Simples Nacional');

@@ -235,9 +235,16 @@ final class ToolCatalog
 
     private function belongsToActiveVertical(ToolManifest $manifest): bool
     {
-        $active = $this->verticalContext?->active();
+        $activeSlug = $this->verticalContext?->active()?->slug;
 
-        return $active === null || $manifest->vertical === $active->slug;
+        if ($activeSlug === null) {
+            $configuredDefault = config('verticals.default');
+            $activeSlug = is_string($configuredDefault) && trim($configuredDefault) !== ''
+                ? trim($configuredDefault)
+                : null;
+        }
+
+        return $activeSlug === null || $manifest->vertical === $activeSlug;
     }
 
     private function releaseOrder(string $slug): int

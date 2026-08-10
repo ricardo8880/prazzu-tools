@@ -34,7 +34,8 @@ final class ContextualHomeTest extends TestCase
     {
         config([
             'verticals.default' => 'rh',
-            'verticals.registered.rh' => ['name' => 'RH'],
+            'verticals.registered.rh' => ['name' => 'RH', 'public_slug' => 'rh'],
+            'home.verticals.rh' => null,
         ]);
 
         $response = $this->get('/');
@@ -43,7 +44,7 @@ final class ContextualHomeTest extends TestCase
             ->assertSee(config('home.global.hero.description'))
             ->assertSee(config('home.global.tools_section_title'));
 
-        self::assertSame([], $response->viewData('featuredTools')->pluck('slug')->all());
+        self::assertSame(['calculadora-turnover'], $response->viewData('featuredTools')->pluck('slug')->all());
     }
 
     public function test_active_context_replaces_content_but_keeps_the_latest_eight_tools(): void

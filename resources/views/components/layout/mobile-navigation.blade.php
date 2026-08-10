@@ -18,6 +18,7 @@
             @endforeach
 
             <a class="nav-link prazzu-sidebar-link" href="{{ route('blog.index') }}"><i class="bi bi-journal-text"></i>Blog</a>
+            <a class="nav-link prazzu-sidebar-link" href="{{ route('resources.index') }}"><i class="bi bi-folder2-open"></i>Recursos</a>
             <a class="nav-link prazzu-sidebar-link" href="{{ route('plans') }}"><i class="bi bi-gem"></i>Planos</a>
             <a class="nav-link prazzu-sidebar-link" href="{{ route('about') }}"><i class="bi bi-info-circle"></i>Sobre</a>
         </nav>

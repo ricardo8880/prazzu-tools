@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\Acquisition\ClearAcquisitionContextController;
 use App\Http\Controllers\Acquisition\ContinueAcquisitionContextController;
@@ -54,22 +54,78 @@ use App\Http\Controllers\Seo\BlogSitemapController;
 use App\Http\Controllers\Seo\ToolSitemapController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', HomeController::class)->name('home');
+$verticalPublicSlugs = collect(config('verticals.registered', []))
+    ->map(static fn (array $vertical, string $slug): string => (string) ($vertical['public_slug'] ?? $slug))
+    ->values()
+    ->all();
 
+Route::prefix('tools/{vertical}')
+    ->whereIn('vertical', $verticalPublicSlugs)
+    ->group(function (): void {
+        Route::get('/', HomeController::class)->name('home');
+        Route::get('/ferramentas', [ToolCatalogController::class, 'index'])->name('tools.index');
+        Route::get('/ferramentas/{category}', [ToolCatalogController::class, 'index'])
+            ->whereIn('category', array_keys(config('tools.categories', [])))
+            ->name('tools.category');
+
+        Route::middleware('vertical.tool')->group(function (): void {
+            require __DIR__.'/tools.php';
+        });
+
+        Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+        Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+        Route::post('/blog/analytics', [BlogAnalyticsController::class, 'store'])
+            ->middleware('throttle:120,1')
+            ->name('blog.analytics');
+
+        Route::get('/recursos', [ContentPageController::class, 'resources'])->name('resources.index');
+        Route::get('/recursos/{resource}/{slug}', [ContentPageController::class, 'resourceItem'])
+            ->whereIn('resource', ['guias', 'modelos'])
+            ->name('resources.item');
+        Route::get('/recursos/{resource}', [ContentPageController::class, 'resource'])
+            ->whereIn('resource', ['guias', 'modelos', 'novidades'])
+            ->name('resources.show');
+
+        Route::get('/sitemap-blog.xml', BlogSitemapController::class)->name('blog.sitemap');
+        Route::get('/sitemap-tools.xml', ToolSitemapController::class)->name('tools.sitemap');
+    });
 
 Route::post('/acquisition/context/clear', ClearAcquisitionContextController::class)
     ->name('acquisition.context.clear');
-
 Route::post('/acquisition/context/continue', ContinueAcquisitionContextController::class)
     ->name('acquisition.context.continue');
 
-Route::get('/ferramentas', [ToolCatalogController::class, 'index'])->name('tools.index');
+// Compatibilidade: URLs histÃ³ricas continuam servindo o conteÃºdo diretamente.
+// As rotas nomeadas pÃºblicas permanecem canÃ´nicas em /tools/{vertical}/... .
+Route::get('/', HomeController::class)->name('legacy.home');
 
+Route::get('/ferramentas', [ToolCatalogController::class, 'index'])->name('legacy.tools.index');
 Route::get('/ferramentas/{category}', [ToolCatalogController::class, 'index'])
     ->whereIn('category', array_keys(config('tools.categories', [])))
-    ->name('tools.category');
+    ->name('legacy.tools.category');
 
-require __DIR__.'/tools.php';
+Route::name('legacy.')
+    ->middleware('vertical.tool')
+    ->group(function (): void {
+        require __DIR__.'/tools.php';
+    });
+
+Route::get('/blog', [BlogController::class, 'index'])->name('legacy.blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('legacy.blog.show');
+Route::post('/blog/analytics', [BlogAnalyticsController::class, 'store'])
+    ->middleware('throttle:120,1')
+    ->name('legacy.blog.analytics');
+
+Route::get('/recursos', [ContentPageController::class, 'resources'])->name('legacy.resources.index');
+Route::get('/recursos/{resource}/{slug}', [ContentPageController::class, 'resourceItem'])
+    ->whereIn('resource', ['guias', 'modelos'])
+    ->name('legacy.resources.item');
+Route::get('/recursos/{resource}', [ContentPageController::class, 'resource'])
+    ->whereIn('resource', ['guias', 'modelos', 'novidades'])
+    ->name('legacy.resources.show');
+
+Route::get('/sitemap-blog.xml', BlogSitemapController::class)->name('legacy.blog.sitemap');
+Route::get('/sitemap-tools.xml', ToolSitemapController::class)->name('legacy.tools.sitemap');
 
 Route::get('/admin', AdminDashboardController::class)
     ->middleware('internal.admin')
@@ -156,15 +212,6 @@ Route::prefix('admin/blog')
             ->except('show');
     });
 
-Route::get('/blog', [BlogController::class, 'index'])
-    ->name('blog.index');
-
-Route::get('/sitemap-blog.xml', BlogSitemapController::class)
-    ->name('blog.sitemap');
-
-Route::get('/sitemap-tools.xml', ToolSitemapController::class)
-    ->name('tools.sitemap');
-
 Route::post('/analytics/audience', CaptureAudienceContextController::class)
     ->middleware('throttle:30,1')
     ->name('analytics.audience.capture');
@@ -181,26 +228,8 @@ Route::post('/analytics/tools/presence', TrackToolPresenceController::class)
     ->middleware('throttle:240,1')
     ->name('analytics.tools.presence');
 
-Route::post('/blog/analytics', [BlogAnalyticsController::class, 'store'])
-    ->middleware('throttle:120,1')
-    ->name('blog.analytics');
-
-Route::get('/blog/{slug}', [BlogController::class, 'show'])
-    ->name('blog.show');
-
 Route::get('/planos', [ContentPageController::class, 'plans'])
     ->name('plans');
-
-Route::get('/recursos', [ContentPageController::class, 'resources'])
-    ->name('resources.index');
-
-Route::get('/recursos/{resource}/{slug}', [ContentPageController::class, 'resourceItem'])
-    ->whereIn('resource', ['guias', 'modelos'])
-    ->name('resources.item');
-
-Route::get('/recursos/{resource}', [ContentPageController::class, 'resource'])
-    ->whereIn('resource', ['guias', 'modelos', 'novidades'])
-    ->name('resources.show');
 
 Route::get('/sobre', [ContentPageController::class, 'about'])
     ->name('about');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Platform;
 
 use App\Core\Verticals\Application\VerticalContext;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -74,6 +75,21 @@ final class ContentPageController extends Controller
     public function prazzu(): View
     {
         return $this->render('prazzu');
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
+    private function resourceItems(): Collection
+    {
+        $vertical = app(VerticalContext::class)->slug();
+
+        return collect(config('resources.items', []))
+            ->filter(static fn (mixed $item): bool => is_array($item))
+            ->filter(static function (array $item) use ($vertical): bool {
+                $itemVertical = $item['vertical'] ?? null;
+
+                return $vertical === null || $itemVertical === $vertical || $itemVertical === 'global';
+            })
+            ->values();
     }
 
     private function render(string $key): View

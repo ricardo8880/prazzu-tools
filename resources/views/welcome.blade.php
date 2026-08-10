@@ -15,7 +15,7 @@
 
                     <p class="prazzu-hero__description mb-4">{{ $home['hero']['description'] }}</p>
 
-                    <form class="prazzu-search" action="{{ url('/ferramentas') }}" method="get" role="search">
+                    <form class="prazzu-search" action="{{ route('tools.index') }}" method="get" role="search">
                         <label class="visually-hidden" for="home-tool-search">Buscar ferramentas</label>
                         <i class="bi bi-search" aria-hidden="true"></i>
                         <input type="hidden" name="source" value="home_search">
@@ -65,7 +65,7 @@
         <section class="prazzu-featured-tools" aria-labelledby="featured-tools-title">
             <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
                 <h2 id="featured-tools-title" class="prazzu-section-title mb-0">{{ $home['tools_section_title'] }}</h2>
-                <a class="prazzu-section-link text-decoration-none" href="{{ url('/ferramentas') }}">
+                <a class="prazzu-section-link text-decoration-none" href="{{ route('tools.index') }}">
                     Ver todas <i class="bi bi-arrow-right" aria-hidden="true"></i>
                 </a>
             </div>
@@ -102,7 +102,7 @@
                     <small>{{ $home['cta']['description'] }}</small>
                 </span>
             </div>
-            <a class="btn btn-primary prazzu-btn-primary" href="{{ url($home['cta']['url']) }}" @if($acquisitionContext) data-acquisition-click="cta" @endif>{{ $home['cta']['label'] }}</a>
+            <a class="btn btn-primary prazzu-btn-primary" href="{{ ($home['cta']['url'] === '/ferramentas' ? route('tools.index') : url($home['cta']['url'])) }}" @if($acquisitionContext) data-acquisition-click="cta" @endif>{{ $home['cta']['label'] }}</a>
         </aside>
     </div>
 @endsection

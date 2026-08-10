@@ -176,7 +176,7 @@ final class RequestedToolsPublicationTest extends TestCase
         $route = Route::getRoutes()->getByName($routeName);
 
         self::assertNotNull($route, "A rota [{$routeName}] não está registrada.");
-        self::assertSame("ferramentas/{$slug}", $route->uri());
+        self::assertSame("tools/{vertical}/ferramentas/{$slug}", $route->uri());
         self::assertContains('GET', $route->methods());
         self::assertContains('HEAD', $route->methods());
     }

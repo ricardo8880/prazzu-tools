@@ -26,7 +26,7 @@ final class BlogPostController extends Controller
     {
         $search = trim((string) $request->query('q', ''));
         $status = trim((string) $request->query('status', ''));
-        $vertical = trim((string) $request->query('vertical', ''));
+        $selectedVertical = trim((string) $request->query('vertical', ''));
 
         $posts = BlogPost::query()
             ->with(['author', 'blogCategory'])
@@ -38,7 +38,7 @@ final class BlogPostController extends Controller
                 });
             })
             ->when($status !== '', static fn ($query) => $query->where('status', $status))
-            ->when($vertical !== '', static fn ($query) => $query->where('vertical_slug', $vertical))
+            ->when($selectedVertical !== '', static fn ($query) => $query->where('vertical_slug', $selectedVertical))
             ->latest('updated_at')
             ->paginate(15)
             ->withQueryString();
@@ -49,7 +49,7 @@ final class BlogPostController extends Controller
             'selectedStatus' => $status,
             'statuses' => BlogPostStatus::cases(),
             'verticals' => $verticalRegistry->all(),
-            'selectedVertical' => $vertical,
+            'selectedVertical' => $selectedVertical,
         ]);
     }
 

@@ -38,7 +38,9 @@ final class ToolCatalogConsistencyTest extends TestCase
     public function test_catalog_contains_only_visible_registered_tool_manifests(): void
     {
         $catalogSlugs = $this->app->make(ToolCatalog::class)->all()->pluck('slug')->sort()->values();
+        $defaultVertical = config('verticals.default');
         $manifestSlugs = collect($this->app->make(ToolRegistry::class)->manifests())
+            ->filter(static fn ($manifest): bool => $defaultVertical === null || $manifest->vertical === $defaultVertical)
             ->pluck('slug')
             ->sort()
             ->values();

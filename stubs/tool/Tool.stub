@@ -41,6 +41,7 @@ final class Tool implements {{ history_interface }}HasToolIntegrations, HasWebRo
             category: ToolCategory::{{ category_case }},
             icon: 'bi-tools',
             routeName: '{{ route_prefix }}.index',
+            vertical: '{{ vertical }}',
             version: '0.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::{{ status_case }},

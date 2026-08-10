@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { attachBrowserDiagnostics, blockingBrowserDiagnostics, collectBrowserDiagnostics } from './helpers/diagnostics';
 import { applyE2ECorrelation, attachCorrelatedServerLogs } from './helpers/e2e-correlation';
-import { auditVisibleResultActions, executeScenario, loadToolScenarios } from './helpers/tool-scenarios';
+import { auditVisibleResultActions, executeScenario, loadToolScenarios, toolPublicPath } from './helpers/tool-scenarios';
 
 const manifest = loadToolScenarios();
 const requestedToolSlug = process.env.E2E_TOOL_SLUG?.trim() || null;
@@ -45,12 +45,12 @@ test.describe('Auditoria operacional rápida de formulários e botões', () => {
             const declaredSteps = scenario.steps.map((step, index) => `${index + 1}. ${step.action}${step.test_id ? ` data-testid=${step.test_id}` : ''}${step.scope_test_id ? ` scope=${step.scope_test_id}` : ''}`);
 
             console.log(`\n[ACTIONS] TESTANDO: ${scenario.tool_slug}`);
-            console.log(`[ACTIONS] Página: /ferramentas/${scenario.tool_slug}`);
+            console.log(`[ACTIONS] Página: ${toolPublicPath(scenario)}`);
             console.log(`[ACTIONS] Fluxo: ${declaredSteps.join(' -> ')}`);
             console.log(`[ACTIONS] Resultado esperado: ${expectedResultSummary(scenario)}`);
 
             try {
-                const response = await page.goto(`/ferramentas/${scenario.tool_slug}`, { waitUntil: 'domcontentloaded' });
+                const response = await page.goto(toolPublicPath(scenario), { waitUntil: 'domcontentloaded' });
                 expect(response?.status(), `[${scenario.tool_slug}] a página da ferramenta precisa abrir antes do teste do botão.`).toBeLessThan(400);
 
                 const execution = await executeScenario(page, scenario);

@@ -10,7 +10,7 @@ final class AboutPageTest extends TestCase
     {
         $this->get('/sobre')
             ->assertOk()
-            ->assertSee('Ferramentas contábeis que resolvem de verdade')
+            ->assertSee('Ferramentas profissionais que resolvem de verdade')
             ->assertSee('Uma plataforma, não apenas calculadoras')
             ->assertSee('Cada ferramenta evolui sozinha. A plataforma evolui para todas.')
             ->assertSee('Um único plano');

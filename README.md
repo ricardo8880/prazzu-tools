@@ -23,6 +23,56 @@ A identidade deste projeto é simples:
 > O Prazzu Tools deve parecer uma plataforma especializada para cada vertical
 > atendida, permanecendo tecnicamente uma única plataforma compartilhada.
 
+
+## URL canônica das verticais
+
+A vertical ativa faz parte da URL pública e é a fonte principal de contexto da experiência.
+O formato obrigatório é:
+
+```text
+/tools/{vertical}
+/tools/{vertical}/ferramentas
+/tools/{vertical}/ferramentas/{slug}
+/tools/{vertical}/blog
+/tools/{vertical}/recursos
+```
+
+Exemplos oficiais atuais:
+
+```text
+/tools/contabil
+/tools/contabil/ferramentas/calculadora-salario-liquido
+/tools/contabil/blog
+/tools/contabil/recursos
+
+/tools/rh
+/tools/rh/ferramentas/calculadora-turnover
+/tools/rh/blog
+/tools/rh/recursos
+```
+
+O slug público não precisa ser igual ao identificador interno da vertical. Atualmente,
+`contabil` é o slug público da vertical interna `contabilidade`, enquanto `rh` usa o
+mesmo slug interna e publicamente. A resolução deve sempre ocorrer pelo registro de
+verticais, nunca por condicionais rígidas no Core.
+
+A URL possui prioridade sobre sessão, aquisição e fallback. Ao acessar `/tools/rh`,
+Home, ferramentas, Blog, Recursos, SEO, breadcrumbs, recomendações e demais
+superfícies específicas devem operar no contexto de RH. Conteúdo ou ferramenta de
+outra vertical não pode vazar para essa experiência; acesso direto incompatível deve
+retornar 404.
+
+As únicas páginas públicas de conteúdo que permanecem globais entre verticais são:
+
+```text
+/planos
+/sobre
+```
+
+Recursos não são globais: pertencem ao contexto de `/tools/{vertical}/recursos`.
+A raiz `/` e as URLs públicas anteriores devem funcionar apenas como pontes de
+compatibilidade para a URL canônica, preferencialmente por redirect.
+
 Cada ferramenta possui estrutura, domínio, regras, interface e testes próprios.
 Uma ferramenta não deve depender de outra nem interferir em seu funcionamento.
 Isso permite criar, alterar ou remover módulos com baixo risco de regressão nas

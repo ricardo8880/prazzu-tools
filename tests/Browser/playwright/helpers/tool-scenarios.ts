@@ -22,6 +22,7 @@ export type ToolScenario = {
     title: string;
     kind: 'valid' | 'invalid' | 'boundary';
     tool_slug: string;
+    vertical_public_slug: string;
     access_profile: string;
     tags: string[];
     steps: ScenarioStep[];
@@ -78,6 +79,13 @@ const RESULT_EVIDENCE_SELECTOR = [
     '[data-testid="contract-preview"]',
     '[data-testid="download-actions"]',
 ].join(', ');
+
+
+export function toolPublicPath(scenario: Pick<ToolScenario, 'tool_slug' | 'vertical_public_slug'>): string {
+    const vertical = scenario.vertical_public_slug.trim();
+    if (vertical === '') throw new Error(`[E2E TOOL] Ferramenta \"${scenario.tool_slug}\" não possui vertical pública no manifesto.`);
+    return `/tools/${encodeURIComponent(vertical)}/ferramentas/${encodeURIComponent(scenario.tool_slug)}`;
+}
 
 export function loadToolScenarios(): ScenarioManifest {
     const path = resolve(process.cwd(), 'storage/app/e2e/runtime/tool-scenarios.json');

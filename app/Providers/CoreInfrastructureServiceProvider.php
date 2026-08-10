@@ -58,6 +58,7 @@ use App\Core\Verticals\Contracts\VerticalRegistry;
 use App\Core\Verticals\Infrastructure\Config\ConfigVerticalRegistry;
 use App\Core\Verticals\Infrastructure\Http\AcquisitionVerticalContextSource;
 use App\Core\Verticals\Infrastructure\Http\DefaultVerticalContextSource;
+use App\Core\Verticals\Infrastructure\Http\RouteVerticalContextSource;
 use App\Core\Verticals\Infrastructure\Http\SessionVerticalContextSource;
 use Illuminate\Support\ServiceProvider;
 
@@ -85,10 +86,12 @@ final class CoreInfrastructureServiceProvider extends ServiceProvider
         $this->app->singleton(PlatformAnalytics::class, DatabasePlatformAnalytics::class);
 
         $this->app->singleton(VerticalRegistry::class, ConfigVerticalRegistry::class);
+        $this->app->singleton(RouteVerticalContextSource::class);
         $this->app->singleton(SessionVerticalContextSource::class);
         $this->app->singleton(AcquisitionVerticalContextSource::class);
         $this->app->singleton(DefaultVerticalContextSource::class);
         $this->app->tag([
+            RouteVerticalContextSource::class,
             SessionVerticalContextSource::class,
             AcquisitionVerticalContextSource::class,
             DefaultVerticalContextSource::class,

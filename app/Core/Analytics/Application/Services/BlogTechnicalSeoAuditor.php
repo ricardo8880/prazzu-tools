@@ -14,7 +14,8 @@ final class BlogTechnicalSeoAuditor
         $plainText = trim(preg_replace('/\s+/u', ' ', strip_tags($content)) ?? '');
         $title = trim((string) ($post->meta_title ?: $post->title));
         $description = trim((string) ($post->meta_description ?: $post->excerpt));
-        $canonical = trim((string) ($post->canonical_url ?: route('blog.show', $post->slug)));
+        $publicVertical = (string) config("verticals.registered.{$post->vertical_slug}.public_slug", $post->vertical_slug);
+        $canonical = trim((string) ($post->canonical_url ?: route('blog.show', ['vertical' => $publicVertical, 'slug' => $post->slug])));
         $images = $this->images($content, $post);
         $links = $this->links($content);
         $schemaTypes = $this->schemaTypes($content);

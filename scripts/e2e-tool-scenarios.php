@@ -13,7 +13,17 @@ if (! in_array($command, ['export', 'check'], true)) {
 require $root.'/vendor/autoload.php';
 $config = require $root.'/config/e2e_scenarios.php';
 $product = require $root.'/config/product_tools.php';
-$allowedSlugs = array_column($product['official'] ?? [], 'slug');
+$verticals = require $root.'/config/verticals.php';
+$officialTools = $product['official'] ?? [];
+$allowedSlugs = array_column($officialTools, 'slug');
+$toolVerticals = [];
+foreach ($officialTools as $tool) {
+    $slug = (string) ($tool['slug'] ?? '');
+    $vertical = (string) ($tool['vertical'] ?? '');
+    if ($slug !== '' && $vertical !== '') {
+        $toolVerticals[$slug] = $vertical;
+    }
+}
 $allowedActions = $config['allowed_step_actions'] ?? [];
 $allowedExpectations = $config['allowed_expectations'] ?? [];
 $failures = [];
@@ -30,6 +40,13 @@ foreach (($config['tools'] ?? []) as $slug => $toolScenarios) {
             continue;
         }
         $data = $scenario->toArray();
+        $vertical = $toolVerticals[$slug] ?? null;
+        $publicVertical = is_string($vertical) ? ($verticals['registered'][$vertical]['public_slug'] ?? null) : null;
+        if (! is_string($publicVertical) || trim($publicVertical) === '') {
+            $failures[] = "Ferramenta [{$slug}] não possui vertical pública E2E resolvível.";
+        } else {
+            $data['vertical_public_slug'] = $publicVertical;
+        }
         $key = $slug.':'.$data['id'];
         if (isset($seen[$key])) {
             $failures[] = "Cenário duplicado: [{$key}].";

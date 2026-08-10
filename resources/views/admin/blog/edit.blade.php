@@ -13,7 +13,7 @@
         <div class="d-flex gap-2 align-self-md-start">
             <a class="btn btn-outline-secondary" href="{{ route('admin.blog.posts.preview', $post) }}" target="_blank"><i class="bi bi-eye me-1"></i> Pré-visualizar</a>
             @if ($post->isPubliclyAvailable())
-                <a class="btn btn-outline-primary" href="{{ route('blog.show', $post->slug) }}" target="_blank"><i class="bi bi-box-arrow-up-right me-1"></i> Ver publicação</a>
+                <a class="btn btn-outline-primary" href="{{ route('blog.show', ['vertical' => config("verticals.registered.{$post->vertical_slug}.public_slug", $post->vertical_slug), 'slug' => $post->slug]) }}" target="_blank"><i class="bi bi-box-arrow-up-right me-1"></i> Ver publicação</a>
             @endif
         </div>
     </div>

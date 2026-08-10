@@ -81,7 +81,7 @@
                             <td class="text-end pe-4">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Ações da postagem">
                                     @if ($post->isPubliclyAvailable())
-                                        <a class="btn btn-outline-secondary" href="{{ route('blog.show', $post->slug) }}" target="_blank" title="Abrir artigo">
+                                        <a class="btn btn-outline-secondary" href="{{ route('blog.show', ['vertical' => config("verticals.registered.{$post->vertical_slug}.public_slug", $post->vertical_slug), 'slug' => $post->slug]) }}" target="_blank" title="Abrir artigo">
                                             <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
                                         </a>
                                     @endif

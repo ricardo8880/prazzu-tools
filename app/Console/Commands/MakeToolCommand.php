@@ -24,6 +24,7 @@ final class MakeToolCommand extends Command
         {name : Nome da classe da ferramenta, por exemplo CalculadoraRescisao}
         {--slug= : Slug público; por padrão é gerado a partir do nome}
         {--category=outros : Categoria oficial da ferramenta}
+        {--vertical=contabilidade : Vertical registrada da ferramenta}
         {--status=draft : Estado inicial da ferramenta}
         {--nature=calculation : Natureza da ferramenta}
         {--normative=none : Dependência normativa}
@@ -87,6 +88,7 @@ final class MakeToolCommand extends Command
 
         $slug = trim((string) ($this->option('slug') ?: $this->kebab($class)));
         $category = trim((string) $this->option('category'));
+        $vertical = trim((string) $this->option('vertical'));
         $status = trim((string) $this->option('status'));
         $nature = trim((string) $this->option('nature'));
         $normative = trim((string) $this->option('normative'));
@@ -130,6 +132,7 @@ final class MakeToolCommand extends Command
             'name' => $this->headline($class),
             'category' => $category,
             'category_case' => $categoryEnum->name,
+            'vertical' => $vertical,
             'status' => $status,
             'status_case' => $statusEnum->name,
             'route_prefix' => "tools.{$slug}",
@@ -173,6 +176,10 @@ final class MakeToolCommand extends Command
     {
         if (! preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $context['slug'])) {
             throw new RuntimeException('O slug deve conter apenas letras minúsculas, números e hífens.');
+        }
+
+        if (! array_key_exists($context['vertical'], (array) config('verticals.registered', []))) {
+            throw new RuntimeException("A vertical [{$context['vertical']}] não está registrada em config/verticals.php.");
         }
 
         if ((int) $this->option('schema-version') < 1
@@ -328,6 +335,7 @@ final class MakeToolCommand extends Command
             '{{ slug }}' => $context['slug'],
             '{{ name }}' => $context['name'],
             '{{ category_case }}' => $context['category_case'],
+            '{{ vertical }}' => $context['vertical'],
             '{{ status_case }}' => $context['status_case'],
             '{{ route_prefix }}' => $context['route_prefix'],
             '{{ view_namespace }}' => $context['view_namespace'],

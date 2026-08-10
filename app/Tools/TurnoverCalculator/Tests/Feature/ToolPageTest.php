@@ -10,11 +10,11 @@ final class ToolPageTest extends TestCase
 {
     public function test_page_and_calculation_route_are_available(): void
     {
-        $this->get(route('tools.calculadora-turnover.index'))
+        $this->get(route('tools.calculadora-turnover.index', ['vertical' => 'rh']))
             ->assertOk()
             ->assertSee('Calculadora de Turnover');
 
-        $this->post(route('tools.calculadora-turnover.calculate'), [
+        $this->post(route('tools.calculadora-turnover.calculate', ['vertical' => 'rh']), [
             'admissions' => 10,
             'terminations' => 6,
             'average_headcount' => 80,

@@ -1,10 +1,10 @@
 @php
     $navigation = [
         ['label' => 'Início', 'url' => route('home'), 'active' => request()->routeIs('home')],
-        ['label' => 'Ferramentas', 'url' => url('/ferramentas'), 'active' => request()->is('ferramentas*')],
-        ['label' => 'Blog', 'url' => url('/blog'), 'active' => request()->is('blog*')],
+        ['label' => 'Ferramentas', 'url' => route('tools.index'), 'active' => request()->routeIs('tools.*')],
+        ['label' => 'Blog', 'url' => route('blog.index'), 'active' => request()->routeIs('blog.*')],
         ['label' => 'Planos', 'url' => url('/planos'), 'active' => request()->is('planos*')],
-        ['label' => 'Recursos', 'url' => url('/recursos'), 'active' => request()->is('recursos*')],
+        ['label' => 'Recursos', 'url' => route('resources.index'), 'active' => request()->routeIs('resources.*')],
         ['label' => 'Sobre', 'url' => url('/sobre'), 'active' => request()->is('sobre')],
     ];
 @endphp

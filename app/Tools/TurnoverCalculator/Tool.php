@@ -16,15 +16,18 @@ use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Data\ToolHistoryPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
-final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-turnover';
 
@@ -69,7 +72,7 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
             status: ToolStatus::Beta,
             position: 10,
             featured: true,
-            supportsHistory: false,
+            supportsHistory: true,
             storesSensitiveData: false,
             keywords: ['turnover', 'rotatividade', 'recursos humanos', 'rh', 'gestão de pessoas'],
             features: [
@@ -77,11 +80,26 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
                 new ToolFeature('method', 'Memória transparente da fórmula utilizada', ToolFeatureTier::Essential),
                 new ToolFeature('advanced_analysis', 'Análises avançadas por período e segmento', ToolFeatureTier::Plus),
             ],
-            capabilities: [],
-            persistence: ToolPersistencePolicy::disabled(),
-            export: ToolExportPolicy::disabled(),
+            capabilities: [
+                ToolCapability::History,
+                ToolCapability::VersionedPersistence,
+                ToolCapability::Export,
+            ],
+            persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
+            export: new ToolExportPolicy(enabled: true, formats: ['json', 'pdf']),
             sharing: ToolSharingPolicy::disabled(),
             sensitiveData: ToolSensitiveDataPolicy::none(),
+        );
+    }
+
+    public function historyPolicy(): ToolHistoryPolicy
+    {
+        return new ToolHistoryPolicy(
+            enabled: true,
+            retentionDays: 365,
+            inputFields: ['admissions', 'terminations', 'average_headcount'],
+            resultFields: ['turnover_rate'],
+            sensitiveFields: [],
         );
     }
 

@@ -32,6 +32,7 @@ use App\Core\Tools\History\Services\DatabaseToolRunFavorites;
 use App\Core\Tools\History\Services\DatabaseToolRunHistory;
 use App\Core\Tools\History\Services\DatabaseToolRunRecorder;
 use App\Core\Tools\ToolRegistry;
+use App\Core\Verticals\Application\VerticalContext;
 use App\Core\Validation\BrazilianMoneyValidator;
 use App\Core\Validation\BrazilianPercentageValidator;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -40,6 +41,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -95,6 +97,15 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapFive();
 
+        $defaultVerticalSlug = config('verticals.default');
+        $defaultPublicSlug = is_string($defaultVerticalSlug)
+            ? config("verticals.registered.{$defaultVerticalSlug}.public_slug", $defaultVerticalSlug)
+            : null;
+        if (is_string($defaultPublicSlug) && $defaultPublicSlug !== '') {
+            URL::defaults(['vertical' => $defaultPublicSlug]);
+        }
+
+
         $moneyValidation = $this->app->make(BrazilianMoneyValidator::class);
         Validator::extend(
             'brazilian_money',
@@ -131,12 +142,14 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(max(1, (int) config('tools-api.rate_limit', 120)))->by($key);
         });
 
+
         View::composer('layouts.app', function ($view): void {
             $routeName = request()->route()?->getName();
             $segments = is_string($routeName) ? explode('.', $routeName) : [];
             $analyticsToolSlug = ($segments[0] ?? null) === 'tools'
-                ? ($segments[1] ?? null)
-                : null;
+                && ! in_array($segments[1] ?? null, ['index', 'category', 'sitemap', 'suggest'], true)
+                    ? ($segments[1] ?? null)
+                    : null;
 
             $view->with('analyticsToolSlug', $analyticsToolSlug);
         });
@@ -144,7 +157,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('components.layout.right-sidebar', function ($view): void {
             try {
                 $recentBlogPosts = Schema::hasTable('blog_posts')
-                    ? BlogPost::query()->publiclyAvailable()->take(3)->get()
+                    ? BlogPost::query()->forVertical(app(VerticalContext::class)->slug())->publiclyAvailable()->take(3)->get()
                     : collect();
             } catch (Throwable) {
                 $recentBlogPosts = collect();

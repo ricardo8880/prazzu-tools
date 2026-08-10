@@ -10,7 +10,7 @@ final class ActiveVerticalContextTest extends TestCase
 {
     public function test_current_platform_resolves_contabilidade_as_explicit_default_vertical(): void
     {
-        $response = $this->get(route('tools.index'));
+        $response = $this->get(route('tools.index', ['vertical' => 'contabil']));
 
         $response->assertOk();
         $response->assertViewHas('activeVertical', fn ($vertical): bool => $vertical instanceof Vertical
@@ -21,7 +21,7 @@ final class ActiveVerticalContextTest extends TestCase
 
     public function test_session_context_has_priority_over_default_vertical(): void
     {
-        config()->set('verticals.registered.rh', ['name' => 'Recursos Humanos']);
+        config()->set('verticals.registered.rh', ['name' => 'Recursos Humanos', 'public_slug' => 'rh']);
 
         $response = $this->withSession([
             'vertical' => [
@@ -30,7 +30,7 @@ final class ActiveVerticalContextTest extends TestCase
                     'activated_at' => now()->toIso8601String(),
                 ],
             ],
-        ])->get(route('tools.index'));
+        ])->get(route('tools.index', ['vertical' => 'rh']));
 
         $response->assertOk();
         $response->assertViewHas('activeVertical', fn ($vertical): bool => $vertical instanceof Vertical
@@ -45,7 +45,7 @@ final class ActiveVerticalContextTest extends TestCase
                     'slug' => 'nao-cadastrada',
                 ],
             ],
-        ])->get(route('tools.index'));
+        ])->get(route('tools.index', ['vertical' => 'contabil']));
 
         $response->assertOk();
         $response->assertSessionMissing('vertical.context');
@@ -53,14 +53,19 @@ final class ActiveVerticalContextTest extends TestCase
             && $vertical->slug === 'contabilidade');
     }
 
-    public function test_global_fallback_remains_valid_when_no_default_vertical_is_configured(): void
+    public function test_route_context_has_priority_over_session_and_default_vertical(): void
     {
-        config()->set('verticals.default', null);
-
-        $response = $this->get(route('tools.index'));
+        $response = $this->withSession([
+            'vertical' => [
+                'context' => [
+                    'slug' => 'contabilidade',
+                ],
+            ],
+        ])->get(route('tools.index', ['vertical' => 'rh']));
 
         $response->assertOk();
-        $response->assertViewHas('activeVertical', null);
-        self::assertNull(app(VerticalContext::class)->active());
+        $response->assertViewHas('activeVertical', fn ($vertical): bool => $vertical instanceof Vertical
+            && $vertical->slug === 'rh');
+        self::assertSame('rh', app(VerticalContext::class)->slug());
     }
 }
