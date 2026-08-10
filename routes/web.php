@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\Acquisition\ClearAcquisitionContextController;
 use App\Http\Controllers\Acquisition\ContinueAcquisitionContextController;

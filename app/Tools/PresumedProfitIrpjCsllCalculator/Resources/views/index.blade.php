@@ -30,7 +30,7 @@
                 </div>
                 <div class="col-md-9"><div class="form-text mt-md-4 pt-md-2">O IRPJ e a CSLL do Lucro Presumido são apurados trimestralmente.</div></div>
 
-                <div class="col-md-6"><x-tools.form.money name="commerce_revenue" label="Comércio / indústria / carga / hospitalar qualificado" :value="old('commerce_revenue', '0')" required help="Presunção-base: IRPJ 8% e CSLL 12%. Use serviço hospitalar apenas se os requisitos legais forem atendidos." /></div>
+                <div class="col-md-6"><x-tools.form.money name="commerce_revenue" label="Comércio / indústria / carga / hospitalar qualificado" :value="old('commerce_revenue', '0')" data-e2e-value="5.000,00" required help="Presunção-base: IRPJ 8% e CSLL 12%. Use serviço hospitalar apenas se os requisitos legais forem atendidos." /></div>
                 <div class="col-md-6"><x-tools.form.money name="fuel_revenue" label="Revenda de combustíveis elegível" :value="old('fuel_revenue', '0')" required help="Presunção-base: IRPJ 1,6% e CSLL 12%." /></div>
                 <div class="col-md-6"><x-tools.form.money name="passenger_transport_revenue" label="Transporte de passageiros" :value="old('passenger_transport_revenue', '0')" required help="Presunção-base: IRPJ 16% e CSLL 12%." /></div>
                 <div class="col-md-6"><x-tools.form.money name="services_revenue" label="Serviços em geral / intermediação / locação" :value="old('services_revenue', '0')" required help="Presunção-base: IRPJ 32% e CSLL 32%." /></div>

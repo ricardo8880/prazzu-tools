@@ -4,7 +4,10 @@
  * layout compartilhado, componentes visuais e exceções devidamente isoladas.
  */
 
-/* 01. Design tokens */
+/* 01. Design tokens
+ * Primary (purple): brand, primary actions, focus and Prazzu Plus.
+ * Secondary (#212C5A): structural emphasis, informational surfaces and neutral hierarchy.
+ */
 :root {
     --prazzu-font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
     --prazzu-header-height: 70px;
@@ -15,6 +18,8 @@
     --prazzu-color-primary: #7c3aed;
     --prazzu-color-primary-light: #9d6cff;
     --prazzu-color-primary-dark: #5b21b6;
+    --prazzu-color-secondary: #212C5A;
+    --prazzu-color-secondary-light: #8290c3;
     --prazzu-color-background: #000618;
     --prazzu-color-background-deep: #050d18;
     --prazzu-color-surface: #0a1626;
@@ -435,7 +440,7 @@ body.prazzu-app .text-body-secondary {
 }
 
 .prazzu-stat > i {
-    color: var(--prazzu-color-primary-light);
+    color: var(--prazzu-color-secondary-light);
     font-size: 25px;
 }
 
@@ -468,7 +473,7 @@ body.prazzu-app .text-body-secondary {
 }
 
 .prazzu-platform-callout strong {
-    color: var(--prazzu-color-primary-light);
+    color: var(--prazzu-color-secondary-light);
 }
 
 /* 07. Mobile navigation */
@@ -653,7 +658,7 @@ body.prazzu-app .text-body-secondary {
 }
 
 .prazzu-benefits i {
-    color: var(--prazzu-color-primary-light);
+    color: var(--prazzu-color-secondary-light);
     font-size: 14px;
 }
 
@@ -714,8 +719,8 @@ body.prazzu-app .text-body-secondary {
     min-width: 24px;
     padding: 2px 5px;
     border-radius: 999px;
-    color: #eadfff;
-    background: #56307e;
+    color: #f6f7fb;
+    background: var(--prazzu-color-secondary);
     font-size: 10px;
     line-height: 1.2;
     text-align: center;
@@ -749,8 +754,8 @@ body.prazzu-app .text-body-secondary {
 
 .prazzu-tool-card:hover {
     transform: translateY(-2px);
-    border-color: rgb(124 58 237 / 48%);
-    background: linear-gradient(145deg, rgb(14 32 53 / 96%), rgb(8 21 37 / 88%));
+    border-color: rgb(130 144 195 / 52%);
+    background: linear-gradient(145deg, rgb(19 36 61 / 96%), rgb(9 23 40 / 90%));
 }
 
 .prazzu-tool-card__link {
@@ -806,11 +811,11 @@ body.prazzu-app .text-body-secondary {
     gap: 24px;
     margin-top: 14px;
     padding: 12px 28px 12px 64px;
-    border: 1px solid rgb(124 58 237 / 28%);
+    border: 1px solid rgb(130 144 195 / 28%);
     border-radius: 8px;
     background:
-        radial-gradient(circle at 14% 50%, rgb(124 58 237 / 17%), transparent 32%),
-        linear-gradient(90deg, rgb(27 26 67 / 82%), rgb(17 19 52 / 76%));
+        radial-gradient(circle at 14% 50%, rgb(33 44 90 / 42%), transparent 34%),
+        linear-gradient(90deg, rgb(23 35 66 / 88%), rgb(12 25 44 / 80%));
 }
 
 .prazzu-home-cta__icon {
@@ -819,7 +824,7 @@ body.prazzu-app .text-body-secondary {
     height: 38px;
     flex: 0 0 38px;
     place-items: center;
-    color: var(--prazzu-color-primary-light);
+    color: var(--prazzu-color-secondary-light);
     font-size: 29px;
 }
 
@@ -1562,11 +1567,13 @@ body.prazzu-app .text-body-secondary {
     --prazzu-color-primary: #6d28d9;
     --prazzu-color-primary-light: #6d28d9;
     --prazzu-color-primary-dark: #4c1d95;
+    --prazzu-color-secondary: #212C5A;
+    --prazzu-color-secondary-light: #384778;
     --prazzu-color-background: #ffffff;
     --prazzu-color-background-deep: #ffffff;
     --prazzu-color-surface: #ffffff;
     --prazzu-color-surface-raised: #ffffff;
-    --prazzu-color-surface-hover: #f5f3ff;
+    --prazzu-color-surface-hover: #f2f4f9;
     --prazzu-color-text: #172033;
     --prazzu-color-muted: #5f6b7a;
     --prazzu-color-subtle: #748094;
@@ -1614,8 +1621,8 @@ body.prazzu-app .text-body-secondary {
 }
 
 [data-bs-theme="light"] .prazzu-tool-card:hover {
-    border-color: rgb(109 40 217 / 40%);
-    background: #faf9ff;
+    border-color: rgb(33 44 90 / 34%);
+    background: #f7f8fb;
     box-shadow: 0 10px 28px rgb(23 32 51 / 8%);
 }
 
@@ -1633,13 +1640,13 @@ body.prazzu-app .text-body-secondary {
 [data-bs-theme="light"] .prazzu-sidebar-link:hover,
 [data-bs-theme="light"] .prazzu-sidebar-link.active {
     color: #172033;
-    background: #f5f3ff;
+    background: #f2f4f9;
 }
 
 [data-bs-theme="light"] .prazzu-icon-button:hover,
 [data-bs-theme="light"] .prazzu-icon-button.is-active {
     color: var(--prazzu-color-primary);
-    background: #f5f3ff;
+    background: #f2f4f9;
 }
 
 [data-bs-theme="light"] .prazzu-dropdown-menu,
@@ -1654,7 +1661,7 @@ body.prazzu-app .text-body-secondary {
 [data-bs-theme="light"] .dropdown-item:hover,
 [data-bs-theme="light"] .dropdown-item:focus {
     color: var(--prazzu-color-primary-dark);
-    background: #f5f3ff;
+    background: #f2f4f9;
 }
 
 [data-bs-theme="light"] .prazzu-form-control,
@@ -1701,8 +1708,8 @@ body.prazzu-app .text-body-secondary {
 }
 
 [data-bs-theme="light"] .prazzu-category-item__count {
-    color: #5b21b6;
-    background: #ede9fe;
+    color: var(--prazzu-color-secondary);
+    background: #e8ebf5;
 }
 
 [data-bs-theme="light"] .prazzu-badge--purple {
@@ -1722,10 +1729,10 @@ body.prazzu-app .text-body-secondary {
 [data-bs-theme="light"] .prazzu-icon-tile--yellow { color: #a16207; background: #fef3c7; }
 
 [data-bs-theme="light"] .prazzu-home-cta {
-    border-color: rgb(109 40 217 / 22%);
+    border-color: rgb(33 44 90 / 20%);
     background:
-        radial-gradient(circle at 14% 50%, rgb(109 40 217 / 9%), transparent 34%),
-        #faf9ff;
+        radial-gradient(circle at 14% 50%, rgb(33 44 90 / 9%), transparent 36%),
+        #f7f8fb;
 }
 
 [data-bs-theme="light"] .prazzu-page-hero,
@@ -7381,7 +7388,7 @@ body.tox-dialog__disable-scroll {
     margin-bottom: 20px;
     border: 1px solid var(--prazzu-border-color);
     border-radius: 16px;
-    background: linear-gradient(135deg, rgb(124 58 237 / 12%), var(--prazzu-color-surface));
+    background: linear-gradient(135deg, rgb(33 44 90 / 34%), var(--prazzu-color-surface));
 }
 
 .prazzu-resource-principles h2 {
@@ -7397,7 +7404,7 @@ body.tox-dialog__disable-scroll {
 }
 
 .prazzu-resource-principles > i {
-    color: var(--prazzu-color-primary);
+    color: var(--prazzu-color-secondary-light);
     font-size: 2.4rem;
 }
 
@@ -7418,7 +7425,7 @@ body.tox-dialog__disable-scroll {
 .prazzu-resource-section:hover {
     transform: translateY(-2px);
     color: inherit;
-    border-color: var(--prazzu-color-primary);
+    border-color: var(--prazzu-color-secondary-light);
 }
 
 .prazzu-resource-section small,
@@ -7429,7 +7436,7 @@ body.tox-dialog__disable-scroll {
 
 .prazzu-resource-section small {
     margin-bottom: 4px;
-    color: var(--prazzu-color-primary);
+    color: var(--prazzu-color-secondary-light);
     font-size: .72rem;
     font-weight: 750;
     letter-spacing: .05em;
@@ -7476,12 +7483,12 @@ body.tox-dialog__disable-scroll {
 }
 
 .prazzu-resource-status--preparing {
-    color: #7c3aed;
-    background: rgb(124 58 237 / 12%);
+    color: var(--prazzu-color-secondary-light);
+    background: rgb(33 44 90 / 34%);
 }
 
 .prazzu-resource-card__category {
-    color: var(--prazzu-color-primary);
+    color: var(--prazzu-color-secondary-light);
     font-size: .72rem;
     font-weight: 750;
     letter-spacing: .05em;
@@ -7522,7 +7529,7 @@ body.tox-dialog__disable-scroll {
 }
 
 .prazzu-resource-card__footer a {
-    color: var(--prazzu-color-primary);
+    color: var(--prazzu-color-secondary-light);
     font-weight: 650;
     text-decoration: none;
 }
@@ -7563,7 +7570,7 @@ body.tox-dialog__disable-scroll {
     margin-bottom: 1.5rem;
     border: 1px solid var(--prazzu-border-color);
     border-radius: 1.25rem;
-    background: linear-gradient(135deg, rgb(124 58 237 / 12%), var(--prazzu-color-surface));
+    background: linear-gradient(135deg, rgb(33 44 90 / 34%), var(--prazzu-color-surface));
 }
 
 .prazzu-resource-article__hero h1 {
@@ -8143,7 +8150,8 @@ body.tox-dialog__disable-scroll {
 }
 
 .prazzu-about__card--essential {
-    background: linear-gradient(145deg, rgb(157 108 255 / 7%), transparent 58%);
+    border-color: rgb(130 144 195 / 30%) !important;
+    background: linear-gradient(145deg, rgb(33 44 90 / 20%), transparent 58%);
 }
 
 .prazzu-about__note {
@@ -8158,14 +8166,14 @@ body.tox-dialog__disable-scroll {
 }
 
 .prazzu-about__audience-item:hover {
-    background: rgb(124 58 237 / 8%);
+    background: rgb(33 44 90 / 24%);
 }
 
 .prazzu-about__audience-icon {
     width: 44px;
     height: 44px;
-    color: var(--prazzu-color-primary-light);
-    background: rgb(124 58 237 / 16%);
+    color: var(--prazzu-color-secondary-light);
+    background: rgb(33 44 90 / 42%);
 }
 
 .prazzu-about__cta {
@@ -8181,7 +8189,7 @@ body.tox-dialog__disable-scroll {
 
 [data-bs-theme="light"] .prazzu-about__feature-panel,
 [data-bs-theme="light"] .prazzu-about__audience-item {
-    background: #faf9ff !important;
+    background: #f7f8fb !important;
 }
 
 [data-bs-theme="light"] .prazzu-about__note {
@@ -8227,7 +8235,7 @@ body.tox-dialog__disable-scroll {
 }
 
 .prazzu-about__card--essential {
-    border-color: rgb(157 108 255 / 24%) !important;
+    border-color: rgb(130 144 195 / 30%) !important;
 }
 
 .prazzu-about__cta .btn-light {
@@ -8355,13 +8363,13 @@ body.tox-dialog__disable-scroll {
     --bs-table-bg: transparent;
     --bs-table-color: var(--prazzu-color-text);
     --bs-table-border-color: var(--prazzu-border-color);
-    --bs-table-hover-bg: rgb(124 58 237 / 7%);
+    --bs-table-hover-bg: rgb(33 44 90 / 18%);
     --bs-table-hover-color: var(--prazzu-color-text);
 }
 
 .prazzu-plans__comparison thead {
     color: var(--prazzu-color-text);
-    background: rgb(124 58 237 / 10%);
+    background: rgb(33 44 90 / 28%);
 }
 
 .prazzu-plans__comparison th,
@@ -8376,7 +8384,7 @@ body.tox-dialog__disable-scroll {
     --bs-accordion-btn-color: var(--prazzu-color-text);
     --bs-accordion-btn-bg: rgb(13 26 43 / 88%);
     --bs-accordion-active-color: var(--prazzu-color-primary-light);
-    --bs-accordion-active-bg: rgb(124 58 237 / 10%);
+    --bs-accordion-active-bg: rgb(33 44 90 / 26%);
     --bs-accordion-btn-focus-box-shadow: 0 0 0 .2rem rgb(124 58 237 / 16%);
 }
 
@@ -8419,8 +8427,8 @@ body.tox-dialog__disable-scroll {
 
 [data-bs-theme="light"] .prazzu-plans__highlight,
 [data-bs-theme="light"] .prazzu-plans__billing {
-    color: #24183c;
-    background: #faf9ff;
+    color: #212c5a;
+    background: #f4f6fb;
 }
 
 [data-bs-theme="light"] .prazzu-plans__comparison .table {
@@ -8436,7 +8444,7 @@ body.tox-dialog__disable-scroll {
 
 [data-bs-theme="light"] .prazzu-plans__faq .accordion-body,
 [data-bs-theme="light"] .prazzu-plans__business-aside {
-    background: #faf9ff;
+    background: #f4f6fb;
 }
 
 @media (max-width: 767.98px) {
@@ -9167,4 +9175,421 @@ body.tox-dialog__disable-scroll {
     position: relative;
     z-index: 3;
     pointer-events: auto;
+}
+
+/* ========================================================================== */
+/* 26. Balanceamento cromático institucional — roxo + azul secundário         */
+/* Roxo: ação / Plus / destaque. #212C5A: estrutura / confiança / informação. */
+/* Escopo: Blog, Planos, Recursos e Sobre.                                    */
+/* ========================================================================== */
+
+/* Blog — deixa o roxo concentrado nas ações e usa o azul para estrutura. */
+.container-fluid:has(> form[action*="/blog"]) {
+    --prazzu-blog-secondary: var(--prazzu-color-secondary);
+    --prazzu-blog-secondary-light: var(--prazzu-color-secondary-light);
+    --prazzu-blog-surface: color-mix(in srgb, var(--bs-body-bg) 94%, var(--prazzu-blog-secondary) 6%);
+    --prazzu-blog-surface-strong: color-mix(in srgb, var(--bs-body-bg) 88%, var(--prazzu-blog-secondary) 12%);
+    --prazzu-blog-border: color-mix(in srgb, var(--prazzu-blog-secondary) 22%, var(--bs-border-color) 78%);
+    --prazzu-blog-border-strong: color-mix(in srgb, var(--prazzu-blog-secondary) 42%, var(--bs-border-color) 58%);
+    --prazzu-blog-secondary-soft: color-mix(in srgb, var(--prazzu-blog-secondary) 11%, transparent);
+    --prazzu-blog-secondary-medium: color-mix(in srgb, var(--prazzu-blog-secondary) 18%, transparent);
+}
+
+.container-fluid:has(> form[action*="/blog"]) > header {
+    background:
+        radial-gradient(circle at 92% 14%, var(--prazzu-blog-secondary-medium), transparent 28%),
+        linear-gradient(145deg, var(--prazzu-blog-surface-strong), var(--bs-body-bg));
+}
+
+.container-fluid:has(> form[action*="/blog"]) > header::after {
+    border-color: color-mix(in srgb, var(--prazzu-blog-secondary) 46%, transparent);
+}
+
+.container-fluid:has(> form[action*="/blog"]) > form.card .input-group-text {
+    color: var(--prazzu-blog-secondary-light);
+}
+
+.container-fluid:has(> form[action*="/blog"]) > form.card .form-control,
+.container-fluid:has(> form[action*="/blog"]) > form.card .form-select,
+.container-fluid:has(> form[action*="/blog"]) > form.card .input-group-text {
+    background-color: color-mix(in srgb, var(--bs-body-bg) 96%, var(--prazzu-blog-secondary) 4%);
+}
+
+.container-fluid:has(> form[action*="/blog"]) > form.card .form-control:focus,
+.container-fluid:has(> form[action*="/blog"]) > form.card .form-select:focus {
+    border-color: color-mix(in srgb, var(--prazzu-blog-secondary) 56%, var(--bs-border-color));
+    box-shadow: 0 0 0 .22rem var(--prazzu-blog-secondary-soft);
+}
+
+/* Categoria em azul; destaque editorial continua roxo. */
+.container-fluid:has(> form[action*="/blog"]) .badge.text-bg-secondary {
+    border-color: color-mix(in srgb, var(--prazzu-blog-secondary) 44%, var(--bs-border-color)) !important;
+    color: color-mix(in srgb, var(--prazzu-blog-secondary-light) 82%, var(--bs-body-color)) !important;
+    background: var(--prazzu-blog-secondary-soft) !important;
+}
+
+.container-fluid:has(> form[action*="/blog"]) .badge.text-bg-primary {
+    border-color: color-mix(in srgb, var(--prazzu-color-primary) 48%, var(--bs-border-color)) !important;
+    color: var(--prazzu-color-primary-light) !important;
+    background: color-mix(in srgb, var(--prazzu-color-primary) 13%, transparent) !important;
+}
+
+.container-fluid:has(> form[action*="/blog"]) article.card:hover,
+.container-fluid:has(> form[action*="/blog"]) article.card:focus-within {
+    border-color: color-mix(in srgb, var(--prazzu-blog-secondary) 50%, var(--bs-border-color)) !important;
+}
+
+.container-fluid:has(> form[action*="/blog"]) article.card:hover .card-title a,
+.container-fluid:has(> form[action*="/blog"]) article.card:focus-within .card-title a {
+    color: var(--prazzu-blog-secondary-light);
+}
+
+.container-fluid:has(> form[action*="/blog"]) > section:not(.card) > h2::before {
+    background: linear-gradient(180deg, var(--prazzu-blog-secondary-light), var(--prazzu-blog-secondary));
+    box-shadow: 0 0 0 .25rem var(--prazzu-blog-secondary-soft);
+}
+
+.container-fluid:has(> form[action*="/blog"]) .page-link:hover,
+.container-fluid:has(> form[action*="/blog"]) .page-link:focus {
+    background: var(--prazzu-blog-secondary-soft);
+    color: var(--prazzu-blog-secondary-light);
+}
+
+[data-bs-theme="light"] .container-fluid:has(> form[action*="/blog"]) {
+    --prazzu-blog-surface: #f7f8fc;
+    --prazzu-blog-surface-strong: #f1f3f9;
+    --prazzu-blog-border: #d8ddeb;
+    --prazzu-blog-border-strong: #aeb8d2;
+    --prazzu-blog-secondary-soft: rgba(33, 44, 90, .08);
+    --prazzu-blog-secondary-medium: rgba(33, 44, 90, .12);
+}
+
+[data-bs-theme="light"] .container-fluid:has(> form[action*="/blog"]) .badge.text-bg-secondary {
+    border-color: #c6cde0 !important;
+    color: #212c5a !important;
+    background: #eef1f7 !important;
+}
+
+[data-bs-theme="dark"] .container-fluid:has(> form[action*="/blog"]) {
+    --prazzu-blog-surface: color-mix(in srgb, var(--bs-body-bg) 88%, #212c5a 12%);
+    --prazzu-blog-surface-strong: color-mix(in srgb, var(--bs-body-bg) 78%, #212c5a 22%);
+    --prazzu-blog-border: rgba(94, 111, 173, .28);
+    --prazzu-blog-border-strong: rgba(113, 132, 199, .48);
+    --prazzu-blog-secondary-soft: rgba(68, 85, 145, .22);
+    --prazzu-blog-secondary-medium: rgba(68, 85, 145, .3);
+}
+
+/* Recursos — azul domina a navegação e os cards; roxo fica para ações-chave. */
+.prazzu-resources .prazzu-page-hero {
+    border-color: color-mix(in srgb, var(--prazzu-color-secondary) 30%, var(--prazzu-border-color));
+    background:
+        radial-gradient(circle at 92% 12%, rgb(33 44 90 / 28%), transparent 32%),
+        linear-gradient(145deg, color-mix(in srgb, var(--prazzu-color-secondary) 13%, var(--prazzu-color-surface)), var(--prazzu-color-surface));
+}
+
+.prazzu-resources .prazzu-page-hero__icon,
+.prazzu-resources .prazzu-icon-tile--violet {
+    color: var(--prazzu-color-secondary-light);
+    background: rgb(33 44 90 / 34%);
+}
+
+.prazzu-resources .prazzu-resource-navigation .nav-link.active {
+    border-color: var(--prazzu-color-secondary);
+    background: var(--prazzu-color-secondary);
+}
+
+.prazzu-resources .prazzu-resource-navigation .nav-link:hover,
+.prazzu-resources .prazzu-resource-navigation .nav-link:focus-visible {
+    border-color: color-mix(in srgb, var(--prazzu-color-secondary) 46%, var(--prazzu-border-color));
+    color: var(--prazzu-color-secondary-light);
+    background: rgb(33 44 90 / 18%);
+}
+
+.prazzu-resources .prazzu-resource-section {
+    background:
+        linear-gradient(145deg, rgb(33 44 90 / 10%), transparent 52%),
+        var(--prazzu-color-surface);
+}
+
+.prazzu-resources .prazzu-resource-section:hover {
+    border-color: var(--prazzu-color-secondary-light);
+    box-shadow: 0 12px 30px rgb(10 20 45 / 12%);
+}
+
+.prazzu-resources .prazzu-resource-card {
+    border-color: color-mix(in srgb, var(--prazzu-color-secondary) 20%, var(--prazzu-border-color));
+}
+
+[data-bs-theme="light"] .prazzu-resources .prazzu-page-hero {
+    background:
+        radial-gradient(circle at 92% 12%, rgb(33 44 90 / 9%), transparent 32%),
+        linear-gradient(145deg, #f4f6fb, #fff);
+}
+
+[data-bs-theme="light"] .prazzu-resources .prazzu-page-hero__icon,
+[data-bs-theme="light"] .prazzu-resources .prazzu-icon-tile--violet {
+    color: #212c5a;
+    background: #e9edf6;
+}
+
+[data-bs-theme="light"] .prazzu-resources .prazzu-resource-navigation .nav-link:hover,
+[data-bs-theme="light"] .prazzu-resources .prazzu-resource-navigation .nav-link:focus-visible {
+    color: #212c5a;
+    background: #eef1f7;
+}
+
+/* Sobre — estrutura e confiança em azul; Plus e chamadas principais em roxo. */
+.prazzu-about__feature-panel::before {
+    background: linear-gradient(90deg, transparent, var(--prazzu-color-secondary-light), transparent);
+}
+
+.prazzu-about__feature-panel .prazzu-about__icon,
+.prazzu-about__audience-icon,
+.prazzu-about__card:not(.prazzu-about__card--plus):not(.prazzu-about__card--featured) .prazzu-about__icon {
+    color: var(--prazzu-color-secondary-light) !important;
+}
+
+.prazzu-about__card:not(.prazzu-about__card--plus):not(.prazzu-about__card--featured):hover,
+.prazzu-about__audience-item:hover {
+    border-color: rgb(74 92 153 / 58%) !important;
+}
+
+.prazzu-about__card--essential {
+    border-color: rgb(74 92 153 / 46%) !important;
+    background: linear-gradient(145deg, rgb(33 44 90 / 26%), transparent 62%);
+}
+
+.prazzu-about__badge--soft {
+    border-color: rgb(74 92 153 / 38%);
+    color: var(--prazzu-color-secondary-light);
+    background: rgb(33 44 90 / 24%);
+}
+
+.prazzu-about__card--plus .prazzu-about__icon,
+.prazzu-about__card--featured .prazzu-about__icon,
+.prazzu-about__card--plus .prazzu-about__check {
+    color: var(--prazzu-color-primary-light) !important;
+}
+
+.prazzu-about__cta {
+    background:
+        radial-gradient(circle at 16% 18%, rgb(255 255 255 / 10%), transparent 24%),
+        linear-gradient(125deg, var(--prazzu-color-secondary), #35477c 42%, var(--prazzu-color-primary-dark) 100%);
+}
+
+[data-bs-theme="light"] .prazzu-about__feature-panel,
+[data-bs-theme="light"] .prazzu-about__audience-item {
+    border-color: #d9deea !important;
+    background: #f5f7fb !important;
+}
+
+[data-bs-theme="light"] .prazzu-about__badge--soft {
+    border-color: #c8cfdf;
+    color: #212c5a;
+    background: #edf0f7;
+}
+
+[data-bs-theme="light"] .prazzu-about__card--essential {
+    background: linear-gradient(145deg, #f0f3f9, #fff 68%);
+}
+
+/* Planos — base e comparação em azul; o plano Plus permanece roxo. */
+.prazzu-plans__highlight i,
+.prazzu-plans__accent {
+    color: var(--prazzu-color-secondary-light) !important;
+}
+
+.prazzu-plans__highlight {
+    border-color: rgb(74 92 153 / 34%);
+    background: rgb(33 44 90 / 28%);
+}
+
+.prazzu-plans__billing {
+    border-color: rgb(74 92 153 / 34%);
+    background: color-mix(in srgb, var(--prazzu-color-secondary) 14%, var(--prazzu-color-surface-raised));
+}
+
+.prazzu-plans__billing .nav-link:not(.active):hover {
+    color: var(--prazzu-color-secondary-light);
+    background: rgb(33 44 90 / 20%);
+}
+
+.prazzu-plans__card:not(.prazzu-plans__card--plus):hover {
+    border-color: rgb(74 92 153 / 58%) !important;
+}
+
+.prazzu-plans__card:not(.prazzu-plans__card--plus) {
+    background:
+        linear-gradient(145deg, rgb(33 44 90 / 16%), transparent 54%),
+        linear-gradient(145deg, rgb(13 26 43 / 94%), rgb(10 22 38 / 82%));
+}
+
+.prazzu-plans__notice {
+    border-color: rgb(74 92 153 / 38%);
+    background: rgb(33 44 90 / 22%);
+}
+
+.prazzu-plans__comparison thead {
+    background: rgb(33 44 90 / 42%);
+}
+
+.prazzu-plans__faq {
+    --bs-accordion-active-color: var(--prazzu-color-secondary-light);
+    --bs-accordion-active-bg: rgb(33 44 90 / 34%);
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 .2rem rgb(74 92 153 / 20%);
+}
+
+.prazzu-plans__cta {
+    border-color: rgb(74 92 153 / 46%) !important;
+    background:
+        radial-gradient(circle at 78% 0, rgb(124 58 237 / 14%), transparent 34%),
+        linear-gradient(135deg, rgb(33 44 90 / 88%), rgb(12 23 45 / 96%) 58%, rgb(76 29 149 / 34%));
+}
+
+[data-bs-theme="light"] .prazzu-plans__highlight,
+[data-bs-theme="light"] .prazzu-plans__billing {
+    border-color: #d4dae8;
+    color: #212c5a;
+    background: #f0f3f8;
+}
+
+[data-bs-theme="light"] .prazzu-plans__billing .nav-link:not(.active):hover {
+    color: #212c5a;
+    background: #e7ebf3;
+}
+
+[data-bs-theme="light"] .prazzu-plans__card:not(.prazzu-plans__card--plus) {
+    background: linear-gradient(145deg, #f7f8fb, #fff 58%);
+}
+
+[data-bs-theme="light"] .prazzu-plans__notice {
+    border-color: #cbd2e2;
+    color: #212c5a;
+    background: #eef1f7;
+}
+
+[data-bs-theme="light"] .prazzu-plans__comparison thead {
+    background: #edf0f6;
+}
+/* 18. Conversão contextual pós-resultado — Prazzu Plus */
+.prazzu-plus-result-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--prazzu-color-secondary) 58%, var(--prazzu-border-color) 42%);
+    border-radius: var(--prazzu-radius-lg);
+    background:
+        linear-gradient(110deg, color-mix(in srgb, var(--prazzu-color-secondary) 15%, transparent), transparent 58%),
+        color-mix(in srgb, var(--prazzu-color-surface-raised) 94%, var(--prazzu-color-primary) 6%);
+    box-shadow: 0 10px 26px rgb(0 0 0 / 10%);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 220ms ease, transform 220ms ease, border-color 220ms ease;
+}
+
+.prazzu-plus-result-cta[hidden] {
+    display: none !important;
+}
+
+.prazzu-plus-result-cta.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.prazzu-plus-result-cta:hover {
+    border-color: color-mix(in srgb, var(--prazzu-color-secondary-light) 72%, var(--prazzu-color-primary) 28%);
+}
+
+.prazzu-plus-result-cta__icon {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: 0 0 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--prazzu-color-primary) 42%, transparent);
+    border-radius: 0.8rem;
+    background: color-mix(in srgb, var(--prazzu-color-primary) 14%, transparent);
+    color: var(--prazzu-color-primary-light);
+    font-size: 1.15rem;
+}
+
+.prazzu-plus-result-cta__content {
+    flex: 1 1 auto;
+}
+
+.prazzu-plus-result-cta__eyebrow {
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--prazzu-color-secondary-light);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.prazzu-plus-result-cta__content h2 {
+    color: var(--prazzu-color-text);
+}
+
+.prazzu-plus-result-cta__content strong {
+    color: color-mix(in srgb, var(--prazzu-color-text) 88%, var(--prazzu-color-secondary-light) 12%);
+    font-weight: 650;
+}
+
+.prazzu-plus-result-cta__action {
+    border: 1px solid color-mix(in srgb, var(--prazzu-color-primary) 64%, transparent);
+    background: color-mix(in srgb, var(--prazzu-color-primary) 13%, transparent);
+    color: var(--prazzu-color-primary-light);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.prazzu-plus-result-cta__action:hover,
+.prazzu-plus-result-cta__action:focus-visible {
+    border-color: var(--prazzu-color-primary);
+    background: var(--prazzu-color-primary);
+    color: #fff;
+}
+
+[data-bs-theme="light"] .prazzu-plus-result-cta {
+    border-color: color-mix(in srgb, var(--prazzu-color-secondary) 28%, #dbe1ef 72%);
+    background:
+        linear-gradient(110deg, color-mix(in srgb, var(--prazzu-color-secondary) 7%, transparent), transparent 58%),
+        color-mix(in srgb, #fff 96%, var(--prazzu-color-primary) 4%);
+    box-shadow: 0 10px 26px rgb(33 44 90 / 8%);
+}
+
+[data-bs-theme="light"] .prazzu-plus-result-cta__eyebrow {
+    color: var(--prazzu-color-secondary);
+}
+
+[data-bs-theme="light"] .prazzu-plus-result-cta__content h2 {
+    color: #18213f;
+}
+
+[data-bs-theme="light"] .prazzu-plus-result-cta__content strong {
+    color: var(--prazzu-color-secondary);
+}
+
+@media (max-width: 767.98px) {
+    .prazzu-plus-result-cta {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .prazzu-plus-result-cta__content {
+        flex-basis: calc(100% - 3.75rem);
+    }
+
+    .prazzu-plus-result-cta__action {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .prazzu-plus-result-cta {
+        transition: none;
+    }
 }

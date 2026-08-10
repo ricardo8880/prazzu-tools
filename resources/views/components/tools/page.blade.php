@@ -9,6 +9,8 @@
 ])
 
 @php
+    $toolCatalog = app(\App\Core\Tools\ToolCatalog::class);
+    $catalogTool = $toolCatalog->find($slug);
     $analyticsJourney = app(\App\Core\Tools\Analytics\Services\ToolAnalyticsJourneyRegistry::class)->find($slug);
     $analyticsConfig = $analyticsJourney === null ? null : array_merge(
         $analyticsJourney->toFrontendArray(),
@@ -47,7 +49,9 @@
 
     {{ $slot }}
 
-    @php($relatedTools = app(\App\Core\Tools\ToolCatalog::class)->related($slug))
+    <x-tools.plus-result-cta :slug="$slug" :plus-features="$catalogTool['plus_features'] ?? []" />
+
+    @php($relatedTools = $toolCatalog->related($slug))
     @if ($relatedTools->isNotEmpty())
         <section class="mt-5" aria-labelledby="{{ $slug }}-related-title">
             <div class="d-flex justify-content-between align-items-end gap-3 mb-3">

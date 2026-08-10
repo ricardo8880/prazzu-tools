@@ -235,3 +235,60 @@ if (currentTool && hasGeneratedResult) {
         }
     } catch {}
 }
+
+// CTA contextual do Prazzu Plus: aparece somente quando a ferramenta já entregou um resultado.
+// A frequência é limitada a uma exibição por ferramenta durante a sessão para não competir
+// com o conteúdo nem transformar recalculações sucessivas em publicidade repetitiva.
+const PLUS_RESULT_CTA_SEEN_PREFIX = 'prazzu-plus-result-cta-seen:';
+
+function hasMeaningfulToolResult(toolPage) {
+    return Boolean(toolPage.querySelector(
+        '[data-analytics-result], [data-result-export-actions]'
+    ));
+}
+
+function revealPlusResultCta(toolPage) {
+    if (!(toolPage instanceof HTMLElement) || !hasMeaningfulToolResult(toolPage)) return;
+
+    const cta = toolPage.querySelector('[data-plus-result-cta]');
+    if (!(cta instanceof HTMLElement) || cta.classList.contains('is-visible')) return;
+
+    const toolSlug = cta.dataset.plusResultCtaTool || toolPage.dataset.tool || 'tool';
+    const storageKey = `${PLUS_RESULT_CTA_SEEN_PREFIX}${toolSlug}`;
+
+    try {
+        if (sessionStorage.getItem(storageKey) === '1') return;
+        sessionStorage.setItem(storageKey, '1');
+    } catch {}
+
+    window.setTimeout(() => {
+        cta.hidden = false;
+        window.requestAnimationFrame(() => cta.classList.add('is-visible'));
+    }, 520);
+}
+
+function initializePlusResultCta() {
+    document.querySelectorAll('[data-tool]').forEach((toolPage) => revealPlusResultCta(toolPage));
+
+    const observer = new MutationObserver((mutations) => {
+        const changedToolPages = new Set();
+
+        for (const mutation of mutations) {
+            const target = mutation.target instanceof Element ? mutation.target : mutation.target.parentElement;
+            const toolPage = target?.closest?.('[data-tool]');
+            if (toolPage) changedToolPages.add(toolPage);
+
+            mutation.addedNodes.forEach((node) => {
+                if (!(node instanceof Element)) return;
+                const addedToolPage = node.matches('[data-tool]') ? node : node.closest('[data-tool]');
+                if (addedToolPage) changedToolPages.add(addedToolPage);
+            });
+        }
+
+        changedToolPages.forEach((toolPage) => revealPlusResultCta(toolPage));
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+initializePlusResultCta();

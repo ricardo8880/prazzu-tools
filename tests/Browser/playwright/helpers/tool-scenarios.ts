@@ -178,6 +178,7 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
             const max = await control.getAttribute('max');
             const inputMode = await control.getAttribute('inputmode');
             const placeholder = await control.getAttribute('placeholder');
+            const e2eValue = await control.getAttribute('data-e2e-value');
             const required = await control.getAttribute('required') !== null;
 
             if (type === 'file') {
@@ -243,11 +244,14 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
                 continue;
             }
             if (!(await control.isEditable()) || !required) continue;
-            if ((await control.inputValue()).trim() === '') {
-                const generated = deterministicValue(name, type, min, max, inputMode, placeholder);
-                await control.fill(generated);
-                filled.add(`${name || '(campo)'}=${type === 'password' ? '[oculto]' : generated}`);
-                changed = true;
+            const currentValue = (await control.inputValue()).trim();
+            if (e2eValue !== null || currentValue === '') {
+                const generated = e2eValue ?? deterministicValue(name, type, min, max, inputMode, placeholder);
+                if (currentValue !== generated) {
+                    await control.fill(generated);
+                    filled.add(`${name || '(campo)'}=${type === 'password' ? '[oculto]' : generated}`);
+                    changed = true;
+                }
             }
         }
 
