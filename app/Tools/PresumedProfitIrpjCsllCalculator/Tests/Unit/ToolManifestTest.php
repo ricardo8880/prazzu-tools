@@ -20,6 +20,6 @@ final class ToolManifestTest extends TestCase
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));
-        self::assertSame(['pdf', 'xlsx'], $manifest->export?->formats);
+        self::assertSame(['pdf', 'xlsx', 'json'], $manifest->export?->formats);
     }
 }

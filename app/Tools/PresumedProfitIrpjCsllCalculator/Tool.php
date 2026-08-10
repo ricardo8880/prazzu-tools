@@ -66,7 +66,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                 new ToolFeature('history', 'Histórico autenticado', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(true, 1, 365, 1),
-            export: new ToolExportPolicy(true, ['pdf', 'xlsx']),
+            export: new ToolExportPolicy(true, ['pdf', 'xlsx', 'json']),
             sharing: ToolSharingPolicy::disabled(),
             sensitiveData: ToolSensitiveDataPolicy::none(),
         );

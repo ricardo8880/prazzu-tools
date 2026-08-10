@@ -270,7 +270,7 @@ A distribuição atual do inventário oficial é:
 ```text
 contabilidade -> 33 ferramentas
 rh            -> 1 ferramenta
-total         -> 34 ferramentas
+total         -> 35 ferramentas
 ```
 
 A Home e o SEO de RH são configuração de conteúdo; Blog usa as mesmas tabelas com `vertical_slug`; Analytics recebe a vertical pelo contexto transversal; E2E descobre a ferramenta pelo mesmo inventário oficial. Assim, o Core não conhece uma lista fechada de nichos e uma terceira vertical deve seguir exatamente o mesmo modelo.

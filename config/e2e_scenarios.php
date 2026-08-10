@@ -202,6 +202,39 @@ foreach (($productTools['official'] ?? []) as $tool) {
                 mimeType: 'text/csv',
             ),
         ],
+        'calculadora-retencoes-nota-fiscal' => [
+            new ToolDownloadExpectation(
+                id: 'retencoes-nota-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800,
+                filenameContains: 'retencoes-nota', mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'retencoes-nota-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000,
+                filenameContains: 'retencoes-nota', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-icms-st' => [
+            new ToolDownloadExpectation(
+                id: 'icms-st-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800,
+                filenameContains: 'icms-st', mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'icms-st-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000,
+                filenameContains: 'icms-st', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-pis-cofins' => [
+            new ToolDownloadExpectation(
+                id: 'pis-cofins-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800,
+                filenameContains: 'pis-cofins', mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'pis-cofins-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000,
+                filenameContains: 'pis-cofins', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
         'calculadora-irpj-csll-lucro-presumido' => [
             new ToolDownloadExpectation(
                 id: 'irpj-csll-pdf',
@@ -554,7 +587,7 @@ return [
     'allowed_step_actions' => ['fill', 'select', 'check', 'uncheck', 'click', 'submit', 'auto_fill_form', 'invalidate_required'],
     'allowed_expectations' => ['visible', 'hidden', 'text', 'url', 'field_value', 'form_invalid', 'in_viewport'],
     'minimum_coverage' => [
-        'expected_tool_count' => 34,
+        'expected_tool_count' => 37,
         'required_kinds' => ['valid', 'invalid'],
     ],
     'tools' => $tools,

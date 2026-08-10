@@ -789,3 +789,32 @@ continuidade, compatibilidade e validação.
 - A regra fiscal é versionada como `lucro_presumido.irpj_csll:2026.1.0`, com referências oficiais e casos dourados de cenário típico, fronteira, entrada inválida, arredondamento, não aplicabilidade, transição normativa e regressão.
 - O Essencial entrega o cálculo do trimestre e memória fiscal; o Plus adiciona múltiplas atividades, ajuste dos limites acumulados, créditos/retenções confirmados, histórico e PDF/XLSX.
 - Os gates numéricos atuais de inventário, Analytics e E2E passam a esperar 34 ferramentas; trechos históricos dos lotes anteriores permanecem como registro de evolução.
+
+## Expansão fiscal — PIS e COFINS 2026
+
+- O inventário oficial é expandido de 34 para 35 ferramentas, preservando todos os módulos e slugs existentes.
+- Foi criado `PisCofinsCalculator`, na vertical `contabilidade`, com apuração mensal pelas alíquotas gerais dos regimes cumulativo e não cumulativo.
+- O Essencial entrega escolha de regime, base tributável, base agregada de créditos elegíveis no não cumulativo, retenções/compensações confirmadas, saldos e memória normativa completa.
+- O Plus adiciona operações adicionais, detalhamento de créditos por operação, comparação cumulativo × não cumulativo, histórico e PDF/XLSX, sem esconder qualquer fórmula necessária ao caso individual.
+- A regra `pis_cofins.general_2026:2026.1.0` registra Leis 9.718/1998, 10.637/2002 e 10.833/2003, LC 214/2025 e a orientação oficial da RFB para a transição de 2026.
+- Operações monofásicas, alíquota zero, suspensão, importação, benefícios e regimes setoriais permanecem explicitamente fora da inferência automática; o usuário informa a base previamente classificada.
+- Os gates atuais de inventário, Analytics e E2E passam a esperar 35 ferramentas.
+
+
+## Expansão fiscal — Calculadora de ICMS-ST
+
+- O inventário oficial é expandido de 35 para 36 ferramentas.
+- `IcmsStCalculator` entra na vertical `contabilidade`, categoria fiscal, release_order 36.
+- Essencial: operação interna, MVA informada, ICMS próprio, base ST, ICMS-ST e memória.
+- Plus: MVA ajustada, FCP-ST, interestadual, múltiplos itens, PDF/XLSX e histórico.
+- O cálculo é paramétrico e exige confirmação de NCM/CEST, sujeição à ST, MVA, alíquotas e regras da UF.
+
+
+## Expansão fiscal — Calculadora de Retenções na Nota Fiscal
+
+- O inventário oficial é expandido de 36 para 37 ferramentas.
+- `InvoiceWithholdingCalculator` entra na vertical `contabilidade`, categoria fiscal, `release_order` 37.
+- O Essencial calcula uma nota individual com incidências e alíquotas explicitamente confirmadas.
+- O Plus adiciona bases configuráveis, múltiplas notas/serviços, relatório, PDF/XLSX e histórico.
+- O domínio é paramétrico e não infere automaticamente a incidência de IRRF, INSS, ISS, PIS/Pasep, Cofins ou CSLL.
+- O E2E passa a exigir cobertura válida e inválida para 37 ferramentas e declara os downloads PDF/XLSX desta ferramenta.

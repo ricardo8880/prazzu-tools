@@ -21,12 +21,12 @@ final class ProductToolsInventoryTest extends TestCase
     {
         $tools = $this->inventory['official'];
 
-        self::assertSame(34, $this->inventory['expected_module_count']);
-        self::assertCount(34, $tools);
-        self::assertSame(range(1, 34), array_column($tools, 'id'));
+        self::assertSame(37, $this->inventory['expected_module_count']);
+        self::assertCount(37, $tools);
+        self::assertSame(range(1, 37), array_column($tools, 'id'));
 
         foreach (['key', 'name', 'slug', 'module'] as $field) {
-            self::assertCount(34, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
+            self::assertCount(37, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
         }
     }
 
@@ -36,22 +36,22 @@ final class ProductToolsInventoryTest extends TestCase
         $tools = $this->inventory['official'];
         $releaseOrders = array_column($tools, 'release_order');
 
-        self::assertCount(34, array_unique($releaseOrders));
+        self::assertCount(37, array_unique($releaseOrders));
         sort($releaseOrders);
-        self::assertSame(range(1, 34), $releaseOrders);
+        self::assertSame(range(1, 37), $releaseOrders);
 
         usort($tools, static fn (array $left, array $right): int => $right['release_order'] <=> $left['release_order']);
         $latest = array_column(array_slice($tools, 0, 8), 'slug');
 
         self::assertSame([
+            'calculadora-retencoes-nota-fiscal',
+            'calculadora-icms-st',
+            'calculadora-pis-cofins',
             'calculadora-irpj-csll-lucro-presumido',
             'calculadora-turnover',
             'calculadora-difal-icms',
             'calculadora-hora-extra',
             'calculadora-salario-liquido',
-            'declaracao-trabalho-renda',
-            'declaracao-rendimentos',
-            'comissao-vendedores',
         ], $latest);
     }
 
@@ -65,7 +65,7 @@ final class ProductToolsInventoryTest extends TestCase
         sort($officialModules);
 
         self::assertSame($actualModules, $officialModules);
-        self::assertCount(34, array_unique($officialModules));
+        self::assertCount(37, array_unique($officialModules));
         self::assertArrayNotHasKey('additional_modules', $this->inventory);
     }
 

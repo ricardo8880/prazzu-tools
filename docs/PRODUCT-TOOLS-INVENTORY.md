@@ -4,13 +4,13 @@ A fonte executável deste inventário é `config/product_tools.php`. O README da
 
 ## Estado consolidado no Lote Cirúrgico 1
 
-Após a expansão fiscal de IRPJ/CSLL, o projeto possui **34 módulos em `app/Tools`**, todos integrantes de um único inventário oficial. Os 33 módulos anteriores permanecem preservados; `PresumedProfitIrpjCsllCalculator` entra como a 33ª ferramenta de `contabilidade`, enquanto `TurnoverCalculator` permanece na vertical `rh`. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
+Após a expansão fiscal de IRPJ/CSLL, o projeto possui **37 módulos em `app/Tools`**, todos integrantes de um único inventário oficial. Os 33 módulos anteriores permanecem preservados; `PresumedProfitIrpjCsllCalculator` entra como a 33ª ferramenta de `contabilidade`, enquanto `TurnoverCalculator` permanece na vertical `rh`. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
 
 Este lote não remove módulos nem altera slugs públicos. A ferramenta combinada `ProLaboreProfitDistributionCalculator` permanece temporariamente no inventário com o estado `implemented`, porque apresenta sobreposição funcional com `ProLaboreSimulator` e `ProfitDistributionCalculator`. A sua retirada só pode ocorrer num lote de migração dedicado, com compatibilidade de rotas, histórico e métricas e sem reduzir a quantidade oficial vigente declarada no inventário.
 
 ## Regras obrigatórias do inventário
 
-- O diretório `app/Tools` deve conter a quantidade declarada por `expected_module_count`. O Lote 6 elevou essa quantidade de 32 para 33; a expansão fiscal de IRPJ/CSLL é o lote explícito que eleva a quantidade atual para 34.
+- O diretório `app/Tools` deve conter a quantidade declarada por `expected_module_count`. O Lote 6 elevou essa quantidade de 32 para 33; a expansão fiscal de IRPJ/CSLL é o lote explícito que eleva a quantidade para 34; a expansão de PIS/COFINS eleva a quantidade para 35; a expansão de ICMS-ST eleva a quantidade para 36; a Calculadora de Retenções na Nota Fiscal eleva a quantidade atual para 37.
 - Cada módulo deve aparecer exatamente uma vez em `config/product_tools.php`.
 - Cada entrada oficial deve declarar uma `vertical` registrada e coincidir com a vertical do respectivo `ToolManifest`.
 - IDs, chaves, nomes e slugs do inventário devem ser únicos.

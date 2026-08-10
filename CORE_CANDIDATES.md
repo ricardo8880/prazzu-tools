@@ -143,3 +143,7 @@ A necessidade de PDF e Excel em todas as 32 ferramentas confirmou a promoção d
 - DTOs compartilhados `PdfDocument`, `SpreadsheetDocument` e `SpreadsheetSheet` definem apenas conteúdo, arquivo e opções de formato.
 
 As implementações antigas baseadas em impressão do navegador e construção manual de OOXML permanecem temporariamente apenas para compatibilidade durante a migração. Nenhuma ferramenta nova deve utilizá-las. A remoção ocorrerá no lote final após todas as ferramentas consumirem os contratos oficiais.
+
+## Expansão — PIS e COFINS 2026
+
+A nova `PisCofinsCalculator` confirma reutilização transversal de `Money`, `Percentage`, `CalculationMemory`, histórico e exportação. As alíquotas gerais de PIS/Cofins também aparecem em estimativas do `TaxRegimeComparator`, mas os contextos de domínio ainda são diferentes: o comparador estima regimes empresariais, enquanto a nova ferramenta apura contribuições a partir de bases já classificadas. Não foi criada uma abstração tributária genérica adicional. Reavaliar uma regra normativa compartilhada específica de PIS/Cofins quando outra ferramenta precisar consumir exatamente a mesma seleção temporal, alíquotas e metadados sem condicionais de domínio.

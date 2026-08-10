@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 return [
-    'schema_version' => '3.6.0',
-    'release_readiness' => 'accounting_expansion_irpj_csll_2026',
+    'schema_version' => '3.9.0',
+    'release_readiness' => 'accounting_expansion_invoice_withholding_2026',
     'source' => 'README.md',
     'continuity_log' => 'docs/IMPLEMENTATION-LOTS.md',
     'inventory_document' => 'docs/PRODUCT-TOOLS-INVENTORY.md',
-    'expected_module_count' => 34,
+    'expected_module_count' => 37,
 
     'official' => [
         ['id' => 1, 'key' => 'employee-cost', 'name' => 'Calculadora de Custo de Funcionário CLT', 'slug' => 'custo-funcionario-clt', 'module' => 'EmployeeCostCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 10],
@@ -45,6 +45,9 @@ return [
         ['id' => 32, 'key' => 'vacation', 'name' => 'Calculadora de Férias', 'slug' => 'calculadora-ferias', 'module' => 'VacationCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 9],
         ['id' => 33, 'key' => 'turnover', 'name' => 'Calculadora de Turnover', 'slug' => 'calculadora-turnover', 'module' => 'TurnoverCalculator', 'state' => 'implemented', 'vertical' => 'rh', 'release_order' => 33],
         ['id' => 34, 'key' => 'presumed-profit-irpj-csll', 'name' => 'Calculadora de IRPJ e CSLL — Lucro Presumido', 'slug' => 'calculadora-irpj-csll-lucro-presumido', 'module' => 'PresumedProfitIrpjCsllCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 34],
+        ['id' => 35, 'key' => 'pis-cofins', 'name' => 'Calculadora PIS e COFINS', 'slug' => 'calculadora-pis-cofins', 'module' => 'PisCofinsCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 35],
+        ['id' => 36, 'key' => 'icms-st', 'name' => 'Calculadora de ICMS-ST', 'slug' => 'calculadora-icms-st', 'module' => 'IcmsStCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 36],
+        ['id' => 37, 'key' => 'invoice-withholding', 'name' => 'Calculadora de Retenções na Nota Fiscal', 'slug' => 'calculadora-retencoes-nota-fiscal', 'module' => 'InvoiceWithholdingCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 37],
     ],
 
     'functional_overlap_reviews' => [

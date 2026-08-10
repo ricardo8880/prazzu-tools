@@ -22,6 +22,9 @@ return [
         App\Tools\LateDasCalculator\Tool::class,
         App\Tools\DifalIcmsCalculator\Tool::class,
         \App\Tools\PresumedProfitIrpjCsllCalculator\Tool::class,
+        App\Tools\PisCofinsCalculator\Tool::class,
+        \App\Tools\IcmsStCalculator\Tool::class,
+        \App\Tools\InvoiceWithholdingCalculator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [

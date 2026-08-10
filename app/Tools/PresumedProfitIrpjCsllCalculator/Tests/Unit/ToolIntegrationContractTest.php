@@ -15,6 +15,10 @@ final class ToolIntegrationContractTest extends TestCase
         $catalog = app(ToolIntegrationCatalog::class);
         $manifest = (new Tool)->integrations();
 
+        if ($manifest->publishes === [] && $manifest->accepts === []) {
+            self::addToAssertionCount(1);
+        }
+
         foreach ([...$manifest->publishes, ...$manifest->accepts] as $contractKey) {
             self::assertNotNull(
                 $catalog->find(...$this->contractIdentity($contractKey)),

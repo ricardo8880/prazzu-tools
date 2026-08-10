@@ -92,8 +92,15 @@ export function loadToolScenarios(): ScenarioManifest {
     const manifest = JSON.parse(readFileSync(path, 'utf8')) as ScenarioManifest;
     if (manifest.schema_version !== '1.2.0') throw new Error(`Versão desconhecida de cenários E2E: ${manifest.schema_version}`);
     if (manifest.scenario_count !== manifest.scenarios.length) throw new Error('Contagem de cenários E2E divergente.');
-    if (manifest.tool_count !== 34 || manifest.coverage.valid_tools !== 34 || manifest.coverage.invalid_tools !== 34) {
-        throw new Error('O manifesto não possui cobertura mínima válida e inválida para as 34 ferramentas.');
+    const minimumToolCount = 35;
+    const hasCompleteCoverage = manifest.coverage.valid_tools === manifest.tool_count
+        && manifest.coverage.invalid_tools === manifest.tool_count;
+
+    if (manifest.tool_count < minimumToolCount || !hasCompleteCoverage) {
+        throw new Error(
+            `O manifesto não possui cobertura mínima válida e inválida para todas as ferramentas `
+            + `(ferramentas=${manifest.tool_count}, válidas=${manifest.coverage.valid_tools}, inválidas=${manifest.coverage.invalid_tools}).`,
+        );
     }
     return manifest;
 }
