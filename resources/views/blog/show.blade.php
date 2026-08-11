@@ -125,7 +125,8 @@
     const endpoint = @json(route('blog.analytics'));
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
     const article = document.querySelector('article');
-    const base = {post_id: {{ $post->getKey() }}, post_slug: @json($post->slug)};
+    const readingId = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const base = {post_id: {{ $post->getKey() }}, post_slug: @json($post->slug), reading_id: readingId};
     const startedAt = Date.now();
     const sentScroll = new Set();
     let completed = false;

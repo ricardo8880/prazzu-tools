@@ -6,6 +6,7 @@ namespace App\Tools\BusinessDocumentValidator\Presentation\Controllers;
 
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
@@ -41,6 +42,7 @@ use Throwable;
 
 final class BusinessDocumentValidatorController extends Controller
 {
+    private const TOOL_SLUG = 'validador-de-cnpj';
     public function index(Request $request, ListValidationHistory $history): View
     {
         $recentHistory = $request->user() === null
@@ -100,7 +102,13 @@ final class BusinessDocumentValidatorController extends Controller
         }
 
         $resultToken = $temporary->put('business-document-validator.batch', $payload, $this->temporaryOwnerKey($request));
-        $analytics->record(AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value, 'tool', $request, $payload['summary'] ?? []);
+        $analytics->track(new AnalyticsEvent(
+            name: AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value,
+            channel: 'tool',
+            properties: $payload['summary'] ?? [],
+            subjectType: 'tool',
+            subjectSlug: self::TOOL_SLUG,
+        ), $request);
 
         return view('tools-validador-de-cnpj::index', [
             'recentHistory' => [],
@@ -118,7 +126,13 @@ final class BusinessDocumentValidatorController extends Controller
         $rows = $builder->execute($result, $onlyIssues);
         $suffix = $onlyIssues ? '-inconsistencias' : '-completo';
 
-        $analytics->record(AnalyticsEventName::BusinessDocumentValidatorBatchExported->value, 'tool', $request, ['format' => $format, 'only_issues' => $onlyIssues, 'rows' => count($rows)]);
+        $analytics->track(new AnalyticsEvent(
+            name: AnalyticsEventName::BusinessDocumentValidatorBatchExported->value,
+            channel: 'tool',
+            properties: ['format' => $format, 'only_issues' => $onlyIssues, 'rows' => count($rows)],
+            subjectType: 'tool',
+            subjectSlug: self::TOOL_SLUG,
+        ), $request);
 
         return $format === 'excel'
             ? $spreadsheet->download(new \App\Core\Export\Data\SpreadsheetDocument('validacao-documentos'.$suffix, [new \App\Core\Export\Data\SpreadsheetSheet('Validações', [$builder->headers(), ...$rows])]))

@@ -20,7 +20,12 @@ final class BlogAnalyticsQuery
     {
         $posts = BlogPost::query()->with('author:id,name')->get();
         $metrics = $this->metricsByPost($period)->keyBy('post_id');
-        $rows = $posts->map(fn (BlogPost $post): object => $this->postRow($post, $metrics->get((int) $post->getKey())));
+        $conversions = $this->attributedConversionsByPost($period)->keyBy('post_id');
+        $rows = $posts->map(fn (BlogPost $post): object => $this->postRow(
+            $post,
+            $metrics->get((int) $post->getKey()),
+            $conversions->get((int) $post->getKey()),
+        ));
 
         return [
             'period' => $period,
@@ -46,7 +51,8 @@ final class BlogAnalyticsQuery
     public function post(BlogPost $post, AnalyticsPeriod $period): array
     {
         $metric = $this->metricsByPost($period, (int) $post->getKey())->first();
-        $row = $this->postRow($post->loadMissing('author:id,name'), $metric);
+        $conversion = $this->attributedConversionsByPost($period, (int) $post->getKey())->first();
+        $row = $this->postRow($post->loadMissing('author:id,name'), $metric, $conversion);
 
         return [
             'period' => $period,
@@ -64,11 +70,10 @@ final class BlogAnalyticsQuery
     private function metricsByPost(AnalyticsPeriod $period, ?int $postId = null): Collection
     {
         $seconds = $this->jsonNumber('seconds');
-        $percentage = $this->jsonNumber('percentage');
         $query = $this->events($period, $postId)
             ->whereNotNull('subject_id')
             ->selectRaw('CAST(subject_id AS INTEGER) as post_id')
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'visitor_id').' as unique_visitors', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'analytics_session_id').' as sessions', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogReadingStarted]).' as reading_starts', $this->names([AnalyticsEventName::BlogReadingStarted]))
@@ -82,18 +87,66 @@ final class BlogAnalyticsQuery
             ->selectRaw($this->distinctMetric([AnalyticsEventName::SubscriptionCreated]).' as subscriptions', $this->names([AnalyticsEventName::SubscriptionCreated]))
             ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogTimeSpent])).') THEN '.$seconds.' END) as average_time_seconds', $this->names([AnalyticsEventName::BlogTimeSpent]))
             ->selectRaw('MAX(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogTimeSpent])).') THEN '.$seconds.' END) as maximum_time_seconds', $this->names([AnalyticsEventName::BlogTimeSpent]))
-            ->selectRaw('AVG(CASE WHEN event_name IN ('.$this->placeholders($this->names([AnalyticsEventName::BlogScrollMeasured])).') THEN '.$percentage.' END) as average_scroll', $this->names([AnalyticsEventName::BlogScrollMeasured]))
             ->groupBy('subject_id');
 
-        return $query->get();
+        $rows = $query->get();
+        $scroll = $this->averageScrollByPost($period, $postId);
+
+        return $rows->each(function (object $row) use ($scroll): void {
+            $row->average_scroll = (float) ($scroll[(int) $row->post_id] ?? 0);
+        });
     }
 
-    private function postRow(BlogPost $post, ?object $metric): object
+    /** @return array<int, float> */
+    private function averageScrollByPost(AnalyticsPeriod $period, ?int $postId = null): array
+    {
+        $percentage = $this->jsonNumber('percentage');
+        $fallbackIdentity = AnalyticsMetricSql::identity("COALESCE(subject_id, '')");
+        $readingId = $this->jsonText('reading_id');
+        $identity = "COALESCE(NULLIF($readingId, ''), $fallbackIdentity)";
+
+        $maximums = $this->events($period, $postId)
+            ->whereIn('event_name', $this->names([AnalyticsEventName::BlogScrollMeasured]))
+            ->whereNotNull('subject_id')
+            ->selectRaw('CAST(subject_id AS INTEGER) as post_id')
+            ->selectRaw($identity.' as reading_identity')
+            ->selectRaw('MAX('.$percentage.') as max_scroll')
+            ->groupBy('subject_id')
+            ->groupByRaw($identity)
+            ->get();
+
+        return $maximums->groupBy('post_id')->map(
+            fn (Collection $rows): float => round((float) $rows->avg('max_scroll'), 1)
+        )->all();
+    }
+
+
+    /** @return Collection<int, object> */
+    private function attributedConversionsByPost(AnalyticsPeriod $period, ?int $postId = null): Collection
+    {
+        $blogPostId = $this->jsonText('attributed_blog_post_id');
+        $events = $this->names([AnalyticsEventName::AccountCreated, AnalyticsEventName::SubscriptionCreated]);
+
+        return PlatformAnalyticsEvent::query()
+            ->whereBetween('occurred_at', [$period->start, $period->end])
+            ->whereIn('event_name', $events)
+            ->whereRaw($blogPostId.' IS NOT NULL')
+            ->when($postId !== null, fn (Builder $query) => $query->whereRaw($blogPostId.' = ?', [(string) $postId]))
+            ->selectRaw('CAST('.$blogPostId.' AS INTEGER) as post_id')
+            ->selectRaw($this->countDistinctCase([AnalyticsEventName::AccountCreated], 'event_id').' as registrations', $this->names([AnalyticsEventName::AccountCreated]))
+            ->selectRaw($this->countDistinctCase([AnalyticsEventName::SubscriptionCreated], 'event_id').' as subscriptions', $this->names([AnalyticsEventName::SubscriptionCreated]))
+            ->selectRaw('COUNT(DISTINCT visitor_id) as converted_visitors')
+            ->groupByRaw($blogPostId)
+            ->get();
+    }
+
+    private function postRow(BlogPost $post, ?object $metric, ?object $conversion = null): object
     {
         $views = (int) ($metric?->views ?? 0);
         $toolClicks = (int) ($metric?->tool_clicks ?? 0);
-        $registrations = (int) ($metric?->registrations ?? 0);
-        $subscriptions = (int) ($metric?->subscriptions ?? 0);
+        $registrations = (int) ($conversion?->registrations ?? 0);
+        $subscriptions = (int) ($conversion?->subscriptions ?? 0);
+        $convertedVisitors = (int) ($conversion?->converted_visitors ?? 0);
         $abandonments = (int) ($metric?->abandonments ?? 0);
         $updatedAt = $post->content_updated_at ?: $post->updated_at;
 
@@ -124,7 +177,7 @@ final class BlogAnalyticsQuery
             'ctr' => $views > 0 ? round(($toolClicks / $views) * 100, 1) : 0.0,
             'registrations' => $registrations,
             'subscriptions' => $subscriptions,
-            'conversion_rate' => $views > 0 ? round((($registrations + $subscriptions) / $views) * 100, 1) : 0.0,
+            'conversion_rate' => (int) ($metric?->unique_visitors ?? 0) > 0 ? round(($convertedVisitors / (int) $metric->unique_visitors) * 100, 1) : 0.0,
         ];
     }
 
@@ -181,7 +234,7 @@ final class BlogAnalyticsQuery
     {
         $rows = $this->events($period, $postId)
             ->selectRaw('DATE(occurred_at) as metric_date')
-            ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
+            ->selectRaw($this->sumCase([AnalyticsEventName::BlogPostViewed]).' as views', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->countDistinctCase([AnalyticsEventName::BlogPostViewed], 'visitor_id').' as visitors', $this->names([AnalyticsEventName::BlogPostViewed]))
             ->selectRaw($this->distinctMetric([AnalyticsEventName::BlogToolClicked]).' as tool_clicks', $this->names([AnalyticsEventName::BlogToolClicked]))
             ->groupBy('metric_date')->get()->keyBy('metric_date');
@@ -244,6 +297,15 @@ final class BlogAnalyticsQuery
     private function placeholders(array $values): string
     {
         return implode(',', array_fill(0, max(1, count($values)), '?'));
+    }
+
+    private function jsonText(string $key): string
+    {
+        return match (DB::connection()->getDriverName()) {
+            'pgsql' => "metadata->>'$key'",
+            'sqlite' => "json_extract(metadata, '$.$key')",
+            default => "JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.$key'))",
+        };
     }
 
     private function jsonNumber(string $key): string

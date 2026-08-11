@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Tools\FiscalXmlConverter\Presentation\Controllers;
 
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
-use App\Core\Analytics\Contracts\PlatformAnalytics;
-use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
@@ -42,7 +40,7 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function convert(ConvertFiscalXmlRequest $request, ConvertUploadedXml $action, PlatformAnalytics $analytics, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
+    public function convert(ConvertFiscalXmlRequest $request, ConvertUploadedXml $action, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
     {
         try {
             $document = $action->execute($request->file('xml_file'));
@@ -62,10 +60,6 @@ final class ToolController extends Controller
             ], (int) $request->user()->getAuthIdentifier());
             $recorder->succeed($run, $payload);
         }
-        $analytics->record(AnalyticsEventName::ToolCalculationCompleted->value, 'tool', $request, [
-            'tool' => Tool::SLUG, 'mode' => 'single', 'model' => $payload['model'], 'items' => count($payload['items']),
-        ]);
-
         return view('tools-conversor-fiscal-xml::index', [
             ...$page->execute(),
             'result' => $payload,
@@ -74,7 +68,7 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function batch(ConvertFiscalXmlBatchRequest $request, ConvertUploadedXmlBatch $action, PlatformAnalytics $analytics, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
+    public function batch(ConvertFiscalXmlBatchRequest $request, ConvertUploadedXmlBatch $action, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
     {
         $result = $action->execute($request->file('xml_files', []));
         if ($result['summary']['processed'] === 0) {
@@ -87,9 +81,6 @@ final class ToolController extends Controller
             ], (int) $request->user()->getAuthIdentifier());
             $recorder->succeed($run, $result);
         }
-        $analytics->record(AnalyticsEventName::ToolCalculationCompleted->value, 'tool', $request, [
-            'tool' => Tool::SLUG, 'mode' => 'batch', 'documents' => $result['summary']['processed'], 'items' => $result['summary']['items'],
-        ]);
         return view('tools-conversor-fiscal-xml::index', [
             ...$page->execute(),
             'batchResult' => $result,

@@ -32,6 +32,36 @@ final class AnalyticsMetricSql
     }
 
     /** @param list<string> $events */
+    public static function countCase(array $events): string
+    {
+        $placeholders = implode(',', array_fill(0, max(1, count($events)), '?'));
+
+        return 'SUM(CASE WHEN event_name IN ('.$placeholders.') THEN 1 ELSE 0 END)';
+    }
+
+    /** @param list<string> $events */
+    public static function countDistinctVisitorsCase(array $events): string
+    {
+        $placeholders = implode(',', array_fill(0, max(1, count($events)), '?'));
+        $fallback = self::identity("''");
+
+        return "COUNT(DISTINCT CASE WHEN event_name IN ($placeholders) THEN COALESCE(visitor_id, ".$fallback.") END)";
+    }
+
+    /** @param list<string> $events */
+    public static function countDistinctSessionsCase(array $events): string
+    {
+        $placeholders = implode(',', array_fill(0, max(1, count($events)), '?'));
+        $driver = PlatformAnalyticsEvent::query()->getConnection()->getDriverName();
+        $session = match ($driver) {
+            'pgsql', 'sqlite' => 'CAST(analytics_session_id AS TEXT)',
+            default => 'CAST(analytics_session_id AS CHAR)',
+        };
+
+        return "COUNT(DISTINCT CASE WHEN event_name IN ($placeholders) THEN COALESCE(".$session.", visitor_id, CAST(event_id AS ".($driver === 'mysql' ? 'CHAR' : 'TEXT').")) END)";
+    }
+
+    /** @param list<string> $events */
     public static function countDistinctCase(array $events, string $scope = "''"): string
     {
         $placeholders = implode(',', array_fill(0, max(1, count($events)), '?'));

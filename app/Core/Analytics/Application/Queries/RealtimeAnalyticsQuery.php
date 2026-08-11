@@ -33,13 +33,14 @@ final class RealtimeAnalyticsQuery
             ->whereBetween('occurred_at', [$activitySince, $now]);
         $activeToolPresences = AnalyticsToolPresence::query()
             ->whereBetween('last_seen_at', [$toolPresenceSince, $now]);
+        $currentPages = $this->currentPages(clone $onlineSessions);
 
         $summary = [
-            'online_users' => (clone $onlineSessions)->count(),
+            'online_users' => (clone $onlineSessions)->whereNotNull('visitor_id')->distinct()->count('visitor_id'),
             'online_visitors' => (clone $onlineSessions)->whereNotNull('visitor_id')->distinct()->count('visitor_id'),
             'identified_users' => (clone $onlineSessions)->whereNotNull('user_id')->distinct()->count('user_id'),
-            'open_pages' => (clone $onlineSessions)->whereNotNull('landing_path')->distinct()->count('landing_path'),
-            'open_tools' => (clone $activeToolPresences)->count(),
+            'open_pages' => (clone $currentPages)->whereNotNull('path')->distinct()->count('path'),
+            'open_tools' => (clone $activeToolPresences)->whereNotNull('tool_slug')->distinct()->count('tool_slug'),
             'events_30m' => (clone $recentEvents)->count(),
             'conversions_30m' => $this->logicalCount(clone $recentEvents, $this->conversionEvents()),
             'registrations_30m' => $this->logicalCount(clone $recentEvents, $this->eventNames->expand([AnalyticsEventName::AccountCreated])),
@@ -51,7 +52,7 @@ final class RealtimeAnalyticsQuery
             'online_window_minutes' => self::ONLINE_WINDOW_MINUTES,
             'activity_window_minutes' => 30,
             'summary' => $summary,
-            'pages' => $this->onlinePages($onlineSessions),
+            'pages' => $this->onlinePages($currentPages),
             'tools' => $this->activeTools($activeToolPresences),
             'sources' => $this->sources($onlineSessions),
             'locations' => $this->locations($onlineSessions),
@@ -83,11 +84,22 @@ final class RealtimeAnalyticsQuery
             ->value('aggregate') ?? 0);
     }
 
-    private function onlinePages(Builder $sessions): Collection
+    private function currentPages(Builder $sessions): Builder
     {
-        return (clone $sessions)
-            ->selectRaw("COALESCE(landing_path, '/') as label, COUNT(*) as total, COUNT(DISTINCT visitor_id) as visitors")
-            ->groupBy('landing_path')->orderByDesc('total')->limit(15)->get();
+        $latestPageEventIds = PlatformAnalyticsEvent::query()
+            ->whereIn('analytics_session_id', (clone $sessions)->select('id'))
+            ->whereIn('event_name', $this->eventNames->expand([AnalyticsEventName::PageViewed]))
+            ->selectRaw('MAX(id)')
+            ->groupBy('analytics_session_id');
+
+        return PlatformAnalyticsEvent::query()->whereIn('id', $latestPageEventIds);
+    }
+
+    private function onlinePages(Builder $pages): Collection
+    {
+        return (clone $pages)
+            ->selectRaw("COALESCE(path, '/') as label, COUNT(*) as total, COUNT(DISTINCT visitor_id) as visitors")
+            ->groupBy('path')->orderByDesc('total')->limit(15)->get();
     }
 
     private function activeTools(Builder $presences): Collection

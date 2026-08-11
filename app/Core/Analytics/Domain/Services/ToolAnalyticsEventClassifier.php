@@ -13,6 +13,8 @@ final class ToolAnalyticsEventClassifier
         'calculate',
         'adjustments.calculate',
         'batch.calculate',
+        'batch',
+        'build',
         'scenarios.simulate',
         'validate',
         'analyze-consistency',
@@ -35,7 +37,7 @@ final class ToolAnalyticsEventClassifier
             return AnalyticsEventName::ToolOpened;
         }
 
-        if (preg_match('/(^|\.)(export|pdf|print)(\.|$)/', $action) === 1) {
+        if (preg_match('/(^|\.)(export|download|document|pdf|print)(\.|$)/', $action) === 1) {
             return AnalyticsEventName::ToolResultExported;
         }
 

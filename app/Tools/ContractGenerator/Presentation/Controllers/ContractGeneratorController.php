@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tools\ContractGenerator\Presentation\Controllers;
 
-use App\Core\Analytics\Contracts\PlatformAnalytics;
-use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
-use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Data\PdfDocument;
@@ -36,17 +33,10 @@ final class ContractGeneratorController
     public function build(
         BuildContractDraftRequest $request,
         BuildContractDraft $buildDraft,
-        ContractTextGenerator $textGenerator,
-        PlatformAnalytics $analytics,
+        ContractTextGenerator $textGenerator
     ): View {
         $draft = $buildDraft->execute($request->validated());
         $contractText = $textGenerator->generate($draft);
-
-        $analytics->track(AnalyticsEvent::make(
-            AnalyticsEventName::ToolCalculationCompleted->value,
-            'tool',
-            ['subject_type' => 'tool', 'subject_slug' => Tool::SLUG, 'contract_type' => $draft->type->value],
-        ), $request);
 
         return $this->render($draft->type, $draft->toArray(), $contractText->toArray());
     }
@@ -69,7 +59,6 @@ final class ContractGeneratorController
     public function exportPdf(
         PreviewContractTextRequest $request,
         PdfExporter $exporter,
-        PlatformAnalytics $analytics,
     ): Response {
         $validated = $request->validated();
         $type = ContractType::from((string) $validated['contract_type']);
@@ -82,12 +71,6 @@ final class ContractGeneratorController
         ]);
 
         try {
-            $analytics->track(AnalyticsEvent::make(
-                AnalyticsEventName::ToolResultExported->value,
-                'tool',
-                ['subject_type' => 'tool', 'subject_slug' => Tool::SLUG, 'contract_type' => $type->value, 'format' => 'pdf'],
-            ), $request);
-
             return $exporter->download(new PdfDocument(
                 filename: 'contrato-'.now()->format('Y-m-d'),
                 view: 'exports.printable-document',
@@ -123,16 +106,9 @@ final class ContractGeneratorController
     public function exportDocx(
         PreviewContractTextRequest $request,
         ContractDocxExporter $exporter,
-        PlatformAnalytics $analytics,
     ): Response {
         $validated = $request->validated();
         $type = ContractType::from((string) $validated['contract_type']);
-
-        $analytics->track(AnalyticsEvent::make(
-            AnalyticsEventName::ToolResultExported->value,
-            'tool',
-            ['subject_type' => 'tool', 'subject_slug' => Tool::SLUG, 'contract_type' => $type->value, 'format' => 'docx'],
-        ), $request);
 
         return $exporter->download(
             $type->documentTitle(),

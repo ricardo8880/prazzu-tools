@@ -34,7 +34,7 @@ final readonly class CaptureAnalyticsContext
         $response = $next($request);
 
         if ($response->getStatusCode() < 400) {
-            if (config('analytics.capture_page_views', true) && $this->isPageViewRequest($request)) {
+            if (config('analytics.capture_page_views', true) && $this->isPageViewRequest($request, $response)) {
                 $this->analytics->track(AnalyticsEvent::make(AnalyticsEventName::PageViewed->value, 'platform'), $request);
             }
             $this->captureToolEvent($request, $response);
@@ -47,13 +47,27 @@ final readonly class CaptureAnalyticsContext
         return $response;
     }
 
-    private function isPageViewRequest(Request $request): bool
+    private function isPageViewRequest(Request $request, Response $response): bool
     {
         if (! $request->isMethod('GET') || $request->expectsJson() || $request->ajax()) {
             return false;
         }
 
+        if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300 || $response->getStatusCode() === 204) {
+            return false;
+        }
+
         if ($this->isPrefetchRequest($request)) {
+            return false;
+        }
+
+        $contentDisposition = strtolower((string) $response->headers->get('Content-Disposition'));
+        if (str_contains($contentDisposition, 'attachment')) {
+            return false;
+        }
+
+        $contentType = strtolower((string) $response->headers->get('Content-Type'));
+        if ($contentType !== '' && ! str_contains($contentType, 'text/html') && ! str_contains($contentType, 'application/xhtml+xml')) {
             return false;
         }
 
@@ -72,10 +86,14 @@ final readonly class CaptureAnalyticsContext
     private function captureToolEvent(Request $request, Response $response): void
     {
         $routeName = (string) optional($request->route())->getName();
-        if (! str_starts_with($routeName, 'tools.')) {
+        $analyticsRouteName = str_starts_with($routeName, 'legacy.tools.')
+            ? substr($routeName, strlen('legacy.'))
+            : $routeName;
+
+        if (! str_starts_with($analyticsRouteName, 'tools.')) {
             return;
         }
-        $parts = explode('.', $routeName);
+        $parts = explode('.', $analyticsRouteName);
         $slug = $parts[1] ?? null;
         if (! $slug || $this->tools->find($slug) === null) {
             return;
@@ -92,7 +110,7 @@ final readonly class CaptureAnalyticsContext
         }
 
         if ($eventName !== null) {
-            $properties = ['route' => $routeName, 'method' => $request->method()];
+            $properties = ['route' => $routeName, 'method' => $request->method(), 'canonical_route' => $analyticsRouteName];
             if ($eventName === AnalyticsEventName::ToolResultExported) {
                 $properties['export_format'] = $this->exportFormat($action, $response);
             }

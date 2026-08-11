@@ -37,9 +37,10 @@ themeButtons.forEach((button) => {
 });
 
 import { initializeToolJourneyAnalytics } from './analytics/tool-journey.js';
-import { initializeAudienceContext, initializeToolPresence } from './analytics/platform-context.js';
+import { initializeAudienceContext, initializeSessionHeartbeat, initializeToolPresence } from './analytics/platform-context.js';
 
 initializeAudienceContext();
+initializeSessionHeartbeat();
 initializeToolPresence();
 initializeToolJourneyAnalytics();
 

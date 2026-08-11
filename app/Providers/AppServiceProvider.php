@@ -8,6 +8,7 @@ use App\Console\Commands\MakeToolCommand;
 use App\Console\Commands\PurgeExpiredToolRunsCommand;
 use App\Core\Audit\Contracts\AuditLogger;
 use App\Core\Audit\Services\DatabaseAuditLogger;
+use App\Core\Analytics\Infrastructure\Observers\UserSubscriptionAnalyticsObserver;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Services\DompdfPdfExporter;
@@ -35,6 +36,7 @@ use App\Core\Tools\ToolRegistry;
 use App\Core\Verticals\Application\VerticalContext;
 use App\Core\Validation\BrazilianMoneyValidator;
 use App\Core\Validation\BrazilianPercentageValidator;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Http\Request;
@@ -96,6 +98,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+        User::observe(UserSubscriptionAnalyticsObserver::class);
 
         $defaultVerticalSlug = config('verticals.default');
         $defaultPublicSlug = is_string($defaultVerticalSlug)

@@ -61,8 +61,8 @@ final class ToolPageTest extends TestCase
             ->once()
             ->withArgs(function (AnalyticsEvent $event): bool {
                 self::assertSame('tool.calculation.completed', $event->name);
-                self::assertSame('gerador-de-contratos', $event->properties['subject_slug'] ?? null);
-                self::assertSame('prestacao-servicos', $event->properties['contract_type'] ?? null);
+                self::assertSame('gerador-de-contratos', $event->subjectSlug);
+                self::assertSame('tool', $event->subjectType);
                 self::assertArrayNotHasKey('first_party_name', $event->properties);
                 self::assertArrayNotHasKey('first_party_document', $event->properties);
                 self::assertArrayNotHasKey('contract_text', $event->properties);

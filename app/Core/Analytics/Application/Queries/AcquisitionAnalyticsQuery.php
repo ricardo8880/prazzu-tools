@@ -38,7 +38,9 @@ final class AcquisitionAnalyticsQuery
     {
         $sessions = $this->sessionsIn($period);
         $sessionCount = (clone $sessions)->count();
-        $conversions = $this->logicalCount($this->eventsIn($period), $this->events('conversion_events'));
+        $conversionEvents = $this->events('conversion_events');
+        $conversions = $this->logicalCount($this->eventsIn($period), $conversionEvents);
+        $convertedSessions = $this->convertedSessionCount($this->eventsIn($period), $conversionEvents);
 
         return [
             'sessions' => $sessionCount,
@@ -46,7 +48,7 @@ final class AcquisitionAnalyticsQuery
             'sources' => (clone $sessions)->whereNotNull('source')->distinct()->count('source'),
             'campaigns' => (clone $sessions)->whereNotNull('campaign')->where('campaign', '!=', '')->distinct()->count('campaign'),
             'conversions' => $conversions,
-            'conversion_rate' => $sessionCount === 0 ? 0.0 : round(($conversions / $sessionCount) * 100, 1),
+            'conversion_rate' => $sessionCount === 0 ? 0.0 : round(($convertedSessions / $sessionCount) * 100, 1),
         ];
     }
 
@@ -87,12 +89,11 @@ final class AcquisitionAnalyticsQuery
             ->limit(30)
             ->get()
             ->map(function (object $row) use ($period): object {
-                $conversions = $this->eventsIn($period)
-                    ->where('campaign', $row->campaign)
-                    ->whereIn('event_name', $this->events('conversion_events'));
-                $conversions = $this->logicalCount($conversions, $this->events('conversion_events'));
-                $row->conversions = $conversions;
-                $row->conversion_rate = (int) $row->sessions === 0 ? 0.0 : round(($conversions / (int) $row->sessions) * 100, 1);
+                $conversionEvents = $this->events('conversion_events');
+                $conversionQuery = $this->eventsIn($period)->where('campaign', $row->campaign);
+                $row->conversions = $this->logicalCount(clone $conversionQuery, $conversionEvents);
+                $convertedSessions = $this->convertedSessionCount(clone $conversionQuery, $conversionEvents);
+                $row->conversion_rate = (int) $row->sessions === 0 ? 0.0 : round(($convertedSessions / (int) $row->sessions) * 100, 1);
 
                 return $row;
             });
@@ -167,12 +168,11 @@ final class AcquisitionAnalyticsQuery
     private function appendConversions(object $row, AnalyticsPeriod $period, string $field): object
     {
         $value = $row->{$field};
-        $conversions = $this->eventsIn($period)
-            ->where($field, $value === 'unknown' ? null : $value)
-            ->whereIn('event_name', $this->events('conversion_events'));
-        $conversions = $this->logicalCount($conversions, $this->events('conversion_events'));
-        $row->conversions = $conversions;
-        $row->conversion_rate = (int) $row->sessions === 0 ? 0.0 : round(($conversions / (int) $row->sessions) * 100, 1);
+        $conversionEvents = $this->events('conversion_events');
+        $conversionQuery = $this->eventsIn($period)->where($field, $value === 'unknown' ? null : $value);
+        $row->conversions = $this->logicalCount(clone $conversionQuery, $conversionEvents);
+        $convertedSessions = $this->convertedSessionCount(clone $conversionQuery, $conversionEvents);
+        $row->conversion_rate = (int) $row->sessions === 0 ? 0.0 : round(($convertedSessions / (int) $row->sessions) * 100, 1);
 
         return $row;
     }
@@ -182,6 +182,12 @@ final class AcquisitionAnalyticsQuery
     private function logicalCount(Builder $query, array $events): int
     {
         return (int) ($query->selectRaw(AnalyticsMetricSql::countDistinctCase($events, "COALESCE(subject_slug, subject_id, path, '')").' as total', $events)->value('total') ?? 0);
+    }
+
+    /** @param list<string> $events */
+    private function convertedSessionCount(Builder $query, array $events): int
+    {
+        return (int) ($query->selectRaw(AnalyticsMetricSql::countDistinctSessionsCase($events).' as total', $events)->value('total') ?? 0);
     }
 
     private function sessionsIn(AnalyticsPeriod $period): Builder

@@ -72,7 +72,7 @@ final class ExecutiveDashboardQuery
 
         $sessions = AnalyticsSession::query()->whereBetween('started_at', [$period->start, $period->end]);
         $sessionCount = (clone $sessions)->count();
-        $pageViews = $this->logicalEventCount(clone $events, $pageViewEvents, "COALESCE(path, subject_slug, subject_id, '')");
+        $pageViews = $this->eventOccurrenceCount(clone $events, $pageViewEvents);
 
         return [
             'visitors' => (clone $events)->whereNotNull('visitor_id')->distinct()->count('visitor_id'),
@@ -81,7 +81,7 @@ final class ExecutiveDashboardQuery
             'page_views' => $pageViews,
             'average_session_seconds' => $this->averageSessionSeconds($sessions),
             'bounce_rate' => $this->bounceRate($period, $sessionCount, $pageViewEvents),
-            'conversions' => $this->logicalEventCount(clone $events, $conversionEvents, "COALESCE(subject_slug, subject_id, path, '')"),
+            'conversions' => $this->uniqueConvertedVisitors(clone $events, $conversionEvents),
             'registrations' => $this->logicalEventCount(clone $events, $registrationEvents),
             'subscriptions' => $this->logicalEventCount(clone $events, $subscriptionEvents),
             'estimated_revenue_cents' => $this->estimatedRevenueCents($period, $subscriptionEvents),
@@ -128,8 +128,8 @@ final class ExecutiveDashboardQuery
             ->whereBetween('occurred_at', [$period->start, $period->end])
             ->selectRaw('DATE(occurred_at) as metric_date')
             ->selectRaw('COUNT(DISTINCT visitor_id) as visitors')
-            ->selectRaw(AnalyticsMetricSql::countDistinctCase($pageViewEvents, "COALESCE(path, subject_slug, subject_id, '')").' as page_views', $pageViewEvents)
-            ->selectRaw(AnalyticsMetricSql::countDistinctCase($conversionEvents, "COALESCE(subject_slug, subject_id, path, '')").' as conversions', $conversionEvents)
+            ->selectRaw(AnalyticsMetricSql::countCase($pageViewEvents).' as page_views', $pageViewEvents)
+            ->selectRaw(AnalyticsMetricSql::countDistinctVisitorsCase($conversionEvents).' as conversions', $conversionEvents)
             ->groupBy('metric_date')
             ->get()
             ->keyBy('metric_date');
@@ -231,7 +231,7 @@ final class ExecutiveDashboardQuery
         return $this->eventsIn($period)
             ->whereIn('event_name', $this->eventNames('page_view_events'))
             ->whereNotNull('path')
-            ->selectRaw('path, '.AnalyticsMetricSql::countDistinctCase($this->eventNames('page_view_events'), "COALESCE(path, '')").' as views, COUNT(DISTINCT visitor_id) as visitors', $this->eventNames('page_view_events'))
+            ->selectRaw('path, COUNT(*) as views, COUNT(DISTINCT visitor_id) as visitors')
             ->groupBy('path')
             ->orderByDesc('views')
             ->limit(8)
@@ -260,20 +260,37 @@ final class ExecutiveDashboardQuery
 
         $periodSessionIds = AnalyticsSession::query()
             ->whereBetween('started_at', [$period->start, $period->end])
-            ->select('id');
+            ->pluck('id');
 
-        $engagedSessions = DB::query()
-            ->fromSub(
-                PlatformAnalyticsEvent::query()
-                    ->whereBetween('occurred_at', [$period->start, $period->end])
-                    ->whereIn('event_name', $pageViewEvents)
-                    ->whereIn('analytics_session_id', $periodSessionIds)
-                    ->selectRaw('analytics_session_id, COUNT(DISTINCT path) as page_views')
-                    ->groupBy('analytics_session_id')
-                    ->havingRaw('COUNT(DISTINCT path) > 1'),
-                'engaged_sessions'
-            )
-            ->count();
+        if ($periodSessionIds->isEmpty()) {
+            return 0.0;
+        }
+
+        $meaningfulEvents = array_values(array_unique([
+            ...$pageViewEvents,
+            ...$this->eventNames('conversion_events'),
+            ...$this->eventNames('export_events'),
+            'tool.calculation.started',
+            'blog.scroll.measured',
+            'blog.time.spent',
+            'blog.tool.clicked',
+            'blog.reading.completed',
+        ]));
+
+        $events = PlatformAnalyticsEvent::query()
+            ->whereBetween('occurred_at', [$period->start, $period->end])
+            ->whereIn('analytics_session_id', $periodSessionIds)
+            ->whereIn('event_name', $meaningfulEvents)
+            ->get(['analytics_session_id', 'event_name']);
+
+        $engagedSessions = $events->groupBy('analytics_session_id')->filter(function (Collection $sessionEvents) use ($pageViewEvents): bool {
+            $pageViews = $sessionEvents->whereIn('event_name', $pageViewEvents)->count();
+            if ($pageViews > 1) {
+                return true;
+            }
+
+            return $sessionEvents->contains(fn (PlatformAnalyticsEvent $event): bool => ! in_array($event->event_name, $pageViewEvents, true));
+        })->count();
 
         return round((($sessionCount - $engagedSessions) / $sessionCount) * 100, 1);
     }
@@ -303,6 +320,18 @@ final class ExecutiveDashboardQuery
             });
     }
 
+
+    /** @param list<string> $events */
+    private function eventOccurrenceCount(Builder $query, array $events): int
+    {
+        return (int) $query->whereIn('event_name', $events)->count();
+    }
+
+    /** @param list<string> $events */
+    private function uniqueConvertedVisitors(Builder $query, array $events): int
+    {
+        return (int) ($query->selectRaw(AnalyticsMetricSql::countDistinctVisitorsCase($events).' as total', $events)->value('total') ?? 0);
+    }
 
     /** @param list<string> $events */
     private function logicalEventCount(Builder $query, array $events, string $scope = "''"): int

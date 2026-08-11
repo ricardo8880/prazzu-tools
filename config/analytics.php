@@ -25,8 +25,8 @@ return [
         'enabled' => env('ANALYTICS_DEDUPLICATION_ENABLED', true),
         'default_window_seconds' => (int) env('ANALYTICS_DEDUPLICATION_WINDOW_SECONDS', 5),
         'event_windows' => [
-            AnalyticsEventName::PageViewed->value => 10,
-            AnalyticsEventName::BlogPostViewed->value => 10,
+            AnalyticsEventName::PageViewed->value => 0,
+            AnalyticsEventName::BlogPostViewed->value => 1,
             AnalyticsEventName::BlogReadingStarted->value => 30,
             AnalyticsEventName::BlogReadingCompleted->value => 30,
             AnalyticsEventName::BlogReadingAbandoned->value => 30,
@@ -43,8 +43,8 @@ return [
         // Deliberately conservative: only events that should be unique inside
         // the same collection window are eligible for historical removal.
         'event_windows' => [
-            AnalyticsEventName::PageViewed->value => 10,
-            AnalyticsEventName::BlogPostViewed->value => 10,
+            AnalyticsEventName::PageViewed->value => 0,
+            AnalyticsEventName::BlogPostViewed->value => 1,
             AnalyticsEventName::BlogReadingStarted->value => 30,
             AnalyticsEventName::BlogReadingCompleted->value => 30,
             AnalyticsEventName::BlogReadingAbandoned->value => 30,

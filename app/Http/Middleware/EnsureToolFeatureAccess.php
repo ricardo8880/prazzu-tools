@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Core\Access\Contracts\ToolFeatureAccessGate;
+use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Tools\ToolRegistry;
 use Closure;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +19,7 @@ final readonly class EnsureToolFeatureAccess
     public function __construct(
         private ToolRegistry $tools,
         private ToolFeatureAccessGate $gate,
+        private PlatformAnalytics $analytics,
     ) {}
 
     public function handle(Request $request, Closure $next, string $toolSlug, string $featureKey): Response
@@ -27,6 +31,20 @@ final readonly class EnsureToolFeatureAccess
 
         if ($decision->allowed) {
             return $next($request);
+        }
+
+        if (in_array($decision->reason, ['feature.authentication_required', 'feature.plus_required'], true)) {
+            $this->analytics->track(new AnalyticsEvent(
+                name: AnalyticsEventName::SubscriptionStarted->value,
+                channel: 'subscription',
+                properties: [
+                    'tool_slug' => $toolSlug,
+                    'feature' => $featureKey,
+                    'reason' => $decision->reason,
+                ],
+                subjectType: 'tool',
+                subjectSlug: $toolSlug,
+            ), $request);
         }
 
         if (in_array($decision->reason, ['tool.feature_disabled', 'tool.status_blocks_execution', 'feature.disabled'], true)) {

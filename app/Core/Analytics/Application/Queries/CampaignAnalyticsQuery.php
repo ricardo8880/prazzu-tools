@@ -50,6 +50,7 @@ final class CampaignAnalyticsQuery
     {
         $visitors = $sessions->pluck('visitor_id')->filter()->unique()->count();
         $conversions = $this->actionCount($events, $this->conversionEvents());
+        $convertedSessions = $this->convertedSessionCount($events, $this->conversionEvents());
 
         return [
             'sessions' => $sessions->count(),
@@ -58,7 +59,7 @@ final class CampaignAnalyticsQuery
             'campaigns' => $sessions->pluck('acquisition_campaign_identifier')->filter()->unique()->count(),
             'keywords' => $sessions->pluck('acquisition_keyword')->filter()->unique()->count(),
             'conversions' => $conversions,
-            'conversion_rate' => $sessions->isEmpty() ? 0.0 : round(($conversions / $sessions->count()) * 100, 1),
+            'conversion_rate' => $sessions->isEmpty() ? 0.0 : round(($convertedSessions / $sessions->count()) * 100, 1),
         ];
     }
 
@@ -70,6 +71,7 @@ final class CampaignAnalyticsQuery
                 $value = $group->first()?->{$field};
                 $related = $events->filter(fn (PlatformAnalyticsEvent $event): bool => $event->{$field} == $value);
                 $conversions = $this->actionCount($related, $this->conversionEvents());
+                $convertedSessions = $this->convertedSessionCount($related, $this->conversionEvents());
 
                 return (object) [
                     'label' => $label,
@@ -81,7 +83,7 @@ final class CampaignAnalyticsQuery
                     'accounts' => $this->actionCount($related, [AnalyticsEventName::AccountCreated->value]),
                     'subscriptions' => $this->actionCount($related, [AnalyticsEventName::SubscriptionCreated->value]),
                     'conversions' => $conversions,
-                    'conversion_rate' => $group->isEmpty() ? 0.0 : round(($conversions / $group->count()) * 100, 1),
+                    'conversion_rate' => $group->isEmpty() ? 0.0 : round(($convertedSessions / $group->count()) * 100, 1),
                 ];
             })->sortByDesc('conversions')->values()->take(50);
     }
@@ -263,6 +265,20 @@ final class CampaignAnalyticsQuery
                     'retention_30d' => $mature30->isEmpty() ? null : round(($retained30 / $mature30->count()) * 100, 1),
                 ];
             })->sortByDesc(fn (object $row): float => (float) ($row->retention_30d ?? $row->retention_7d ?? -1))->values();
+    }
+
+    /** @param Collection<int, PlatformAnalyticsEvent> $events @param list<string> $eventNames */
+    private function convertedSessionCount(Collection $events, array $eventNames): int
+    {
+        return $events->whereIn('event_name', $eventNames)->map(function (PlatformAnalyticsEvent $event): string {
+            if ($event->analytics_session_id !== null) {
+                return 'session-'.$event->analytics_session_id;
+            }
+            if ($event->visitor_id !== null) {
+                return 'visitor-'.$event->visitor_id;
+            }
+            return 'event-'.$event->event_id;
+        })->unique()->count();
     }
 
     /** @param Collection<int, PlatformAnalyticsEvent> $events @param list<string> $eventNames */

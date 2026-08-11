@@ -74,7 +74,27 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             );
         }, 3);
 
-        $utm = $acquisition->utm;
+        $session = AnalyticsSession::query()->find($sessionId);
+        $effectiveAcquisition = $session === null ? $acquisition : new Acquisition(
+            source: (string) ($session->source ?: 'direct'),
+            medium: (string) ($session->medium ?: 'none'),
+            campaign: $session->campaign,
+            utm: [
+                'source' => $session->utm_source,
+                'medium' => $session->utm_medium,
+                'campaign' => $session->utm_campaign,
+                'term' => $session->utm_term,
+                'content' => $session->utm_content,
+            ],
+            referrerHost: null,
+        );
+        $utm = $effectiveAcquisition->utm;
+        AnalyticsVisitor::query()->whereKey($visitorId)->update([
+            'last_source' => $effectiveAcquisition->source,
+            'last_medium' => $effectiveAcquisition->medium,
+            'last_campaign' => $effectiveAcquisition->campaign,
+            'last_utm' => json_encode($utm),
+        ]);
 
         return new AnalyticsContext(
             visitorId: $visitorId,
@@ -84,9 +104,9 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
             url: $request->fullUrl(),
             path: '/'.$request->path(),
             referrer: $request->headers->get('referer'),
-            source: $acquisition->source,
-            medium: $acquisition->medium,
-            campaign: $acquisition->campaign,
+            source: $effectiveAcquisition->source,
+            medium: $effectiveAcquisition->medium,
+            campaign: $effectiveAcquisition->campaign,
             verticalSlug: $verticalSlug,
             acquisition: $acquisitionContext,
             utm: $utm,
@@ -251,7 +271,9 @@ final class RequestAnalyticsContextResolver implements AnalyticsContextResolver
         }
 
         $session->last_activity_at = $now;
-        $session->vertical_slug = $verticalSlug;
+        if ($verticalSlug !== null) {
+            $session->vertical_slug = $verticalSlug;
+        }
 
         if ($acquisitionContext !== null) {
             $session->acquisition_context_id = $acquisitionContext->contextId;

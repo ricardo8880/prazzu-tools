@@ -53,6 +53,31 @@ export function initializeAudienceContext() {
     }).catch(() => {});
 }
 
+export function initializeSessionHeartbeat() {
+    const endpoint = readMeta('analytics-session-heartbeat-endpoint');
+    if (!endpoint) return;
+
+    const csrf = readMeta('csrf-token');
+    const sendHeartbeat = () => {
+        if (document.hidden) return;
+        fetch(endpoint, {
+            method: 'POST',
+            credentials: 'same-origin',
+            keepalive: true,
+            headers: {
+                'X-CSRF-TOKEN': csrf || '',
+                'Accept': 'application/json',
+            },
+        }).catch(() => {});
+    };
+
+    const timer = window.setInterval(sendHeartbeat, 60000);
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) sendHeartbeat();
+    });
+    window.addEventListener('pagehide', () => window.clearInterval(timer), {once: true});
+}
+
 export function initializeToolPresence() {
     const endpoint = readMeta('analytics-tool-endpoint');
     const presenceEndpoint = readMeta('analytics-presence-endpoint');

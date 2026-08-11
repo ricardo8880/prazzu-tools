@@ -25,7 +25,7 @@ final class BlogAnalyticsTest extends TestCase
 
         $this->postJson(route('blog.analytics'), [
             'event' => AnalyticsEventName::BlogScrollMeasured->value, 'post_id' => $post->getKey(),
-            'post_slug' => $post->slug, 'percentage' => 75,
+            'post_slug' => $post->slug, 'reading_id' => 'reading-1', 'percentage' => 75,
         ])->assertOk();
 
         $this->assertDatabaseHas('platform_analytics_events', [
@@ -47,6 +47,7 @@ final class BlogAnalyticsTest extends TestCase
             'event' => AnalyticsEventName::BlogScrollMeasured->value,
             'post_id' => $post->getKey(),
             'post_slug' => $post->slug,
+            'reading_id' => 'reading-2',
             'percentage' => 75,
         ];
 

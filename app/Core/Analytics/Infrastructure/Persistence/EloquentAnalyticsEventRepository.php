@@ -101,32 +101,22 @@ final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
             ->where('channel', $event->channel)
             ->where('occurred_at', '>=', $event->date()->subSeconds($window));
 
-        $identities = array_filter([
-            'analytics_session_id' => $context->analyticsSessionId,
-            'visitor_id' => $context->visitorId,
-            'user_id' => $context->userId,
-            'session_id' => $context->laravelSessionId,
-        ], static fn (mixed $value): bool => $value !== null && $value !== '');
+        $identity = match (true) {
+            $context->analyticsSessionId !== null && $context->analyticsSessionId !== '' => ['analytics_session_id', $context->analyticsSessionId],
+            $context->visitorId !== null && $context->visitorId !== '' => ['visitor_id', $context->visitorId],
+            $context->laravelSessionId !== null && $context->laravelSessionId !== '' => ['session_id', $context->laravelSessionId],
+            $context->userId !== null => ['user_id', $context->userId],
+            $context->ipHash !== null && $context->ipHash !== '' => ['ip_hash', $context->ipHash],
+            default => null,
+        };
 
-        // IP addresses are shared by offices, mobile carriers, proxies and VPNs.
-        // Using the IP hash together with stable identities would merge independent
-        // visitors who perform the same action within the deduplication window.
-        // Keep it only as a last-resort identity when no session/user identifier exists.
-        if ($identities === [] && $context->ipHash !== null && $context->ipHash !== '') {
-            $identities['ip_hash'] = $context->ipHash;
-        }
-
-        if ($identities !== []) {
-            $query->where(function ($identityQuery) use ($identities): void {
-                foreach ($identities as $column => $value) {
-                    $identityQuery->orWhere($column, $value);
-                }
-            });
-        } else {
-            // Without any stable identity, two independent anonymous events
-            // must not be merged merely because their payload is similar.
+        if ($identity === null) {
+            // Without a stable identity, independent anonymous events must not be merged.
             return false;
         }
+
+        [$identityColumn, $identityValue] = $identity;
+        $query->where($identityColumn, $identityValue);
 
         $query->where('subject_type', $event->subjectType)
             ->where('subject_id', is_numeric($event->subjectId) ? (int) $event->subjectId : null)
@@ -136,7 +126,7 @@ final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
             $query->where('path', $context->path);
         }
 
-        foreach (['percentage', 'tool_slug', 'placement', 'position', 'destination', 'method', 'file', 'journey_id', 'form', 'step', 'field', 'action'] as $key) {
+        foreach (['percentage', 'tool_slug', 'placement', 'position', 'destination', 'method', 'file', 'journey_id', 'reading_id', 'form', 'step', 'field', 'action'] as $key) {
             if (array_key_exists($key, $event->properties)) {
                 $query->where("metadata->$key", $event->properties[$key]);
             }

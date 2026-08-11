@@ -24,8 +24,8 @@ final class ToolPageTest extends TestCase
     public function test_valid_nfe_is_processed_and_shown(): void
     {
         $analytics = Mockery::mock(PlatformAnalytics::class);
-        $analytics->shouldReceive('record')->once();
-        $analytics->shouldReceive('track')->zeroOrMoreTimes();
+        $analytics->shouldReceive('record')->zeroOrMoreTimes();
+        $analytics->shouldReceive('track')->atLeast()->once();
         $this->app->instance(PlatformAnalytics::class, $analytics);
 
         $xml = '<?xml version="1.0"?><nfeProc><NFe><infNFe Id="NFe'.str_repeat('1', 44).'"><ide><mod>55</mod><serie>1</serie><nNF>123</nNF><dhEmi>2026-01-10T10:00:00-03:00</dhEmi></ide><emit><CNPJ>12345678000199</CNPJ><xNome>Emitente Teste</xNome></emit><dest><CPF>12345678900</CPF><xNome>Cliente Teste</xNome></dest><det nItem="1"><prod><cProd>A1</cProd><xProd>Produto Teste</xProd><NCM>01012100</NCM><CFOP>5102</CFOP><uCom>UN</uCom><qCom>2</qCom><vUnCom>10</vUnCom><vProd>20</vProd></prod><imposto><ICMS><ICMS00><vICMS>3.60</vICMS></ICMS00></ICMS></imposto></det><total><ICMSTot><vProd>20</vProd><vFrete>0</vFrete><vDesc>0</vDesc><vICMS>3.60</vICMS><vIPI>0</vIPI><vPIS>0.33</vPIS><vCOFINS>1.52</vCOFINS><vNF>20</vNF></ICMSTot></total></infNFe></NFe></nfeProc>';

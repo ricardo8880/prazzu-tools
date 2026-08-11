@@ -70,6 +70,7 @@
     @stack('head')
 
     <meta name="analytics-audience-endpoint" content="{{ route('analytics.audience.capture') }}">
+    <meta name="analytics-session-heartbeat-endpoint" content="{{ route('analytics.session.heartbeat') }}">
     @if(! empty($analyticsToolSlug))
         <meta name="analytics-tool-endpoint" content="{{ route('analytics.tools.track') }}">
         <meta name="analytics-presence-endpoint" content="{{ route('analytics.tools.presence') }}">

@@ -5,6 +5,7 @@ namespace App\Core\Analytics\Services;
 use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Analytics\Application\Services\BlogConversionAttribution;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Analytics\Infrastructure\Http\AnalyticsCollectionPolicy;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ final readonly class DatabasePlatformAnalytics implements PlatformAnalytics
         private AnalyticsContextResolver $contextResolver,
         private AnalyticsEventRepository $events,
         private AnalyticsCollectionPolicy $collectionPolicy,
+        private BlogConversionAttribution $blogAttribution,
     ) {}
 
     public function track(AnalyticsEvent $event, ?Request $request = null): void
@@ -23,7 +25,8 @@ final readonly class DatabasePlatformAnalytics implements PlatformAnalytics
             return;
         }
 
-        $this->events->store($event, $this->contextResolver->resolve($request));
+        $context = $this->contextResolver->resolve($request);
+        $this->events->store($this->blogAttribution->enrich($event, $context), $context);
     }
 
     public function record(string $eventName, string $channel, Request $request, array $metadata = []): void

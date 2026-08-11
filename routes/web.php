@@ -28,6 +28,7 @@ use App\Http\Controllers\Analytics\EnableInternalAnalyticsAccessController;
 use App\Http\Controllers\Analytics\TrackAcquisitionEventController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
 use App\Http\Controllers\Analytics\TrackToolPresenceController;
+use App\Http\Controllers\Analytics\SessionHeartbeatController;
 use App\Http\Controllers\Auth\AccountController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -215,6 +216,11 @@ Route::prefix('admin/blog')
         Route::resource('posts', BlogPostController::class)
             ->except('show');
     });
+
+
+Route::post('/analytics/session/heartbeat', SessionHeartbeatController::class)
+    ->middleware('throttle:120,1')
+    ->name('analytics.session.heartbeat');
 
 Route::post('/analytics/audience', CaptureAudienceContextController::class)
     ->middleware('throttle:30,1')
