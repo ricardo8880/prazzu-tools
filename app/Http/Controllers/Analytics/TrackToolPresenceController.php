@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Analytics;
 
+use App\Core\Analytics\Infrastructure\Http\AnalyticsCollectionPolicy;
 use App\Core\Analytics\Models\AnalyticsSession;
 use App\Core\Analytics\Models\AnalyticsToolPresence;
 use App\Core\Tools\ToolCatalog;
@@ -11,10 +12,20 @@ use Illuminate\Http\Response;
 
 final class TrackToolPresenceController extends Controller
 {
-    public function __invoke(TrackToolPresenceRequest $request, ToolCatalog $catalog): Response
+    public function __invoke(
+        TrackToolPresenceRequest $request,
+        ToolCatalog $catalog,
+        AnalyticsCollectionPolicy $collectionPolicy,
+    ): Response
     {
         $data = $request->validated();
         abort_if($catalog->find($data['tool']) === null, 404);
+
+        if (! $collectionPolicy->shouldCollect($request)) {
+            AnalyticsToolPresence::query()->whereKey($data['presence_id'])->delete();
+
+            return response()->noContent();
+        }
 
         if ($data['action'] === 'leave') {
             AnalyticsToolPresence::query()->whereKey($data['presence_id'])->delete();

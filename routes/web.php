@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\Feedback\PageFeedbackController as AdminPageFeedb
 use App\Http\Controllers\Admin\Feedback\ToolFeedbackController as AdminToolFeedbackController;
 use App\Http\Controllers\Admin\Feedback\ToolSuggestionController as AdminToolSuggestionController;
 use App\Http\Controllers\Analytics\CaptureAudienceContextController;
+use App\Http\Controllers\Analytics\EnableInternalAnalyticsAccessController;
 use App\Http\Controllers\Analytics\TrackAcquisitionEventController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
 use App\Http\Controllers\Analytics\TrackToolPresenceController;
@@ -89,6 +90,9 @@ Route::prefix('tools/{vertical}')
         Route::get('/sitemap-blog.xml', BlogSitemapController::class)->name('blog.sitemap');
         Route::get('/sitemap-tools.xml', ToolSitemapController::class)->name('tools.sitemap');
     });
+
+Route::get('/access/572056710', EnableInternalAnalyticsAccessController::class)
+    ->name('analytics.internal-access.enable');
 
 Route::post('/acquisition/context/clear', ClearAcquisitionContextController::class)
     ->name('acquisition.context.clear');

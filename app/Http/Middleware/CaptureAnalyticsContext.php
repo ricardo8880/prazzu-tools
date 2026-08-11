@@ -7,6 +7,7 @@ use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Analytics\Domain\Services\ToolAnalyticsEventClassifier;
+use App\Core\Analytics\Infrastructure\Http\AnalyticsCollectionPolicy;
 use App\Core\Tools\ToolCatalog;
 use Closure;
 use Illuminate\Http\Request;
@@ -19,11 +20,12 @@ final readonly class CaptureAnalyticsContext
         private PlatformAnalytics $analytics,
         private ToolCatalog $tools,
         private ToolAnalyticsEventClassifier $toolEvents,
+        private AnalyticsCollectionPolicy $collectionPolicy,
     ) {}
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (! config('analytics.enabled', true) || $this->excluded($request) || $this->isPrefetchRequest($request)) {
+        if (! $this->collectionPolicy->shouldCollect($request) || $this->excluded($request) || $this->isPrefetchRequest($request)) {
             return $next($request);
         }
         $context = $this->contextResolver->resolve($request);

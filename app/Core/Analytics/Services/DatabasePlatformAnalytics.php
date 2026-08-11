@@ -6,6 +6,7 @@ use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
+use App\Core\Analytics\Infrastructure\Http\AnalyticsCollectionPolicy;
 use Illuminate\Http\Request;
 
 final readonly class DatabasePlatformAnalytics implements PlatformAnalytics
@@ -13,11 +14,12 @@ final readonly class DatabasePlatformAnalytics implements PlatformAnalytics
     public function __construct(
         private AnalyticsContextResolver $contextResolver,
         private AnalyticsEventRepository $events,
+        private AnalyticsCollectionPolicy $collectionPolicy,
     ) {}
 
     public function track(AnalyticsEvent $event, ?Request $request = null): void
     {
-        if (! config('analytics.enabled', true)) {
+        if (! $this->collectionPolicy->shouldCollect($request)) {
             return;
         }
 

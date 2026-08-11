@@ -9,7 +9,13 @@ return [
     'visitor_cookie_days' => (int) env('ANALYTICS_VISITOR_COOKIE_DAYS', 730),
     'session_timeout_minutes' => (int) env('ANALYTICS_SESSION_TIMEOUT_MINUTES', 30),
     'capture_page_views' => env('ANALYTICS_CAPTURE_PAGE_VIEWS', true),
+    'internal_access' => [
+        'cookie' => 'prazzu_internal_access',
+        'cookie_value' => 'enabled',
+        'cookie_days' => 400,
+    ],
     'excluded_paths' => [
+        'access/*',
         'admin/*',
         'up',
     ],
