@@ -4,13 +4,13 @@ A fonte executável deste inventário é `config/product_tools.php`. O README da
 
 ## Estado consolidado no Lote Cirúrgico 1
 
-Após a expansão fiscal de IRPJ/CSLL, o projeto possui **37 módulos em `app/Tools`**, todos integrantes de um único inventário oficial. Os 33 módulos anteriores permanecem preservados; `PresumedProfitIrpjCsllCalculator` entra como a 33ª ferramenta de `contabilidade`, enquanto `TurnoverCalculator` permanece na vertical `rh`. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
+No estado atual, após a expansão com a Calculadora de Parcelamento Tributário, o projeto possui **39 módulos em `app/Tools`**, todos integrantes de um único inventário oficial. As expansões anteriores permanecem preservadas e `TurnoverCalculator` continua como a ferramenta da vertical `rh`; as demais 38 ferramentas pertencem à vertical `contabilidade`. Não existe mais a classificação de ferramentas “complementares” ou “adicionais” para fins de produto: todas devem permanecer registadas e visíveis na página **Ferramentas**.
 
 Este lote não remove módulos nem altera slugs públicos. A ferramenta combinada `ProLaboreProfitDistributionCalculator` permanece temporariamente no inventário com o estado `implemented`, porque apresenta sobreposição funcional com `ProLaboreSimulator` e `ProfitDistributionCalculator`. A sua retirada só pode ocorrer num lote de migração dedicado, com compatibilidade de rotas, histórico e métricas e sem reduzir a quantidade oficial vigente declarada no inventário.
 
 ## Regras obrigatórias do inventário
 
-- O diretório `app/Tools` deve conter a quantidade declarada por `expected_module_count`. O Lote 6 elevou essa quantidade de 32 para 33; a expansão fiscal de IRPJ/CSLL é o lote explícito que eleva a quantidade para 34; a expansão de PIS/COFINS eleva a quantidade para 35; a expansão de ICMS-ST eleva a quantidade para 36; a Calculadora de Retenções na Nota Fiscal eleva a quantidade atual para 37.
+- O diretório `app/Tools` deve conter a quantidade declarada por `expected_module_count`. O Lote 6 elevou essa quantidade de 32 para 33; a expansão fiscal de IRPJ/CSLL é o lote explícito que eleva a quantidade para 34; a expansão de PIS/COFINS eleva a quantidade para 35; a expansão de ICMS-ST eleva a quantidade para 36; a Calculadora de Retenções na Nota Fiscal eleva a quantidade para 37; a Calculadora de Depreciação de Ativos eleva a quantidade para 38; a Calculadora de Parcelamento Tributário eleva a quantidade para 39; o Simulador MEI → Microempresa eleva a quantidade para 40; Calculadora de ISS, Simulador de Distribuição de Lucros com Balanço × sem Balanço e DAS Retroativo + Regularização do Simples elevam a quantidade atual para 43.
 - Cada módulo deve aparecer exatamente uma vez em `config/product_tools.php`.
 - Cada entrada oficial deve declarar uma `vertical` registrada e coincidir com a vertical do respectivo `ToolManifest`.
 - IDs, chaves, nomes e slugs do inventário devem ser únicos.
@@ -56,3 +56,23 @@ O módulo `ProLaboreProfitDistributionCalculator` foi mantido com o slug histór
 - Estado: `implemented` / manifesto `beta`.
 - Ordem de lançamento: `34`.
 - Escopo normativo inicial: ano-calendário de 2026, com regras versionadas e fontes oficiais registradas no próprio módulo.
+
+
+## Expansão contábil — Parcelamento Tributário
+
+- `TaxInstallmentCalculator` — `calculadora-parcelamento-tributario` — vertical `contabilidade` — implementada — release 39.
+
+## Expansão contábil — MEI → Microempresa
+
+- `MeiToMicroenterpriseSimulator` — `simulador-mei-microempresa` — vertical `contabilidade` — implementada — release 40.
+
+
+## Expansão fiscal — Ferramentas 41 a 43
+
+| ID | Ferramenta | Slug | Módulo | Vertical | Release |
+|---:|---|---|---|---|---:|
+| 41 | Calculadora de ISS | `calculadora-iss` | `IssCalculator` | contabilidade | 41 |
+| 42 | Simulador de Distribuição de Lucros com Balanço × sem Balanço | `simulador-distribuicao-lucros-balanco` | `ProfitDistributionBalanceSimulator` | contabilidade | 42 |
+| 43 | Calculadora de DAS Retroativo + Regularização do Simples | `calculadora-das-retroativo-regularizacao-simples` | `RetroactiveDasRegularizationCalculator` | contabilidade | 43 |
+
+As sobreposições com `ProfitDistributionCalculator` e `LateDasCalculator` foram resolvidas por escopo distinto no inventário executável.

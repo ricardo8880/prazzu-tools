@@ -43,6 +43,7 @@
             </div>
         </x-tools.form-panel>
 
+        @if($plusEnabled ?? true)
         <x-tools.form-panel title="Regras avançadas e conferência em lote" description="Ajuste a base de cada tributo e inclua outras notas/serviços com as mesmas regras." badge="Prazzu Plus">
             <h3 class="h6 mb-3">Percentual da nota que compõe a base</h3>
             <div class="row g-3 mb-4">
@@ -60,6 +61,7 @@
             </tbody></table></div>
             <div class="form-text">As notas adicionais usam as mesmas incidências, alíquotas e percentuais de base definidos acima. O relatório discrimina cada nota separadamente.</div>
         </x-tools.form-panel>
+        @endif
 
         <div class="form-check"><input class="form-check-input" type="checkbox" name="confirm_scope" value="1" id="confirm_scope" required @checked(old('confirm_scope'))><label class="form-check-label" for="confirm_scope">Confirmo que revisei a aplicabilidade, as bases, as alíquotas e eventuais dispensas/exceções de cada retenção informada.</label></div>
         <div><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-2"></i>Calcular retenções</button></div>

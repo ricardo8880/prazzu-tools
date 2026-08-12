@@ -202,6 +202,51 @@ foreach (($productTools['official'] ?? []) as $tool) {
                 mimeType: 'text/csv',
             ),
         ],
+        'calculadora-das-retroativo-regularizacao-simples' => [
+            new ToolDownloadExpectation(id: 'das-retroativo-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800, filenameContains: 'das-retroativo-regularizacao-simples', mimeType: 'application/pdf'),
+            new ToolDownloadExpectation(id: 'das-retroativo-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000, filenameContains: 'das-retroativo-regularizacao-simples', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml']),
+        ],
+        'simulador-distribuicao-lucros-balanco' => [
+            new ToolDownloadExpectation(id: 'lucros-balanco-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800, filenameContains: 'distribuicao-lucros-balanco', mimeType: 'application/pdf'),
+            new ToolDownloadExpectation(id: 'lucros-balanco-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000, filenameContains: 'distribuicao-lucros-balanco', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml']),
+        ],
+        'calculadora-iss' => [
+            new ToolDownloadExpectation(id: 'calculadora-iss-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800, filenameContains: 'calculadora-iss', mimeType: 'application/pdf'),
+            new ToolDownloadExpectation(id: 'calculadora-iss-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000, filenameContains: 'calculadora-iss', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml']),
+        ],
+        'simulador-mei-microempresa' => [
+            new ToolDownloadExpectation(
+                id: 'simulador-mei-microempresa-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800,
+                filenameContains: 'simulacao-mei-microempresa', mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'simulador-mei-microempresa-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000,
+                filenameContains: 'simulacao-mei-microempresa', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-parcelamento-tributario' => [
+            new ToolDownloadExpectation(
+                id: 'parcelamento-tributario-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800,
+                filenameContains: 'parcelamento-tributario', mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'parcelamento-tributario-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000,
+                filenameContains: 'parcelamento-tributario', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
+        'calculadora-depreciacao-ativos' => [
+            new ToolDownloadExpectation(
+                id: 'depreciacao-ativos-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800,
+                filenameContains: 'depreciacao-ativos', mimeType: 'application/pdf',
+            ),
+            new ToolDownloadExpectation(
+                id: 'depreciacao-ativos-xlsx', testId: 'download-xlsx', format: 'xlsx', extension: 'xlsx', minimumBytes: 1000,
+                filenameContains: 'depreciacao-ativos', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                requiredEntries: ['[Content_Types].xml', 'xl/workbook.xml'],
+            ),
+        ],
         'calculadora-retencoes-nota-fiscal' => [
             new ToolDownloadExpectation(
                 id: 'retencoes-nota-pdf', testId: 'download-pdf', format: 'pdf', extension: 'pdf', minimumBytes: 800,
@@ -587,7 +632,7 @@ return [
     'allowed_step_actions' => ['fill', 'select', 'check', 'uncheck', 'click', 'submit', 'auto_fill_form', 'invalidate_required'],
     'allowed_expectations' => ['visible', 'hidden', 'text', 'url', 'field_value', 'form_invalid', 'in_viewport'],
     'minimum_coverage' => [
-        'expected_tool_count' => 37,
+        'expected_tool_count' => 43,
         'required_kinds' => ['valid', 'invalid'],
     ],
     'tools' => $tools,

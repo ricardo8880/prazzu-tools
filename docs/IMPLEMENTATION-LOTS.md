@@ -818,3 +818,45 @@ continuidade, compatibilidade e validação.
 - O Plus adiciona bases configuráveis, múltiplas notas/serviços, relatório, PDF/XLSX e histórico.
 - O domínio é paramétrico e não infere automaticamente a incidência de IRRF, INSS, ISS, PIS/Pasep, Cofins ou CSLL.
 - O E2E passa a exigir cobertura válida e inválida para 37 ferramentas e declara os downloads PDF/XLSX desta ferramenta.
+
+## Expansão contábil — Calculadora de Depreciação de Ativos
+
+- O inventário oficial é expandido de 37 para 38 ferramentas.
+- `AssetDepreciationCalculator` entra na vertical `contabilidade`, categoria calculadoras, `release_order` 38.
+- O Essencial recebe bem, valor e vida útil, usa o método linear e entrega depreciação mensal/anual, valor contábil, projeção anual e memória de cálculo.
+- O Plus adiciona vários ativos no mesmo cálculo, métodos de saldos decrescentes e soma dos dígitos, projeção patrimonial consolidada e exportação PDF/XLSX.
+- O módulo não cria cadastro patrimonial persistente nem assume função de ERP; a lista de ativos existe somente dentro da simulação atual.
+- O cálculo usa `Money` e `IntegerRounding`, considera valor residual zero na versão 1.0.0 e não infere vida útil, enquadramento fiscal ou taxa normativa.
+- Os gates atuais de inventário, Analytics e E2E passam a esperar 38 ferramentas, com downloads PDF/XLSX declarados para a nova ferramenta.
+
+
+## Expansão contábil — Calculadora de Parcelamento Tributário
+
+- O inventário oficial é expandido de 38 para 39 ferramentas.
+- `TaxInstallmentCalculator` entra na vertical `contabilidade`, categoria calculadoras, `release_order` 39.
+- O Essencial recebe dívida, quantidade de parcelas e taxa mensal de encargos informada pelo usuário e entrega parcela média aproximada, primeira/última parcela, encargos totais, custo final e memória de cálculo.
+- O Plus adiciona entrada, comparação de cenários de prazo/encargos, evolução do saldo, cronograma completo e relatório/exportação PDF/XLSX.
+- O cálculo é paramétrico por SAC e não embute regras de Receita Federal, PGFN, Simples Nacional, estados ou municípios; condições oficiais devem ser confirmadas pelo usuário.
+- Não há cadastro persistente de débitos, negociação ou gestão fiscal; cenários existem somente na simulação atual.
+- Os gates de inventário, Analytics e E2E passam a esperar 39 ferramentas, com downloads PDF/XLSX declarados para a nova ferramenta.
+
+
+## Expansão — Lote 19 — Simulador MEI → Microempresa
+
+### Resultado do Lote 19
+
+- `MeiToMicroenterpriseSimulator` foi criado como módulo fiscal independente, elevando o inventário oficial para 40 ferramentas.
+- O Essencial compara faturamento atual/projetado com o teto MEI de referência de 2026 e classifica a projeção em dentro do limite, excesso de até 20% ou excesso superior a 20%.
+- O Plus adiciona projeção anual, alíquota efetiva informada pelo usuário, custos empresariais, peso sobre o faturamento, ponto de diluição de custos fixos e exportações PDF/XLSX.
+- A ferramenta não presume CNAE, anexo, Fator R ou alíquota do Simples Nacional e não determina automaticamente a data jurídica do desenquadramento.
+- Os limites de 2026, 2027 e 2028 foram versionados conforme fontes oficiais vigentes consultadas em 12/08/2026; anos posteriores exigem confirmação normativa.
+- Nenhuma capacidade de ERP/persistência foi adicionada e as exportações reutilizam o Core compartilhado.
+
+
+## Expansão — Lote 20 — ISS, Lucros com/sem Balanço e DAS Retroativo
+
+- O inventário oficial passa de 40 para 43 ferramentas, sem remoção dos módulos existentes.
+- `IssCalculator` (`release_order` 41) calcula ISS de forma parametrizada pela alíquota municipal informada; Plus acrescenta retenção, múltiplos serviços/tomadores, cenários municipais, consolidação e PDF/XLSX.
+- `ProfitDistributionBalanceSimulator` (`release_order` 42) compara capacidade estimada com balanço (lucro contábil informado) e sem balanço (receita × percentual de referência informado − tributos), com pró-labore, acumulados, planejamento e relatório no Plus. O escopo permanece distinto de `ProfitDistributionCalculator`.
+- `RetroactiveDasRegularizationCalculator` (`release_order` 43) reconstitui principal estimado por competência/faturamento/alíquota informada e reutiliza `LateDasRule` para mora. O Plus consolida competências e cria cronograma financeiro; o escopo permanece distinto de `LateDasCalculator`, que parte de um principal já conhecido.
+- Analytics, rotas, catálogo, E2E e exportações continuam na infraestrutura compartilhada. Os gates atuais passam a esperar 43 ferramentas.

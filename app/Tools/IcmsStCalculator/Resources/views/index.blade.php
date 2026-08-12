@@ -13,7 +13,7 @@
         <x-tools.form-panel title="Operação principal" description="O Essencial resolve uma operação básica com MVA e alíquotas informadas." badge="Essencial">
             <div class="row g-3">
                 <div class="col-md-4"><label class="form-label" for="competence">Competência</label><input class="form-control" type="month" id="competence" name="competence" min="2026-01" max="2026-12" value="{{ old('competence','2026-08') }}" required></div>
-                <div class="col-md-4"><label class="form-label" for="operation_type">Tipo de operação</label><select class="form-select" id="operation_type" name="operation_type" required><option value="internal" @selected(old('operation_type','internal')==='internal')>Interna</option><option value="interstate" @selected(old('operation_type')==='interstate')>Interestadual · Plus</option></select></div>
+                <div class="col-md-4"><label class="form-label" for="operation_type">Tipo de operação</label><select class="form-select" id="operation_type" name="operation_type" required><option value="internal" @selected(old('operation_type','internal')==='internal')>Interna</option>@if($plusEnabled ?? true)<option value="interstate" @selected(old('operation_type')==='interstate')>Interestadual · Plus</option>@endif</select></div>
                 <div class="col-md-2"><label class="form-label" for="origin_uf">UF origem</label><select class="form-select" id="origin_uf" name="origin_uf" required>@foreach(['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] as $uf)<option value="{{ $uf }}" @selected(old('origin_uf','SP')===$uf)>{{ $uf }}</option>@endforeach</select></div>
                 <div class="col-md-2"><label class="form-label" for="destination_uf">UF destino</label><select class="form-select" id="destination_uf" name="destination_uf" required>@foreach(['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] as $uf)<option value="{{ $uf }}" @selected(old('destination_uf','SP')===$uf)>{{ $uf }}</option>@endforeach</select></div>
                 <div class="col-md-4"><x-tools.form.money name="merchandise_value" label="Valor da mercadoria" :value="old('merchandise_value')" data-e2e-value="1.000,00" required /></div>
@@ -28,6 +28,7 @@
             </div>
         </x-tools.form-panel>
 
+        @if($plusEnabled ?? true)
         <x-tools.form-panel title="Recursos avançados" description="MVA ajustada, FCP, interestadual e múltiplos itens da mesma operação." badge="Prazzu Plus">
             <div class="row g-3 mb-3">
                 <div class="col-md-4"><label class="form-label" for="interstate_rate">Alíquota interestadual (%)</label><input class="form-control" id="interstate_rate" name="interstate_rate" type="number" step="0.0001" min="0" max="99.9999" value="{{ old('interstate_rate','12') }}"><div class="form-text">Usada somente quando a operação for interestadual.</div></div>
@@ -40,6 +41,7 @@
             </tbody></table></div>
             <div class="form-text">Os itens adicionais usam as mesmas alíquotas da operação. Frete, seguro, IPI e outras despesas do painel principal pertencem somente ao item principal.</div>
         </x-tools.form-panel>
+        @endif
 
         <div class="form-check"><input class="form-check-input" type="checkbox" name="confirm_scope" value="1" id="confirm_scope" required @checked(old('confirm_scope'))><label class="form-check-label" for="confirm_scope">Confirmo que verifiquei NCM/CEST, sujeição à ST, MVA, alíquotas, FCP, benefícios e composição da base aplicáveis à operação.</label></div>
         <div><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-2"></i>Calcular ICMS-ST</button></div>

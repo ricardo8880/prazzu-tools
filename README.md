@@ -120,7 +120,7 @@ A Home utiliza `release_order` do inventário executável para mostrar exatament
 
 A URL combinada de Pró-Labore e Distribuição de Lucros funciona temporariamente como ponte de compatibilidade e não deve voltar a expor um terceiro cálculo duplicado. A remoção física depende de substituição explícita que preserve a quantidade oficial vigente do catálogo e migre histórico, métricas e integrações.
 
-A consolidação multi-vertical dos Lotes 1 a 7 está concluída. O estado de referência atual possui `contabilidade` e `rh` registradas, 37 ferramentas oficiais e infraestrutura compartilhada para Home, Blog, Analytics, SEO, Admin, busca, observabilidade e E2E. Superfícies globais não podem assumir Contabilidade implicitamente; conteúdo específico deve declarar ou receber sua vertical.
+A consolidação multi-vertical dos Lotes 1 a 7 está concluída. O estado de referência atual possui `contabilidade` e `rh` registradas, 43 ferramentas oficiais e infraestrutura compartilhada para Home, Blog, Analytics, SEO, Admin, busca, observabilidade e E2E. Superfícies globais não podem assumir Contabilidade implicitamente; conteúdo específico deve declarar ou receber sua vertical.
 
 Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
 
@@ -310,7 +310,7 @@ O código compartilhado não deve manter uma lista fechada de verticais nem
 assumir que `Prazzu = Contabilidade`. Quando uma regra for específica de uma
 vertical, essa especialização deve permanecer explícita no domínio correspondente.
 
-A prova arquitetural do Lote 6 registra `rh` como segunda vertical e adiciona uma ferramenta específica de RH sem duplicar infraestrutura. O Lote 6 levou o inventário a 33 módulos: 32 de `contabilidade` e `calculadora-turnover` como primeira ferramenta de `rh`. A expansão fiscal posterior adiciona `calculadora-irpj-csll-lucro-presumido`, totalizando 34 ferramentas oficiais. A expansão seguinte adiciona `calculadora-pis-cofins`, seguida de `calculadora-icms-st` e `calculadora-retencoes-nota-fiscal`, totalizando 37 ferramentas oficiais. Home, Blog, SEO, Analytics, Admin e E2E continuam compartilhados.
+A prova arquitetural do Lote 6 registra `rh` como segunda vertical e adiciona uma ferramenta específica de RH sem duplicar infraestrutura. O Lote 6 levou o inventário a 33 módulos: 32 de `contabilidade` e `calculadora-turnover` como primeira ferramenta de `rh`. A expansão fiscal posterior adiciona `calculadora-irpj-csll-lucro-presumido`, totalizando 34 ferramentas oficiais. A expansão seguinte adiciona `calculadora-pis-cofins`, seguida de `calculadora-icms-st`, `calculadora-retencoes-nota-fiscal` e `calculadora-depreciacao-ativos`, totalizando 38 ferramentas oficiais. A expansão posterior adiciona `calculadora-parcelamento-tributario`, totalizando 39 ferramentas oficiais. A expansão seguinte adiciona `simulador-mei-microempresa`, totalizando 40 ferramentas oficiais. A expansão fiscal posterior adiciona `calculadora-iss`, `simulador-distribuicao-lucros-balanco` e `calculadora-das-retroativo-regularizacao-simples`, totalizando 43 ferramentas oficiais. Home, Blog, SEO, Analytics, Admin e E2E continuam compartilhados.
 
 ## VerticalContext
 

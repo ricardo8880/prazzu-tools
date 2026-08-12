@@ -147,3 +147,8 @@ As implementações antigas baseadas em impressão do navegador e construção m
 ## Expansão — PIS e COFINS 2026
 
 A nova `PisCofinsCalculator` confirma reutilização transversal de `Money`, `Percentage`, `CalculationMemory`, histórico e exportação. As alíquotas gerais de PIS/Cofins também aparecem em estimativas do `TaxRegimeComparator`, mas os contextos de domínio ainda são diferentes: o comparador estima regimes empresariais, enquanto a nova ferramenta apura contribuições a partir de bases já classificadas. Não foi criada uma abstração tributária genérica adicional. Reavaliar uma regra normativa compartilhada específica de PIS/Cofins quando outra ferramenta precisar consumir exatamente a mesma seleção temporal, alíquotas e metadados sem condicionais de domínio.
+
+
+## Lote 20 — reutilização fiscal sem nova abstração
+
+A Calculadora de DAS Retroativo confirmou o uso equivalente de `App\Core\Tax\Normative\LateDasRule` fora da Calculadora de DAS em Atraso, validando a promoção já existente sem exigir novo componente. ISS e comparação de lucros reutilizam `Money`, `Percentage`, `CalculationMemory` e exportação compartilhada; suas fórmulas permanecem específicas de domínio.

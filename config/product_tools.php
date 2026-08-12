@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 return [
-    'schema_version' => '3.9.0',
-    'release_readiness' => 'accounting_expansion_invoice_withholding_2026',
+    'schema_version' => '3.13.0',
+    'release_readiness' => 'accounting_expansion_fiscal_trio_2026',
     'source' => 'README.md',
     'continuity_log' => 'docs/IMPLEMENTATION-LOTS.md',
     'inventory_document' => 'docs/PRODUCT-TOOLS-INVENTORY.md',
-    'expected_module_count' => 37,
+    'expected_module_count' => 43,
 
     'official' => [
         ['id' => 1, 'key' => 'employee-cost', 'name' => 'Calculadora de Custo de Funcionário CLT', 'slug' => 'custo-funcionario-clt', 'module' => 'EmployeeCostCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 10],
@@ -48,9 +48,29 @@ return [
         ['id' => 35, 'key' => 'pis-cofins', 'name' => 'Calculadora PIS e COFINS', 'slug' => 'calculadora-pis-cofins', 'module' => 'PisCofinsCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 35],
         ['id' => 36, 'key' => 'icms-st', 'name' => 'Calculadora de ICMS-ST', 'slug' => 'calculadora-icms-st', 'module' => 'IcmsStCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 36],
         ['id' => 37, 'key' => 'invoice-withholding', 'name' => 'Calculadora de Retenções na Nota Fiscal', 'slug' => 'calculadora-retencoes-nota-fiscal', 'module' => 'InvoiceWithholdingCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 37],
+        ['id' => 38, 'key' => 'asset-depreciation', 'name' => 'Calculadora de Depreciação de Ativos', 'slug' => 'calculadora-depreciacao-ativos', 'module' => 'AssetDepreciationCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 38],
+        ['id' => 39, 'key' => 'tax-installment', 'name' => 'Calculadora de Parcelamento Tributário', 'slug' => 'calculadora-parcelamento-tributario', 'module' => 'TaxInstallmentCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 39],
+        ['id' => 40, 'key' => 'mei-to-microenterprise', 'name' => 'Simulador MEI → Microempresa', 'slug' => 'simulador-mei-microempresa', 'module' => 'MeiToMicroenterpriseSimulator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 40],
+        ['id' => 41, 'key' => 'iss', 'name' => 'Calculadora de ISS', 'slug' => 'calculadora-iss', 'module' => 'IssCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 41],
+        ['id' => 42, 'key' => 'profit-distribution-balance-comparison', 'name' => 'Simulador de Distribuição de Lucros com Balanço × sem Balanço', 'slug' => 'simulador-distribuicao-lucros-balanco', 'module' => 'ProfitDistributionBalanceSimulator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 42],
+        ['id' => 43, 'key' => 'retroactive-das-regularization', 'name' => 'Calculadora de DAS Retroativo + Regularização do Simples', 'slug' => 'calculadora-das-retroativo-regularizacao-simples', 'module' => 'RetroactiveDasRegularizationCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 43],
     ],
 
     'functional_overlap_reviews' => [
+        [
+            'module' => 'ProfitDistributionBalanceSimulator',
+            'classification' => 'resolved_distinct_balance_comparison_scope',
+            'state' => 'resolved',
+            'related_modules' => ['ProfitDistributionCalculator'],
+            'distinction' => 'A calculadora histórica apura distribuição societária de um lucro contábil; o novo simulador compara explicitamente um cenário com balanço contra uma referência parametrizada sem balanço e projeta os dois cenários.',
+        ],
+        [
+            'module' => 'RetroactiveDasRegularizationCalculator',
+            'classification' => 'resolved_distinct_reconstitution_scope',
+            'state' => 'resolved',
+            'related_modules' => ['LateDasCalculator'],
+            'distinction' => 'DAS em Atraso parte de um principal já conhecido; DAS Retroativo reconstitui o principal estimado pelo faturamento e alíquota informada, consolida competências e planeja regularização financeira.',
+        ],
         [
             'module' => 'ProLaboreProfitDistributionCalculator',
             'classification' => 'resolved_distinct_planning_scope',

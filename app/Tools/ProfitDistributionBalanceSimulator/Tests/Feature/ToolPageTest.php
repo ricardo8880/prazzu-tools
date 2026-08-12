@@ -1,0 +1,3 @@
+<?php
+
+declare(strict_types=1); namespace App\Tools\ProfitDistributionBalanceSimulator\Tests\Feature; use Tests\TestCase; final class ToolPageTest extends TestCase { public function test_page_loads():void{$this->get('/tools/contabil/ferramentas/simulador-distribuicao-lucros-balanco')->assertOk()->assertSee('Balanço');} public function test_calculation_returns_result():void{$this->post('/tools/contabil/ferramentas/simulador-distribuicao-lucros-balanco',['annual_revenue'=>'240.000,00','accounting_profit'=>'72.000,00','reference_margin'=>'32','taxes_on_revenue'=>'14.400,00'])->assertOk()->assertSee('Comparação estimada');}}

@@ -27,12 +27,13 @@
                     </select>
                 </div>
                 <div class="col-md-6"><x-tools.form.money name="taxable_revenue" label="Base tributável da receita" :value="old('taxable_revenue')" data-e2e-value="10.000,00" required help="Informe a base já após exclusões e ajustes aplicáveis ao caso." /></div>
-                <div class="col-md-6"><x-tools.form.money name="credit_base" label="Base total elegível a créditos" :value="old('credit_base','0')" required help="Usada no regime não cumulativo. No cumulativo, mantenha zero se não estiver comparando cenários." /></div>
+                @if($plusEnabled ?? true)<div class="col-md-6"><x-tools.form.money name="credit_base" label="Base total elegível a créditos" :value="old('credit_base','0')" required help="Usada no regime não cumulativo. No cumulativo, mantenha zero se não estiver comparando cenários." /></div>@else<input type="hidden" name="credit_base" value="0">@endif
                 <div class="col-md-6"><x-tools.form.money name="pis_withheld" label="PIS retido/compensável confirmado" :value="old('pis_withheld','0')" required /></div>
                 <div class="col-md-6"><x-tools.form.money name="cofins_withheld" label="Cofins retida/compensável confirmada" :value="old('cofins_withheld','0')" required /></div>
             </div>
         </x-tools.form-panel>
 
+        @if($plusEnabled ?? true)
         <x-tools.form-panel title="Operações e análise avançada" description="Detalhe outras operações da competência e compare os dois regimes com a mesma base informada." badge="Prazzu Plus">
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" name="compare_regimes" value="1" id="compare_regimes" @checked(old('compare_regimes'))>
@@ -54,6 +55,7 @@
             </div>
             <div class="form-text">As linhas adicionais são somadas à base principal. Informe crédito apenas quando a operação/aquisição efetivamente gerar crédito no regime não cumulativo.</div>
         </x-tools.form-panel>
+        @endif
 
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="confirm_scope" value="1" id="confirm_scope" required @checked(old('confirm_scope'))>

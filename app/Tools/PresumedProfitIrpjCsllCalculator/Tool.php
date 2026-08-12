@@ -59,7 +59,9 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                 new ToolFeature('calculate', 'IRPJ, adicional e CSLL do trimestre', ToolFeatureTier::Essential),
                 new ToolFeature('presumption_2026', 'Acréscimo de 10% nos percentuais de presunção de 2026', ToolFeatureTier::Essential),
                 new ToolFeature('memory', 'Memória de cálculo e fontes normativas', ToolFeatureTier::Essential),
-                new ToolFeature('multiple_activities', 'Múltiplas atividades no mesmo trimestre', ToolFeatureTier::Plus),
+                new ToolFeature('periodicity', 'Apuração mensal ou trimestral', ToolFeatureTier::Plus),
+                new ToolFeature('multiple_activities', 'Múltiplas atividades no mesmo período', ToolFeatureTier::Plus),
+                new ToolFeature('scenario_comparison', 'Comparação de cenários', ToolFeatureTier::Plus),
                 new ToolFeature('carry_forward_limit', 'Ajuste do limite com receitas de trimestres anteriores', ToolFeatureTier::Plus),
                 new ToolFeature('credits', 'Dedução parametrizada de créditos e retenções confirmados', ToolFeatureTier::Plus),
                 new ToolFeature('export', 'Relatório em PDF e planilha', ToolFeatureTier::Plus),
@@ -77,7 +79,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
         return new ToolHistoryPolicy(
             true,
             365,
-            ['quarter', 'commerceRevenue', 'fuelRevenue', 'passengerTransportRevenue', 'servicesRevenue', 'otherTaxableAdditions', 'priorIrpjPresumptionRevenue', 'priorCsllPresumptionRevenue', 'irpjCredits', 'csllCredits'],
+            ['periodicity', 'month', 'quarter', 'commerceRevenue', 'fuelRevenue', 'passengerTransportRevenue', 'servicesRevenue', 'otherTaxableAdditions', 'priorIrpjPresumptionRevenue', 'priorCsllPresumptionRevenue', 'irpjCredits', 'csllCredits'],
             ['irpj_base', 'irpj_due', 'csll_base', 'csll_due', 'total_due', 'summary', 'details', 'warnings', 'calculation_memory'],
             [],
         );

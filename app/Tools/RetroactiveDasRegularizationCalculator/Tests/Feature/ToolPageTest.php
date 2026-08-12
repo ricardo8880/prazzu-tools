@@ -1,0 +1,3 @@
+<?php
+
+declare(strict_types=1); namespace App\Tools\RetroactiveDasRegularizationCalculator\Tests\Feature; use Tests\TestCase; final class ToolPageTest extends TestCase { public function test_page_loads():void{$this->get('/tools/contabil/ferramentas/calculadora-das-retroativo-regularizacao-simples')->assertOk()->assertSee('DAS Retroativo');} public function test_calculation_returns_result():void{$this->post('/tools/contabil/ferramentas/calculadora-das-retroativo-regularizacao-simples',['competence'=>'2026-06','revenue'=>'20.000,00','effective_rate'=>'6','due_date'=>'2026-07-20','update_date'=>'2026-08-12','accumulated_selic'=>'1,12'])->assertOk()->assertSee('DAS atualizado estimado');}}

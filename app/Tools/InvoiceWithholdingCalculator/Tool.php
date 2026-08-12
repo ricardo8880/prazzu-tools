@@ -39,7 +39,7 @@ final class Tool implements HasAnalyticsJourney,HasHistoryPolicy,HasToolIntegrat
             capabilities:[ToolCapability::History,ToolCapability::VersionedPersistence,ToolCapability::Export],
             features:[
                 new ToolFeature('calculate','Estimativa de retenções de uma nota/serviço',ToolFeatureTier::Essential),
-                new ToolFeature('memory','Memória de cálculo e premissas',ToolFeatureTier::Essential),
+                new ToolFeature('memory','Memória de cálculo e premissas',ToolFeatureTier::Plus),
                 new ToolFeature('custom_rules','Bases e alíquotas configuráveis por tributo',ToolFeatureTier::Plus),
                 new ToolFeature('multiple_notes','Múltiplas notas ou serviços no mesmo cálculo',ToolFeatureTier::Plus),
                 new ToolFeature('report','Relatório de conferência por nota e tributo',ToolFeatureTier::Plus),

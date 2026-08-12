@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('title', 'Calculadora de IRPJ e CSLL — Lucro Presumido')
-@section('meta_description', 'Calcule IRPJ, adicional de IRPJ e CSLL trimestral no Lucro Presumido com percentuais de presunção de 2026, múltiplas atividades e memória fiscal.')
+@section('meta_description', 'Calcule IRPJ, adicional de IRPJ e CSLL no Lucro Presumido com apuração mensal ou trimestral, múltiplas atividades, cenários e memória fiscal.')
 
 @section('content')
 <x-tools.page
     title="Calculadora de IRPJ e CSLL — Lucro Presumido"
-    description="Apure as bases presumidas, IRPJ, adicional de IRPJ e CSLL do trimestre com a regra vigente em 2026."
+    description="Apure bases presumidas, IRPJ, adicional e CSLL, com modo mensal ou trimestral e comparação de cenários."
     icon="bi-building-check"
     slug="calculadora-irpj-csll-lucro-presumido"
 >
@@ -18,17 +18,29 @@
 
     <form method="POST" action="{{ route('tools.calculadora-irpj-csll-lucro-presumido.calculate') }}" class="vstack gap-4">
         @csrf
-        <x-tools.form-panel title="Receita do trimestre" description="Preencha apenas as atividades existentes no período. Campos sem receita podem ficar em zero." badge="Essencial">
+        <x-tools.form-panel title="Receita do período" description="Preencha as atividades existentes no período. A apuração trimestral resolve o caso Essencial; o modo mensal e os cenários fazem parte do Plus." badge="Essencial + Plus">
             <div class="row g-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
+                    <label class="form-label" for="periodicity">Periodicidade</label>
+                    <select class="form-select" name="periodicity" id="periodicity">
+                        <option value="quarterly" @selected(old('periodicity','quarterly') === 'quarterly')>Trimestral</option>
+                        @if($plusEnabled ?? true)<option value="monthly" @selected(old('periodicity') === 'monthly')>Mensal — Plus</option>@endif
+                    </select>
+                </div>
+                <div class="col-md-4">
                     <label class="form-label" for="quarter">Trimestre de 2026</label>
-                    <select class="form-select" name="quarter" id="quarter" required>
+                    <select class="form-select" name="quarter" id="quarter">
                         @foreach([1 => '1º trimestre', 2 => '2º trimestre', 3 => '3º trimestre', 4 => '4º trimestre'] as $value => $label)
                             <option value="{{ $value }}" @selected((int) old('quarter', 3) === $value)>{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-9"><div class="form-text mt-md-4 pt-md-2">O IRPJ e a CSLL do Lucro Presumido são apurados trimestralmente.</div></div>
+                @if($plusEnabled ?? true)
+                <div class="col-md-4">
+                    <label class="form-label" for="month">Mês de 2026 — Plus</label>
+                    <select class="form-select" name="month" id="month"><option value="">Selecione no modo mensal</option>@foreach(range(1,12) as $m)<option value="{{ $m }}" @selected((int) old('month') === $m)>{{ str_pad((string)$m,2,'0',STR_PAD_LEFT) }}/2026</option>@endforeach</select>
+                </div>
+                @endif
 
                 <div class="col-md-6"><x-tools.form.money name="commerce_revenue" label="Comércio / indústria / carga / hospitalar qualificado" :value="old('commerce_revenue', '0')" data-e2e-value="5.000,00" required help="Presunção-base: IRPJ 8% e CSLL 12%. Use serviço hospitalar apenas se os requisitos legais forem atendidos." /></div>
                 <div class="col-md-6"><x-tools.form.money name="fuel_revenue" label="Revenda de combustíveis elegível" :value="old('fuel_revenue', '0')" required help="Presunção-base: IRPJ 1,6% e CSLL 12%." /></div>
@@ -38,6 +50,7 @@
             </div>
         </x-tools.form-panel>
 
+        @if($plusEnabled ?? true)
         <x-tools.form-panel title="Ajustes do ano e créditos" description="Use os acumulados para que a faixa normal de presunção considere os trimestres anteriores." badge="Prazzu Plus">
             <div class="row g-3">
                 <div class="col-md-6"><x-tools.form.money name="prior_irpj_presumption_revenue" label="Receita anterior no ano — limite IRPJ" :value="old('prior_irpj_presumption_revenue', '0')" required help="Receita bruta dos trimestres anteriores de 2026 sujeita a coeficientes de presunção. Não inclua receitas financeiras/ganhos adicionados integralmente." /></div>
@@ -46,7 +59,23 @@
                 <div class="col-md-6"><x-tools.form.money name="csll_credits" label="Créditos/retenções de CSLL compensáveis" :value="old('csll_credits', '0')" required help="Informe somente valores cuja compensação no período tenha sido confirmada." /></div>
             </div>
         </x-tools.form-panel>
+        @endif
 
+
+        @if($plusEnabled ?? true)
+        <x-tools.form-panel title="Comparação de cenários" description="Plus — compare até três alternativas no mesmo período usando diferentes composições de receita.">
+            @foreach([0,1] as $scenarioIndex)
+                <div class="border rounded p-3 mb-3"><div class="row g-3">
+                    <div class="col-12"><label class="form-label">Nome do cenário {{ $scenarioIndex + 2 }}</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][name]" value="{{ old('scenarios.'.$scenarioIndex.'.name', 'Cenário '.($scenarioIndex + 2)) }}"></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][commerce_revenue]'" label="Comércio/indústria" :value="old('scenarios.'.$scenarioIndex.'.commerce_revenue', '0')" /></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][fuel_revenue]'" label="Combustíveis" :value="old('scenarios.'.$scenarioIndex.'.fuel_revenue', '0')" /></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][passenger_transport_revenue]'" label="Transporte passageiros" :value="old('scenarios.'.$scenarioIndex.'.passenger_transport_revenue', '0')" /></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][services_revenue]'" label="Serviços em geral" :value="old('scenarios.'.$scenarioIndex.'.services_revenue', '0')" /></div>
+                    <div class="col-12"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][other_taxable_additions]'" label="Adições integrais" :value="old('scenarios.'.$scenarioIndex.'.other_taxable_additions', '0')" /></div>
+                </div></div>
+            @endforeach
+        </x-tools.form-panel>
+        @endif
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="confirm_scope" value="1" id="confirm_scope" required @checked(old('confirm_scope'))>
             <label class="form-check-label" for="confirm_scope">Confirmo que revisei o enquadramento das atividades, os percentuais de presunção, as adições integrais e os créditos aplicáveis ao caso.</label>
@@ -59,7 +88,7 @@
         <span data-analytics-result="main" hidden></span>
         @php($money = static fn (int $minor) => \App\Core\Money\Money::fromMinor($minor)->formatPtBr())
         <div class="mt-5">
-            <x-tools.result-panel title="Resultado do trimestre" description="Estimativa conforme os dados e enquadramentos confirmados no formulário.">
+            <x-tools.result-panel :title="$result->details['periodicity'] === 'monthly' ? 'Resultado mensal' : 'Resultado trimestral'" description="Estimativa conforme os dados e enquadramentos confirmados no formulário.">
                 <div class="row g-3 mb-4">
                     @foreach($result->summary as $item)
                         <div class="col-12 col-md-6 col-xl"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="calculator" /></div>
@@ -102,6 +131,13 @@
                     </table>
                 </div>
 
+
+                @if(!empty($result->details['scenario_comparison']))
+                    <h3 class="h5 mt-4">Comparação de cenários <span class="badge text-bg-primary">Plus</span></h3>
+                    <div class="table-responsive"><table class="table table-sm"><thead><tr><th>Cenário</th><th class="text-end">Receita</th><th class="text-end">IRPJ</th><th class="text-end">CSLL</th><th class="text-end">Total</th><th class="text-end">Diferença</th></tr></thead><tbody>
+                    @foreach($result->details['scenario_comparison'] as $scenario)<tr><td>{{ $scenario['name'] }}</td><td class="text-end">{{ $money($scenario['total_revenue_minor']) }}</td><td class="text-end">{{ $money($scenario['irpj_due_minor']) }}</td><td class="text-end">{{ $money($scenario['csll_due_minor']) }}</td><td class="text-end fw-semibold">{{ $money($scenario['total_due_minor']) }}</td><td class="text-end">{{ $money($scenario['difference_from_main_minor']) }}</td></tr>@endforeach
+                    </tbody></table></div>
+                @endif
                 <h3 class="h5 mt-4">Memória de cálculo</h3>
                 <div class="accordion mb-4" id="presumed-profit-memory">
                     @foreach($result->calculationMemory->steps as $step)

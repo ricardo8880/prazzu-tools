@@ -54,8 +54,8 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             capabilities:[ToolCapability::History,ToolCapability::VersionedPersistence,ToolCapability::Export],
             features:[
                 new ToolFeature('calculate','Apuração completa de PIS e Cofins em um regime',ToolFeatureTier::Essential),
-                new ToolFeature('aggregate_credits','Base total de créditos no não cumulativo',ToolFeatureTier::Essential),
-                new ToolFeature('memory','Memória de cálculo e fontes normativas',ToolFeatureTier::Essential),
+                new ToolFeature('aggregate_credits','Créditos do regime não cumulativo',ToolFeatureTier::Plus),
+                new ToolFeature('memory','Memória de cálculo e fontes normativas',ToolFeatureTier::Plus),
                 new ToolFeature('multiple_operations','Múltiplas operações na mesma competência',ToolFeatureTier::Plus),
                 new ToolFeature('credit_breakdown','Créditos detalhados por operação',ToolFeatureTier::Plus),
                 new ToolFeature('comparison','Comparação cumulativo × não cumulativo',ToolFeatureTier::Plus),

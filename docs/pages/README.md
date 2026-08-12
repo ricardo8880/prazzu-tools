@@ -108,6 +108,7 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 - [Planejamento de férias](app/Tools/VacationCalculator/pages/planner.blade.md) — `app/Tools/VacationCalculator/Resources/views/planner.blade.php`
 
 - [Calculadora de IRPJ e CSLL — Lucro Presumido](app/Tools/PresumedProfitIrpjCsllCalculator/pages/index.blade.md) — `app/Tools/PresumedProfitIrpjCsllCalculator/Resources/views/index.blade.php`
+- [Calculadora de Depreciação de Ativos](app/Tools/AssetDepreciationCalculator/pages/index.blade.md) — `app/Tools/AssetDepreciationCalculator/Resources/views/index.blade.php`
 
 ### Página de histórico
 

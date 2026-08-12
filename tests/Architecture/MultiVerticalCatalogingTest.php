@@ -15,8 +15,8 @@ final class MultiVerticalCatalogingTest extends TestCase
         $inventory = collect(config('product_tools.official', []))->keyBy('slug');
         $manifests = collect($this->app->make(ToolRegistry::class)->manifests(false));
 
-        self::assertCount(37, $inventory);
-        self::assertCount(37, $manifests);
+        self::assertCount(43, $inventory);
+        self::assertCount(43, $manifests);
 
         foreach ($manifests as $manifest) {
             self::assertContains($manifest->vertical, $registered);

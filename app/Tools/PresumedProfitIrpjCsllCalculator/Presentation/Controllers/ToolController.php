@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\PresumedProfitIrpjCsllCalculator\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Services\ToolResultExportFactory;
+use App\Core\Money\Money;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
 use App\Core\Tools\History\Data\ToolRunHandle;
@@ -25,14 +27,24 @@ use Throwable;
 
 final class ToolController extends Controller
 {
-    public function index(ShowToolPage $page): View
+    public function index(Request $request, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
-        return view('tools-calculadora-irpj-csll-lucro-presumido::index', $page->execute());
+        return view('tools-calculadora-irpj-csll-lucro-presumido::index', [...$page->execute(), 'plusEnabled' => $features->plusEnabled($module, $request)]);
     }
 
-    public function calculate(ExecuteToolRequest $request, CalculateTool $action, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page): View
+    public function calculate(ExecuteToolRequest $request, CalculateTool $action, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, ToolFeatureRequestAuthorizer $features, Tool $module, ShowToolPage $page): View
     {
-        $input = $this->input($request->validated());
+        $data = $request->validated();
+        $features->requireIf(($data['periodicity'] ?? 'quarterly') === 'monthly', $module, 'periodicity', $request);
+        $activityCount = 0;
+        foreach (['commerce_revenue', 'fuel_revenue', 'passenger_transport_revenue', 'services_revenue'] as $field) {
+            if ($this->moneyPositive($data[$field] ?? '0')) $activityCount++;
+        }
+        $features->requireIf($activityCount > 1, $module, 'multiple_activities', $request);
+        $features->requireIf(count($data['scenarios'] ?? []) > 0, $module, 'scenario_comparison', $request);
+        $features->requireIf($this->moneyPositive($data['prior_irpj_presumption_revenue'] ?? '0') || $this->moneyPositive($data['prior_csll_presumption_revenue'] ?? '0'), $module, 'carry_forward_limit', $request);
+        $features->requireIf($this->moneyPositive($data['irpj_credits'] ?? '0') || $this->moneyPositive($data['csll_credits'] ?? '0'), $module, 'credits', $request);
+        $input = $this->input($data);
         $run = $this->startRun($request, $recorder, $persistence, $module, $input);
         try {
             $result = $action->execute($input);
@@ -44,7 +56,7 @@ final class ToolController extends Controller
         $request->flash();
 
         return view('tools-calculadora-irpj-csll-lucro-presumido::index', [
-            ...$page->execute(), 'result' => $result, 'historySaved' => $run !== null, 'calculationInput' => $request->validated(),
+            ...$page->execute(), 'result' => $result, 'historySaved' => $run !== null, 'calculationInput' => $data, 'plusEnabled' => $features->plusEnabled($module, $request),
         ]);
     }
 
@@ -62,18 +74,47 @@ final class ToolController extends Controller
 
     private function input(array $d): CalculationInput
     {
+        $scenarios = [];
+        foreach (($d['scenarios'] ?? []) as $index => $scenario) {
+            $hasRevenue = false;
+            foreach (['commerce_revenue', 'fuel_revenue', 'passenger_transport_revenue', 'services_revenue'] as $field) {
+                $value = trim((string) ($scenario[$field] ?? ''));
+                if ($value !== '' && $value !== '0' && $value !== '0,00') { $hasRevenue = true; break; }
+            }
+            if (! $hasRevenue) continue;
+            $scenarios[] = [
+                'name' => trim((string) ($scenario['name'] ?? '')) ?: 'Cenário '.($index + 2),
+                'commerce_revenue' => (string) ($scenario['commerce_revenue'] ?? '0'),
+                'fuel_revenue' => (string) ($scenario['fuel_revenue'] ?? '0'),
+                'passenger_transport_revenue' => (string) ($scenario['passenger_transport_revenue'] ?? '0'),
+                'services_revenue' => (string) ($scenario['services_revenue'] ?? '0'),
+                'other_taxable_additions' => (string) ($scenario['other_taxable_additions'] ?? '0'),
+            ];
+        }
+
+        $periodicity = (string) ($d['periodicity'] ?? 'quarterly');
+        $month = isset($d['month']) && $d['month'] !== '' ? (int) $d['month'] : null;
+        $quarter = $periodicity === 'monthly' && $month !== null ? (int) ceil($month / 3) : (int) ($d['quarter'] ?? 1);
+
         return new CalculationInput(
-            (int) $d['quarter'], (string) $d['commerce_revenue'], (string) $d['fuel_revenue'],
+            $quarter, (string) $d['commerce_revenue'], (string) $d['fuel_revenue'],
             (string) $d['passenger_transport_revenue'], (string) $d['services_revenue'],
             (string) $d['other_taxable_additions'], (string) $d['prior_irpj_presumption_revenue'],
             (string) $d['prior_csll_presumption_revenue'], (string) $d['irpj_credits'], (string) $d['csll_credits'],
+            $periodicity, $month, $scenarios,
         );
+    }
+
+    private function moneyPositive(mixed $value): bool
+    {
+        return Money::fromDecimal((string) ($value ?: '0'))->minorAmount() > 0;
     }
 
     private function startRun(Request $request, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, CalculationInput $input): ?ToolRunHandle
     {
         if (! $request->user() || ! $persistence->allowsHistory($module, $request->user())) return null;
-        $month = str_pad((string) ($input->quarter * 3), 2, '0', STR_PAD_LEFT);
+        $referenceMonth = $input->periodicity === 'monthly' && $input->month !== null ? $input->month : $input->quarter * 3;
+        $month = str_pad((string) $referenceMonth, 2, '0', STR_PAD_LEFT);
         return $recorder->start($module, new RuleVersion('2026.1.0'), ReferenceDate::fromString('2026-'.$month.'-01'), $input->toArray(), $request->user()->id);
     }
 }
