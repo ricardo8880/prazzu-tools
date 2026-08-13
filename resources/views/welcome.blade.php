@@ -42,11 +42,59 @@
                     </ul>
                 </div>
 
-{{--                <div class="col-lg-5 d-none d-lg-block">--}}
-{{--                    <div class="prazzu-hero-art" aria-hidden="true">--}}
-{{--                        <img src="{{ asset('assets/images/accounting-tools-hero.png') }}" alt="">--}}
-{{--                    </div>--}}
-{{--                </div>--}}
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="prazzu-hero-art" aria-hidden="true">
+                        <div class="prazzu-hero-art__float">
+                            <svg class="prazzu-hero-art__svg" viewBox="0 0 430 250" role="presentation" focusable="false">
+                                <g class="prazzu-hero-art__orbit">
+                                    <ellipse cx="216" cy="126" rx="176" ry="82" transform="rotate(-8 216 126)" />
+                                    <ellipse cx="216" cy="126" rx="145" ry="60" transform="rotate(10 216 126)" />
+                                </g>
+
+                                <g class="prazzu-hero-art__sparkles">
+                                    <path d="M67 66v18M58 75h18" />
+                                    <path d="M353 177v15M345.5 184.5h15" />
+                                    <circle cx="365" cy="72" r="4" />
+                                    <circle cx="72" cy="180" r="3" />
+                                </g>
+
+                                <g class="prazzu-hero-art__main-card">
+                                    <rect x="105" y="47" width="222" height="152" rx="26" />
+                                    <path d="M133 78h78" class="prazzu-hero-art__soft-line" />
+                                    <circle cx="291" cy="78" r="6" />
+                                    <circle cx="270" cy="78" r="6" />
+
+                                    <g class="prazzu-hero-art__chart">
+                                        <path d="M140 160V119" />
+                                        <path d="M171 160V103" />
+                                        <path d="M202 160v-25" />
+                                        <path d="M233 160V91" />
+                                        <path d="M264 160v-43" />
+                                        <path d="M132 160h142" class="prazzu-hero-art__soft-line" />
+                                    </g>
+                                </g>
+
+                                <g class="prazzu-hero-art__mini-card prazzu-hero-art__mini-card--calculator">
+                                    <rect x="55" y="112" width="92" height="89" rx="20" />
+                                    <rect x="76" y="133" width="50" height="16" rx="5" class="prazzu-hero-art__mini-screen" />
+                                    <circle cx="81" cy="169" r="5" />
+                                    <circle cx="101" cy="169" r="5" />
+                                    <circle cx="121" cy="169" r="5" />
+                                    <circle cx="81" cy="187" r="5" />
+                                    <circle cx="101" cy="187" r="5" />
+                                    <path d="M118 184h7" />
+                                </g>
+
+                                <g class="prazzu-hero-art__mini-card prazzu-hero-art__mini-card--document">
+                                    <rect x="296" y="72" width="83" height="92" rx="20" />
+                                    <path d="M319 99h36M319 115h27M319 131h19" class="prazzu-hero-art__soft-line" />
+                                    <circle cx="352" cy="136" r="15" class="prazzu-hero-art__check-circle" />
+                                    <path d="m345 136 5 5 10-11" class="prazzu-hero-art__check" />
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

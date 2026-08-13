@@ -9640,3 +9640,150 @@ body.tox-dialog__disable-scroll {
         radial-gradient(circle at 90% 8%, rgb(124 58 237 / 8%), transparent 34%),
         var(--bs-body-bg);
 }
+
+/* Home hero — theme-aware floating SVG illustration */
+.prazzu-hero-art {
+    --prazzu-hero-art-primary: var(--prazzu-color-primary-light);
+    --prazzu-hero-art-secondary: var(--prazzu-color-secondary-light);
+    --prazzu-hero-art-ink: rgb(246 247 251 / 88%);
+    --prazzu-hero-art-line: rgb(154 167 184 / 42%);
+    --prazzu-hero-art-panel: rgb(13 26 43 / 88%);
+    --prazzu-hero-art-panel-soft: rgb(124 58 237 / 12%);
+    --prazzu-hero-art-shadow: rgb(0 0 0 / 24%);
+    pointer-events: none;
+}
+
+.prazzu-hero-art__float {
+    width: min(100%, 430px);
+    animation: prazzu-hero-float 7s ease-in-out infinite;
+    filter: drop-shadow(0 22px 30px var(--prazzu-hero-art-shadow));
+    will-change: transform;
+}
+
+.prazzu-hero-art__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.prazzu-hero-art__orbit ellipse {
+    fill: none;
+    stroke: var(--prazzu-hero-art-secondary);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 10;
+    opacity: 0.25;
+}
+
+.prazzu-hero-art__sparkles path,
+.prazzu-hero-art__sparkles circle {
+    fill: none;
+    stroke: var(--prazzu-hero-art-primary);
+    stroke-width: 2;
+    stroke-linecap: round;
+    opacity: 0.7;
+}
+
+.prazzu-hero-art__sparkles circle {
+    fill: var(--prazzu-hero-art-primary);
+    stroke: none;
+    opacity: 0.5;
+}
+
+.prazzu-hero-art__main-card > rect,
+.prazzu-hero-art__mini-card > rect:first-child {
+    fill: var(--prazzu-hero-art-panel);
+    stroke: var(--prazzu-hero-art-primary);
+    stroke-width: 1.6;
+}
+
+.prazzu-hero-art__main-card > rect {
+    fill: var(--prazzu-hero-art-panel-soft);
+}
+
+.prazzu-hero-art__main-card > circle,
+.prazzu-hero-art__chart path,
+.prazzu-hero-art__mini-card circle,
+.prazzu-hero-art__mini-card path {
+    fill: none;
+    stroke: var(--prazzu-hero-art-ink);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.prazzu-hero-art__main-card > circle {
+    fill: var(--prazzu-hero-art-primary);
+    stroke: none;
+    opacity: 0.78;
+}
+
+.prazzu-hero-art__chart path {
+    stroke: var(--prazzu-hero-art-primary);
+    stroke-width: 8;
+}
+
+.prazzu-hero-art__soft-line {
+    fill: none !important;
+    stroke: var(--prazzu-hero-art-line) !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round;
+}
+
+.prazzu-hero-art__mini-screen {
+    fill: var(--prazzu-hero-art-panel-soft) !important;
+    stroke: var(--prazzu-hero-art-line) !important;
+}
+
+.prazzu-hero-art__mini-card circle {
+    fill: var(--prazzu-hero-art-primary);
+    stroke: none;
+    opacity: 0.8;
+}
+
+.prazzu-hero-art__check-circle {
+    fill: var(--prazzu-hero-art-primary) !important;
+    stroke: none !important;
+}
+
+.prazzu-hero-art__check {
+    stroke: #fff !important;
+    stroke-width: 2.8 !important;
+}
+
+.prazzu-hero-art__mini-card--calculator {
+    transform: rotate(-5deg);
+    transform-origin: 101px 156px;
+}
+
+.prazzu-hero-art__mini-card--document {
+    transform: rotate(6deg);
+    transform-origin: 337px 118px;
+}
+
+[data-bs-theme="light"] .prazzu-hero-art {
+    --prazzu-hero-art-primary: var(--prazzu-color-primary);
+    --prazzu-hero-art-secondary: var(--prazzu-color-secondary);
+    --prazzu-hero-art-ink: rgb(33 44 90 / 88%);
+    --prazzu-hero-art-line: rgb(56 71 120 / 30%);
+    --prazzu-hero-art-panel: rgb(255 255 255 / 96%);
+    --prazzu-hero-art-panel-soft: rgb(109 40 217 / 7%);
+    --prazzu-hero-art-shadow: rgb(33 44 90 / 12%);
+}
+
+@keyframes prazzu-hero-float {
+    0%,
+    100% {
+        transform: translateY(-5px);
+    }
+
+    50% {
+        transform: translateY(9px);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .prazzu-hero-art {
+        display: none !important;
+    }
+}
