@@ -7,16 +7,32 @@
  */
 document.documentElement.classList.add('js-enabled');
 
+const THEME_STORAGE_KEY = 'prazzu-theme';
+const VALID_THEMES = new Set(['light', 'dark']);
 const themeButtons = document.querySelectorAll('[data-theme-value]');
-const savedTheme = (() => {
-    try { return localStorage.getItem('prazzu-theme'); } catch { return null; }
-})();
-const preferredTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+
+function storedTheme() {
+    try {
+        const theme = localStorage.getItem(THEME_STORAGE_KEY);
+        return VALID_THEMES.has(theme) ? theme : null;
+    } catch {
+        return null;
+    }
+}
+
+function preferredTheme() {
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
+function resolvedTheme() {
+    return storedTheme() ?? preferredTheme();
+}
 
 function applyTheme(theme) {
-    const value = theme === 'light' ? 'light' : 'dark';
+    const value = VALID_THEMES.has(theme) ? theme : preferredTheme();
 
     document.documentElement.setAttribute('data-bs-theme', value);
+    document.documentElement.style.colorScheme = value;
     document.body?.setAttribute('data-theme', value);
 
     themeButtons.forEach((button) => {
@@ -26,14 +42,24 @@ function applyTheme(theme) {
     });
 }
 
-applyTheme(savedTheme ?? preferredTheme);
+applyTheme(resolvedTheme());
 
 themeButtons.forEach((button) => {
     button.addEventListener('click', () => {
         const theme = button.dataset.themeValue;
-        try { localStorage.setItem('prazzu-theme', theme); } catch {}
+        if (!VALID_THEMES.has(theme)) return;
+
+        try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch {}
         applyTheme(theme);
     });
+});
+
+// Mantém o tema consistente ao voltar pelo cache do navegador ou ao alterá-lo em outra aba.
+window.addEventListener('pageshow', () => applyTheme(resolvedTheme()));
+window.addEventListener('storage', (event) => {
+    if (event.key === THEME_STORAGE_KEY) {
+        applyTheme(resolvedTheme());
+    }
 });
 
 import { initializeToolJourneyAnalytics } from './analytics/tool-journey.js';

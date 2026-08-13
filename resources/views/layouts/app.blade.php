@@ -6,6 +6,32 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="color-scheme" content="light dark">
+    <meta name="darkreader-lock" content="true">
+
+    {{--
+        O tema precisa ser resolvido antes do carregamento das folhas de estilo.
+        Isso evita que o HTML seja pintado em dark e só depois trocado para light.
+    --}}
+    <script nonce="{{ $cspNonce ?? '' }}">
+        (() => {
+            const storageKey = 'prazzu-theme';
+            let theme = null;
+
+            try {
+                theme = window.localStorage.getItem(storageKey);
+            } catch (_) {
+                // localStorage pode estar indisponível em modos restritos do navegador.
+            }
+
+            if (theme !== 'light' && theme !== 'dark') {
+                theme = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            }
+
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            document.documentElement.style.colorScheme = theme;
+        })();
+    </script>
 
     <title>@yield('title', $verticalSeo['title'])</title>
     <meta
