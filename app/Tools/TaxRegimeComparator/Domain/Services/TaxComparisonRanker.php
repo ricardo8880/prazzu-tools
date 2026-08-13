@@ -14,6 +14,7 @@ use DateTimeImmutable;
 final class TaxComparisonRanker
 {
     public function __construct(private readonly TaxRegimeComparisonRule $rule = new TaxRegimeComparisonRule) {}
+
     /**
      * @param list<TaxRegimeEstimate> $estimates
      */

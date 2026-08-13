@@ -6,6 +6,7 @@ namespace App\Tools\ReceiptIssuer\Application\Actions;
 
 use App\Core\Imports\Services\CsvTabularFileReader;
 use App\Tools\ReceiptIssuer\Presentation\Requests\ExecuteToolRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
@@ -20,7 +21,7 @@ final class GenerateReceiptBatch
     ) {}
 
     /** @return array{receipts:list<array<string,mixed>>,errors:list<array{line:int,message:string}>,total:int} */
-    public function execute(\Illuminate\Http\UploadedFile $file): array
+    public function execute(UploadedFile $file): array
     {
         $dataset = $this->reader->read($file, self::MAXIMUM_ROWS);
         $receipts = [];
@@ -33,6 +34,7 @@ final class GenerateReceiptBatch
 
             if ($validator->fails()) {
                 $errors[] = ['line' => $index + 2, 'message' => $validator->errors()->first()];
+
                 continue;
             }
 

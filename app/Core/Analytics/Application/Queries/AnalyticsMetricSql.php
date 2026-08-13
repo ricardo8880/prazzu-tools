@@ -45,7 +45,7 @@ final class AnalyticsMetricSql
         $placeholders = implode(',', array_fill(0, max(1, count($events)), '?'));
         $fallback = self::identity("''");
 
-        return "COUNT(DISTINCT CASE WHEN event_name IN ($placeholders) THEN COALESCE(visitor_id, ".$fallback.") END)";
+        return "COUNT(DISTINCT CASE WHEN event_name IN ($placeholders) THEN COALESCE(visitor_id, ".$fallback.') END)';
     }
 
     /** @param list<string> $events */
@@ -58,7 +58,7 @@ final class AnalyticsMetricSql
             default => 'CAST(analytics_session_id AS CHAR)',
         };
 
-        return "COUNT(DISTINCT CASE WHEN event_name IN ($placeholders) THEN COALESCE(".$session.", visitor_id, CAST(event_id AS ".($driver === 'mysql' ? 'CHAR' : 'TEXT').")) END)";
+        return "COUNT(DISTINCT CASE WHEN event_name IN ($placeholders) THEN COALESCE(".$session.', visitor_id, CAST(event_id AS '.($driver === 'mysql' ? 'CHAR' : 'TEXT').')) END)';
     }
 
     /** @param list<string> $events */

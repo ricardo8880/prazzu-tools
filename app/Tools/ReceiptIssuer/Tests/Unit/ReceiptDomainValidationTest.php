@@ -32,7 +32,7 @@ final class ReceiptDomainValidationTest extends TestCase
 
     public function test_it_rejects_a_non_positive_amount(): void
     {
-        $issuer = new ReceiptIssuer(new BrazilianMoneyInWords());
+        $issuer = new ReceiptIssuer(new BrazilianMoneyInWords);
 
         $this->expectException(InvalidArgumentException::class);
         $issuer->issue(

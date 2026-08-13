@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ReceiptIssuer\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
@@ -14,6 +15,7 @@ final class BatchGenerationTest extends TestCase
         $this->get(route('tools.emissor-de-recibos.batch.index'))->assertOk()->assertSee('Geração de recibos em lote');
     }
 
+    #[CoversPlusFeature('emissor-de-recibos', 'batch_generation')]
     public function test_valid_csv_generates_printable_receipts(): void
     {
         $csv = "number;payer_name;payee_name;amount;description;issued_at;city\nR-1;Cliente Teste;Prestador Teste;100,00;Serviço prestado;2026-07-23;São Paulo\n";

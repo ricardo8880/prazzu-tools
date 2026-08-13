@@ -13,8 +13,8 @@ final class ContractTextGeneratorTest extends TestCase
 {
     public function test_generates_complete_service_contract_text(): void
     {
-        $draft = (new BuildContractDraft())->execute($this->servicePayload());
-        $contract = (new ContractTextGenerator(new BrazilianMoneyInWords()))->generate($draft);
+        $draft = (new BuildContractDraft)->execute($this->servicePayload());
+        $contract = (new ContractTextGenerator(new BrazilianMoneyInWords))->generate($draft);
 
         self::assertSame('CONTRATO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS', $contract->title);
         self::assertStringContainsString('CONTRATANTE: Empresa Contratante Ltda.', $contract->content);
@@ -34,8 +34,8 @@ final class ContractTextGeneratorTest extends TestCase
         $payload['delivery_date'] = '2026-08-10';
         $payload['delivery_location'] = 'São Paulo/SP';
 
-        $draft = (new BuildContractDraft())->execute($payload);
-        $contract = (new ContractTextGenerator(new BrazilianMoneyInWords()))->generate($draft);
+        $draft = (new BuildContractDraft)->execute($payload);
+        $contract = (new ContractTextGenerator(new BrazilianMoneyInWords))->generate($draft);
 
         self::assertSame('CONTRATO PARTICULAR DE COMPRA E VENDA DE BEM MÓVEL', $contract->title);
         self::assertStringContainsString('VENDEDOR: Empresa Contratante Ltda.', $contract->content);

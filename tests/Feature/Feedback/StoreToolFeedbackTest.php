@@ -8,7 +8,6 @@ use App\Core\Feedback\Application\StoreToolFeedback;
 use App\Core\Feedback\Data\ToolFeedbackSubmission;
 use App\Core\Feedback\Enums\ToolFeedbackStatus;
 use App\Core\Feedback\Enums\ToolFeedbackType;
-use App\Core\Feedback\Models\ToolFeedback;
 use App\Core\Tools\ToolRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use InvalidArgumentException;

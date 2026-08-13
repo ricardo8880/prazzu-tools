@@ -8,13 +8,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class ConvertFiscalXmlBatchRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     public function rules(): array
     {
         return [
             'xml_files' => ['required', 'array', 'min:2', 'max:50'],
             'xml_files.*' => ['required', 'file', 'max:10240', 'mimes:xml', 'mimetypes:text/xml,application/xml'],
+            'compare_documents' => ['nullable', 'boolean'],
         ];
     }
 

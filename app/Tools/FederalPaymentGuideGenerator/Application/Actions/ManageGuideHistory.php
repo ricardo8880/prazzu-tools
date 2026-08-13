@@ -9,6 +9,7 @@ use App\Core\Tools\History\Contracts\ToolRunHistory;
 use App\Core\Tools\History\Data\ToolRunEntry;
 use App\Core\Tools\History\Data\ToolRunHistoryQuery;
 use App\Core\Tools\History\Data\ToolRunPage;
+use App\Tools\FederalPaymentGuideGenerator\Domain\Rules\RuleCatalog;
 use App\Tools\FederalPaymentGuideGenerator\Tool;
 
 final readonly class ManageGuideHistory
@@ -26,7 +27,7 @@ final readonly class ManageGuideHistory
             page: $page,
             perPage: $perPage,
             favoritesOnly: $favoritesOnly,
-            ruleVersions: [\App\Tools\FederalPaymentGuideGenerator\Domain\Rules\RuleCatalog::CURRENT_VERSION],
+            ruleVersions: [RuleCatalog::CURRENT_VERSION],
         ));
     }
 

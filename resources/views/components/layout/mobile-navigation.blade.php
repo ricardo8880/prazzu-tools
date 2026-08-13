@@ -25,7 +25,7 @@
 
         <div class="d-grid gap-2 mt-auto pt-4">
             @auth
-                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('account.show') }}">Minha conta</a>
+                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('account.show') }}">Meu Prazzu</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="btn prazzu-btn-outline w-100" type="submit">Sair</button>

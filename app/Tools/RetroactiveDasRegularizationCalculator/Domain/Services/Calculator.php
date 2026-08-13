@@ -1,8 +1,86 @@
 <?php
 
-declare(strict_types=1); namespace App\Tools\RetroactiveDasRegularizationCalculator\Domain\Services; use App\Core\Dates\ReferenceDate; use App\Core\Money\Money; use App\Core\Money\Percentage; use App\Core\Tax\Normative\LateDasRule; use App\Core\Tools\Calculation\Data\CalculationMemory; use App\Core\Tools\Calculation\Data\CalculationMemoryStep; use App\Core\Tools\Calculation\Data\ToolCalculationResult; use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem; use App\Core\Tools\Calculation\Data\ToolCalculationWarning; use App\Core\Tools\Calculation\Enums\ToolCalculationWarningLevel; use App\Core\Tools\Contracts\ToolCalculationInput; use App\Core\Tools\Contracts\ToolCalculator; use App\Tools\RetroactiveDasRegularizationCalculator\Application\Data\CalculationInput; use DateTimeImmutable; use InvalidArgumentException;
-final class Calculator implements ToolCalculator { public function __construct(private readonly LateDasRule $rule=new LateDasRule){} public function calculate(ToolCalculationInput $input):ToolCalculationResult { if(!$input instanceof CalculationInput||$input->competencies===[])throw new InvalidArgumentException('Entrada incompatível.'); $rows=[];$sumPrincipal=0;$sumFine=0;$sumInterest=0;$sumTotal=0; foreach($input->competencies as $c){$revenue=Money::fromDecimal((string)$c['revenue']);$rate=Percentage::fromString((string)$c['effective_rate']);$selic=Percentage::fromString((string)$c['accumulated_selic']);$due=new DateTimeImmutable((string)$c['due_date']);$update=new DateTimeImmutable((string)$c['update_date']); if($revenue->minorAmount()<=0||$update<$due)throw new InvalidArgumentException('Faturamento e datas inválidos.'); $principal=$revenue->percentage($rate)->minorAmount();$days=(int)$due->diff($update)->format('%a');$dailyBp=intdiv($this->rule->dailyFine()->millionthsOfPercent(),10000);$maxBp=intdiv($this->rule->maximumFine()->millionthsOfPercent(),10000);$fineBp=min($maxBp,$days*$dailyBp);$fine=Money::fromMinor($principal)->percentage(Percentage::fromBasisPoints($fineBp))->minorAmount();$interestRate=Percentage::fromString($this->scaledPercent($selic->millionthsOfPercent()+$this->rule->paymentMonthInterest()->millionthsOfPercent()));$interest=Money::fromMinor($principal)->percentage($interestRate)->minorAmount();$total=$principal+$fine+$interest;$rows[]=['competence'=>(string)$c['competence'],'revenue_minor'=>$revenue->minorAmount(),'effective_rate'=>$rate->toDecimalString(),'principal_minor'=>$principal,'due_date'=>$due->format('Y-m-d'),'update_date'=>$update->format('Y-m-d'),'days_late'=>$days,'fine_percent'=>number_format($fineBp/100,2,'.',''),'fine_minor'=>$fine,'accumulated_selic'=>$selic->toDecimalString(),'interest_percent'=>$interestRate->toDecimalString(),'interest_minor'=>$interest,'total_minor'=>$total];$sumPrincipal+=$principal;$sumFine+=$fine;$sumInterest+=$interest;$sumTotal+=$total; }
-        $months=max(1,min(24,$input->regularizationMonths));$base=intdiv($sumTotal,$months);$rem=$sumTotal-($base*$months);$schedule=[];$balance=$sumTotal;for($i=1;$i<=$months;$i++){$payment=$base+($i<=$rem?1:0);$balance=max(0,$balance-$payment);$schedule[]=['month'=>$i,'planned_payment_minor'=>$payment,'remaining_balance_minor'=>$balance];}$scenarios=[];foreach(array_unique([$months,3,6,12]) as $m){if($m<1||$m>24)continue;$scenarios[]=['months'=>$m,'monthly_target_minor'=>(int)ceil($sumTotal/$m),'total_minor'=>$sumTotal];}
-        $main=$rows[0];return new ToolCalculationResult(toolSlug:'calculadora-das-retroativo-regularizacao-simples',schemaVersion:'1.0.0',summary:[new ToolCalculationSummaryItem('principal','Principal estimado',Money::fromMinor($main['principal_minor'])->formatPtBr()),new ToolCalculationSummaryItem('fine','Multa estimada',Money::fromMinor($main['fine_minor'])->formatPtBr()),new ToolCalculationSummaryItem('interest','Juros estimados',Money::fromMinor($main['interest_minor'])->formatPtBr()),new ToolCalculationSummaryItem('total','Total atualizado',Money::fromMinor($main['total_minor'])->formatPtBr())],details:['competencies'=>$rows,'consolidated'=>['principal_minor'=>$sumPrincipal,'fine_minor'=>$sumFine,'interest_minor'=>$sumInterest,'total_minor'=>$sumTotal],'regularization'=>['months'=>$months,'schedule'=>$schedule,'scenarios'=>$scenarios]],warnings:[new ToolCalculationWarning('estimate','O principal é estimado como faturamento da competência × alíquota efetiva informada. A ferramenta não recalcula PGDAS-D, anexo, faixa, Fator R, segregações ou sublimites.',ToolCalculationWarningLevel::Info),new ToolCalculationWarning('selic','A Selic acumulada deve ser informada para cada competência. A regra soma 1% referente ao mês de pagamento/atualização, seguindo o padrão normativo compartilhado do Core.',ToolCalculationWarningLevel::Info),new ToolCalculationWarning('regularization_plan','O cronograma Plus é um plano financeiro de aportes para quitar o total estimado; não representa parcelamento oficial nem prevê encargos futuros do programa escolhido.',ToolCalculationWarningLevel::Info)],calculationMemory:new CalculationMemory('1.0.0',[new CalculationMemoryStep('principal','Principal estimado','faturamento × alíquota efetiva informada',['revenue_minor'=>$main['revenue_minor'],'rate'=>$main['effective_rate']],$main['principal_minor']),new CalculationMemoryStep('fine','Multa de mora','principal × mínimo(20%; dias × 0,33%)',['days'=>$main['days_late']],$main['fine_minor']),new CalculationMemoryStep('interest','Juros de mora','principal × (Selic acumulada informada + 1% no mês de atualização)',['selic'=>$main['accumulated_selic']],$main['interest_minor']),new CalculationMemoryStep('total','Total atualizado','principal + multa + juros',[],$main['total_minor'])],normativeRules:[$this->rule->snapshot(ReferenceDate::fromDateTime(new DateTimeImmutable($main['update_date'])))],assumptions:['A alíquota efetiva e a Selic acumulada são parâmetros informados pelo usuário.','A competência serve para identificar o período reconstituído e não aciona cálculo automático do PGDAS-D.'],isEstimate:true)); }
-    private function scaledPercent(int $scaled):string{$w=intdiv($scaled,1000000);$f=rtrim(str_pad((string)($scaled%1000000),6,'0',STR_PAD_LEFT),'0');return $f===''?(string)$w:$w.'.'.$f;}
+declare(strict_types=1);
+
+namespace App\Tools\RetroactiveDasRegularizationCalculator\Domain\Services;
+
+use App\Core\Dates\ReferenceDate;
+use App\Core\Money\Money;
+use App\Core\Money\Percentage;
+use App\Core\Tax\Normative\LateDasRule;
+use App\Core\Tools\Calculation\Data\CalculationMemory;
+use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
+use App\Core\Tools\Calculation\Data\ToolCalculationResult;
+use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
+use App\Core\Tools\Calculation\Data\ToolCalculationWarning;
+use App\Core\Tools\Calculation\Enums\ToolCalculationWarningLevel;
+use App\Core\Tools\Contracts\ToolCalculationInput;
+use App\Core\Tools\Contracts\ToolCalculator;
+use App\Tools\RetroactiveDasRegularizationCalculator\Application\Data\CalculationInput;
+use DateTimeImmutable;
+use InvalidArgumentException;
+
+final class Calculator implements ToolCalculator
+{
+    public function __construct(private readonly LateDasRule $rule = new LateDasRule) {}
+
+    public function calculate(ToolCalculationInput $input): ToolCalculationResult
+    {
+        if (! $input instanceof CalculationInput || $input->competencies === []) {
+            throw new InvalidArgumentException('Entrada incompatível.');
+        } $rows = [];
+        $sumPrincipal = 0;
+        $sumFine = 0;
+        $sumInterest = 0;
+        $sumTotal = 0;
+        foreach ($input->competencies as $c) {
+            $revenue = Money::fromDecimal((string) $c['revenue']);
+            $rate = Percentage::fromString((string) $c['effective_rate']);
+            $selic = Percentage::fromString((string) $c['accumulated_selic']);
+            $due = new DateTimeImmutable((string) $c['due_date']);
+            $update = new DateTimeImmutable((string) $c['update_date']);
+            if ($revenue->minorAmount() <= 0 || $update < $due) {
+                throw new InvalidArgumentException('Faturamento e datas inválidos.');
+            } $principal = $revenue->percentage($rate)->minorAmount();
+            $days = (int) $due->diff($update)->format('%a');
+            $dailyBp = intdiv($this->rule->dailyFine()->millionthsOfPercent(), 10000);
+            $maxBp = intdiv($this->rule->maximumFine()->millionthsOfPercent(), 10000);
+            $fineBp = min($maxBp, $days * $dailyBp);
+            $fine = Money::fromMinor($principal)->percentage(Percentage::fromBasisPoints($fineBp))->minorAmount();
+            $interestRate = Percentage::fromString($this->scaledPercent($selic->millionthsOfPercent() + $this->rule->paymentMonthInterest()->millionthsOfPercent()));
+            $interest = Money::fromMinor($principal)->percentage($interestRate)->minorAmount();
+            $total = $principal + $fine + $interest;
+            $rows[] = ['competence' => (string) $c['competence'], 'revenue_minor' => $revenue->minorAmount(), 'effective_rate' => $rate->toDecimalString(), 'principal_minor' => $principal, 'due_date' => $due->format('Y-m-d'), 'update_date' => $update->format('Y-m-d'), 'days_late' => $days, 'fine_percent' => number_format($fineBp / 100, 2, '.', ''), 'fine_minor' => $fine, 'accumulated_selic' => $selic->toDecimalString(), 'interest_percent' => $interestRate->toDecimalString(), 'interest_minor' => $interest, 'total_minor' => $total];
+            $sumPrincipal += $principal;
+            $sumFine += $fine;
+            $sumInterest += $interest;
+            $sumTotal += $total;
+        }
+        $months = max(1, min(24, $input->regularizationMonths));
+        $base = intdiv($sumTotal, $months);
+        $rem = $sumTotal - ($base * $months);
+        $schedule = [];
+        $balance = $sumTotal;
+        for ($i = 1; $i <= $months; $i++) {
+            $payment = $base + ($i <= $rem ? 1 : 0);
+            $balance = max(0, $balance - $payment);
+            $schedule[] = ['month' => $i, 'planned_payment_minor' => $payment, 'remaining_balance_minor' => $balance];
+        }$scenarios = [];
+        foreach (array_unique([$months, 3, 6, 12]) as $m) {
+            if ($m < 1 || $m > 24) {
+                continue;
+            }$scenarios[] = ['months' => $m, 'monthly_target_minor' => (int) ceil($sumTotal / $m), 'total_minor' => $sumTotal];
+        }
+        $main = $rows[0];
+
+        return new ToolCalculationResult(toolSlug: 'calculadora-das-retroativo-regularizacao-simples', schemaVersion: '1.0.0', summary: [new ToolCalculationSummaryItem('principal', 'Principal estimado', Money::fromMinor($main['principal_minor'])->formatPtBr()), new ToolCalculationSummaryItem('fine', 'Multa estimada', Money::fromMinor($main['fine_minor'])->formatPtBr()), new ToolCalculationSummaryItem('interest', 'Juros estimados', Money::fromMinor($main['interest_minor'])->formatPtBr()), new ToolCalculationSummaryItem('total', 'Total atualizado', Money::fromMinor($main['total_minor'])->formatPtBr())], details: ['competencies' => $rows, 'consolidated' => ['principal_minor' => $sumPrincipal, 'fine_minor' => $sumFine, 'interest_minor' => $sumInterest, 'total_minor' => $sumTotal], 'regularization' => ['months' => $months, 'schedule' => $schedule, 'scenarios' => $scenarios]], warnings: [new ToolCalculationWarning('estimate', 'O principal é estimado como faturamento da competência × alíquota efetiva informada. A ferramenta não recalcula PGDAS-D, anexo, faixa, Fator R, segregações ou sublimites.', ToolCalculationWarningLevel::Info), new ToolCalculationWarning('selic', 'A Selic acumulada deve ser informada para cada competência. A regra soma 1% referente ao mês de pagamento/atualização, seguindo o padrão normativo compartilhado do Core.', ToolCalculationWarningLevel::Info), new ToolCalculationWarning('regularization_plan', 'O cronograma Plus é um plano financeiro de aportes para quitar o total estimado; não representa parcelamento oficial nem prevê encargos futuros do programa escolhido.', ToolCalculationWarningLevel::Info)], calculationMemory: new CalculationMemory('1.0.0', [new CalculationMemoryStep('principal', 'Principal estimado', 'faturamento × alíquota efetiva informada', ['revenue_minor' => $main['revenue_minor'], 'rate' => $main['effective_rate']], $main['principal_minor']), new CalculationMemoryStep('fine', 'Multa de mora', 'principal × mínimo(20%; dias × 0,33%)', ['days' => $main['days_late']], $main['fine_minor']), new CalculationMemoryStep('interest', 'Juros de mora', 'principal × (Selic acumulada informada + 1% no mês de atualização)', ['selic' => $main['accumulated_selic']], $main['interest_minor']), new CalculationMemoryStep('total', 'Total atualizado', 'principal + multa + juros', [], $main['total_minor'])], normativeRules: [$this->rule->snapshot(ReferenceDate::fromDateTime(new DateTimeImmutable($main['update_date'])))], assumptions: ['A alíquota efetiva e a Selic acumulada são parâmetros informados pelo usuário.', 'A competência serve para identificar o período reconstituído e não aciona cálculo automático do PGDAS-D.'], isEstimate: true));
+    }
+
+    private function scaledPercent(int $scaled): string
+    {
+        $w = intdiv($scaled,1000000);
+        $f = rtrim(str_pad((string) ($scaled % 1000000),6,'0',STR_PAD_LEFT),'0');
+
+        return $f === '' ? (string) $w : $w.'.'.$f;
+    }
 }

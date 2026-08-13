@@ -27,10 +27,12 @@ final class Calculator implements ToolCalculator
             throw new InvalidArgumentException('Admissões e desligamentos não podem ser negativos, e o quadro médio deve ser maior que zero.');
         }
 
-        // Mantém precisão determinística em basis points (1/100 de ponto percentual).
-        $movementTimes100 = ($input->admissions + $input->terminations) * 50;
+        // Mantém precisão determinística com aritmética inteira: a média pode terminar em ,5 e a taxa usa basis points.
+        $movementTotal = $input->admissions + $input->terminations;
+        $averageMovement = intdiv($movementTotal, 2).($movementTotal % 2 === 0 ? '' : ',5');
+        $movementTimes100 = $movementTotal * 50;
         $rateBasisPoints = intdiv(($movementTimes100 * 100) + intdiv($input->averageHeadcount, 2), $input->averageHeadcount);
-        $rate = number_format($rateBasisPoints / 100, 2, ',', '.').'%';
+        $rate = number_format(intdiv($rateBasisPoints, 100), 0, ',', '.').','.str_pad((string) ($rateBasisPoints % 100), 2, '0', STR_PAD_LEFT).'%';
 
         $memory = new CalculationMemory(
             schemaVersion: self::SCHEMA_VERSION,
@@ -40,7 +42,7 @@ final class Calculator implements ToolCalculator
                     'Movimentação média',
                     '(admissões + desligamentos) ÷ 2',
                     ['admissions' => $input->admissions, 'terminations' => $input->terminations],
-                    ($input->admissions + $input->terminations) / 2,
+                    $averageMovement,
                     'Indicador operacional; não representa regra legal ou normativa.',
                 ),
                 new CalculationMemoryStep(

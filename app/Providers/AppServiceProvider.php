@@ -6,9 +6,9 @@ use App\Blog\Models\BlogPost;
 use App\Console\Commands\CheckToolArchitectureCommand;
 use App\Console\Commands\MakeToolCommand;
 use App\Console\Commands\PurgeExpiredToolRunsCommand;
+use App\Core\Analytics\Infrastructure\Observers\UserSubscriptionAnalyticsObserver;
 use App\Core\Audit\Contracts\AuditLogger;
 use App\Core\Audit\Services\DatabaseAuditLogger;
-use App\Core\Analytics\Infrastructure\Observers\UserSubscriptionAnalyticsObserver;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Services\DompdfPdfExporter;
@@ -33,9 +33,9 @@ use App\Core\Tools\History\Services\DatabaseToolRunFavorites;
 use App\Core\Tools\History\Services\DatabaseToolRunHistory;
 use App\Core\Tools\History\Services\DatabaseToolRunRecorder;
 use App\Core\Tools\ToolRegistry;
-use App\Core\Verticals\Application\VerticalContext;
 use App\Core\Validation\BrazilianMoneyValidator;
 use App\Core\Validation\BrazilianPercentageValidator;
+use App\Core\Verticals\Application\VerticalContext;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -108,7 +108,6 @@ class AppServiceProvider extends ServiceProvider
             URL::defaults(['vertical' => $defaultPublicSlug]);
         }
 
-
         $moneyValidation = $this->app->make(BrazilianMoneyValidator::class);
         Validator::extend(
             'brazilian_money',
@@ -144,7 +143,6 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(max(1, (int) config('tools-api.rate_limit', 120)))->by($key);
         });
-
 
         View::composer('layouts.app', function ($view): void {
             $routeName = request()->route()?->getName();

@@ -11,7 +11,7 @@ final class PrepareGuideExportTest extends TestCase
 {
     public function test_it_prepares_stable_rows_and_payload_without_numeric_floats(): void
     {
-        $export = (new PrepareGuideExport())->execute(
+        $export = (new PrepareGuideExport)->execute(
             ['guide_type' => 'darf', 'revenue_code' => '0561', 'payment_date' => '2026-07-21'],
             [
                 'guide' => ['type' => 'DARF', 'code' => '0561', 'description' => 'Rendimentos do trabalho', 'periodicity' => 'mensal', 'official_reference' => 'Catálogo'],

@@ -24,6 +24,7 @@ final class ApiFoundationTest extends TestCase
     {
         return $this->withToken('test-private-token');
     }
+
     public function test_versioned_api_status_uses_the_standard_success_envelope(): void
     {
         $this->api()->getJson('/api/v1')

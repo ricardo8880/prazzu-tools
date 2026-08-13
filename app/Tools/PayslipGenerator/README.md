@@ -53,3 +53,8 @@ Regras normativas continuam sujeitas à revisão profissional e atualização pe
 ## Lote 5 — memória e transparência
 
 O módulo foi revisado no Lote 5 para expor memória de cálculo estruturada, premissas e arredondamento sem depender do domínio de outras ferramentas. A responsabilidade permanece limitada ao escopo descrito neste documento.
+
+## Prazzu Plus — saneamento de monetização
+
+Exportação em planilha (`spreadsheet_export`) é Plus; geração individual e PDF permanecem Essenciais.
+A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.

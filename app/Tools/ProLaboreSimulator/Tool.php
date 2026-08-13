@@ -38,12 +38,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'),
-                    new ToolAnalyticsField('company_regime', 'input', selector: '[name="company_regime"]'),
-                    new ToolAnalyticsField('gross_pro_labore', 'input', selector: '[name="gross_pro_labore"]'),
-                    new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
-                    new ToolAnalyticsField('other_official_social_security', 'input', selector: '[name="other_official_social_security"]'),
-                    new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
+                        new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'),
+                        new ToolAnalyticsField('company_regime', 'input', selector: '[name="company_regime"]'),
+                        new ToolAnalyticsField('gross_pro_labore', 'input', selector: '[name="gross_pro_labore"]'),
+                        new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
+                        new ToolAnalyticsField('other_official_social_security', 'input', selector: '[name="other_official_social_security"]'),
+                        new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -63,7 +63,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
             icon: 'bi-person-badge',
             routeName: 'tools.simulador-pro-labore-ideal.index',
             vertical: 'contabilidade',
-            version: '1.0.0',
+            version: '1.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 30,
@@ -78,7 +78,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
             features: [
                 new ToolFeature('calculate', 'Cálculo completo do pró-labore', ToolFeatureTier::Essential),
                 new ToolFeature('memory', 'Memória e regras normativas', ToolFeatureTier::Essential),
-                new ToolFeature('scenarios', 'Cenários anuais e comparação entre sócios', ToolFeatureTier::Plus),
+                new ToolFeature('scenarios', 'Comparação anual de múltiplos valores de pró-labore', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),
@@ -98,7 +98,18 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
         );
     }
 
-    public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; }
-    public function viewsPath(): string { return __DIR__.'/Resources/views'; }
-    public function viewsNamespace(): string { return 'tools-simulador-pro-labore-ideal'; }
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-simulador-pro-labore-ideal';
+    }
 }

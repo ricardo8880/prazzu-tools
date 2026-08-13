@@ -29,7 +29,10 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
 {
     public const SLUG = 'simulador-mei-microempresa';
 
-    public function integrations(): ToolIntegrationManifest { return new ToolIntegrationManifest(publishes: [], accepts: []); }
+    public function integrations(): ToolIntegrationManifest
+    {
+        return new ToolIntegrationManifest(publishes: [], accepts: []);
+    }
 
     public function manifest(): ToolManifest
     {
@@ -65,9 +68,20 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
         );
     }
 
-    public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; }
-    public function viewsPath(): string { return __DIR__.'/Resources/views'; }
-    public function viewsNamespace(): string { return 'tools-simulador-mei-microempresa'; }
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-simulador-mei-microempresa';
+    }
 
     public function analyticsJourney(): ToolAnalyticsJourney
     {

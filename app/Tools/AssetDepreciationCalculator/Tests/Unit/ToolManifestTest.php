@@ -13,7 +13,7 @@ final class ToolManifestTest extends TestCase
 {
     public function test_manifest_has_expected_identity_and_tiers(): void
     {
-        $manifest = (new Tool())->manifest();
+        $manifest = (new Tool)->manifest();
         self::assertSame('calculadora-depreciacao-ativos', $manifest->slug);
         self::assertSame('tools.calculadora-depreciacao-ativos.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);

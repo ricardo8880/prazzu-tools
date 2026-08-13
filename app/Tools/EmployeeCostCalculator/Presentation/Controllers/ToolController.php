@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\EmployeeCostCalculator\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Data\PdfDocument;
-use App\Core\Export\Services\ToolResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
+use App\Core\Export\Services\ToolResultExportFactory;
 use App\Core\ToolProfiles\Services\ToolProfileManager;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
@@ -36,8 +37,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -90,8 +91,11 @@ final class ToolController extends Controller
         ExecuteToolRequest $request,
         CalculateTool $action,
         ToolProfileManager $profiles,
+        ToolFeatureRequestAuthorizer $features,
+        Tool $module,
     ): View {
         $input = $request->validated();
+        $features->requireIf(! empty($input['company_profile_id']), $module, 'branded_report', $request);
 
         Log::info('Employee cost printable report requested.', [
             'tool' => Tool::SLUG,

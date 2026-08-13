@@ -2,9 +2,10 @@
 
 namespace Tests\Feature\Admin\Acquisition;
 
+use App\Core\Access\Enums\AccountRole;
 use App\Core\Acquisition\Infrastructure\Persistence\AcquisitionContextRecord;
 use App\Core\Acquisition\Infrastructure\Persistence\AcquisitionContextToolRecord;
-use App\Core\Access\Enums\AccountRole;
+use App\Core\Tools\ToolCatalog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -30,7 +31,7 @@ final class AcquisitionContextAdminTest extends TestCase
 
     public function test_admin_can_create_context_with_ordered_content(): void
     {
-        $tools = app(\App\Core\Tools\ToolCatalog::class)->all(false)->pluck('slug')->take(3)->values();
+        $tools = app(ToolCatalog::class)->all(false)->pluck('slug')->take(3)->values();
 
         $response = $this->post(route('admin.acquisition.contexts.store'), [
             'name' => 'Rescisão Instagram',
@@ -118,7 +119,7 @@ final class AcquisitionContextAdminTest extends TestCase
             'status' => 'inactive',
         ]);
         $context->tools()->create([
-            'tool_slug' => app(\App\Core\Tools\ToolCatalog::class)->all(false)->first()['slug'],
+            'tool_slug' => app(ToolCatalog::class)->all(false)->first()['slug'],
             'placement' => 'featured',
             'position' => 0,
         ]);

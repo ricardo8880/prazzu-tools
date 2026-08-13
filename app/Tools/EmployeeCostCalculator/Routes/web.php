@@ -23,7 +23,7 @@ Route::prefix('ferramentas/custo-funcionario-clt')
             ->defaults('format', 'xlsx')->middleware('tool.feature:custo-funcionario-clt,xlsx_export')->name('export.xlsx');
 
         Route::post('/lote/calcular', [ToolController::class, 'calculateBatch'])
-            ->middleware('tool.feature:custo-funcionario-clt,batch_processing')->name('batch.calculate');
+            ->middleware(['tool.feature:custo-funcionario-clt,batch_processing', 'tool.feature:custo-funcionario-clt,projections'])->name('batch.calculate');
         Route::post('/lote/exportar/csv', [ToolController::class, 'exportBatch'])
             ->defaults('format', 'csv')->middleware([
                 'tool.feature:custo-funcionario-clt,batch_processing',
@@ -38,6 +38,7 @@ Route::prefix('ferramentas/custo-funcionario-clt')
             ->middleware([
                 'tool.feature:custo-funcionario-clt,batch_processing',
                 'tool.feature:custo-funcionario-clt,professional_report',
+                'tool.feature:custo-funcionario-clt,projections',
             ])->name('batch.print');
 
         Route::post('/cenarios/comparar', [ToolController::class, 'compareScenarios'])

@@ -34,23 +34,24 @@ final class HistoricalAnalyticsDeduplicator
         $lastAcceptedAt = [];
 
         foreach ($query->cursor() as $event) {
-                ++$scanned;
+            $scanned++;
 
-                $window = $this->windowFor((string) $event->event_name);
-                if ($window <= 0) {
-                    continue;
-                }
+            $window = $this->windowFor((string) $event->event_name);
+            if ($window <= 0) {
+                continue;
+            }
 
-                $fingerprint = $this->fingerprint($event);
-                $occurredAt = CarbonImmutable::instance($event->occurred_at);
-                $previousAt = $lastAcceptedAt[$fingerprint] ?? null;
+            $fingerprint = $this->fingerprint($event);
+            $occurredAt = CarbonImmutable::instance($event->occurred_at);
+            $previousAt = $lastAcceptedAt[$fingerprint] ?? null;
 
-                if ($previousAt instanceof CarbonImmutable && $previousAt->diffInSeconds($occurredAt) <= $window) {
-                    $duplicateIds[] = (int) $event->id;
-                    continue;
-                }
+            if ($previousAt instanceof CarbonImmutable && $previousAt->diffInSeconds($occurredAt) <= $window) {
+                $duplicateIds[] = (int) $event->id;
 
-                $lastAcceptedAt[$fingerprint] = $occurredAt;
+                continue;
+            }
+
+            $lastAcceptedAt[$fingerprint] = $occurredAt;
         }
 
         $deleted = 0;

@@ -10,6 +10,7 @@ use Tests\TestCase;
 final class ToolPageTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_public_page_displays_essential_form(): void
     {
         $this->get(route('tools.gerador-darf-gps.index'))

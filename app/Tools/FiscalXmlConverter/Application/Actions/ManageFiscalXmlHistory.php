@@ -24,6 +24,7 @@ final readonly class ManageFiscalXmlHistory
     public function paginate(int $userId, int $page = 1, int $perPage = 10): LengthAwarePaginator
     {
         $result = $this->history->paginateSucceeded(new ToolRunHistoryQuery(Tool::SLUG, $userId, $page, $perPage));
+
         return new LengthAwarePaginator($result->items, $result->total, $result->perPage, $result->page, [
             'path' => request()->url(), 'query' => request()->query(),
         ]);

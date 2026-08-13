@@ -10,12 +10,12 @@ use App\Core\Math\RoundingMode;
 use App\Core\Money\Money;
 use App\Core\Normative\NormativeRuleResolver;
 use App\Core\Normative\NormativeRuleSnapshot;
+use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Core\Tools\Calculation\Data\CalculationMemory;
 use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Tools\NetSalaryCalculator\Domain\Data\NetSalaryInput;
 use App\Tools\NetSalaryCalculator\Domain\Data\NetSalaryResult;
 use App\Tools\NetSalaryCalculator\Domain\Rules\EmployeeSocialSecurityRule;
-use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Tools\NetSalaryCalculator\Domain\Rules\RuleCatalog;
 
 final class NetSalaryCalculator

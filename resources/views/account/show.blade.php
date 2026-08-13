@@ -1,20 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Minha conta — Prazzu Tools')
-@section('meta_description', 'Gerencie sua conta local do Prazzu Tools.')
+@section('title', 'Meu Prazzu — Prazzu Tools')
+@section('meta_description', 'Retome ferramentas, resultados salvos e favoritos vinculados à sua conta Prazzu Tools.')
 @section('meta_robots', 'noindex,nofollow')
 
 @section('content')
     <div class="prazzu-page">
         <div class="row justify-content-center">
-            <div class="col-12 col-xl-9">
-                <section class="card border-0 shadow-sm">
+            <div class="col-12 col-xxl-10">
+                <section class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4 p-lg-5">
-                        <div class="d-flex flex-column flex-md-row justify-content-between gap-4">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-4">
                             <div>
                                 <span class="badge text-bg-success mb-3">Conta ativa</span>
-                                <h1 class="h3 mb-2">Olá, {{ auth()->user()->name }}</h1>
-                                <p class="text-body-secondary mb-0">{{ auth()->user()->email }}</p>
+                                <h1 class="h2 mb-2">Meu Prazzu</h1>
+                                <p class="text-body-secondary mb-2">
+                                    Olá, {{ auth()->user()->name }}. Este é seu ponto de retorno para continuar o que você já salvou nas ferramentas.
+                                </p>
+                                <p class="small text-body-secondary mb-0">{{ auth()->user()->email }}</p>
                             </div>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -24,7 +27,180 @@
                             </form>
                         </div>
 
-                        <hr class="my-4">
+                        <div class="row g-3 mt-2">
+                            <div class="col-12 col-sm-4">
+                                <div class="border rounded-3 p-3 h-100">
+                                    <div class="small text-body-secondary mb-1">Resultados salvos</div>
+                                    <div class="fs-3 fw-semibold">{{ number_format($historyCount, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="border rounded-3 p-3 h-100">
+                                    <div class="small text-body-secondary mb-1">Favoritos</div>
+                                    <div class="fs-3 fw-semibold">{{ number_format($favoriteCount, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="border rounded-3 p-3 h-100">
+                                    <div class="small text-body-secondary mb-1">Ferramentas com histórico</div>
+                                    <div class="fs-3 fw-semibold">{{ number_format($usedToolCount, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                @if($continueRuns->isNotEmpty())
+                    <section class="mb-4" aria-labelledby="continue-title">
+                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 mb-3">
+                            <div>
+                                <h2 class="h4 mb-1" id="continue-title">Continue de onde parou</h2>
+                                <p class="text-body-secondary mb-0">As ferramentas mais recentes com resultados vinculados à sua conta.</p>
+                            </div>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.index') }}">Ver todas as ferramentas</a>
+                        </div>
+
+                        <div class="row g-3">
+                            @foreach($continueRuns as $run)
+                                <div class="col-12 col-md-6">
+                                    <article class="card border h-100">
+                                        <div class="card-body d-flex flex-column gap-3">
+                                            <div class="d-flex align-items-start gap-3">
+                                                <div class="fs-4" aria-hidden="true"><i class="bi {{ $run['tool_icon'] }}"></i></div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex flex-wrap align-items-center gap-2">
+                                                        <h3 class="h6 mb-0">{{ $run['tool_name'] }}</h3>
+                                                        @if($run['favorite'])
+                                                            <span class="badge text-bg-warning"><i class="bi bi-star-fill me-1" aria-hidden="true"></i>Favorito</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="small text-body-secondary mt-1">
+                                                        Último resultado em {{ $run['finished_at']->format('d/m/Y \à\s H:i') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex flex-wrap gap-2 mt-auto">
+                                                @if($run['repeat_url'])
+                                                    <form method="POST" action="{{ url()->query($run['repeat_url'], ['source' => 'account_continuity']) }}">
+                                                        @csrf
+                                                        <button class="btn btn-primary btn-sm" type="submit">
+                                                            <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Refazer cálculo
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <a class="btn btn-primary btn-sm" href="{{ url()->query($run['tool_url'], ['source' => 'account_continuity']) }}">
+                                                        <i class="bi bi-arrow-right-circle me-1" aria-hidden="true"></i>Usar novamente
+                                                    </a>
+                                                @endif
+
+                                                @if($run['history_url'])
+                                                    <a class="btn btn-outline-secondary btn-sm" href="{{ url()->query($run['history_url'], ['source' => 'account_continuity']) }}">
+                                                        <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Histórico
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </article>
+                                </div>
+                            @endforeach
+                        </div>
+                    </section>
+                @else
+                    <section class="card border mb-4" aria-labelledby="continue-title">
+                        <div class="card-body p-4">
+                            <h2 class="h4 mb-2" id="continue-title">Continue de onde parou</h2>
+                            <p class="text-body-secondary mb-3">
+                                Ainda não há resultados salvos nesta conta. Quando você usar a persistência de uma ferramenta, seus resultados aparecerão aqui para facilitar o retorno.
+                            </p>
+                            <a class="btn btn-primary" href="{{ route('tools.index') }}">Explorar ferramentas</a>
+                        </div>
+                    </section>
+                @endif
+
+                @if($favoriteRuns->isNotEmpty())
+                    <section class="mb-4" aria-labelledby="favorites-title">
+                        <div class="mb-3">
+                            <h2 class="h4 mb-1" id="favorites-title">Seus favoritos</h2>
+                            <p class="text-body-secondary mb-0">Resultados que você marcou para encontrar novamente com mais facilidade.</p>
+                        </div>
+
+                        <div class="row g-3">
+                            @foreach($favoriteRuns as $run)
+                                <div class="col-12 col-md-6 col-xl-4">
+                                    <article class="card border h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <div class="d-flex align-items-start gap-3 mb-3">
+                                                <i class="bi bi-star-fill text-warning fs-5" aria-hidden="true"></i>
+                                                <div>
+                                                    <h3 class="h6 mb-1">{{ $run['tool_name'] }}</h3>
+                                                    <div class="small text-body-secondary">
+                                                        Salvo em {{ $run['finished_at']->format('d/m/Y \à\s H:i') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a class="btn btn-sm btn-outline-primary mt-auto align-self-start" href="{{ url()->query($run['open_url'], ['source' => 'account_favorite']) }}">
+                                                Abrir favorito
+                                            </a>
+                                        </div>
+                                    </article>
+                                </div>
+                            @endforeach
+                        </div>
+                    </section>
+                @elseif($historyCount > 0)
+                    <section class="card border mb-4" aria-labelledby="favorites-title">
+                        <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                            <div>
+                                <h2 class="h5 mb-1" id="favorites-title">Seus favoritos</h2>
+                                <p class="text-body-secondary mb-0">Você ainda não marcou resultados como favoritos. Use a estrela nos históricos que quiser encontrar mais rápido depois.</p>
+                            </div>
+                            <i class="bi bi-star fs-3 text-body-secondary flex-shrink-0" aria-hidden="true"></i>
+                        </div>
+                    </section>
+                @endif
+
+                @if($historyTools->isNotEmpty())
+                    <section class="card border mb-4" aria-labelledby="history-title">
+                        <div class="card-body p-4">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-2 mb-3">
+                                <div>
+                                    <h2 class="h4 mb-1" id="history-title">Seu histórico por ferramenta</h2>
+                                    <p class="text-body-secondary mb-0">Acesse rapidamente os históricos que já existem na sua conta.</p>
+                                </div>
+                            </div>
+
+                            <div class="list-group list-group-flush">
+                                @foreach($historyTools as $tool)
+                                    <div class="list-group-item px-0 py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                        <div class="d-flex align-items-start gap-3">
+                                            <i class="bi {{ $tool['tool_icon'] }} fs-5" aria-hidden="true"></i>
+                                            <div>
+                                                <h3 class="h6 mb-1">{{ $tool['tool_name'] }}</h3>
+                                                <div class="small text-body-secondary">
+                                                    {{ $tool['runs_count'] }} {{ $tool['runs_count'] === 1 ? 'resultado salvo' : 'resultados salvos' }}
+                                                    @if($tool['last_used_at'])
+                                                        · último em {{ \Illuminate\Support\Carbon::parse($tool['last_used_at'])->format('d/m/Y') }}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @if($tool['history_url'])
+                                                <a class="btn btn-sm btn-outline-primary" href="{{ url()->query($tool['history_url'], ['source' => 'account_history']) }}">Ver histórico</a>
+                                            @endif
+                                            <a class="btn btn-sm btn-outline-secondary" href="{{ url()->query($tool['tool_url'], ['source' => 'account_history']) }}">Abrir ferramenta</a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </section>
+                @endif
+
+                <section class="card border mb-4" aria-labelledby="account-settings-title">
+                    <div class="card-body p-4">
+                        <h2 class="h4 mb-3" id="account-settings-title">Conta e segurança</h2>
 
                         @if (auth()->user()->hasVerifiedEmail())
                             <div class="alert alert-success d-flex align-items-center gap-2" role="status">
@@ -38,11 +214,11 @@
                             </div>
                         @endif
 
-                        <div class="row g-4 mb-4">
+                        <div class="row g-4">
                             <div class="col-12 col-lg-7">
                                 <div class="card h-100 border">
                                     <div class="card-body">
-                                        <h2 class="h5">Alterar senha</h2>
+                                        <h3 class="h5">Alterar senha</h3>
                                         <form method="POST" action="{{ route('password.update') }}" novalidate>
                                             @csrf
                                             @method('PUT')
@@ -66,37 +242,36 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="card border mb-4">
-                            <div class="card-body">
-                                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                                    <div>
-                                        <h2 class="h5 mb-1">Acessos empresariais</h2>
-                                        <p class="text-body-secondary mb-0">Cadastre uma empresa ou acesse empresas às quais sua conta pertence.</p>
-                                    </div>
-                                    <a class="btn btn-outline-primary" href="{{ route('organizations.create') }}">Cadastrar empresa</a>
-                                </div>
-
-                                @php($memberships = auth()->user()->organizationMemberships()->with('organization')->where('status', 'active')->get())
-                                @if($memberships->isNotEmpty())
-                                    <div class="list-group list-group-flush mt-3">
-                                        @foreach($memberships as $membership)
-                                            <a class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center" href="{{ route('organizations.show', $membership->organization) }}">
-                                                <span>{{ $membership->organization->name }}</span>
-                                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-                                            </a>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="alert alert-info mb-0" role="note">
-                            <strong>Conta Prazzu unificada:</strong>
-                            sua conta é local neste momento. A estrutura já está preparada para receber futuramente o identificador da conta única Prazzu sem usar seu e-mail como chave de integração.
-                        </div>
                     </div>
                 </section>
+
+                <section class="card border mb-4" aria-labelledby="business-access-title">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                            <div>
+                                <h2 class="h4 mb-1" id="business-access-title">Acessos empresariais</h2>
+                                <p class="text-body-secondary mb-0">Cadastre uma empresa ou acesse empresas às quais sua conta pertence.</p>
+                            </div>
+                            <a class="btn btn-outline-primary" href="{{ route('organizations.create') }}">Cadastrar empresa</a>
+                        </div>
+
+                        @if($memberships->isNotEmpty())
+                            <div class="list-group list-group-flush mt-3">
+                                @foreach($memberships as $membership)
+                                    <a class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center" href="{{ route('organizations.show', $membership->organization) }}">
+                                        <span>{{ $membership->organization->name }}</span>
+                                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </section>
+
+                <div class="alert alert-info mb-0" role="note">
+                    <strong>Conta Prazzu unificada:</strong>
+                    sua conta é local neste momento. A estrutura já está preparada para receber futuramente o identificador da conta única Prazzu sem usar seu e-mail como chave de integração.
+                </div>
             </div>
         </div>
     </div>

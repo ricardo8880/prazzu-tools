@@ -18,6 +18,7 @@ page.viewed
 blog.reading.started
 tool.calculation.completed
 account.created
+newsletter.subscribed
 subscription.started
 ```
 
@@ -113,3 +114,23 @@ Eventos adicionados para reconstruir o funil sem capturar conteúdo informado pe
 Metadados permitidos: `journey_id`, `form`, `step`, `field`, `action`, `completion_percentage`, `filled_fields`, `total_fields`, `validation_error`, `execution_time_ms`, `calculation_success`, `abandoned_after_seconds`, `export_format` e `share_method`.
 
 Nunca publicar valores de campos, documentos, nomes, e-mails, CPF, CNPJ ou conteúdo do resultado.
+
+## Retenção — newsletter
+
+| Evento | Uso |
+|---|---|
+| `newsletter.subscribed` | Nova inscrição confirmada no canal de atualizações da plataforma. |
+
+O evento é emitido somente na criação ou reativação de uma inscrição, não em submissões repetidas do mesmo e-mail. Metadados permitidos: `vertical` e `source_path`. O endereço de e-mail nunca é enviado ao Analytics; ele permanece somente na tabela própria de assinantes.
+
+
+## Retenção — continuidade e descoberta
+
+| Evento | Uso |
+|---|---|
+| `retention.continuity.used` | Um atalho de retorno da Home, sessão temporária, Meu Prazzu, favoritos ou histórico levou novamente a uma ferramenta. |
+| `retention.related-tool.opened` | A jornada editorial de uma ferramenta levou à abertura de outra ferramenta oficial da mesma vertical. |
+
+Os eventos são atribuídos no destino por parâmetros de origem controlados pela própria interface. Valores arbitrários de `source` são ignorados. Para continuidade, o Analytics guarda somente a superfície (`placement`), rota e método. Para ferramenta relacionada, guarda também o slug público da ferramenta de origem (`from_tool`) e a posição da recomendação. Nenhum payload de cálculo, e-mail, documento ou valor digitado é enviado.
+
+Os funis padrão `Retorno por continuidade` e `Descoberta por ferramenta relacionada` permitem verificar se esses atalhos terminam em um novo resultado entregue, sem alterar os funis históricos de aquisição e Plus.

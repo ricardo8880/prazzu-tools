@@ -38,7 +38,6 @@ final class ResourcePagesTest extends TestCase
             ->assertSee('Acessar modelo');
     }
 
-
     public function test_published_guide_has_complete_practical_content(): void
     {
         $this->get('/recursos/guias/precificacao-de-honorarios-contabeis')

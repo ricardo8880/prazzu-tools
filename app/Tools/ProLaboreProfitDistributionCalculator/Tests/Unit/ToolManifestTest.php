@@ -15,7 +15,7 @@ final class ToolManifestTest extends TestCase
     public function test_active_planner_manifest_is_complete(): void
     {
         $manifest = (new Tool)->manifest();
-        self::assertSame('3.1.0', $manifest->version);
+        self::assertSame('3.2.0', $manifest->version);
         self::assertSame(ToolStatus::Active, $manifest->status);
         self::assertSame('Planejador de Retirada de Sócios', $manifest->name);
         self::assertTrue($manifest->supportsHistory);

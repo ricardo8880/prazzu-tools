@@ -10,6 +10,10 @@ use App\Tools\IssCalculator\Tool;
 final readonly class ShowToolPage
 {
     public function __construct(private Tool $tool) {}
+
     /** @return array{tool: ToolManifest} */
-    public function execute(): array { return ['tool' => $this->tool->manifest()]; }
+    public function execute(): array
+    {
+        return ['tool' => $this->tool->manifest()];
+    }
 }

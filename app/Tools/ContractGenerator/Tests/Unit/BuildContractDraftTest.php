@@ -12,7 +12,7 @@ final class BuildContractDraftTest extends TestCase
 {
     public function test_builds_typed_service_contract_draft(): void
     {
-        $draft = (new BuildContractDraft())->execute([
+        $draft = (new BuildContractDraft)->execute([
             'contract_type' => 'prestacao-servicos',
             'first_party_name' => 'Empresa Contratante Ltda.',
             'first_party_document_type' => 'cnpj',

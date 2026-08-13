@@ -21,6 +21,48 @@ final class ToolAnalyticsTest extends TestCase
         ]);
     }
 
+    public function test_continuity_entry_is_measured_without_capturing_calculation_payloads(): void
+    {
+        $this->get(route('tools.calculadora-margem-markup.index', [
+            'source' => 'home_recent_session',
+        ]))->assertOk();
+
+        $event = PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::RetentionContinuityUsed->value)
+            ->firstOrFail();
+
+        self::assertSame('calculadora-margem-markup', $event->subject_slug);
+        self::assertSame('home_recent_session', $event->metadata['placement']);
+        self::assertArrayNotHasKey('input_payload', $event->metadata);
+        self::assertArrayNotHasKey('result_payload', $event->metadata);
+    }
+
+    public function test_related_tool_entry_records_only_valid_catalog_attribution(): void
+    {
+        $this->get(route('tools.calculadora-ferias.index', [
+            'source' => 'related_tools',
+            'from_tool' => 'calculadora-salario-liquido',
+            'position' => 2,
+        ]))->assertOk();
+
+        $event = PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::RetentionRelatedToolOpened->value)
+            ->firstOrFail();
+
+        self::assertSame('calculadora-ferias', $event->subject_slug);
+        self::assertSame('calculadora-salario-liquido', $event->metadata['from_tool']);
+        self::assertSame(2, $event->metadata['position']);
+
+        $this->get(route('tools.calculadora-ferias.index', [
+            'source' => 'related_tools',
+            'from_tool' => 'slug-inexistente',
+        ]))->assertOk();
+
+        self::assertSame(1, PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::RetentionRelatedToolOpened->value)
+            ->count());
+    }
+
     public function test_browser_can_publish_a_normalized_tool_event(): void
     {
         $this->postJson(route('analytics.tools.track'), [
@@ -30,7 +72,6 @@ final class ToolAnalyticsTest extends TestCase
             'event_name' => AnalyticsEventName::ToolCalculationStarted->value, 'subject_slug' => 'calculadora-margem-markup',
         ]);
     }
-
 
     public function test_browser_can_publish_a_journey_event_without_persisting_sensitive_values(): void
     {
@@ -102,6 +143,7 @@ final class ToolAnalyticsTest extends TestCase
         ]);
         $this->get(route('admin.analytics.tools'))->assertOk()->assertSee('Analytics das Ferramentas');
     }
+
     public function test_product_dashboard_uses_declared_journey_events_and_period_comparison(): void
     {
         $this->signInAsInternalAdministrator();
@@ -128,5 +170,4 @@ final class ToolAnalyticsTest extends TestCase
             ->assertSee('purchase_price')
             ->assertSee('60,0s');
     }
-
 }

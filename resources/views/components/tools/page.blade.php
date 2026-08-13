@@ -20,6 +20,15 @@
             'has_validation_errors' => $errors->any(),
         ],
     );
+
+    $historyUrl = null;
+    $toolRouteName = is_array($catalogTool) ? ($catalogTool['route_name'] ?? null) : null;
+    if (($catalogTool['supports_history'] ?? false) && is_string($toolRouteName) && str_ends_with($toolRouteName, '.index')) {
+        $historyRouteName = substr($toolRouteName, 0, -strlen('.index')).'.history.index';
+        if (\Illuminate\Support\Facades\Route::has($historyRouteName)) {
+            $historyUrl = route($historyRouteName);
+        }
+    }
 @endphp
 
 <div {{ $attributes->class(['prazzu-page', 'tool-page'])->merge(['data-testid' => \App\Core\Quality\E2E\Support\TestId::make('tool-page', $slug)]) }} data-tool="{{ $slug }}">
@@ -49,12 +58,14 @@
 
     {{ $slot }}
 
-    <x-tools.plus-result-cta :slug="$slug" :plus-features="$catalogTool['plus_features'] ?? []" />
+    <x-tools.plus-result-cta :slug="$slug" :history-url="$historyUrl" />
+
+    <x-tools.trust-seo :slug="$slug" />
 
     @php($relatedTools = $toolCatalog->related($slug))
     @if ($relatedTools->isNotEmpty())
         <section class="mt-5" aria-labelledby="{{ $slug }}-related-title">
-            <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 gap-sm-3 mb-3">
                 <div>
                     <span class="prazzu-eyebrow">Continue sua análise</span>
                     <h2 class="h4 mb-0" id="{{ $slug }}-related-title">Ferramentas relacionadas</h2>
@@ -64,7 +75,7 @@
             <div class="row g-3">
                 @foreach ($relatedTools as $related)
                     <div class="col-12 col-md-6 col-xl-3">
-                        <a class="card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ route($related['route_name']) }}">
+                        <a class="card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ url()->query(route($related['route_name']), ['source' => 'related_tools', 'from_tool' => $slug, 'position' => $loop->iteration]) }}">
                             <div class="card-body">
                                 <div class="d-flex align-items-start gap-3">
                                     <span class="prazzu-tool-icon prazzu-tool-icon-sm" aria-hidden="true"><i class="bi {{ $related['icon'] }}"></i></span>

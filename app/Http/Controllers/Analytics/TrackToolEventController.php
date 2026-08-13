@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Analytics;
 
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Analytics\Domain\Services\ToolAnalyticsMetadata;
 use App\Core\Tools\ToolCatalog;
@@ -26,7 +27,7 @@ final class TrackToolEventController extends Controller
         $properties = $metadata->sanitize((array) ($data['metadata'] ?? []));
 
         if (isset($data['seconds'])) {
-            $legacySecondsKey = $data['event'] === \App\Core\Analytics\Domain\Enums\AnalyticsEventName::ToolTimeSpent->value
+            $legacySecondsKey = $data['event'] === AnalyticsEventName::ToolTimeSpent->value
                 ? 'time_spent_seconds'
                 : 'abandoned_after_seconds';
 

@@ -72,6 +72,7 @@ final class AccountingFeesController extends Controller
         $input = $request->validated();
         $result = $action->execute($input, null, false)['result'];
         $filename = 'honorarios-contabeis-'.now()->format('Y-m-d');
+
         return $format === 'pdf'
             ? $pdf->download($documents->pdf('Cálculo de honorários contábeis', $filename, $result, $input))
             : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\EmployeeCostCalculator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use Tests\TestCase;
 
 final class ToolPageTest extends TestCase
@@ -35,6 +36,8 @@ final class ToolPageTest extends TestCase
             ->assertSee('Custo anual projetado');
     }
 
+    #[CoversPlusFeature('custo-funcionario-clt', 'batch_processing')]
+    #[CoversPlusFeature('custo-funcionario-clt', 'professional_report')]
     public function test_batch_print_and_scenario_comparison_have_visible_results(): void
     {
         $employee = [
@@ -66,6 +69,21 @@ final class ToolPageTest extends TestCase
             ->assertSee('Alternativo');
     }
 
+    #[CoversPlusFeature('custo-funcionario-clt', 'scenarios')]
+    public function test_two_cost_scenarios_are_compared(): void
+    {
+        $employee = [...$this->employeePayload(), 'role' => 'Analista'];
+        $alternative = [...$employee, 'salary' => '5.500,00'];
+        $this->post(route('tools.custo-funcionario-clt.scenarios.compare'), [
+            'scenarios' => [
+                ['scenario_name' => 'Atual', 'employees' => [$employee]],
+                ['scenario_name' => 'Alternativo', 'employees' => [$alternative]],
+            ],
+        ])->assertOk()->assertSee('Comparação de cenários')->assertSee('Atual')->assertSee('Alternativo');
+    }
+
+    #[CoversPlusFeature('custo-funcionario-clt', 'csv_export')]
+    #[CoversPlusFeature('custo-funcionario-clt', 'xlsx_export')]
     public function test_csv_and_xlsx_exports_use_the_shared_download_formats(): void
     {
         $payload = $this->employeePayload();

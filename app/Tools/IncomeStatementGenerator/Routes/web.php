@@ -10,4 +10,4 @@ Route::get('/ferramentas/declaracao-rendimentos', [ToolController::class, 'index
 Route::post('/ferramentas/declaracao-rendimentos', [ToolController::class, 'calculate'])
     ->name('tools.declaracao-rendimentos.calculate');
 Route::post('/ferramentas/declaracao-rendimentos/baixar-pdf', [ToolController::class, 'downloadPdf'])->name('tools.declaracao-rendimentos.export.pdf');
-Route::post('/ferramentas/declaracao-rendimentos/baixar-excel', [ToolController::class, 'downloadExcel'])->name('tools.declaracao-rendimentos.export.excel');
+Route::post('/ferramentas/declaracao-rendimentos/baixar-excel', [ToolController::class, 'downloadExcel'])->middleware('tool.feature:declaracao-rendimentos,spreadsheet_export')->name('tools.declaracao-rendimentos.export.excel');

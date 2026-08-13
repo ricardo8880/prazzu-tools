@@ -39,3 +39,8 @@ Utiliza geração documental, políticas de dados sensíveis, histórico version
 
 - `1.1.0`: memória documental, datas coerentes, avisos contra presunção de vínculo e limitações de autenticidade.
 - `1.0.0`: gerador funcional inicial.
+
+## Prazzu Plus — saneamento de monetização
+
+Exportação em planilha (`spreadsheet_export`) é Plus; geração individual e PDF permanecem Essenciais.
+A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.

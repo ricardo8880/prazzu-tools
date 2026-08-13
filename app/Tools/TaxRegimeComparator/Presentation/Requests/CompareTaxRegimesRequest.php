@@ -32,6 +32,11 @@ final class CompareTaxRegimesRequest extends FormRequest
             'indirect_tax_rate' => ['nullable', 'regex:/^\d{1,2}(?:[\.,]\d{1,6})?$/', 'not_regex:/^100(?:[\.,]0+)?$/'],
             'state' => ['nullable', 'string', 'size:2', 'regex:/^[A-Za-z]{2}$/'],
             'municipality' => ['nullable', 'string', 'max:120'],
+            'scenarios' => ['nullable', 'array', 'max:4'],
+            'scenarios.*.label' => ['nullable', 'string', 'max:80'],
+            'scenarios.*.monthly_revenue' => ['nullable', ...array_slice($money, 1)],
+            'scenarios.*.revenue_last_twelve_months' => ['nullable', ...array_slice($money, 1)],
+            'scenarios.*.payroll_last_twelve_months' => ['nullable', ...array_slice($money, 1)],
         ];
     }
 

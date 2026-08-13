@@ -22,6 +22,7 @@ final readonly class CalculationInput implements ToolCalculationInput
         public string $adjustments = '0',
         public string $priorDistributions = '0',
         public string $intendedDistribution = '0',
+        public array $partners = [],
     ) {}
 
     public function toDomain(): ProfitDistributionInput
@@ -33,11 +34,7 @@ final readonly class CalculationInput implements ToolCalculationInput
             adjustments: Money::fromDecimal($this->adjustments),
             priorDistributions: Money::fromDecimal($this->priorDistributions),
             criterion: ProfitDistributionCriterion::Proportional,
-            partners: [new PartnerProfitShare(
-                key: 'partner-1',
-                ownershipPercentage: Percentage::fromString($this->ownershipPercentage),
-                label: trim($this->partnerLabel) !== '' ? trim($this->partnerLabel) : 'Sócio',
-            )],
+            partners: $this->partnerShares(),
             intendedDistribution: Money::fromDecimal($this->intendedDistribution),
         );
     }
@@ -53,6 +50,30 @@ final readonly class CalculationInput implements ToolCalculationInput
             'adjustments' => $this->adjustments,
             'prior_distributions' => $this->priorDistributions,
             'intended_distribution' => $this->intendedDistribution,
+            'partners' => $this->partners,
         ];
+    }
+
+    /** @return list<PartnerProfitShare> */
+    private function partnerShares(): array
+    {
+        $shares = [new PartnerProfitShare(
+            key: 'partner-1',
+            ownershipPercentage: Percentage::fromString($this->ownershipPercentage),
+            label: trim($this->partnerLabel) !== '' ? trim($this->partnerLabel) : 'Sócio 1',
+        )];
+
+        foreach ($this->partners as $index => $partner) {
+            if (trim((string) ($partner['ownership_percentage'] ?? '')) === '') {
+                continue;
+            }
+            $shares[] = new PartnerProfitShare(
+                key: 'partner-'.($index + 2),
+                ownershipPercentage: Percentage::fromString((string) $partner['ownership_percentage']),
+                label: trim((string) ($partner['label'] ?? '')) !== '' ? trim((string) $partner['label']) : 'Sócio '.($index + 2),
+            );
+        }
+
+        return $shares;
     }
 }

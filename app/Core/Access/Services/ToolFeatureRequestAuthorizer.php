@@ -19,7 +19,6 @@ final readonly class ToolFeatureRequestAuthorizer
         return $this->gate->decide($module->manifest(), $featureKey, $request->user())->allowed;
     }
 
-
     public function plusEnabled(ToolModule $module, Request $request): bool
     {
         foreach ($module->manifest()->featuresFor(ToolFeatureTier::Plus) as $feature) {

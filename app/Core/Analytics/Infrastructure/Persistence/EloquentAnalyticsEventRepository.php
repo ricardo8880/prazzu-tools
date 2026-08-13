@@ -126,7 +126,7 @@ final class EloquentAnalyticsEventRepository implements AnalyticsEventRepository
             $query->where('path', $context->path);
         }
 
-        foreach (['percentage', 'tool_slug', 'placement', 'position', 'destination', 'method', 'file', 'journey_id', 'reading_id', 'form', 'step', 'field', 'action'] as $key) {
+        foreach (['percentage', 'tool_slug', 'placement', 'position', 'destination', 'method', 'file', 'journey_id', 'reading_id', 'form', 'step', 'field', 'action', 'from_tool'] as $key) {
             if (array_key_exists($key, $event->properties)) {
                 $query->where("metadata->$key", $event->properties[$key]);
             }

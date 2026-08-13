@@ -16,8 +16,7 @@ final class TrackToolPresenceController extends Controller
         TrackToolPresenceRequest $request,
         ToolCatalog $catalog,
         AnalyticsCollectionPolicy $collectionPolicy,
-    ): Response
-    {
+    ): Response {
         $data = $request->validated();
         abort_if($catalog->find($data['tool']) === null, 404);
 

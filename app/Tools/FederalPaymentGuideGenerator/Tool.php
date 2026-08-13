@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tools\FederalPaymentGuideGenerator;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
@@ -28,7 +28,6 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
-
 use App\Tools\FederalPaymentGuideGenerator\Api\Actions\CalculateApiAction;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
@@ -54,13 +53,13 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('guide_type', 'input', selector: '[name="guide_type"]'),
-                    new ToolAnalyticsField('revenue_code', 'input', selector: '[name="revenue_code"]'),
-                    new ToolAnalyticsField('principal', 'input', selector: '[name="principal"]'),
-                    new ToolAnalyticsField('due_date', 'input', selector: '[name="due_date"]'),
-                    new ToolAnalyticsField('payment_date', 'input', selector: '[name="payment_date"]'),
-                    new ToolAnalyticsField('selic_accumulated_percent', 'input', selector: '[name="selic_accumulated_percent"]'),
-                    new ToolAnalyticsField('confirm_official_check', 'input', selector: '[name="confirm_official_check"]'),
+                        new ToolAnalyticsField('guide_type', 'input', selector: '[name="guide_type"]'),
+                        new ToolAnalyticsField('revenue_code', 'input', selector: '[name="revenue_code"]'),
+                        new ToolAnalyticsField('principal', 'input', selector: '[name="principal"]'),
+                        new ToolAnalyticsField('due_date', 'input', selector: '[name="due_date"]'),
+                        new ToolAnalyticsField('payment_date', 'input', selector: '[name="payment_date"]'),
+                        new ToolAnalyticsField('selic_accumulated_percent', 'input', selector: '[name="selic_accumulated_percent"]'),
+                        new ToolAnalyticsField('confirm_official_check', 'input', selector: '[name="confirm_official_check"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -105,7 +104,6 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
         );
     }
 
-
     public function historyPolicy(): ToolHistoryPolicy
     {
         return new ToolHistoryPolicy(
@@ -117,7 +115,18 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
         );
     }
 
-    public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; }
-    public function viewsPath(): string { return __DIR__.'/Resources/views'; }
-    public function viewsNamespace(): string { return 'tools-gerador-darf-gps'; }
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-gerador-darf-gps';
+    }
 }

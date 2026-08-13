@@ -6,16 +6,16 @@
 <div class="alert alert-info"><strong>Escopo.</strong> Operações interestaduais destinadas a consumidor final. Alíquota interna, FCP, benefícios e método de base dependem da legislação e da mercadoria/serviço e precisam ser confirmados pelo profissional.</div>
 <form method="POST" action="{{ route('tools.calculadora-difal-icms.calculate') }}" class="vstack gap-4">@csrf
 <x-tools.form-panel title="DIFAL" description="O Essencial resolve o diferencial a partir da base e alíquotas aplicáveis ao caso." badge="Essencial"><div class="row g-3">
-<div class="col-md-3"><x-tools.form.input name="competence" label="Competência" type="month" :value="old('competence','2026-07')" required /></div>
+<div class="col-md-3"><x-tools.form.input name="competence" label="Competência" type="month" :value="old('competence', now()->format('Y-m'))" required /></div>
 <div class="col-md-3"><x-tools.form.money name="base" label="Base/valor tributável" :value="old('base')" required help="Informe a base de cálculo aplicável ao caso." /></div>
 @php($ufs=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'])
 <div class="col-md-3"><label class="form-label" for="origin_uf">UF origem</label><select class="form-select" name="origin_uf" id="origin_uf" required>@foreach($ufs as $uf)<option value="{{ $uf }}" @selected(old('origin_uf','SP')===$uf)>{{ $uf }}</option>@endforeach</select></div>
 <div class="col-md-3"><label class="form-label" for="destination_uf">UF destino</label><select class="form-select" name="destination_uf" id="destination_uf" required>@foreach($ufs as $uf)<option value="{{ $uf }}" @selected(old('destination_uf','MG')===$uf)>{{ $uf }}</option>@endforeach</select></div>
-<div class="col-md-3"><x-tools.form.input name="internal_rate" label="Alíquota interna destino (%)" type="number" min="0.000001" max="99.999999" step="0.000001" :value="old('internal_rate','18')" required /></div>
+<div class="col-md-3"><x-tools.form.input name="internal_rate" label="Alíquota interna destino (%)" type="number" min="0.000001" max="99.999999" step="0.000001" :value="old('internal_rate')" required /></div>
 <div class="col-md-3"><x-tools.form.input name="interstate_rate" label="Alíquota interestadual (%)" type="number" min="0" max="100" step="0.000001" :value="old('interstate_rate')" help="Deixe vazio para usar a regra 7%/12%/4% assistida." /></div>
 </div></x-tools.form-panel>
 <x-tools.form-panel title="Cenário fiscal" description="Recursos Plus ficam liberados durante o lançamento." badge="Prazzu Plus"><div class="row g-3">
-<div class="col-md-3"><x-tools.form.input name="fcp_rate" label="FCP (%)" type="number" min="0" max="10" step="0.000001" :value="old('fcp_rate','0')" help="Informe somente se aplicável à mercadoria/operação." /></div>
+<div class="col-md-3"><x-tools.form.input name="fcp_rate" label="FCP (%)" type="number" min="0" max="10" step="0.000001" :value="old('fcp_rate')" help="Informe somente se aplicável à mercadoria/operação." /></div>
 <div class="col-md-4"><label class="form-label" for="method">Método de base</label><select class="form-select" name="method" id="method"><option value="single_base" @selected(old('method','single_base')==='single_base')>Base única</option><option value="double_base" @selected(old('method')==='double_base')>Base dupla / por dentro</option></select></div>
 <div class="col-md-4 form-check mt-4 ms-2"><input class="form-check-input" type="checkbox" name="imported" value="1" id="imported" @checked(old('imported'))><label class="form-check-label" for="imported">Mercadoria enquadrada na alíquota interestadual de 4%</label></div>
 <div class="col-md-4 form-check mt-4 ms-2"><input class="form-check-input" type="checkbox" name="recipient_taxpayer" value="1" id="recipient_taxpayer" @checked(old('recipient_taxpayer'))><label class="form-check-label" for="recipient_taxpayer">Destinatário é contribuinte do ICMS</label></div>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ReceiptIssuer\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -27,11 +28,15 @@ final class HistoryTest extends TestCase
         self::assertTrue($router->has('tools.emissor-de-recibos.history.export.pdf'));
     }
 
+    #[CoversPlusFeature('emissor-de-recibos', 'history')]
     public function test_authenticated_user_can_open_history_when_feature_is_available(): void
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->get(route('tools.emissor-de-recibos.history.index'));
-
-        self::assertContains($response->status(), [200, 302, 403]);
+        $this->actingAs($user)->post(route('tools.emissor-de-recibos.issue'), [
+            'number' => 'REC-HIST-1', 'payer_name' => 'Cliente', 'payee_name' => 'Prestador',
+            'amount' => '100,00', 'description' => 'Serviço', 'issued_at' => '2026-07-23',
+        ])->assertOk();
+        $this->actingAs($user)->get(route('tools.emissor-de-recibos.history.index'))
+            ->assertOk()->assertSee('REC-HIST-1');
     }
 }

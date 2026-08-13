@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Tools\IncomeStatementGenerator;
 
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
-use App\Core\Tools\Contracts\HasToolIntegrations;
-use App\Core\Tools\Contracts\HasViews;
-use App\Core\Tools\Contracts\HasWebRoutes;
-use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
+use App\Core\Tools\Contracts\HasToolIntegrations;
+use App\Core\Tools\Contracts\HasViews;
+use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -47,14 +47,14 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                     key: 'statement',
                     steps: ['identity', 'period', 'amounts'],
                     fields: [
-                    new ToolAnalyticsField('name', 'identity', selector: '[name="name"]'),
-                    new ToolAnalyticsField('document', 'identity', selector: '[name="document"]'),
-                    new ToolAnalyticsField('payer', 'identity', selector: '[name="payer"]'),
-                    new ToolAnalyticsField('year', 'period', selector: '[name="year"]'),
-                    new ToolAnalyticsField('gross', 'amounts', selector: '[name="gross"]'),
-                    new ToolAnalyticsField('inss', 'amounts', selector: '[name="inss"]'),
-                    new ToolAnalyticsField('irrf', 'amounts', selector: '[name="irrf"]'),
-                    new ToolAnalyticsField('other_deductions', 'amounts', selector: '[name="other_deductions"]'),
+                        new ToolAnalyticsField('name', 'identity', selector: '[name="name"]'),
+                        new ToolAnalyticsField('document', 'identity', selector: '[name="document"]'),
+                        new ToolAnalyticsField('payer', 'identity', selector: '[name="payer"]'),
+                        new ToolAnalyticsField('year', 'period', selector: '[name="year"]'),
+                        new ToolAnalyticsField('gross', 'amounts', selector: '[name="gross"]'),
+                        new ToolAnalyticsField('inss', 'amounts', selector: '[name="inss"]'),
+                        new ToolAnalyticsField('irrf', 'amounts', selector: '[name="irrf"]'),
+                        new ToolAnalyticsField('other_deductions', 'amounts', selector: '[name="other_deductions"]'),
                     ],
                     actions: ['calculate', 'export'],
                     selector: '[data-analytics-form="statement"]',
@@ -89,10 +89,10 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             ],
             features: [
                 new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('advanced_productivity', 'Produtividade avançada', ToolFeatureTier::Plus),
+                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
-            export: new ToolExportPolicy(enabled: true, formats: ['json', 'pdf']),
+            export: new ToolExportPolicy(enabled: true, formats: ['json', 'pdf', 'xlsx']),
             sharing: ToolSharingPolicy::disabled(),
             sensitiveData: new ToolSensitiveDataPolicy(SensitiveDataMode::Encrypted, ['name', 'document']),
         );

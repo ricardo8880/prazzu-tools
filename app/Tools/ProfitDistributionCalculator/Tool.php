@@ -38,15 +38,15 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('partner_label', 'input', selector: '[name="partner_label"]'),
-                    new ToolAnalyticsField('ownership_percentage', 'input', selector: '[name="ownership_percentage"]'),
-                    new ToolAnalyticsField('accounting_profit', 'input', selector: '[name="accounting_profit"]'),
-                    new ToolAnalyticsField('accumulated_losses', 'input', selector: '[name="accumulated_losses"]'),
-                    new ToolAnalyticsField('reserves_and_unavailable_amounts', 'input', selector: '[name="reserves_and_unavailable_amounts"]'),
-                    new ToolAnalyticsField('adjustments', 'input', selector: '[name="adjustments"]'),
-                    new ToolAnalyticsField('prior_distributions', 'input', selector: '[name="prior_distributions"]'),
-                    new ToolAnalyticsField('intended_distribution', 'input', selector: '[name="intended_distribution"]'),
-                    new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
+                        new ToolAnalyticsField('partner_label', 'input', selector: '[name="partner_label"]'),
+                        new ToolAnalyticsField('ownership_percentage', 'input', selector: '[name="ownership_percentage"]'),
+                        new ToolAnalyticsField('accounting_profit', 'input', selector: '[name="accounting_profit"]'),
+                        new ToolAnalyticsField('accumulated_losses', 'input', selector: '[name="accumulated_losses"]'),
+                        new ToolAnalyticsField('reserves_and_unavailable_amounts', 'input', selector: '[name="reserves_and_unavailable_amounts"]'),
+                        new ToolAnalyticsField('adjustments', 'input', selector: '[name="adjustments"]'),
+                        new ToolAnalyticsField('prior_distributions', 'input', selector: '[name="prior_distributions"]'),
+                        new ToolAnalyticsField('intended_distribution', 'input', selector: '[name="intended_distribution"]'),
+                        new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -101,7 +101,18 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
         );
     }
 
-    public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; }
-    public function viewsPath(): string { return __DIR__.'/Resources/views'; }
-    public function viewsNamespace(): string { return 'tools-distribuicao-de-lucros'; }
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-distribuicao-de-lucros';
+    }
 }

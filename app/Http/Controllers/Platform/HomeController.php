@@ -9,6 +9,9 @@ use App\Core\Acquisition\Domain\Data\AcquisitionContext;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
+use App\Core\Tools\History\Application\Queries\UserToolContinuityQuery;
+use App\Core\Tools\ToolCatalog;
+use App\Core\Verticals\Application\VerticalContext;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,6 +26,9 @@ final class HomeController extends Controller
         ResolveAcquisitionContext $resolveContext,
         AcquisitionContextSession $contextSession,
         PlatformAnalytics $analytics,
+        UserToolContinuityQuery $continuity,
+        ToolCatalog $toolCatalog,
+        VerticalContext $verticalContext,
     ): View|RedirectResponse {
         $queryContext = $request->query('context');
         $context = null;
@@ -61,11 +67,32 @@ final class HomeController extends Controller
         ViewFacade::share('activeAcquisitionContext', $context);
         ViewFacade::share('activeAcquisitionContextMode', $contextSession->mode($request->session()));
 
-        return view('welcome', $home->execute(
+        $payload = $home->execute(
             keyword: $context !== null && $contextSession->mode($request->session()) === AcquisitionContextSession::MODE_CONTEXTUAL
                 ? $context->keyword
                 : null,
             defaultHome: config('home'),
-        ));
+        );
+
+        $payload['continueTools'] = $request->user() === null
+            ? collect()
+            : $continuity->recentTools(
+                (int) $request->user()->getAuthIdentifier(),
+                $verticalContext->slug(),
+                4,
+            );
+
+        $payload['recentToolCandidates'] = $request->user() === null
+            ? $toolCatalog->all()->map(static fn (array $tool): array => [
+                'slug' => $tool['slug'],
+                'name' => $tool['name'],
+                'description' => $tool['description'],
+                'icon' => $tool['icon'],
+                'tone' => $tool['tone'],
+                'url' => route($tool['route_name']),
+            ])->values()
+            : collect();
+
+        return view('welcome', $payload);
     }
 }

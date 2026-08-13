@@ -5,14 +5,20 @@ declare(strict_types=1);
 namespace App\Tools\FiscalXmlConverter\Tests\Feature;
 
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Quality\Attributes\CoversPlusFeature;
+use App\Core\Temporary\Contracts\TemporaryPayloadStore;
+use App\Core\Tools\History\Enums\ToolRunStatus;
+use App\Core\Tools\History\Models\ToolRun;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Mockery;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class ToolPageTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_page_is_available(): void
     {
         $this->get(route('tools.conversor-fiscal-xml.index'))
@@ -50,5 +56,29 @@ final class ToolPageTest extends TestCase
     {
         $this->post(route('tools.conversor-fiscal-xml.calculate'))
             ->assertSessionHasErrors('xml_file');
+    }
+
+    #[CoversPlusFeature('conversor-fiscal-xml', 'professional_export')]
+    public function test_current_result_can_be_exported_as_json(): void
+    {
+        $user = User::factory()->create();
+        $token = app(TemporaryPayloadStore::class)->put('fiscal-xml.current', ['documents' => []], 'user:'.$user->id);
+        $this->actingAs($user)->get(route('tools.conversor-fiscal-xml.export', ['format' => 'json', 'result_token' => $token]))
+            ->assertOk()->assertHeader('content-disposition');
+    }
+
+    #[CoversPlusFeature('conversor-fiscal-xml', 'history')]
+    public function test_authenticated_user_sees_saved_processing_history(): void
+    {
+        $user = User::factory()->create();
+        ToolRun::query()->create([
+            'user_id' => $user->id, 'tool_slug' => 'conversor-fiscal-xml', 'tool_version' => '1.0.0',
+            'schema_version' => 1, 'rule_version' => '2026.1.0', 'reference_date' => now()->toDateString(),
+            'status' => ToolRunStatus::Succeeded, 'input_payload' => ['mode' => 'single', 'number' => '123'],
+            'result_payload' => ['number' => '123', 'total' => ['document' => '10.00']],
+            'started_at' => now(), 'finished_at' => now(), 'expires_at' => now()->addYear(),
+        ]);
+        $this->actingAs($user)->get(route('tools.conversor-fiscal-xml.history.index'))
+            ->assertOk()->assertSee('Histórico do Conversor Fiscal de XML');
     }
 }

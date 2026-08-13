@@ -931,3 +931,29 @@ Toda nova página deve nascer com sua documentação oficial. Toda página remov
 ## Estado do saneamento cirúrgico do catálogo
 
 Após o Lote Cirúrgico 4, o catálogo histórico mantinha 32 ferramentas visíveis. O Lote 6 multi-nicho expande explicitamente esse catálogo para 33, sem remover nenhuma das 32 anteriores. O antigo módulo combinado permanece reposicionado como `Planejador de Retirada de Sócios`, com propósito distinto de consolidação e comparação de cenários. Os simuladores especializados de Pró-Labore e Distribuição de Lucros permanecem independentes. A Home continua limitada às 8 maiores ordens de lançamento da vertical ativa.
+
+## Remediação Prazzu Plus — certificação funcional
+
+O novo ciclo de remediação separa autorização comercial, prontidão estrutural e certificação funcional. Os 137 benefícios Plus existentes permanecem disponíveis conforme o modo comercial, mas começam como dívida funcional até receberem teste comportamental explícito por `slug:feature`. Checksums protegem o catálogo e a dívida legada contra substituições silenciosas. A continuidade detalhada está em `docs/PLUS-REMEDIATION-LOT-1-FOUNDATION.md` e `docs/IMPLEMENTATION-LOTS.md`.
+
+O Lote 2 certificou funcionalmente 19 benefícios das cinco ferramentas críticas. Esses contratos possuem implementação real, gate individual e teste comportamental identificado; a continuidade está em `docs/PLUS-REMEDIATION-LOT-2-CRITICALS.md`.
+
+O Lote 3 certificou mais 13 benefícios de produtividade documental, histórico e relatórios. O estado acumulado possui 32 contratos funcionalmente certificados e está detalhado em `docs/PLUS-REMEDIATION-LOT-3-DOCUMENTS.md`.
+
+O Lote 4 certificou os 11 benefícios integrados da Calculadora de Custo de Funcionário CLT. O estado acumulado possui 43 contratos funcionais e está detalhado em `docs/PLUS-REMEDIATION-LOT-4-EMPLOYEE-COST.md`.
+
+O Lote 5 certificou 16 benefícios de apuração fiscal nas calculadoras de IRPJ/CSLL no Lucro Presumido, PIS/Cofins e ICMS-ST. O estado acumulado possui 59 contratos funcionais, restando 17 contratos na dívida legada, conforme `docs/PLUS-REMEDIATION-LOT-5-FISCAL-APURATIONS.md`.
+
+O Lote 6 certificou os 17 benefícios legados finais em seis ferramentas fiscais, contábeis e trabalhistas. Os 137 contratos Plus agora cumprem o contrato estrutural estrito; 76 possuem certificação funcional explícita e a dívida legada estrutural está zerada. A continuidade está em `docs/PLUS-REMEDIATION-LOT-6-LEGACY-CLOSURE.md`.
+
+O Lote 7 concluiu a matriz funcional dos 61 contratos restantes. Os 137 benefícios Plus declarados agora estão vinculados a evidências de comportamento em seus módulos, mantendo também implementação, gate central e cobertura Free × Plus. A dívida funcional está zerada; o Lote 8 fica reservado à auditoria final consolidada. Detalhes em `docs/PLUS-REMEDIATION-LOT-7-FUNCTIONAL-CLOSURE.md`.
+
+O Lote 8 encerrou a remediação com auditoria consolidada dos 43 módulos e 137 contratos Plus. Catálogo, contratos estritos e certificações funcionais coincidem integralmente; dívidas estrutural e funcional permanecem zeradas. A composição funcional passou a ter checksum próprio e o inventário oficial registra o estado auditado. Detalhes em `docs/PLUS-REMEDIATION-LOT-8-FINAL-AUDIT.md`.
+
+O Lote 9 endureceu a distribuição sem alterar ferramentas: o empacotador exclui raízes Laravel aninhadas, o validador rejeita resíduos proibidos em qualquer profundidade e o CI passa a construir e validar o ZIP oficial. O saneamento local remove a cópia duplicada e mantém `.env` no computador, mas fora do índice do Git. Detalhes em `docs/PLUS-REMEDIATION-LOT-9-DISTRIBUTION-HARDENING.md`.
+
+O Lote 10 corrigiu a representação de namespace em 38 testes adicionados durante a certificação funcional. Os imports de `CoversPlusFeature` agora usam separadores PHP válidos, preservando integralmente os 137 marcadores e destravando o lint do `composer release:check`. Detalhes em `docs/PLUS-REMEDIATION-LOT-10-PHP-IMPORTS.md`.
+
+O Lote 11 restaurou o fluxo E2E mínimo referenciado pelo projeto e adicionou um finalizador para aplicar o Pint oficial antes do gate de release. Ambiente isolado, presença do Chromium, relatório textual e comando Playwright completo voltam a ter implementações executáveis, sem desativar verificações. Detalhes em `docs/PLUS-REMEDIATION-LOT-11-QUALITY-E2E.md`.
+
+O Lote 12 concluiu os ajustes operacionais observados na execução real: o E2E completo não herda mais o limite de 300 segundos do Composer e o empacotador exclui ambientes locais como `.env.e2e`, preservando apenas os exemplos públicos. Detalhes em `docs/PLUS-REMEDIATION-LOT-12-E2E-TIMEOUT-DISTRIBUTION.md`.

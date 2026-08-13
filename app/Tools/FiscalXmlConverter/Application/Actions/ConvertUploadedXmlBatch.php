@@ -14,7 +14,7 @@ final readonly class ConvertUploadedXmlBatch
     public function __construct(private NfeXmlParser $parser) {}
 
     /** @param list<UploadedFile> $files @return array{documents:list<array<string,mixed>>,errors:list<array{file:string,message:string}>,summary:array<string,mixed>} */
-    public function execute(array $files): array
+    public function execute(array $files, bool $compareDocuments = false): array
     {
         $documents = [];
         $errors = [];
@@ -41,9 +41,25 @@ final readonly class ConvertUploadedXmlBatch
             }
         }
 
+        $comparison = null;
+        if ($compareDocuments && count($documents) >= 2) {
+            $left = $documents[0];
+            $right = $documents[1];
+            $leftTotal = Money::fromDecimal((string) ($left['totals']['document'] ?? '0'));
+            $rightTotal = Money::fromDecimal((string) ($right['totals']['document'] ?? '0'));
+            $comparison = [
+                'left' => ['source_file' => $left['source_file'] ?? '', 'number' => $left['number'] ?? '', 'total' => $leftTotal->formatPtBr()],
+                'right' => ['source_file' => $right['source_file'] ?? '', 'number' => $right['number'] ?? '', 'total' => $rightTotal->formatPtBr()],
+                'difference_minor' => $rightTotal->subtract($leftTotal)->minorAmount(),
+                'same_issuer' => data_get($left, 'issuer.tax_id') === data_get($right, 'issuer.tax_id'),
+                'item_count_difference' => count($right['items'] ?? []) - count($left['items'] ?? []),
+            ];
+        }
+
         return [
             'documents' => $documents,
             'errors' => $errors,
+            'document_comparison' => $comparison,
             'summary' => [
                 'received' => count($files),
                 'processed' => count($documents),

@@ -5,12 +5,14 @@
 ## Código
 
 - [ ] `composer release:check` aprovado.
+- [ ] `scripts/finalize-quality.ps1` aplicado quando o Pint indicar dívida de estilo.
 
 - [ ] `composer format:check` aprovado.
 - [ ] `composer architecture` aprovado.
 - [ ] `composer test` aprovado.
 - [ ] `composer quality` aprovado.
 - [ ] `npm run build` aprovado.
+- [ ] `composer e2e:browser:test` aprovado com Chromium instalado por `npm run e2e:install`.
 
 ## Laravel
 
@@ -32,9 +34,12 @@
 ## Distribuição
 
 - [ ] `.env` não está no pacote.
+- [ ] `.env` não está versionado (`git ls-files .env` não retorna resultado).
 - [ ] `.git`, `.idea`, `vendor` e `node_modules` não estão no pacote.
+- [ ] Não existe outra raiz Laravel aninhada no pacote.
 - [ ] Banco SQLite local não está no pacote.
 - [ ] Logs locais não estão no pacote.
 - [ ] README e documentação correspondem ao estado atual.
 - [ ] `scripts/verify-distribution.php` aprovou o diretório empacotado.
+- [ ] O pacote foi gerado por `scripts/package-distribution.ps1`, nunca compactando a pasta de trabalho diretamente.
 - [ ] Nenhum arquivo temporário `~$*`, `.DS_Store` ou `Thumbs.db` está no pacote.

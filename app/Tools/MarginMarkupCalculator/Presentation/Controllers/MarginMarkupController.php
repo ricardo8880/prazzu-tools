@@ -108,7 +108,7 @@ final class MarginMarkupController extends Controller
 
             $request->flash();
 
-        return view('tools-calculadora-margem-markup::index', [
+            return view('tools-calculadora-margem-markup::index', [
                 'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
                 'calculationResult' => $resultData,
             ]);

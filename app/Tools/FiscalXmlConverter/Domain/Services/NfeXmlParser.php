@@ -27,7 +27,7 @@ final class NfeXmlParser
         }
 
         $previous = libxml_use_internal_errors(true);
-        $document = new DOMDocument();
+        $document = new DOMDocument;
         $loaded = $document->loadXML($xml, LIBXML_NONET | LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_COMPACT);
         libxml_clear_errors();
         libxml_use_internal_errors($previous);
@@ -48,9 +48,13 @@ final class NfeXmlParser
 
         $items = [];
         foreach ($xpath->query('.//*[local-name()="det"]', $infNfe) ?: [] as $det) {
-            if (! $det instanceof DOMElement) continue;
+            if (! $det instanceof DOMElement) {
+                continue;
+            }
             $product = $xpath->query('./*[local-name()="prod"]', $det)->item(0);
-            if (! $product instanceof DOMElement) continue;
+            if (! $product instanceof DOMElement) {
+                continue;
+            }
             $items[] = new FiscalItem(
                 number: max(1, (int) $det->getAttribute('nItem')),
                 code: $this->text($xpath, './*[local-name()="cProd"]', $product),
@@ -65,13 +69,17 @@ final class NfeXmlParser
             );
         }
 
-        if ($items === []) throw new InvalidFiscalXml('A nota não possui itens de produto reconhecíveis.');
+        if ($items === []) {
+            throw new InvalidFiscalXml('A nota não possui itens de produto reconhecíveis.');
+        }
 
         $issuer = $xpath->query('.//*[local-name()="emit"]', $infNfe)->item(0);
         $recipient = $xpath->query('.//*[local-name()="dest"]', $infNfe)->item(0);
         $id = preg_replace('/^NFe/', '', $infNfe->getAttribute('Id')) ?: '';
         $warnings = [];
-        if ($id === '' || strlen($id) !== 44) $warnings[] = 'A chave de acesso não foi localizada ou não possui 44 dígitos.';
+        if ($id === '' || strlen($id) !== 44) {
+            $warnings[] = 'A chave de acesso não foi localizada ou não possui 44 dígitos.';
+        }
 
         return new FiscalDocument(
             model: $model,
@@ -89,8 +97,11 @@ final class NfeXmlParser
 
     private function party(DOMXPath $xpath, ?DOMNode $node): FiscalParty
     {
-        if (! $node) return new FiscalParty('', null, null);
+        if (! $node) {
+            return new FiscalParty('', null, null);
+        }
         $taxId = $this->text($xpath, './*[local-name()="CNPJ" or local-name()="CPF"]', $node);
+
         return new FiscalParty(
             $this->text($xpath, './*[local-name()="xNome"]', $node),
             $this->nullable($taxId),
@@ -101,26 +112,42 @@ final class NfeXmlParser
     private function extractTotals(DOMXPath $xpath, DOMNode $context): array
     {
         $total = $xpath->query('.//*[local-name()="ICMSTot"]', $context)->item(0);
-        $map = ['products'=>'vProd','freight'=>'vFrete','discount'=>'vDesc','icms'=>'vICMS','ipi'=>'vIPI','pis'=>'vPIS','cofins'=>'vCOFINS','document'=>'vNF'];
+        $map = ['products' => 'vProd', 'freight' => 'vFrete', 'discount' => 'vDesc', 'icms' => 'vICMS', 'ipi' => 'vIPI', 'pis' => 'vPIS', 'cofins' => 'vCOFINS', 'document' => 'vNF'];
         $values = [];
-        foreach ($map as $key => $tag) $values[$key] = $this->decimal($this->text($xpath, './*[local-name()="'.$tag.'"]', $total));
+        foreach ($map as $key => $tag) {
+            $values[$key] = $this->decimal($this->text($xpath, './*[local-name()="'.$tag.'"]', $total));
+        }
+
         return $values;
     }
 
     private function extractTaxes(DOMXPath $xpath, DOMNode $context): array
     {
-        $map = ['icms'=>'vICMS','ipi'=>'vIPI','pis'=>'vPIS','cofins'=>'vCOFINS'];
+        $map = ['icms' => 'vICMS', 'ipi' => 'vIPI', 'pis' => 'vPIS', 'cofins' => 'vCOFINS'];
         $values = [];
-        foreach ($map as $key => $tag) $values[$key] = $this->decimal($this->text($xpath, './/*[local-name()="'.$tag.'"]', $context));
+        foreach ($map as $key => $tag) {
+            $values[$key] = $this->decimal($this->text($xpath, './/*[local-name()="'.$tag.'"]', $context));
+        }
+
         return $values;
     }
 
     private function text(DOMXPath $xpath, string $query, ?DOMNode $context = null): string
     {
-        if (! $context) return '';
+        if (! $context) {
+            return '';
+        }
+
         return trim((string) $xpath->evaluate('string('.$query.')', $context));
     }
 
-    private function nullable(string $value): ?string { return $value === '' ? null : $value; }
-    private function decimal(string $value): string { return is_numeric($value) ? $value : '0'; }
+    private function nullable(string $value): ?string
+    {
+        return $value === '' ? null : $value;
+    }
+
+    private function decimal(string $value): string
+    {
+        return is_numeric($value) ? $value : '0';
+    }
 }

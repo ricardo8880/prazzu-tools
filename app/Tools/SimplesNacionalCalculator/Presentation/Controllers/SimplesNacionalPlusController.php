@@ -36,6 +36,7 @@ final class SimplesNacionalPlusController extends Controller
         private readonly ListSimplesNacionalCalculations $history,
         private readonly ToolResultResolver $integrations,
     ) {}
+
     public function alerts(AnalyzeAlertsRequest $request, AnalyzeSimplesNacionalAlerts $action): View
     {
         try {

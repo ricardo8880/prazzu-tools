@@ -13,7 +13,7 @@ final class ToolManifestTest extends TestCase
 {
     public function test_manifest_is_active_with_the_expected_identity(): void
     {
-        $manifest = (new Tool())->manifest();
+        $manifest = (new Tool)->manifest();
 
         self::assertSame('calculadora-ferias', $manifest->slug);
         self::assertSame('Calculadora de Férias', $manifest->name);

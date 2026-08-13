@@ -27,7 +27,6 @@ $accounting = [
     ],
 ];
 
-
 $hr = [
     'page_title' => 'Prazzu Tools — Ferramentas para Recursos Humanos',
     'meta_description' => 'Ferramentas práticas para apoiar indicadores, rotinas e decisões de Recursos Humanos.',

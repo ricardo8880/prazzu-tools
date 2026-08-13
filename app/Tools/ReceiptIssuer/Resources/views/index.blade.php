@@ -10,6 +10,8 @@
         <span data-analytics-result="main" hidden></span>
     @endif
 
+    <x-tools.trust-seo slug="emissor-de-recibos" :show-content="false" />
+
     <div class="container py-5" data-testid="tool-page-emissor-de-recibos">
         <div class="row justify-content-center">
             <div class="col-xl-10">
@@ -127,6 +129,11 @@
                                 <label for="city" class="form-label">Cidade <span class="text-muted">(opcional)</span></label>
                                 <input id="city" name="city" value="{{ old('city') }}" class="form-control" maxlength="120">
                             </div>
+                            <div class="col-12"><hr><h3 class="h5">Identidade do escritório <span class="badge text-bg-primary">Prazzu Plus</span></h3><p class="small text-body-secondary mb-2">Opcional. Personalize o cabeçalho e o rodapé do recibo com a identidade profissional.</p></div>
+                            <div class="col-md-5"><label for="brand_name" class="form-label">Nome do escritório</label><input id="brand_name" name="brand_name" value="{{ old('brand_name') }}" class="form-control" maxlength="120"></div>
+                            <div class="col-md-3"><label for="brand_document" class="form-label">CNPJ/registro</label><input id="brand_document" name="brand_document" value="{{ old('brand_document') }}" class="form-control" maxlength="40"></div>
+                            <div class="col-md-4"><label for="brand_footer" class="form-label">Rodapé personalizado</label><input id="brand_footer" name="brand_footer" value="{{ old('brand_footer') }}" class="form-control" maxlength="160"></div>
+
                             <div class="col-12 d-flex gap-2">
                                 <button class="btn btn-primary" type="submit">Gerar e revisar recibo</button>
                                 <a class="btn btn-outline-secondary" href="{{ route('tools.emissor-de-recibos.index') }}">Limpar</a>
@@ -142,7 +149,7 @@
                             <div class="d-flex flex-wrap gap-2">
                                 <form method="POST" action="{{ route('tools.emissor-de-recibos.export', 'pdf') }}">
                                     @csrf
-                                    @foreach (['number', 'payer_name', 'payer_document_type', 'payer_document', 'payee_name', 'payee_document_type', 'payee_document', 'amount', 'description', 'issued_at', 'city'] as $field)
+                                    @foreach (['number', 'payer_name', 'payer_document_type', 'payer_document', 'payee_name', 'payee_document_type', 'payee_document', 'amount', 'description', 'issued_at', 'city', 'brand_name', 'brand_document', 'brand_footer'] as $field)
                                         <input type="hidden" name="{{ $field }}" value="{{ old($field) }}">
                                     @endforeach
                                     <button class="btn btn-success" type="submit">
@@ -151,7 +158,7 @@
                                 </form>
                                 <form method="POST" action="{{ route('tools.emissor-de-recibos.export', 'xlsx') }}">
                                     @csrf
-                                    @foreach (['number', 'payer_name', 'payer_document_type', 'payer_document', 'payee_name', 'payee_document_type', 'payee_document', 'amount', 'description', 'issued_at', 'city'] as $field)
+                                    @foreach (['number', 'payer_name', 'payer_document_type', 'payer_document', 'payee_name', 'payee_document_type', 'payee_document', 'amount', 'description', 'issued_at', 'city', 'brand_name', 'brand_document', 'brand_footer'] as $field)
                                         <input type="hidden" name="{{ $field }}" value="{{ old($field) }}">
                                     @endforeach
                                     <button class="btn btn-outline-success" type="submit"><i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i>Exportar Excel (.xlsx)</button>
@@ -161,6 +168,9 @@
 
                         <article class="card shadow-sm" id="receipt-preview">
                             <div class="card-body p-4 p-md-5">
+                                @if(!empty($receipt['branding']['name']) || !empty($receipt['branding']['document']))
+                                    <div class="mb-3" data-plus-feature="custom_branding"><strong>{{ $receipt['branding']['name'] ?? '' }}</strong>@if(!empty($receipt['branding']['document']))<div class="small text-muted">{{ $receipt['branding']['document'] }}</div>@endif</div>
+                                @endif
                                 <div class="d-flex justify-content-between gap-3 border-bottom pb-3 mb-4">
                                     <div>
                                         <div class="text-uppercase text-muted small">Recibo</div>
@@ -194,6 +204,7 @@
                                 </div>
 
                                 <div class="text-muted small mt-5">Identificador: {{ $receipt['identifier'] }}</div>
+                                @if(!empty($receipt['branding']['footer']))<div class="text-center small mt-3" data-plus-feature="custom_branding">{{ $receipt['branding']['footer'] }}</div>@endif
                             </div>
                         </article>
                         <div class="alert alert-info mt-3 mb-0">Revise nomes, documentos, valor, descrição e data antes de imprimir ou salvar o PDF.</div>

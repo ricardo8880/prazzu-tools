@@ -28,8 +28,8 @@ final class ExecuteToolRequest extends FormRequest
             'assets.*.value' => ['nullable', 'brazilian_money', 'money_min:0'],
             'assets.*.useful_life_years' => ['nullable', 'integer', 'min:1', 'max:100'],
             'assets.*.method' => ['nullable', 'in:linear,declining_balance,sum_of_years_digits'],
-            'registered_asset_ids' => ['nullable','array','max:20'],
-            'registered_asset_ids.*' => ['integer','min:1'],
+            'registered_asset_ids' => ['nullable', 'array', 'max:20'],
+            'registered_asset_ids.*' => ['integer', 'min:1'],
         ];
     }
 

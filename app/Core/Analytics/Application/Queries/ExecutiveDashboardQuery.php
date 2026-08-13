@@ -238,7 +238,6 @@ final class ExecutiveDashboardQuery
             ->get();
     }
 
-
     private function averageSessionSeconds(Builder $sessions): float
     {
         $driver = DB::connection()->getDriverName();
@@ -319,7 +318,6 @@ final class ExecutiveDashboardQuery
                 return 0;
             });
     }
-
 
     /** @param list<string> $events */
     private function eventOccurrenceCount(Builder $query, array $events): int

@@ -7,7 +7,8 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $targets = @(
     (Join-Path $projectRoot '.idea'),
     (Join-Path $projectRoot 'ARQUIVOS_REMOVIDOS.txt'),
-    (Join-Path $projectRoot 'ferramentas')
+    (Join-Path $projectRoot 'ferramentas'),
+    (Join-Path $projectRoot (Split-Path -Leaf $projectRoot))
 )
 
 foreach ($target in $targets) {
@@ -21,4 +22,9 @@ foreach ($target in $targets) {
     }
 }
 
-Write-Host 'Limpeza concluída. .git, .env, vendor e database/database.sqlite foram preservados.'
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    & git -C $projectRoot rm --cached --ignore-unmatch -- .env
+    if ($LASTEXITCODE -ne 0) { throw 'Não foi possível remover .env do índice do Git.' }
+}
+
+Write-Host 'Limpeza concluída. A cópia aninhada foi removida e .env permanece local, mas fora do índice do Git.'

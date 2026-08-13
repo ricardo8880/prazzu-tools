@@ -22,6 +22,21 @@ try {
 
     Get-ChildItem -LiteralPath $projectRoot -Force | ForEach-Object {
         if ($excludedDirectories -contains $_.Name -or $excludedFiles -contains $_.Name) { return }
+
+        if (-not $_.PSIsContainer -and
+            $_.Name.StartsWith('.env.') -and
+            $_.Name -notin @('.env.example', '.env.e2e.example')) {
+            Write-Host "Ambiente local excluído do pacote: $($_.Name)"
+            return
+        }
+
+        if ($_.PSIsContainer -and
+            (Test-Path -LiteralPath (Join-Path $_.FullName 'artisan')) -and
+            (Test-Path -LiteralPath (Join-Path $_.FullName 'composer.json'))) {
+            Write-Host "Projeto Laravel aninhado excluído do pacote: $($_.Name)"
+            return
+        }
+
         Copy-Item -LiteralPath $_.FullName -Destination $stagingRoot -Recurse -Force
     }
 

@@ -14,7 +14,7 @@ final class LatePaymentCalculatorTest extends TestCase
 {
     public function test_it_caps_penalty_at_twenty_percent(): void
     {
-        $result = (new LatePaymentCalculator())->calculate(new LatePaymentInput(
+        $result = (new LatePaymentCalculator)->calculate(new LatePaymentInput(
             Money::fromMinor(100000),
             new DateTimeImmutable('2026-01-01'),
             new DateTimeImmutable('2026-04-11'),

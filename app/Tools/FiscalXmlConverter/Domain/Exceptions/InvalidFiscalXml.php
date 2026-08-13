@@ -6,6 +6,4 @@ namespace App\Tools\FiscalXmlConverter\Domain\Exceptions;
 
 use DomainException;
 
-final class InvalidFiscalXml extends DomainException
-{
-}
+final class InvalidFiscalXml extends DomainException {}

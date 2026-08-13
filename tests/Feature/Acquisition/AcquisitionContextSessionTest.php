@@ -4,7 +4,6 @@ namespace Tests\Feature\Acquisition;
 
 use App\Core\Acquisition\Infrastructure\Persistence\AcquisitionContextRecord;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
-use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

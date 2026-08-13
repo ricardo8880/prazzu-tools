@@ -6,7 +6,7 @@
 
 Permitir que o usuário produza um contrato completo a partir de perguntas guiadas, revise e edite o texto final e exporte o documento em PDF ou Word.
 
-## Escopo entregue até o lote 5
+## Escopo entregue até o saneamento Prazzu Plus — Lote 2
 
 O lote 1 criou a fundação oficial do módulo. O lote 2 adicionou o questionário, a validação das respostas e o `ContractDraft` tipado. O lote 3 passou a redigir o contrato completo e permitir edição do texto. O lote 4 concluiu o fluxo Essencial com exportação do conteúdo atual em PDF e Word/DOCX. O lote 5 finaliza interface, acessibilidade, analytics, perfil de risco e contratos de qualidade.
 
@@ -40,7 +40,16 @@ A edição, a visualização e as exportações do fluxo Essencial não exigem l
 - histórico;
 - comparação entre versões.
 
-O Plus adiciona produtividade e continuidade. Nenhum recurso Plus é necessário para gerar, revisar ou exportar corretamente o contrato no fluxo Essencial.
+O Plus adiciona produtividade e continuidade. No saneamento Prazzu Plus — Lote 2, as seis capacidades passaram a possuir experiência operacional e autorização central:
+
+- a biblioteca ampliada oferece quatro modelos profissionais adicionais e mantém os dois modelos essenciais;
+- cláusulas inteligentes podem ser selecionadas individualmente e também são pré-selecionadas por modelos profissionais compatíveis;
+- preenchimento automático reutiliza perfis empresariais compartilhados para razão social e CNPJ;
+- histórico persiste contratos e versões editadas para usuários autenticados com acesso;
+- favoritos usam o mecanismo compartilhado de favoritos de execuções;
+- comparação entre versões trabalha sobre duas versões persistidas.
+
+Nenhum recurso Plus é necessário para gerar, revisar ou exportar corretamente o contrato no fluxo Essencial.
 
 ## Dependências
 
@@ -93,7 +102,7 @@ Analytics registra apenas conclusão da geração e formato de exportação, sem
 
 ## Limites do texto gerado
 
-Os modelos são gerais e cobrem somente as duas modalidades declaradas. A interface informa que situações sujeitas a regimes especiais podem exigir adaptação. O gerador não tenta substituir análise jurídica específica nem cria cláusulas inteligentes; essa última capacidade permanece classificada como Plus.
+Os modelos são gerais e cobrem somente as duas modalidades declaradas. A interface informa que situações sujeitas a regimes especiais podem exigir adaptação. O gerador não tenta substituir análise jurídica específica. As cláusulas inteligentes são textos gerais opcionais do Plus e também devem ser revisadas pelo usuário antes do uso.
 
 ## Histórico de versões
 
@@ -104,3 +113,4 @@ Os modelos são gerais e cobrem somente as duas modalidades declaradas. A interf
 | 0.3.0 | Draft | Redação completa por modalidade, valor por extenso compartilhado pelo Core, editor e visualização do texto. |
 | 0.4.0 | Draft | Exportação PDF pelo Core compartilhado, download Word/DOCX e promoção do empacotamento ZIP reutilizável para o Core. |
 | 0.5.0 | Beta | Acabamento de interface, acessibilidade, analytics sem dados pessoais, perfil de risco, casos dourados e testes de arquitetura/catálogo. |
+| 0.6.0 | Beta | Materialização das seis features Prazzu Plus, com biblioteca ampliada, cláusulas inteligentes, autofill empresarial, histórico, favoritos, comparação e gates centralizados. |

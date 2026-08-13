@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="prazzu-page tool-page" data-tool="calculadora-de-honorarios-contabeis" data-testid="tool-page-calculadora-de-honorarios-contabeis">
+    <x-tools.trust-seo slug="calculadora-de-honorarios-contabeis" :show-content="false" />
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -58,13 +59,13 @@
 
             <div class="col-12 col-md-6 col-lg-3">
                 <label class="form-label" for="employees">Funcionários <span class="text-danger">*</span></label>
-                <input class="form-control @error('employees') is-invalid @enderror" id="employees" name="employees" type="number" min="0" value="{{ old('employees', 0) }}" required>
+                <input class="form-control @error('employees') is-invalid @enderror" id="employees" name="employees" type="number" min="0" value="{{ old('employees') }}" required>
                 @error('employees')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
             <div class="col-12 col-md-6 col-lg-3">
                 <label class="form-label" for="partners">Sócios ou titulares <span class="text-danger">*</span></label>
-                <input class="form-control @error('partners') is-invalid @enderror" id="partners" name="partners" type="number" min="1" value="{{ old('partners', 1) }}" required>
+                <input class="form-control @error('partners') is-invalid @enderror" id="partners" name="partners" type="number" min="1" value="{{ old('partners') }}" required>
                 @error('partners')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
@@ -93,14 +94,14 @@
 
             <div class="col-12 col-md-6">
                 <label class="form-label" for="monthly_invoices">Notas fiscais por mês <span class="text-danger">*</span></label>
-                <input class="form-control @error('monthly_invoices') is-invalid @enderror" id="monthly_invoices" name="monthly_invoices" type="number" min="0" value="{{ old('monthly_invoices', 0) }}" required>
+                <input class="form-control @error('monthly_invoices') is-invalid @enderror" id="monthly_invoices" name="monthly_invoices" type="number" min="0" value="{{ old('monthly_invoices') }}" required>
                 <div class="form-text">Considere notas de entrada, saída e serviços.</div>
                 @error('monthly_invoices')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
             <div class="col-12 col-md-6">
                 <label class="form-label" for="monthly_bank_transactions">Movimentações financeiras por mês <span class="text-danger">*</span></label>
-                <input class="form-control @error('monthly_bank_transactions') is-invalid @enderror" id="monthly_bank_transactions" name="monthly_bank_transactions" type="number" min="0" value="{{ old('monthly_bank_transactions', 0) }}" required>
+                <input class="form-control @error('monthly_bank_transactions') is-invalid @enderror" id="monthly_bank_transactions" name="monthly_bank_transactions" type="number" min="0" value="{{ old('monthly_bank_transactions') }}" required>
                 <div class="form-text">Use uma média de lançamentos bancários e financeiros.</div>
                 @error('monthly_bank_transactions')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
@@ -334,7 +335,7 @@
 
                         <div class="col-12 col-md-6 col-lg-3">
                             <label class="form-label" for="setup_fee">Taxa de implantação</label>
-                            <input class="form-control @error('setup_fee') is-invalid @enderror" id="setup_fee" name="setup_fee" value="{{ old('setup_fee', '0,00') }}" inputmode="decimal">
+                            <input class="form-control @error('setup_fee') is-invalid @enderror" id="setup_fee" name="setup_fee" value="{{ old('setup_fee') }}" inputmode="decimal">
                             @error('setup_fee')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
 
@@ -473,7 +474,7 @@
                         </div>
                         <div class="col-12 col-md-4">
                             <label class="form-label" for="contract_late_fee_percent">Multa por atraso <span class="text-danger">*</span></label>
-                            <div class="input-group"><input class="form-control @error('late_fee_percent') is-invalid @enderror" id="contract_late_fee_percent" name="late_fee_percent" type="number" min="0" max="10" value="{{ old('late_fee_percent', 2) }}" required><span class="input-group-text">%</span>@error('late_fee_percent')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                            <div class="input-group"><input class="form-control @error('late_fee_percent') is-invalid @enderror" id="contract_late_fee_percent" name="late_fee_percent" type="number" min="0" max="10" value="{{ old('late_fee_percent') }}" required><span class="input-group-text">%</span>@error('late_fee_percent')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                         </div>
                         <div class="col-12 col-md-4">
                             <label class="form-label" for="contract_termination_notice_days">Aviso para rescisão <span class="text-danger">*</span></label>

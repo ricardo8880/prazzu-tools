@@ -18,7 +18,7 @@ final class CalculatorTest extends TestCase
 {
     public function test_it_issues_a_receipt_using_the_standard_result_contract(): void
     {
-        $result = (new Calculator())->calculate(new CalculationInput(
+        $result = (new Calculator)->calculate(new CalculationInput(
             identifier: ReceiptIdentifier::fromString('550e8400-e29b-41d4-a716-446655440000'),
             number: ReceiptNumber::fromString('REC-2026-0001'),
             payer: new ReceiptParty('Empresa Pagadora Ltda.', PartyDocument::cnpj('11.222.333/0001-81')),

@@ -8,9 +8,9 @@ use App\Core\Math\IntegerRounding;
 use App\Core\Math\RoundingMode;
 use App\Core\Money\Money;
 use App\Core\Normative\NormativeRuleResolver;
+use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Tools\ProLaboreSimulator\Domain\Data\ProLaboreInput;
 use App\Tools\ProLaboreSimulator\Domain\Data\ProLaboreResult;
-use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Tools\ProLaboreSimulator\Domain\Rules\RuleCatalog;
 use App\Tools\ProLaboreSimulator\Domain\Rules\SocialSecurityRule;
 

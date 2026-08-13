@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ProLaboreProfitDistributionCalculator\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
@@ -29,11 +30,18 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class ToolController extends Controller
 {
-    public function index(Request $request, ShowToolPage $page, ManageToolHistory $history): View
+    private const PLUS_SCENARIO_FEATURE = 'scenario_planning';
+
+    private const PLUS_HISTORY_EXPORTS_FEATURE = 'history_exports';
+
+    public function index(Request $request, ShowToolPage $page, ManageToolHistory $history, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
+        $historyAllowed = $request->user() !== null && $features->allows($module, self::PLUS_HISTORY_EXPORTS_FEATURE, $request);
+
         return view('tools-calculadora-pro-labore-distribuicao-lucros::index', [
             ...$page->execute(),
-            'recentHistory' => $request->user() === null ? [] : $history->recent((int) $request->user()->getAuthIdentifier()),
+            'historyAllowed' => $historyAllowed,
+            'recentHistory' => $historyAllowed ? $history->recent((int) $request->user()->getAuthIdentifier()) : [],
         ]);
     }
 
@@ -49,10 +57,10 @@ final class ToolController extends Controller
         $result = $action->execute($input);
         $saved = false;
 
-        if ($persistence->allowsHistory($module, $request->user())) {
+        if ($persistence->allowsHistory($module, $request->user(), self::PLUS_HISTORY_EXPORTS_FEATURE)) {
             $run = $recorder->start(
                 module: $module,
-                ruleVersion: new RuleVersion('2026.1'),
+                ruleVersion: new RuleVersion('2026.1.0'),
                 referenceDate: ReferenceDate::fromString($input['competence'].'-01'),
                 input: $input,
                 userId: (int) $request->user()->getAuthIdentifier(),
@@ -65,7 +73,7 @@ final class ToolController extends Controller
             ...$page->execute(),
             'result' => $result,
             'historySaved' => $saved,
-            'recentHistory' => $request->user() === null ? [] : app(ManageToolHistory::class)->recent((int) $request->user()->getAuthIdentifier()),
+            'recentHistory' => $saved ? app(ManageToolHistory::class)->recent((int) $request->user()->getAuthIdentifier()) : [],
         ]);
     }
 
@@ -127,10 +135,20 @@ final class ToolController extends Controller
     /** @param array<string,mixed> $result @param array<string,mixed> $input */
     private function export(string $format, array $result, array $input, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, TabularExportService $tabular): Response|JsonResponse|StreamedResponse
     {
-        abort_unless(in_array($format,['csv','json','pdf','xlsx'],true),404); $filename='pro-labore-lucros-'.($input['competence']??now()->format('Y-m'));
-        if($format==='json') return response()->json(['input'=>$input,'result'=>$result],200,['Content-Disposition'=>'attachment; filename="'.$filename.'.json"'],JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
-        if($format==='csv'){ $rows=[]; foreach(($result['summary']??[]) as $item)$rows[]=[$item['label']??'',$item['value']??'',$item['description']??'']; return $tabular->csv($filename.'.csv',['Indicador','Valor','Descrição'],$rows); }
-        return $format==='pdf' ? $pdf->download($documents->pdf('Relatório de Pró-Labore e Distribuição de Lucros',$filename,$result,$input)) : $spreadsheet->download($documents->spreadsheet($filename,$result,$input));
-    }
+        abort_unless(in_array($format, ['csv', 'json', 'pdf', 'xlsx'], true), 404);
+        $filename = 'pro-labore-lucros-'.($input['competence'] ?? now()->format('Y-m'));
+        if ($format === 'json') {
+            return response()->json(['input' => $input, 'result' => $result], 200, ['Content-Disposition' => 'attachment; filename="'.$filename.'.json"'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        }
+        if ($format === 'csv') {
+            $rows = [];
+            foreach (($result['summary'] ?? []) as $item) {
+                $rows[] = [$item['label'] ?? '', $item['value'] ?? '', $item['description'] ?? ''];
+            }
 
+return $tabular->csv($filename.'.csv', ['Indicador', 'Valor', 'Descrição'], $rows);
+        }
+
+        return $format === 'pdf' ? $pdf->download($documents->pdf('Relatório de Pró-Labore e Distribuição de Lucros', $filename, $result, $input)) : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));
+    }
 }

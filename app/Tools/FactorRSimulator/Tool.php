@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tools\FactorRSimulator;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
@@ -46,8 +46,8 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('payroll_12', 'input', selector: '[name="payroll_12"]'),
-                    new ToolAnalyticsField('revenue_12', 'input', selector: '[name="revenue_12"]'),
+                        new ToolAnalyticsField('payroll_12', 'input', selector: '[name="payroll_12"]'),
+                        new ToolAnalyticsField('revenue_12', 'input', selector: '[name="revenue_12"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -81,10 +81,10 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             ],
             features: [
                 new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('advanced_productivity', 'Produtividade avançada', ToolFeatureTier::Plus),
+                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
-            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),
+            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'xlsx']),
             sharing: ToolSharingPolicy::disabled(),
             sensitiveData: ToolSensitiveDataPolicy::none(),
         );

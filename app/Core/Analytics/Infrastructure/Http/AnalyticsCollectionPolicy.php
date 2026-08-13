@@ -29,6 +29,7 @@ final class AnalyticsCollectionPolicy
 
         return ! ($cookieName !== '' && hash_equals($cookieValue, (string) $request->cookie($cookieName, '')));
     }
+
     private function isAutomatedTraffic(Request $request): bool
     {
         $userAgent = strtolower((string) $request->userAgent());

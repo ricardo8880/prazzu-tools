@@ -19,6 +19,7 @@ final class ArchitectureInspector
     public function __construct(
         private readonly ToolRegistry $registry,
         private readonly Filesystem $files,
+        private readonly PlusFeatureReadinessInspector $plusFeatures,
     ) {}
 
     /** @return list<ArchitectureViolation> */
@@ -38,7 +39,23 @@ final class ArchitectureInspector
             $this->inspectSharedToolComponents(),
             $this->inspectControllers(),
             $this->inspectRouteFiles(),
+            $this->inspectPlusFeatureReadiness(),
         ));
+    }
+
+    /** @return list<ArchitectureViolation> */
+    private function inspectPlusFeatureReadiness(): array
+    {
+        $violations = [];
+        $modules = $this->registry->modules();
+
+        foreach ($modules as $module) {
+            array_push($violations, ...$this->plusFeatures->inspect($module));
+        }
+
+        array_push($violations, ...$this->plusFeatures->inspectGovernance($modules));
+
+        return $violations;
     }
 
     /** @return list<ArchitectureViolation> */

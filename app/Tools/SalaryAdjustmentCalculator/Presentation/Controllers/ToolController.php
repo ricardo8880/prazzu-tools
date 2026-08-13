@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ToolController extends Controller
 {
+    private const PLUS_SPREADSHEET_FEATURE = 'spreadsheet_export';
+
     public function index(ShowToolPage $page): View
     {
         return view('tools-reajuste-salarial::index', $page->execute());
@@ -24,6 +26,7 @@ final class ToolController extends Controller
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
         $input = $request->validated();
+
         return view('tools-reajuste-salarial::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($input),
@@ -34,12 +37,14 @@ final class ToolController extends Controller
     public function exportPdf(ExecuteToolRequest $request, CalculateTool $action, PdfExporter $exporter, ToolResultExportFactory $documents): Response
     {
         $input = $request->validated();
+
         return $exporter->download($documents->pdf('Cálculo de Reajuste Salarial', 'reajuste-salarial-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 
     public function exportExcel(ExecuteToolRequest $request, CalculateTool $action, SpreadsheetExporter $exporter, ToolResultExportFactory $documents): Response
     {
         $input = $request->validated();
+
         return $exporter->download($documents->spreadsheet('reajuste-salarial-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 }

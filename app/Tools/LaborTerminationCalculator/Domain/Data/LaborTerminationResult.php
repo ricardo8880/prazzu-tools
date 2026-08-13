@@ -88,5 +88,4 @@ final readonly class LaborTerminationResult
             isEstimate: true,
         );
     }
-
 }

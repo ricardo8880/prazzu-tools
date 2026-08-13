@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\PisCofinsCalculator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use Tests\TestCase;
 
 final class ToolPageTest extends TestCase
@@ -34,6 +35,11 @@ final class ToolPageTest extends TestCase
             ->assertSee('Memória de cálculo');
     }
 
+    #[CoversPlusFeature('calculadora-pis-cofins', 'aggregate_credits')]
+    #[CoversPlusFeature('calculadora-pis-cofins', 'multiple_operations')]
+    #[CoversPlusFeature('calculadora-pis-cofins', 'credit_breakdown')]
+    #[CoversPlusFeature('calculadora-pis-cofins', 'comparison')]
+    #[CoversPlusFeature('calculadora-pis-cofins', 'export')]
     public function test_non_cumulative_comparison_and_plus_operations_are_rendered(): void
     {
         $payload = $this->payload();
@@ -41,13 +47,15 @@ final class ToolPageTest extends TestCase
         $payload['taxable_revenue'] = '10.000,00';
         $payload['credit_base'] = '4.000,00';
         $payload['compare_regimes'] = '1';
-        $payload['operations'] = [['description'=>'Operação adicional','revenue'=>'5.000,00','credit_base'=>'1.000,00']];
+        $payload['operations'] = [['description' => 'Operação adicional', 'revenue' => '5.000,00', 'credit_base' => '1.000,00']];
 
         $this->post(route('tools.calculadora-pis-cofins.calculate'), $payload)
             ->assertOk()
             ->assertSee('Comparação cumulativo')
             ->assertSee('Operação adicional')
-            ->assertSee('R$ 925,00');
+            ->assertSee('R$ 925,00')
+            ->assertSee('Exportar PDF')
+            ->assertSee('Baixar Excel');
     }
 
     private function payload(): array

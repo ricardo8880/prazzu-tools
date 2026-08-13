@@ -14,7 +14,7 @@ use InvalidArgumentException;
 
 final readonly class Calculator implements ToolCalculator
 {
-    public function __construct(private ReceiptIssuer $issuer = new ReceiptIssuer(new BrazilianMoneyInWords())) {}
+    public function __construct(private ReceiptIssuer $issuer = new ReceiptIssuer(new BrazilianMoneyInWords)) {}
 
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {

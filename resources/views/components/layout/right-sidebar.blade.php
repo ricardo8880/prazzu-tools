@@ -29,19 +29,7 @@
             @endif
         </section>
 
-        <section class="prazzu-panel p-3" aria-labelledby="newsletter-title">
-            <h2 id="newsletter-title" class="h6 mb-2">Fique por dentro</h2>
-            <p class="small text-body-secondary mb-3">Receba novidades sobre novas ferramentas e conteúdos exclusivos.</p>
-            <form action="{{ route('newsletter.store') }}" method="post" class="d-grid gap-2">
-                @csrf
-                <label for="newsletter-email" class="visually-hidden">Seu melhor e-mail</label>
-                <input id="newsletter-email" class="form-control prazzu-form-control" type="email" name="email" value="{{ old('email') }}" placeholder="Seu melhor e-mail" required autocomplete="email">
-                @error('email')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-                <button class="btn btn-primary prazzu-btn-primary" type="submit">Inscrever-se</button>
-            </form>
-        </section>
+        <x-newsletter.signup id-prefix="newsletter-sidebar" class="prazzu-panel p-3" />
 
         @if ($toolFeedbackManifest !== null)
             <x-feedback.tool-feedback :tool="$toolFeedbackManifest" />

@@ -29,6 +29,33 @@ final class SharedToolVisualComponentsTest extends TestCase
         self::assertFileExists(base_path($path));
     }
 
+
+    public function test_tool_page_wrapper_does_not_repeat_feature_tiers_in_tool_views(): void
+    {
+        $views = glob(base_path('app/Tools/*/Resources/views/index.blade.php'));
+
+        self::assertIsArray($views);
+
+        foreach ($views as $viewPath) {
+            $view = file_get_contents($viewPath);
+
+            self::assertIsString($view);
+
+            if (! str_contains($view, '<x-tools.page')) {
+                continue;
+            }
+
+            self::assertStringNotContainsString(
+                '<x-tool-feature-tiers',
+                $view,
+                sprintf(
+                    '%s usa <x-tools.page>, que já renderiza os tiers; a chamada manual duplica o conteúdo.',
+                    str_replace(base_path().DIRECTORY_SEPARATOR, '', $viewPath),
+                ),
+            );
+        }
+    }
+
     public function test_simples_nacional_is_the_visual_standard_pilot(): void
     {
         $view = file_get_contents(base_path('app/Tools/SimplesNacionalCalculator/Resources/views/index.blade.php'));

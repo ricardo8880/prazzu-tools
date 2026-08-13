@@ -55,8 +55,7 @@ final class PhpSpreadsheetExporter implements SpreadsheetExporter
     {
         return array_map(
             static fn (array $row): array => array_map(
-                static fn (string|int|float|bool|null $value): string|int|float|bool|null =>
-                    is_string($value) && preg_match('/^[=+\-@]/', $value) === 1 ? "'".$value : $value,
+                static fn (string|int|float|bool|null $value): string|int|float|bool|null => is_string($value) && preg_match('/^[=+\-@]/', $value) === 1 ? "'".$value : $value,
                 $row,
             ),
             $rows,

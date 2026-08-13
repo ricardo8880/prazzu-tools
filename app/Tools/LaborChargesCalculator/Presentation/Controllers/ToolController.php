@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class ToolController extends Controller
 {
+    private const PLUS_SPREADSHEET_FEATURE = 'spreadsheet_export';
+
     public function index(ShowToolPage $page): View
     {
         return view('tools-encargos-trabalhistas::index', $page->execute());
@@ -29,7 +31,6 @@ final class ToolController extends Controller
             'calculationInput' => $request->validated(),
         ]);
     }
-
 
     public function exportPdf(
         ExecuteToolRequest $request,

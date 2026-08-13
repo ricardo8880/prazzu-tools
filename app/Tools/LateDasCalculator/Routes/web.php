@@ -12,4 +12,5 @@ Route::post('/ferramentas/das-em-atraso', [ToolController::class, 'calculate'])
 Route::post('/ferramentas/das-em-atraso/exportar/pdf', [ToolController::class, 'exportPdf'])
     ->name('tools.das-em-atraso.export.pdf');
 Route::post('/ferramentas/das-em-atraso/exportar/excel', [ToolController::class, 'exportExcel'])
+    ->middleware('tool.feature:das-em-atraso,spreadsheet_export')
     ->name('tools.das-em-atraso.export.excel');

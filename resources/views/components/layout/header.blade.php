@@ -54,7 +54,7 @@
 
                 @auth
                     <a class="btn btn-primary prazzu-btn-primary d-none d-sm-inline-flex" href="{{ route('account.show') }}">
-                        <i class="bi bi-person-circle me-2" aria-hidden="true"></i>Minha conta
+                        <i class="bi bi-person-circle me-2" aria-hidden="true"></i>Meu Prazzu
                     </a>
                 @else
                     <a class="btn prazzu-btn-outline d-none d-sm-inline-flex" href="{{ route('login') }}">Entrar</a>

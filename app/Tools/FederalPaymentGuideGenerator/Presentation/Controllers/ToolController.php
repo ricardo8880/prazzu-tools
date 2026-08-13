@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\FederalPaymentGuideGenerator\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
@@ -82,9 +83,10 @@ final class ToolController extends Controller
         return $this->export($format, $request->validated(), $action->execute($request->validated()), $prepare, $documents, $pdf, $spreadsheet, $tabular);
     }
 
-    public function history(Request $request, ManageGuideHistory $history): View
+    public function history(Request $request, ManageGuideHistory $history, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
         $favorite = $request->boolean('favorite');
+        $features->requireIf($favorite, $module, 'favorites', $request);
         $page = $history->paginate((int) $request->user()->getAuthIdentifier(), max(1, $request->integer('page', 1)), $favorite);
 
         return view('tools-gerador-darf-gps::history.index', [
@@ -138,6 +140,7 @@ final class ToolController extends Controller
         }
 
         $filename = $export['filename'];
+
         return $format === 'pdf'
             ? $pdf->download($documents->pdf('Relatório orientativo de DARF/GPS', $filename, $export['payload'], $input))
             : $spreadsheet->download($documents->spreadsheet($filename, $export['payload'], $input));

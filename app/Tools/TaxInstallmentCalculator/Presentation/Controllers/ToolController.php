@@ -23,7 +23,7 @@ final class ToolController extends Controller
 {
     public function index(Request $request, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
-        return view('tools-calculadora-parcelamento-tributario::index', [...$page->execute(), 'plusEnabled' => $features->plusEnabled($module, $request)]);
+        return view('tools-calculadora-parcelamento-tributario::index', [...$page->execute(), 'plusEnabled' => $features->plusEnabled($module, $request), 'balanceEvolutionAllowed' => $features->allows($module, 'balance_evolution', $request)]);
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action, ToolFeatureRequestAuthorizer $features, Tool $module, ShowToolPage $page): View
@@ -31,26 +31,43 @@ final class ToolController extends Controller
         $data = $request->validated();
         $hasScenario = count(array_filter($data['scenarios'] ?? [], fn ($s) => trim((string) ($s['name'] ?? $s['entry_amount'] ?? $s['installments'] ?? $s['monthly_charge'] ?? '')) !== '')) > 0;
         $features->requireIf($this->moneyPositive($data['entry_amount'] ?? '0') || $hasScenario, $module, 'scenario_comparison', $request);
-        $input = $this->input($data); $result = $action->execute($input); $request->flash();
-        return view('tools-calculadora-parcelamento-tributario::index', [...$page->execute(), 'result' => $result, 'calculationInput' => $data, 'plusEnabled' => $features->plusEnabled($module, $request)]);
+        $input = $this->input($data);
+        $result = $action->execute($input);
+        $request->flash();
+
+        return view('tools-calculadora-parcelamento-tributario::index', [...$page->execute(), 'result' => $result, 'calculationInput' => $data, 'plusEnabled' => $features->plusEnabled($module, $request), 'balanceEvolutionAllowed' => $features->allows($module, 'balance_evolution', $request)]);
     }
 
     public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, ToolResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): Response
     {
-        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404); $input = $this->input($request->validated()); $result = $action->execute($input); $filename = 'parcelamento-tributario-'.now()->format('Y-m-d');
+        abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
+        $input = $this->input($request->validated());
+        $result = $action->execute($input);
+        $filename = 'parcelamento-tributario-'.now()->format('Y-m-d');
+
         return $format === 'pdf' ? $pdf->download($documents->pdf('Calculadora de Parcelamento Tributário', $filename, $result, $input->toArray())) : $spreadsheet->download($documents->spreadsheet($filename, $result, $input->toArray()));
     }
 
     private function input(array $data): CalculationInput
     {
-        $debt = (string) $data['debt_amount']; $scenarios = [['name' => 'Cenário principal', 'debt' => $debt, 'entry' => (string) ($data['entry_amount'] ?? '0'), 'installments' => (int) $data['installments'], 'monthly_charge' => (string) $data['monthly_charge']]];
+        $debt = (string) $data['debt_amount'];
+        $scenarios = [['name' => 'Cenário principal', 'debt' => $debt, 'entry' => (string) ($data['entry_amount'] ?? '0'), 'installments' => (int) $data['installments'], 'monthly_charge' => (string) $data['monthly_charge']]];
         foreach (($data['scenarios'] ?? []) as $index => $scenario) {
-            $name = trim((string) ($scenario['name'] ?? '')); $entry = trim((string) ($scenario['entry_amount'] ?? '')); $installments = trim((string) ($scenario['installments'] ?? '')); $charge = trim((string) ($scenario['monthly_charge'] ?? ''));
-            if ($name === '' && $entry === '' && $installments === '' && $charge === '') continue;
+            $name = trim((string) ($scenario['name'] ?? ''));
+            $entry = trim((string) ($scenario['entry_amount'] ?? ''));
+            $installments = trim((string) ($scenario['installments'] ?? ''));
+            $charge = trim((string) ($scenario['monthly_charge'] ?? ''));
+            if ($name === '' && $entry === '' && $installments === '' && $charge === '') {
+                continue;
+            }
             $scenarios[] = ['name' => $name !== '' ? $name : 'Cenário '.($index + 2), 'debt' => $debt, 'entry' => $entry !== '' ? $entry : '0', 'installments' => $installments !== '' ? (int) $installments : (int) $data['installments'], 'monthly_charge' => $charge !== '' ? $charge : (string) $data['monthly_charge']];
         }
+
         return new CalculationInput($scenarios);
     }
 
-    private function moneyPositive(mixed $value): bool { return Money::fromDecimal((string) ($value ?: '0'))->minorAmount() > 0; }
+    private function moneyPositive(mixed $value): bool
+    {
+        return Money::fromDecimal((string) ($value ?: '0'))->minorAmount() > 0;
+    }
 }

@@ -28,7 +28,7 @@ final class AnalyticsMetricSqlTest extends TestCase
 
         $sql = AnalyticsMetricSql::identity("COALESCE(path, '')");
 
-        $this->assertStringContainsString("CONCAT_WS('|', " , $sql);
+        $this->assertStringContainsString("CONCAT_WS('|', ", $sql);
         $this->assertStringNotContainsString('ooOOA', $sql);
     }
 }

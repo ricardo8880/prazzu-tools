@@ -12,4 +12,5 @@ Route::post('/ferramentas/inss-patronal', [ToolController::class, 'calculate'])
 Route::post('/ferramentas/inss-patronal/exportar/pdf', [ToolController::class, 'exportPdf'])
     ->name('tools.inss-patronal.export.pdf');
 Route::post('/ferramentas/inss-patronal/exportar/excel', [ToolController::class, 'exportExcel'])
+    ->middleware('tool.feature:inss-patronal,spreadsheet_export')
     ->name('tools.inss-patronal.export.excel');

@@ -7,8 +7,10 @@ namespace App\Tools\ContractGenerator\Presentation\Requests;
 use App\Core\Identifiers\Cnpj;
 use App\Core\Identifiers\Cpf;
 use App\Core\Money\Money;
+use App\Tools\ContractGenerator\Domain\Enums\ContractTemplate;
 use App\Tools\ContractGenerator\Domain\Enums\ContractType;
 use App\Tools\ContractGenerator\Domain\Enums\PartyDocumentType;
+use App\Tools\ContractGenerator\Domain\Enums\SmartClause;
 use Closure;
 use DateTimeImmutable;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,6 +29,9 @@ final class BuildContractDraftRequest extends FormRequest
     {
         return [
             'contract_type' => ['required', Rule::enum(ContractType::class)],
+            'template_key' => ['nullable', Rule::enum(ContractTemplate::class)],
+            'smart_clauses' => ['sometimes', 'array', 'max:5'],
+            'smart_clauses.*' => [Rule::enum(SmartClause::class)],
             'first_party_name' => ['required', 'string', 'min:2', 'max:180'],
             'first_party_document_type' => ['required', Rule::enum(PartyDocumentType::class)],
             'first_party_document' => ['required', 'string', 'max:18', $this->documentRule('first_party_document_type')],
@@ -75,6 +80,12 @@ final class BuildContractDraftRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
+            $template = ContractTemplate::tryFrom((string) $this->input('template_key'));
+            $type = ContractType::tryFrom((string) $this->input('contract_type'));
+            if ($template !== null && $type !== null && $template->contractType() !== $type) {
+                $validator->errors()->add('template_key', 'O modelo selecionado não corresponde à modalidade do contrato.');
+            }
+
             if ($this->input('contract_type') !== ContractType::ServiceProvision->value) {
                 return;
             }

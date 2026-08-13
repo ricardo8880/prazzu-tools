@@ -14,7 +14,7 @@ final class ToolManifestTest extends TestCase
 {
     public function test_manifest_is_active_and_declares_plus_infrastructure(): void
     {
-        $manifest = (new Tool())->manifest();
+        $manifest = (new Tool)->manifest();
 
         self::assertSame('conversor-fiscal-xml', $manifest->slug);
         self::assertSame('1.0.0', $manifest->version);

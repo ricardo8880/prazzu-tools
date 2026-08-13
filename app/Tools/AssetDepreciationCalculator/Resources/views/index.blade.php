@@ -21,7 +21,7 @@
                 </div>
                 <div class="col-12 col-md-6 col-lg-3">
                     <label class="form-label" for="useful_life_years">Vida útil</label>
-                    <div class="input-group"><input class="form-control @error('useful_life_years') is-invalid @enderror" id="useful_life_years" name="useful_life_years" type="number" min="1" max="100" value="{{ old('useful_life_years', 5) }}" required><span class="input-group-text">anos</span></div>
+                    <div class="input-group"><input class="form-control @error('useful_life_years') is-invalid @enderror" id="useful_life_years" name="useful_life_years" type="number" min="1" max="100" value="{{ old('useful_life_years') }}" required><span class="input-group-text">anos</span></div>
                     @error('useful_life_years')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
             </div>
@@ -48,8 +48,8 @@
                         @for($i = 0; $i < 5; $i++)
                             <tr>
                                 <td><input class="form-control" name="assets[{{ $i }}][name]" value="{{ old("assets.$i.name") }}" placeholder="Ex.: Veículo {{ $i + 1 }}"></td>
-                                <td><input class="form-control" name="assets[{{ $i }}][value]" value="{{ old("assets.$i.value", '0') }}" inputmode="decimal"></td>
-                                <td><div class="input-group"><input class="form-control" name="assets[{{ $i }}][useful_life_years]" type="number" min="1" max="100" value="{{ old("assets.$i.useful_life_years", 5) }}"><span class="input-group-text">anos</span></div></td>
+                                <td><input class="form-control" name="assets[{{ $i }}][value]" value="{{ old("assets.$i.value") }}" inputmode="decimal"></td>
+                                <td><div class="input-group"><input class="form-control" name="assets[{{ $i }}][useful_life_years]" type="number" min="1" max="100" value="{{ old("assets.$i.useful_life_years") }}"><span class="input-group-text">anos</span></div></td>
                                 <td><select class="form-select" name="assets[{{ $i }}][method]">@foreach($methods as $value => $label)<option value="{{ $value }}" @selected(old("assets.$i.method", 'linear') === $value)>{{ $label }}</option>@endforeach</select></td>
                             </tr>
                         @endfor
@@ -94,7 +94,7 @@
                     @csrf
                     <div class="col-12 col-lg-4"><label class="form-label" for="registry_name">Bem</label><input class="form-control" id="registry_name" name="name" maxlength="120" required></div>
                     <div class="col-12 col-md-4 col-lg-3"><label class="form-label" for="registry_value">Valor</label><div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="registry_value" name="value" inputmode="decimal" placeholder="0,00" required></div></div>
-                    <div class="col-12 col-md-4 col-lg-2"><label class="form-label" for="registry_life">Vida útil</label><div class="input-group"><input class="form-control" id="registry_life" name="useful_life_years" type="number" min="1" max="100" value="5" required><span class="input-group-text">anos</span></div></div>
+                    <div class="col-12 col-md-4 col-lg-2"><label class="form-label" for="registry_life">Vida útil</label><div class="input-group"><input class="form-control" id="registry_life" name="useful_life_years" type="number" min="1" max="100" placeholder="Ex.: 6" required><span class="input-group-text">anos</span></div></div>
                     <div class="col-12 col-md-4 col-lg-2"><label class="form-label" for="registry_method">Método</label><select class="form-select" id="registry_method" name="method">@foreach($methods as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach</select></div>
                     <div class="col-12 col-lg-1"><button class="btn btn-outline-primary w-100" type="submit" aria-label="Salvar ativo"><i class="bi bi-plus-lg"></i></button></div>
                 </form>
@@ -137,9 +137,13 @@
                         @foreach($result->details['assets'] as $asset)<tr><td class="fw-semibold">{{ $asset['name'] }}</td><td>{{ $asset['method_label'] }}</td><td>{{ $asset['useful_life_years'] }} anos</td><td class="text-end">{{ $money($asset['cost_minor']) }}</td><td class="text-end">{{ $money($asset['first_year_depreciation_minor']) }}</td><td class="text-end">{{ $money($asset['first_year_book_value_minor']) }}</td></tr>@endforeach
                     </tbody></table></div>
 
-                    <h3 class="h5 mt-4">Projeção patrimonial consolidada <span class="badge text-bg-primary">Plus</span></h3>
-                    <div class="row g-3 mb-3"><div class="col-12 col-md-4"><x-tools.result-metric label="Valor total dos ativos" :value="$money($result->details['portfolio_cost_minor'])" icon="buildings" /></div><div class="col-12 col-md-4"><x-tools.result-metric label="Depreciação total no 1º ano" :value="$money($result->details['portfolio_first_year_depreciation_minor'])" icon="graph-down" /></div><div class="col-12 col-md-4"><x-tools.result-metric label="Valor contábil após 1 ano" :value="$money($result->details['portfolio_first_year_book_value_minor'])" icon="wallet2" /></div></div>
-                    <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Ano</th><th class="text-end">Depreciação do ano</th><th class="text-end">Depreciação acumulada</th><th class="text-end">Valor contábil consolidado</th></tr></thead><tbody>@foreach($result->details['portfolio'] as $row)<tr><td>{{ $row['year'] }}</td><td class="text-end">{{ $money($row['depreciation_minor']) }}</td><td class="text-end">{{ $money($row['accumulated_depreciation_minor']) }}</td><td class="text-end fw-semibold">{{ $money($row['book_value_minor']) }}</td></tr>@endforeach</tbody></table></div>
+                    @if($portfolioProjectionAllowed ?? false)
+                    <section data-plus-feature="portfolio_projection">
+                        <h3 class="h5 mt-4">Projeção patrimonial consolidada <span class="badge text-bg-primary">Plus</span></h3>
+                        <div class="row g-3 mb-3"><div class="col-12 col-md-4"><x-tools.result-metric label="Valor total dos ativos" :value="$money($result->details['portfolio_cost_minor'])" icon="buildings" /></div><div class="col-12 col-md-4"><x-tools.result-metric label="Depreciação total no 1º ano" :value="$money($result->details['portfolio_first_year_depreciation_minor'])" icon="graph-down" /></div><div class="col-12 col-md-4"><x-tools.result-metric label="Valor contábil após 1 ano" :value="$money($result->details['portfolio_first_year_book_value_minor'])" icon="wallet2" /></div></div>
+                        <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Ano</th><th class="text-end">Depreciação do ano</th><th class="text-end">Depreciação acumulada</th><th class="text-end">Valor contábil consolidado</th></tr></thead><tbody>@foreach($result->details['portfolio'] as $row)<tr><td>{{ $row['year'] }}</td><td class="text-end">{{ $money($row['depreciation_minor']) }}</td><td class="text-end">{{ $money($row['accumulated_depreciation_minor']) }}</td><td class="text-end fw-semibold">{{ $money($row['book_value_minor']) }}</td></tr>@endforeach</tbody></table></div>
+                    </section>
+                    @endif
                 @endif
 
                 <h3 class="h5 mt-4">Memória de cálculo</h3>

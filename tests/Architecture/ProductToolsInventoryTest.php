@@ -30,7 +30,6 @@ final class ProductToolsInventoryTest extends TestCase
         }
     }
 
-
     public function test_release_order_is_complete_unique_and_independent_from_editorial_position(): void
     {
         $tools = $this->inventory['official'];

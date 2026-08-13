@@ -15,6 +15,9 @@
     </div>
 
     <x-tools.validation-summary />
+    @auth
+        <div class="mb-3"><a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-irpj-csll-lucro-presumido.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico Plus</a></div>
+    @endauth
 
     <form method="POST" action="{{ route('tools.calculadora-irpj-csll-lucro-presumido.calculate') }}" class="vstack gap-4">
         @csrf
@@ -42,21 +45,21 @@
                 </div>
                 @endif
 
-                <div class="col-md-6"><x-tools.form.money name="commerce_revenue" label="Comércio / indústria / carga / hospitalar qualificado" :value="old('commerce_revenue', '0')" data-e2e-value="5.000,00" required help="Presunção-base: IRPJ 8% e CSLL 12%. Use serviço hospitalar apenas se os requisitos legais forem atendidos." /></div>
-                <div class="col-md-6"><x-tools.form.money name="fuel_revenue" label="Revenda de combustíveis elegível" :value="old('fuel_revenue', '0')" required help="Presunção-base: IRPJ 1,6% e CSLL 12%." /></div>
-                <div class="col-md-6"><x-tools.form.money name="passenger_transport_revenue" label="Transporte de passageiros" :value="old('passenger_transport_revenue', '0')" required help="Presunção-base: IRPJ 16% e CSLL 12%." /></div>
-                <div class="col-md-6"><x-tools.form.money name="services_revenue" label="Serviços em geral / intermediação / locação" :value="old('services_revenue', '0')" required help="Presunção-base: IRPJ 32% e CSLL 32%." /></div>
-                <div class="col-12"><x-tools.form.money name="other_taxable_additions" label="Adições tributáveis integralmente" :value="old('other_taxable_additions', '0')" required help="Ex.: receitas financeiras, ganhos de capital e outros valores que devam ser somados integralmente às bases. Não entram no limite da receita sujeita aos coeficientes de presunção." /></div>
+                <div class="col-md-6"><x-tools.form.money name="commerce_revenue" label="Comércio / indústria / carga / hospitalar qualificado" :value="old('commerce_revenue')" data-e2e-value="5.000,00" required help="Presunção-base: IRPJ 8% e CSLL 12%. Use serviço hospitalar apenas se os requisitos legais forem atendidos." /></div>
+                <div class="col-md-6"><x-tools.form.money name="fuel_revenue" label="Revenda de combustíveis elegível" :value="old('fuel_revenue')" required help="Presunção-base: IRPJ 1,6% e CSLL 12%." /></div>
+                <div class="col-md-6"><x-tools.form.money name="passenger_transport_revenue" label="Transporte de passageiros" :value="old('passenger_transport_revenue')" required help="Presunção-base: IRPJ 16% e CSLL 12%." /></div>
+                <div class="col-md-6"><x-tools.form.money name="services_revenue" label="Serviços em geral / intermediação / locação" :value="old('services_revenue')" required help="Presunção-base: IRPJ 32% e CSLL 32%." /></div>
+                <div class="col-12"><x-tools.form.money name="other_taxable_additions" label="Adições tributáveis integralmente" :value="old('other_taxable_additions')" required help="Ex.: receitas financeiras, ganhos de capital e outros valores que devam ser somados integralmente às bases. Não entram no limite da receita sujeita aos coeficientes de presunção." /></div>
             </div>
         </x-tools.form-panel>
 
         @if($plusEnabled ?? true)
         <x-tools.form-panel title="Ajustes do ano e créditos" description="Use os acumulados para que a faixa normal de presunção considere os trimestres anteriores." badge="Prazzu Plus">
             <div class="row g-3">
-                <div class="col-md-6"><x-tools.form.money name="prior_irpj_presumption_revenue" label="Receita anterior no ano — limite IRPJ" :value="old('prior_irpj_presumption_revenue', '0')" required help="Receita bruta dos trimestres anteriores de 2026 sujeita a coeficientes de presunção. Não inclua receitas financeiras/ganhos adicionados integralmente." /></div>
-                <div class="col-md-6"><x-tools.form.money name="prior_csll_presumption_revenue" label="Receita anterior desde o 2º tri — limite CSLL" :value="old('prior_csll_presumption_revenue', '0')" required help="Para Q3/Q4, informe somente a receita sujeita à presunção desde o 2º trimestre. Em Q1/Q2, normalmente é zero." /></div>
-                <div class="col-md-6"><x-tools.form.money name="irpj_credits" label="Créditos/retenções de IRPJ compensáveis" :value="old('irpj_credits', '0')" required help="Informe somente valores cuja compensação no período tenha sido confirmada." /></div>
-                <div class="col-md-6"><x-tools.form.money name="csll_credits" label="Créditos/retenções de CSLL compensáveis" :value="old('csll_credits', '0')" required help="Informe somente valores cuja compensação no período tenha sido confirmada." /></div>
+                <div class="col-md-6"><x-tools.form.money name="prior_irpj_presumption_revenue" label="Receita anterior no ano — limite IRPJ" :value="old('prior_irpj_presumption_revenue')" required help="Receita bruta dos trimestres anteriores de 2026 sujeita a coeficientes de presunção. Não inclua receitas financeiras/ganhos adicionados integralmente." /></div>
+                <div class="col-md-6"><x-tools.form.money name="prior_csll_presumption_revenue" label="Receita anterior desde o 2º tri — limite CSLL" :value="old('prior_csll_presumption_revenue')" required help="Para Q3/Q4, informe somente a receita sujeita à presunção desde o 2º trimestre. Em Q1/Q2, normalmente é zero." /></div>
+                <div class="col-md-6"><x-tools.form.money name="irpj_credits" label="Créditos/retenções de IRPJ compensáveis" :value="old('irpj_credits')" required help="Informe somente valores cuja compensação no período tenha sido confirmada." /></div>
+                <div class="col-md-6"><x-tools.form.money name="csll_credits" label="Créditos/retenções de CSLL compensáveis" :value="old('csll_credits')" required help="Informe somente valores cuja compensação no período tenha sido confirmada." /></div>
             </div>
         </x-tools.form-panel>
         @endif
@@ -67,11 +70,11 @@
             @foreach([0,1] as $scenarioIndex)
                 <div class="border rounded p-3 mb-3"><div class="row g-3">
                     <div class="col-12"><label class="form-label">Nome do cenário {{ $scenarioIndex + 2 }}</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][name]" value="{{ old('scenarios.'.$scenarioIndex.'.name', 'Cenário '.($scenarioIndex + 2)) }}"></div>
-                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][commerce_revenue]'" label="Comércio/indústria" :value="old('scenarios.'.$scenarioIndex.'.commerce_revenue', '0')" /></div>
-                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][fuel_revenue]'" label="Combustíveis" :value="old('scenarios.'.$scenarioIndex.'.fuel_revenue', '0')" /></div>
-                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][passenger_transport_revenue]'" label="Transporte passageiros" :value="old('scenarios.'.$scenarioIndex.'.passenger_transport_revenue', '0')" /></div>
-                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][services_revenue]'" label="Serviços em geral" :value="old('scenarios.'.$scenarioIndex.'.services_revenue', '0')" /></div>
-                    <div class="col-12"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][other_taxable_additions]'" label="Adições integrais" :value="old('scenarios.'.$scenarioIndex.'.other_taxable_additions', '0')" /></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][commerce_revenue]'" label="Comércio/indústria" :value="old('scenarios.'.$scenarioIndex.'.commerce_revenue')" /></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][fuel_revenue]'" label="Combustíveis" :value="old('scenarios.'.$scenarioIndex.'.fuel_revenue')" /></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][passenger_transport_revenue]'" label="Transporte passageiros" :value="old('scenarios.'.$scenarioIndex.'.passenger_transport_revenue')" /></div>
+                    <div class="col-md-3"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][services_revenue]'" label="Serviços em geral" :value="old('scenarios.'.$scenarioIndex.'.services_revenue')" /></div>
+                    <div class="col-12"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][other_taxable_additions]'" label="Adições integrais" :value="old('scenarios.'.$scenarioIndex.'.other_taxable_additions')" /></div>
                 </div></div>
             @endforeach
         </x-tools.form-panel>

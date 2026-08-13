@@ -34,7 +34,6 @@ final class BlogAnalyticsTest extends TestCase
         ]);
     }
 
-
     public function test_repeated_blog_engagement_event_is_deduplicated_per_session_and_milestone(): void
     {
         $post = BlogPost::query()->create([

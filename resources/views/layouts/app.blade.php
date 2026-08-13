@@ -17,7 +17,7 @@
     @endif
     <meta name="vertical" content="{{ $verticalSeo['vertical'] ?? 'global' }}">
     <meta name="robots" content="@yield('meta_robots', 'index,follow')">
-    <link rel="canonical" href="@yield('canonical_url', url()->current())">
+    <link rel="canonical" href="@yield('canonical_url', $verticalSeo['canonical'] ?? url()->current())">
 
     <meta property="og:locale" content="pt_BR">
     <meta property="og:type" content="@yield('og_type', 'website')">
@@ -30,7 +30,7 @@
         property="og:description"
         content="@yield('og_description', trim($__env->yieldContent('meta_description', $verticalSeo['description'])))"
     >
-    <meta property="og:url" content="@yield('canonical_url', url()->current())">
+    <meta property="og:url" content="@yield('canonical_url', $verticalSeo['canonical'] ?? url()->current())">
 
     @hasSection('og_image')
         <meta property="og:image" content="@yield('og_image')">
@@ -126,6 +126,13 @@
             @endif
 
             @yield('content')
+
+            @if (! request()->routeIs('admin.*', 'login', 'register', 'password.*', 'verification.*', 'account.*', 'organizations.*'))
+                <x-newsletter.signup
+                    id-prefix="newsletter-mobile"
+                    class="prazzu-panel p-3 mt-4 d-xxl-none"
+                />
+            @endif
         </main>
 
         <x-layout.right-sidebar />

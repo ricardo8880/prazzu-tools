@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tools\FactorRSimulator\Domain\Services;
 
-use App\Core\Money\Money;
 use App\Core\Dates\ReferenceDate;
+use App\Core\Money\Money;
 use App\Core\Tax\Normative\FactorRRule;
 use App\Core\Tools\Calculation\Data\CalculationMemory;
 use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
@@ -19,7 +19,6 @@ use InvalidArgumentException;
 final class Calculator implements ToolCalculator
 {
     public function __construct(private readonly FactorRRule $rule = new FactorRRule) {}
-
 
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {

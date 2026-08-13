@@ -1,11 +1,61 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Tools\IssCalculator;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest; use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney; use App\Core\Tools\Analytics\Data\ToolAnalyticsField; use App\Core\Tools\Analytics\Data\ToolAnalyticsForm; use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney; use App\Core\Tools\Contracts\HasToolIntegrations; use App\Core\Tools\Contracts\HasViews; use App\Core\Tools\Contracts\HasWebRoutes; use App\Core\Tools\Contracts\ToolModule; use App\Core\Tools\Data\ToolFeature; use App\Core\Tools\Data\ToolManifest; use App\Core\Tools\Enums\ToolAccess; use App\Core\Tools\Enums\ToolCapability; use App\Core\Tools\Enums\ToolCategory; use App\Core\Tools\Enums\ToolFeatureTier; use App\Core\Tools\Enums\ToolStatus; use App\Core\Tools\Infrastructure\Data\ToolExportPolicy; use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy; use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy; use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
-final class Tool implements HasAnalyticsJourney,HasToolIntegrations,HasViews,HasWebRoutes,ToolModule
+
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
+use App\Core\Tools\Contracts\HasToolIntegrations;
+use App\Core\Tools\Contracts\HasViews;
+use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
+use App\Core\Tools\Data\ToolManifest;
+use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
+use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
+use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+
+final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG='calculadora-iss'; public function integrations():ToolIntegrationManifest{return new ToolIntegrationManifest(publishes:[],accepts:[]);} public function webRoutesPath():string{return __DIR__.'/Routes/web.php';} public function viewsPath():string{return __DIR__.'/Resources/views';} public function viewsNamespace():string{return 'tools-calculadora-iss';}
-    public function manifest():ToolManifest{return new ToolManifest(slug:self::SLUG,name:'Calculadora de ISS',description:'Estime o ISS com município, serviço, valor e alíquota informada; compare retenção, serviços e cenários municipais.',category:ToolCategory::Fiscal,icon:'bi-building-check',routeName:'tools.calculadora-iss.index',vertical:'contabilidade',version:'1.0.0',access:ToolAccess::Free,status:ToolStatus::Beta,position:203,featured:true,supportsHistory:false,storesSensitiveData:false,keywords:['iss','issqn','serviços','município','retenção'],capabilities:[ToolCapability::Export],features:[new ToolFeature('calculate','Município, serviço, valor e alíquota com ISS estimado',ToolFeatureTier::Essential),new ToolFeature('memory','Memória do cálculo principal',ToolFeatureTier::Essential),new ToolFeature('retention','Retenção e líquido estimado',ToolFeatureTier::Plus),new ToolFeature('multiple_services','Vários serviços e tomadores com consolidação',ToolFeatureTier::Plus),new ToolFeature('municipality_scenarios','Cenários por município',ToolFeatureTier::Plus),new ToolFeature('monthly_consolidation','Consolidação mensal por competência e município',ToolFeatureTier::Plus),new ToolFeature('export','PDF e XLSX',ToolFeatureTier::Plus)],persistence:ToolPersistencePolicy::disabled(),export:new ToolExportPolicy(enabled:true,formats:['pdf','xlsx']),sharing:ToolSharingPolicy::disabled(),sensitiveData:ToolSensitiveDataPolicy::none());}
-    public function analyticsJourney():ToolAnalyticsJourney{return new ToolAnalyticsJourney(toolSlug:self::SLUG,forms:[new ToolAnalyticsForm(key:'main',steps:['service','plus'],fields:[new ToolAnalyticsField('municipality','service',selector:'[name="municipality"]'),new ToolAnalyticsField('service','service',selector:'[name="service"]'),new ToolAnalyticsField('value','service',selector:'[name="value"]'),new ToolAnalyticsField('rate','service',selector:'[name="rate"]'),new ToolAnalyticsField('retained','plus',selector:'[name="retained"]')],actions:['calculate','export'],selector:'form[action*="calculadora-iss"]',resultSelector:'[data-analytics-result="main"]')]);}
+    public const SLUG = 'calculadora-iss';
+
+    public function integrations(): ToolIntegrationManifest
+    {
+        return new ToolIntegrationManifest(publishes: [], accepts: []);
+    }
+
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-calculadora-iss';
+    }
+
+    public function manifest(): ToolManifest
+    {
+        return new ToolManifest(slug: self::SLUG, name: 'Calculadora de ISS', description: 'Estime o ISS com município, serviço, valor e alíquota informada; compare retenção, serviços e cenários municipais.', category: ToolCategory::Fiscal, icon: 'bi-building-check', routeName: 'tools.calculadora-iss.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Beta, position: 203, featured: true, supportsHistory: false, storesSensitiveData: false, keywords: ['iss', 'issqn', 'serviços', 'município', 'retenção'], capabilities: [ToolCapability::Export], features: [new ToolFeature('calculate', 'Município, serviço, valor e alíquota com ISS estimado', ToolFeatureTier::Essential), new ToolFeature('memory', 'Memória do cálculo principal', ToolFeatureTier::Essential), new ToolFeature('retention', 'Retenção e líquido estimado', ToolFeatureTier::Plus), new ToolFeature('multiple_services', 'Vários serviços e tomadores com consolidação', ToolFeatureTier::Plus), new ToolFeature('municipality_scenarios', 'Cenários por município', ToolFeatureTier::Plus), new ToolFeature('monthly_consolidation', 'Consolidação mensal por competência e município', ToolFeatureTier::Plus), new ToolFeature('export', 'PDF e XLSX', ToolFeatureTier::Plus)], persistence: ToolPersistencePolicy::disabled(), export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'xlsx']), sharing: ToolSharingPolicy::disabled(), sensitiveData: ToolSensitiveDataPolicy::none());
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(toolSlug: self::SLUG, forms: [new ToolAnalyticsForm(key: 'main', steps: ['service', 'plus'], fields: [new ToolAnalyticsField('municipality', 'service', selector: '[name="municipality"]'), new ToolAnalyticsField('service', 'service', selector: '[name="service"]'), new ToolAnalyticsField('value', 'service', selector: '[name="value"]'), new ToolAnalyticsField('rate', 'service', selector: '[name="rate"]'), new ToolAnalyticsField('retained','plus',selector: '[name="retained"]')], actions: ['calculate', 'export'], selector: 'form[action*="calculadora-iss"]', resultSelector: '[data-analytics-result="main"]')]);
+    }
 }

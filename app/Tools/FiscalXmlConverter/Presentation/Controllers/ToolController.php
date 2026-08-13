@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tools\FiscalXmlConverter\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
+use App\Core\Temporary\Contracts\TemporaryPayloadStore;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Temporary\Contracts\TemporaryPayloadStore;
 use App\Http\Controllers\Controller;
 use App\Tools\FiscalXmlConverter\Application\Actions\ConvertUploadedXml;
 use App\Tools\FiscalXmlConverter\Application\Actions\ConvertUploadedXmlBatch;
@@ -48,18 +49,20 @@ final class ToolController extends Controller
             return back()->withErrors(['xml_file' => $exception->getMessage()]);
         } catch (Throwable $exception) {
             report($exception);
+
             return back()->withErrors(['xml_file' => 'Não foi possível processar o XML. Verifique o arquivo e tente novamente.']);
         }
 
         $payload = $document->toArray();
         $resultToken = $temporary->put('fiscal-xml.current', $payload, $this->temporaryOwnerKey($request));
         if ($persistence->allowsHistory($module, $request->user())) {
-            $run = $recorder->start($module, new RuleVersion('2026.1'), ReferenceDate::fromDateTime(now()), [
+            $run = $recorder->start($module, new RuleVersion('2026.1.0'), ReferenceDate::fromDateTime(now()), [
                 'mode' => 'single', 'model' => $payload['model'], 'access_key' => $payload['access_key'],
                 'number' => $payload['number'], 'series' => $payload['series'],
             ], (int) $request->user()->getAuthIdentifier());
             $recorder->succeed($run, $payload);
         }
+
         return view('tools-conversor-fiscal-xml::index', [
             ...$page->execute(),
             'result' => $payload,
@@ -68,19 +71,21 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function batch(ConvertFiscalXmlBatchRequest $request, ConvertUploadedXmlBatch $action, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
+    public function batch(ConvertFiscalXmlBatchRequest $request, ConvertUploadedXmlBatch $action, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, ToolFeatureRequestAuthorizer $features, Tool $module, ShowToolPage $page, TemporaryPayloadStore $temporary): RedirectResponse|View
     {
-        $result = $action->execute($request->file('xml_files', []));
+        $features->requireIf($request->boolean('compare_documents'), $module, 'document_comparison', $request);
+        $result = $action->execute($request->file('xml_files', []), $request->boolean('compare_documents'));
         if ($result['summary']['processed'] === 0) {
             return back()->withErrors(['xml_files' => 'Nenhum dos XMLs enviados pôde ser processado.'])->with('batch_errors', $result['errors']);
         }
         $resultToken = $temporary->put('fiscal-xml.current', $result, $this->temporaryOwnerKey($request));
         if ($persistence->allowsHistory($module, $request->user())) {
-            $run = $recorder->start($module, new RuleVersion('2026.1'), ReferenceDate::fromDateTime(now()), [
+            $run = $recorder->start($module, new RuleVersion('2026.1.0'), ReferenceDate::fromDateTime(now()), [
                 'mode' => 'batch', 'received' => $result['summary']['received'],
             ], (int) $request->user()->getAuthIdentifier());
             $recorder->succeed($run, $result);
         }
+
         return view('tools-conversor-fiscal-xml::index', [
             ...$page->execute(),
             'batchResult' => $result,
@@ -94,6 +99,7 @@ final class ToolController extends Controller
         $token = (string) $request->query('result_token', '');
         $result = $temporary->get('fiscal-xml.current', $token, $this->temporaryOwnerKey($request));
         abort_unless(is_array($result), 404);
+
         return $this->export($format, $result, $tabular, $documents, $pdf, $spreadsheet);
     }
 
@@ -108,12 +114,14 @@ final class ToolController extends Controller
     {
         $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier());
         $key = ($entry->input['mode'] ?? 'single') === 'batch' ? 'fiscal_xml_batch_result' : 'fiscal_xml_result';
+
         return redirect()->route('tools.conversor-fiscal-xml.index')->with($key, $entry->result)->with('history_message', 'Resultado recuperado do histórico.');
     }
 
     public function destroyHistory(Request $request, string $run, ManageFiscalXmlHistory $history): RedirectResponse
     {
         $history->delete($run, (int) $request->user()->getAuthIdentifier());
+
         return back()->with('history_message', 'Processamento removido do histórico.');
     }
 
@@ -158,7 +166,8 @@ final class ToolController extends Controller
                 ];
             }
         }
-        $headers = ['Arquivo','Modelo','Chave','Número','Série','CNPJ/CPF emitente','Item','Código','Descrição','NCM','CFOP','Quantidade','Unidade','Valor unitário','Valor total','ICMS','IPI','PIS','Cofins'];
+        $headers = ['Arquivo', 'Modelo', 'Chave', 'Número', 'Série', 'CNPJ/CPF emitente', 'Item', 'Código', 'Descrição', 'NCM', 'CFOP', 'Quantidade', 'Unidade', 'Valor unitário', 'Valor total', 'ICMS', 'IPI', 'PIS', 'Cofins'];
+
         return $tabular->csv('xml-fiscal.csv', $headers, $rows);
     }
 }

@@ -12,4 +12,5 @@ Route::post('/ferramentas/simulador-fator-r', [ToolController::class, 'calculate
 Route::post('/ferramentas/simulador-fator-r/exportar/pdf', [ToolController::class, 'exportPdf'])
     ->name('tools.simulador-fator-r.export.pdf');
 Route::post('/ferramentas/simulador-fator-r/exportar/excel', [ToolController::class, 'exportExcel'])
+    ->middleware('tool.feature:simulador-fator-r,spreadsheet_export')
     ->name('tools.simulador-fator-r.export.excel');

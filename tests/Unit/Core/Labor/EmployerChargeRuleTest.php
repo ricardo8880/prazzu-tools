@@ -13,7 +13,7 @@ final class EmployerChargeRuleTest extends TestCase
 {
     public function test_general_regime_keeps_cpp_rat_and_third_parties(): void
     {
-        $rates = (new EmployerChargeRule())->ratesFor(
+        $rates = (new EmployerChargeRule)->ratesFor(
             'general', Percentage::fromString('2'), Percentage::fromString('5.8'),
         );
 
@@ -22,7 +22,7 @@ final class EmployerChargeRuleTest extends TestCase
 
     public function test_simples_other_embeds_patronal_charges_and_keeps_fgts(): void
     {
-        $rates = (new EmployerChargeRule())->ratesFor(
+        $rates = (new EmployerChargeRule)->ratesFor(
             'simples_other', Percentage::fromString('3'), Percentage::fromString('5.8'),
         );
 
@@ -31,7 +31,7 @@ final class EmployerChargeRuleTest extends TestCase
 
     public function test_snapshot_preserves_official_sources(): void
     {
-        $snapshot = (new EmployerChargeRule())->snapshot(ReferenceDate::fromString('2026-07-25'));
+        $snapshot = (new EmployerChargeRule)->snapshot(ReferenceDate::fromString('2026-07-25'));
 
         self::assertSame('labor.employer-charges', $snapshot->identifier);
         self::assertCount(3, $snapshot->references);

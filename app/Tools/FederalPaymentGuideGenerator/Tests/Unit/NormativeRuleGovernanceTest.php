@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tools\FederalPaymentGuideGenerator\Tests\Unit;
 
-use App\Core\Dates\ReferenceDate;
 use App\Core\Dates\Exceptions\NoEffectiveRule;
+use App\Core\Dates\ReferenceDate;
 use App\Core\Normative\NormativeRuleResolver;
 use App\Core\Normative\NormativeRuleVersion;
 use App\Tools\FederalPaymentGuideGenerator\Domain\Rules\LatePaymentRule;

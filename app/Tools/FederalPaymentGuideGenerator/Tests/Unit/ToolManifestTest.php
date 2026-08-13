@@ -13,7 +13,7 @@ final class ToolManifestTest extends TestCase
 {
     public function test_manifest_declares_versioned_history_and_professional_exports(): void
     {
-        $tool = new Tool();
+        $tool = new Tool;
         $manifest = $tool->manifest();
 
         self::assertSame('1.1.0', $manifest->version);

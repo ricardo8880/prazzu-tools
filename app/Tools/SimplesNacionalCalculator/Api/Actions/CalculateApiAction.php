@@ -16,9 +16,15 @@ final readonly class CalculateApiAction implements ToolApiAction
 
     public function __construct(private CalculateSimplesNacional $action) {}
 
-    public function name(): string { return 'calculate'; }
+    public function name(): string
+    {
+        return 'calculate';
+    }
 
-    protected function requestClass(): string { return CalculateSimplesNacionalRequest::class; }
+    protected function requestClass(): string
+    {
+        return CalculateSimplesNacionalRequest::class;
+    }
 
     public function execute(array $input, ToolExecutionContext $context): mixed
     {

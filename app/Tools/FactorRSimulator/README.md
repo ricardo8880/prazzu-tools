@@ -52,3 +52,8 @@ Regras normativas continuam sujeitas à revisão profissional e atualização pe
 ## Lote 6 — regra normativa e memória
 
 O cálculo passou a usar `App\Core\Tax\Normative\FactorRRule`, com limite de 28% versionado, fonte oficial, snapshot por data de referência e memória estruturada. A ferramenta continua limitada ao critério do Fator R e não presume automaticamente que toda atividade possa migrar entre os Anexos III e V.
+
+## Prazzu Plus — saneamento de monetização
+
+Exportação em planilha (`spreadsheet_export`) é Plus; cálculo e PDF permanecem Essenciais.
+A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.

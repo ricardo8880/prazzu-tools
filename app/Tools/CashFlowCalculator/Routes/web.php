@@ -9,6 +9,8 @@ Route::get('/ferramentas/fluxo-de-caixa', [ToolController::class, 'index'])
     ->name('tools.fluxo-de-caixa.index');
 Route::post('/ferramentas/fluxo-de-caixa', [ToolController::class, 'calculate'])
     ->name('tools.fluxo-de-caixa.calculate');
+Route::post('/ferramentas/fluxo-de-caixa/cenarios', [ToolController::class, 'compareScenarios'])
+    ->middleware('tool.feature:fluxo-de-caixa,cash_flow_scenarios')->name('tools.fluxo-de-caixa.scenarios');
 Route::post('/ferramentas/fluxo-de-caixa/exportar/pdf', [ToolController::class, 'exportPdf'])
     ->name('tools.fluxo-de-caixa.export.pdf');
 Route::post('/ferramentas/fluxo-de-caixa/exportar/excel', [ToolController::class, 'exportExcel'])

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tools\BusinessDocumentValidator;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
@@ -29,9 +29,8 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
-use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
-
 use App\Tools\BusinessDocumentValidator\Api\Actions\ValidateApiAction;
+use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
@@ -57,20 +56,20 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('document_type', 'input', selector: '[name="document_type"]'),
-                    new ToolAnalyticsField('document_number', 'input', selector: '[name="document_number"]'),
-                    new ToolAnalyticsField('state', 'input', selector: '[name="state"]'),
-                    new ToolAnalyticsField('state_registration', 'input', selector: '[name="state_registration"]'),
-                    new ToolAnalyticsField('cnpj', 'input', selector: '[name="cnpj"]'),
-                    new ToolAnalyticsField('analysis_cnpj', 'input', selector: '[name="analysis_cnpj"]'),
-                    new ToolAnalyticsField('legal_name', 'input', selector: '[name="legal_name"]'),
-                    new ToolAnalyticsField('trade_name', 'input', selector: '[name="trade_name"]'),
-                    new ToolAnalyticsField('analysis_state', 'input', selector: '[name="analysis_state"]'),
-                    new ToolAnalyticsField('city', 'input', selector: '[name="city"]'),
-                    new ToolAnalyticsField('analysis_state_registration', 'input', selector: '[name="analysis_state_registration"]'),
-                    new ToolAnalyticsField('batch_file', 'input', selector: '[name="batch_file"]'),
-                    new ToolAnalyticsField('import_token', 'input', selector: '[name="import_token"]'),
-                    new ToolAnalyticsField('consult_registry', 'input', selector: '[name="consult_registry"]'),
+                        new ToolAnalyticsField('document_type', 'input', selector: '[name="document_type"]'),
+                        new ToolAnalyticsField('document_number', 'input', selector: '[name="document_number"]'),
+                        new ToolAnalyticsField('state', 'input', selector: '[name="state"]'),
+                        new ToolAnalyticsField('state_registration', 'input', selector: '[name="state_registration"]'),
+                        new ToolAnalyticsField('cnpj', 'input', selector: '[name="cnpj"]'),
+                        new ToolAnalyticsField('analysis_cnpj', 'input', selector: '[name="analysis_cnpj"]'),
+                        new ToolAnalyticsField('legal_name', 'input', selector: '[name="legal_name"]'),
+                        new ToolAnalyticsField('trade_name', 'input', selector: '[name="trade_name"]'),
+                        new ToolAnalyticsField('analysis_state', 'input', selector: '[name="analysis_state"]'),
+                        new ToolAnalyticsField('city', 'input', selector: '[name="city"]'),
+                        new ToolAnalyticsField('analysis_state_registration', 'input', selector: '[name="analysis_state_registration"]'),
+                        new ToolAnalyticsField('batch_file', 'input', selector: '[name="batch_file"]'),
+                        new ToolAnalyticsField('import_token', 'input', selector: '[name="import_token"]'),
+                        new ToolAnalyticsField('consult_registry', 'input', selector: '[name="consult_registry"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="validate"]',

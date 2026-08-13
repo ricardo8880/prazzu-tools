@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Core\Export\Services;
 
 use App\Core\Money\Money;
-use DateTimeImmutable;
 use Throwable;
 
 final class HumanReadableExportPresenter
@@ -143,6 +142,7 @@ final class HumanReadableExportPresenter
 
         if ($key === 'competence' && is_string($value) && preg_match('/^(\d{4})-(\d{2})$/', $value, $matches)) {
             $months = [1 => 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+
             return ucfirst($months[(int) $matches[2]] ?? $matches[2]).' de '.$matches[1];
         }
 
@@ -207,11 +207,13 @@ final class HumanReadableExportPresenter
                             'level' => $level,
                         ];
                     }
+
                     continue;
                 }
 
                 $rows[] = ['label' => $this->label($key), 'value' => '', 'level' => $level];
                 $this->flatten($value, $rows, $level + 1, $skipDuplicatedInput);
+
                 continue;
             }
 

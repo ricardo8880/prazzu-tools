@@ -20,7 +20,6 @@ use App\Tools\SimplesNacionalCalculator\Application\Data\SimplesNacionalCalculat
 use App\Tools\SimplesNacionalCalculator\Application\Features\SimplesNacionalFeature;
 use App\Tools\SimplesNacionalCalculator\Domain\Enums\TaxAnnex;
 use App\Tools\SimplesNacionalCalculator\Presentation\Requests\CalculateSimplesNacionalRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -119,6 +118,7 @@ final class SimplesNacionalController extends Controller
             'factorRResult' => $factorRResult?->toArray(),
         ]);
     }
+
     public function exportCurrent(
         CalculateSimplesNacionalRequest $request,
         StandardSimplesNacionalCalculator $calculateSimples,
@@ -145,5 +145,4 @@ final class SimplesNacionalController extends Controller
             ? $pdf->download($documents->pdf('Cálculo do Simples Nacional', $filename, $result, $input))
             : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));
     }
-
 }

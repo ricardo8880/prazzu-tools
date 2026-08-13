@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Models\User;
@@ -64,6 +65,8 @@ final class LaborTerminationToolTest extends TestCase
             ->assertSessionHasErrors(['notice_type']);
     }
 
+    #[CoversPlusFeature('calculadora-de-rescisao', 'history')]
+    #[CoversPlusFeature('calculadora-de-rescisao', 'repeat_history')]
     public function test_authenticated_calculation_is_saved_and_can_be_repeated_and_deleted(): void
     {
         $user = User::factory()->create();
@@ -173,6 +176,7 @@ final class LaborTerminationToolTest extends TestCase
         $this->assertStringStartsWith('%PDF', $response->getContent());
     }
 
+    #[CoversPlusFeature('calculadora-de-rescisao', 'historical_report')]
     public function test_user_can_export_owned_history_report(): void
     {
         $user = User::factory()->create();

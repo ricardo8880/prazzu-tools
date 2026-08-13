@@ -43,4 +43,9 @@ jobs:
           cp .env.example .env
           php artisan key:generate
           touch database/database.sqlite
+      - name: Matriz Prazzu Plus (Free x Plus)
+        run: php artisan test tests/Architecture/PlusFeatureAccessContractTest.php tests/Architecture/PlusFeatureGovernanceContractTest.php
       - run: composer release:check
+      - name: Validar pacote de distribuição
+        shell: pwsh
+        run: ./scripts/package-distribution.ps1 -OutputPath "${{ runner.temp }}/prazzu-tools-distribuicao.zip"

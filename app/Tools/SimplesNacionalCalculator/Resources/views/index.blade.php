@@ -232,7 +232,7 @@
                     <form method="post" action="{{ route('tools.calculadora-simples-nacional.plus.project') }}" class="row g-3">@csrf
                         <div class="col-md-3"><label class="form-label">Anexo</label><select class="form-select" name="annex" required>@foreach($annexes as $annex)<option value="{{ $annex->value }}" @selected(old('annex') === $annex->value)>{{ $annex->label() }}</option>@endforeach</select></div>
                         <div class="col-md-4"><label class="form-label">Faturamento mensal inicial</label><input class="form-control" name="monthly_revenue" value="{{ old('monthly_revenue') }}" required></div>
-                        <div class="col-md-3"><label class="form-label">Crescimento mensal (%)</label><input class="form-control" type="number" step="0.01" name="monthly_growth" value="{{ old('monthly_growth', 0) }}" required></div>
+                        <div class="col-md-3"><label class="form-label">Crescimento mensal (%)</label><input class="form-control" type="number" step="0.01" name="monthly_growth" value="{{ old('monthly_growth') }}" required></div>
                         <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" type="submit" @disabled(! ($plusAccess['annual_projection'] ?? false))>Projetar</button></div>
                     </form>
                     @php
@@ -250,7 +250,7 @@
                         <div class="col-md-3"><label class="form-label">RBT12</label><input class="form-control" name="rbt12" value="{{ old('rbt12') }}" required></div>
                         <div class="col-md-3"><label class="form-label">Faturamento mensal</label><input class="form-control" name="monthly_revenue" value="{{ old('monthly_revenue') }}" required></div>
                         <div class="col-md-2"><label class="form-label">Folha 12 meses</label><input class="form-control" name="payroll_12" value="{{ old('payroll_12') }}"></div>
-                        <div class="col-md-2"><label class="form-label">Crescimento (%)</label><input class="form-control" type="number" min="0" max="100" step="0.01" name="monthly_growth" value="{{ old('monthly_growth', 0) }}"></div>
+                        <div class="col-md-2"><label class="form-label">Crescimento (%)</label><input class="form-control" type="number" min="0" max="100" step="0.01" name="monthly_growth" value="{{ old('monthly_growth') }}"></div>
                         <div class="col-12"><button class="btn btn-primary" type="submit" @disabled(! ($plusAccess['alerts'] ?? false))><i class="bi bi-search me-1"></i> Analisar alertas</button></div>
                     </form>
                     @php

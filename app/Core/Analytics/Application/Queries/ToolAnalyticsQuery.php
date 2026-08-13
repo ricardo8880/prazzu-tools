@@ -180,6 +180,7 @@ final readonly class ToolAnalyticsQuery
         }
 
         sort($durations);
+
         return $durations;
     }
 
@@ -190,6 +191,7 @@ final readonly class ToolAnalyticsQuery
             ->groupBy(fn ($event) => $event->subject_slug.'|'.data_get($event->metadata, 'field').'|'.data_get($event->metadata, 'step', '—'))
             ->map(function (Collection $rows): object {
                 $first = $rows->first();
+
                 return (object) [
                     'tool' => $first->subject_slug, 'field' => data_get($first->metadata, 'field'),
                     'step' => data_get($first->metadata, 'step', '—'),
@@ -203,6 +205,7 @@ final readonly class ToolAnalyticsQuery
     {
         $abandoned = $events->whereIn('event_name', $this->names([AnalyticsEventName::ToolAbandoned]));
         $total = max(1, $abandoned->count());
+
         return $abandoned->groupBy(fn ($event) => data_get($event->metadata, 'step', 'unknown'))
             ->map(fn (Collection $rows, string $step) => (object) ['step' => $step, 'total' => $rows->count(), 'percentage' => round($rows->count() / $total * 100, 1)])
             ->sortByDesc('total')->values();
@@ -212,9 +215,16 @@ final readonly class ToolAnalyticsQuery
     {
         return $tools->flatMap(function (object $tool): array {
             $alerts = [];
-            if ($tool->completion_trend !== null && $tool->completion_trend <= -20) $alerts[] = (object) ['severity' => 'danger', 'tool' => $tool->name, 'message' => 'Queda de conclusão superior a 20%.'];
-            if ($tool->previous_errors > 0 && $tool->errors > $tool->previous_errors * 1.2) $alerts[] = (object) ['severity' => 'warning', 'tool' => $tool->name, 'message' => 'Crescimento anormal de erros.'];
-            if ($tool->opens >= 10 && $tool->completion_rate < 20) $alerts[] = (object) ['severity' => 'warning', 'tool' => $tool->name, 'message' => 'Muitas aberturas e poucos resultados visualizados.'];
+            if ($tool->completion_trend !== null && $tool->completion_trend <= -20) {
+                $alerts[] = (object) ['severity' => 'danger', 'tool' => $tool->name, 'message' => 'Queda de conclusão superior a 20%.'];
+            }
+            if ($tool->previous_errors > 0 && $tool->errors > $tool->previous_errors * 1.2) {
+                $alerts[] = (object) ['severity' => 'warning', 'tool' => $tool->name, 'message' => 'Crescimento anormal de erros.'];
+            }
+            if ($tool->opens >= 10 && $tool->completion_rate < 20) {
+                $alerts[] = (object) ['severity' => 'warning', 'tool' => $tool->name, 'message' => 'Muitas aberturas e poucos resultados visualizados.'];
+            }
+
             return $alerts;
         })->values();
     }
@@ -224,12 +234,19 @@ final readonly class ToolAnalyticsQuery
     {
         $query = $this->base($period)->whereNotNull('subject_slug');
         $columns = ['source', 'device_type', 'browser', 'country_code', 'language'];
-        foreach ($columns as $column) if (filled($filters[$column] ?? null)) $query->where($column, $filters[$column]);
-        if (filled($filters['tool'] ?? null)) $query->where('subject_slug', $filters['tool']);
+        foreach ($columns as $column) {
+            if (filled($filters[$column] ?? null)) {
+                $query->where($column, $filters[$column]);
+            }
+        }
+        if (filled($filters['tool'] ?? null)) {
+            $query->where('subject_slug', $filters['tool']);
+        }
         if (filled($filters['category'] ?? null)) {
             $slugs = $this->catalog->all(false)->where('category', $filters['category'])->pluck('slug');
             $query->whereIn('subject_slug', $slugs);
         }
+
         return $query;
     }
 
@@ -237,6 +254,7 @@ final readonly class ToolAnalyticsQuery
     {
         $base = $this->base($period);
         $distinct = fn (string $column): Collection => (clone $base)->whereNotNull($column)->where($column, '!=', '')->distinct()->orderBy($column)->pluck($column);
+
         return [
             'tools' => $this->catalog->all(false)->map(fn (array $tool) => ['slug' => $tool['slug'], 'name' => $tool['name']]),
             'categories' => $this->catalog->all(false)->pluck('category')->filter()->unique()->sort()->values(),
@@ -248,6 +266,7 @@ final readonly class ToolAnalyticsQuery
     private function audienceBreakdown(AnalyticsPeriod $period, string $slug, string $column, string $fallback): Collection
     {
         $events = $this->names([AnalyticsEventName::ToolOpened]);
+
         return $this->base($period, $slug)->whereIn('event_name', $events)->selectRaw("COALESCE($column, ?) as label", [$fallback])
             ->selectRaw('COUNT(*) as total')->groupBy($column)->orderByDesc('total')->get();
     }
@@ -255,7 +274,10 @@ final readonly class ToolAnalyticsQuery
     /** @param array<string, string|null> $filters */
     private function daily(AnalyticsPeriod $period, ?string $slug = null, array $filters = []): Collection
     {
-        if ($slug) $filters['tool'] = $slug;
+        if ($slug) {
+            $filters['tool'] = $slug;
+        }
+
         return $this->filteredEvents($period, $filters)->selectRaw('DATE(occurred_at) as day')
             ->selectRaw($this->sumCase([AnalyticsEventName::ToolOpened]).' as opens', $this->names([AnalyticsEventName::ToolOpened]))
             ->selectRaw($this->sumCase([AnalyticsEventName::ToolResultViewed]).' as results', $this->names([AnalyticsEventName::ToolResultViewed]))
@@ -270,22 +292,40 @@ final readonly class ToolAnalyticsQuery
     }
 
     /** @param list<AnalyticsEventName> $events @return list<string> */
-    private function names(array $events): array { return $this->eventNames->expand($events); }
+    private function names(array $events): array
+    {
+        return $this->eventNames->expand($events);
+    }
 
     /** @param list<AnalyticsEventName> $events */
-    private function sumCase(array $events): string { return 'SUM(CASE WHEN event_name IN ('.implode(',', array_fill(0, count($this->names($events)), '?')).') THEN 1 ELSE 0 END)'; }
+    private function sumCase(array $events): string
+    {
+        return 'SUM(CASE WHEN event_name IN ('.implode(',', array_fill(0, count($this->names($events)), '?')).') THEN 1 ELSE 0 END)';
+    }
 
-    private function average(array $values): float { return $values === [] ? 0.0 : round(array_sum($values) / count($values), 1); }
+    private function average(array $values): float
+    {
+        return $values === [] ? 0.0 : round(array_sum($values) / count($values), 1);
+    }
+
     private function percentile(array $values, int $percentile): float
     {
-        if ($values === []) return 0.0;
+        if ($values === []) {
+            return 0.0;
+        }
         $index = ($percentile / 100) * (count($values) - 1);
-        $lower = (int) floor($index); $upper = (int) ceil($index);
+        $lower = (int) floor($index);
+        $upper = (int) ceil($index);
+
         return round($values[$lower] + (($values[$upper] - $values[$lower]) * ($index - $lower)), 1);
     }
+
     private function percentageChange(float|int $current, float|int $previous): ?float
     {
-        if ((float) $previous === 0.0) return (float) $current === 0.0 ? 0.0 : null;
+        if ((float) $previous === 0.0) {
+            return (float) $current === 0.0 ? 0.0 : null;
+        }
+
         return round((($current - $previous) / $previous) * 100, 1);
     }
 }

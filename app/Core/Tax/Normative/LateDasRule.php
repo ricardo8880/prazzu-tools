@@ -18,9 +18,20 @@ final readonly class LateDasRule implements NormativeRule
 {
     public const VERSION = '1.0.0';
 
-    public function dailyFine(): Percentage { return Percentage::fromString('0.33'); }
-    public function maximumFine(): Percentage { return Percentage::fromString('20'); }
-    public function paymentMonthInterest(): Percentage { return Percentage::fromString('1'); }
+    public function dailyFine(): Percentage
+    {
+        return Percentage::fromString('0.33');
+    }
+
+    public function maximumFine(): Percentage
+    {
+        return Percentage::fromString('20');
+    }
+
+    public function paymentMonthInterest(): Percentage
+    {
+        return Percentage::fromString('1');
+    }
 
     public function snapshot(ReferenceDate $referenceDate): NormativeRuleSnapshot
     {

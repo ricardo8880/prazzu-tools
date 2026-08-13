@@ -17,10 +17,10 @@ final class CampaignAnalyticsInsightGeneratorTest extends TestCase
         ];
         $previous = [
             'summary' => ['sessions' => 10, 'conversion_rate' => 20.0],
-            'keywords' => new Collection(), 'campaigns' => new Collection(),
+            'keywords' => new Collection, 'campaigns' => new Collection,
         ];
 
-        $insights = (new CampaignAnalyticsInsightGenerator())->generate($current, $previous);
+        $insights = (new CampaignAnalyticsInsightGenerator)->generate($current, $previous);
 
         self::assertTrue($insights->contains(fn (object $item): bool => $item->title === 'Campanhas ganharam tráfego'));
         self::assertTrue($insights->contains(fn (object $item): bool => $item->title === 'Palavra-chave com melhor eficiência'));

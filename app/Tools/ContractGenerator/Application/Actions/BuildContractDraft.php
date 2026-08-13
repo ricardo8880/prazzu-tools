@@ -9,8 +9,10 @@ use App\Core\Identifiers\Cpf;
 use App\Core\Money\Money;
 use App\Tools\ContractGenerator\Domain\Data\ContractDraft;
 use App\Tools\ContractGenerator\Domain\Data\ContractParty;
+use App\Tools\ContractGenerator\Domain\Enums\ContractTemplate;
 use App\Tools\ContractGenerator\Domain\Enums\ContractType;
 use App\Tools\ContractGenerator\Domain\Enums\PartyDocumentType;
+use App\Tools\ContractGenerator\Domain\Enums\SmartClause;
 use DateTimeImmutable;
 
 final class BuildContractDraft
@@ -19,9 +21,18 @@ final class BuildContractDraft
     public function execute(array $data): ContractDraft
     {
         $type = ContractType::from((string) $data['contract_type']);
+        $template = isset($data['template_key']) && filled($data['template_key'])
+            ? ContractTemplate::from((string) $data['template_key'])
+            : ContractTemplate::essentialFor($type);
+        $selectedClauses = array_values(array_unique([
+            ...array_map(static fn (mixed $value): SmartClause => SmartClause::from((string) $value), (array) ($data['smart_clauses'] ?? [])),
+            ...$template->presetClauses(),
+        ], SORT_REGULAR));
 
         return new ContractDraft(
             type: $type,
+            template: $template,
+            smartClauses: $selectedClauses,
             firstParty: $this->party($data, 'first_party'),
             secondParty: $this->party($data, 'second_party'),
             amount: Money::fromDecimal((string) $data['amount']),

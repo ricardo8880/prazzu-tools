@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Core\Quality\E2E\Data\ToolScenario;
 
 $root = dirname(__DIR__);
 $command = $argv[1] ?? 'export';
@@ -35,8 +36,9 @@ foreach (($config['tools'] ?? []) as $slug => $toolScenarios) {
         $failures[] = "Ferramenta desconhecida no catálogo oficial: [{$slug}].";
     }
     foreach ($toolScenarios as $scenario) {
-        if (! $scenario instanceof App\Core\Quality\E2E\Data\ToolScenario) {
+        if (! $scenario instanceof ToolScenario) {
             $failures[] = "Entrada de cenário inválida para [{$slug}].";
+
             continue;
         }
         $data = $scenario->toArray();

@@ -10,10 +10,10 @@
         <form method="POST" action="{{ route('tools.simulador-fator-r.calculate') }}" class="row g-3">
             @csrf
             <div class="col-12 col-md-6">
-                <x-tools.form.money name="payroll_12" label="Folha de salários e encargos (FS12)" help="Remunerações e pró-labore pagos, CPP e FGTS efetivamente recolhidos." :value="old('payroll_12', '0,00')" required />
+                <x-tools.form.money name="payroll_12" label="Folha de salários e encargos (FS12)" help="Remunerações e pró-labore pagos, CPP e FGTS efetivamente recolhidos." :value="old('payroll_12')" required />
             </div>
             <div class="col-12 col-md-6">
-                <x-tools.form.money name="revenue_12" label="Receita bruta acumulada (RBT12)" help="Mercados interno e externo nos 12 meses anteriores ao período de apuração." :value="old('revenue_12', '0,00')" required />
+                <x-tools.form.money name="revenue_12" label="Receita bruta acumulada (RBT12)" help="Mercados interno e externo nos 12 meses anteriores ao período de apuração." :value="old('revenue_12')" required />
             </div>
             <div class="col-12"><button class="btn btn-primary" type="submit">Calcular Fator R</button></div>
         </form>

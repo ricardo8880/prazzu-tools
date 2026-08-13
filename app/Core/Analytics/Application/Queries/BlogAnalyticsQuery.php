@@ -120,7 +120,6 @@ final class BlogAnalyticsQuery
         )->all();
     }
 
-
     /** @return Collection<int, object> */
     private function attributedConversionsByPost(AnalyticsPeriod $period, ?int $postId = null): Collection
     {

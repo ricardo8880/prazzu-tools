@@ -20,6 +20,7 @@ final class PersistenceAuthenticationTest extends TestCase
         $this->get(route('tools.calculadora-de-rescisao.index'))->assertOk();
         $this->get(route('tools.calculadora-simples-nacional.index'))->assertOk();
     }
+
     public function test_persistence_auth_is_not_applied_to_immediate_tool_usage_routes(): void
     {
         foreach (app('router')->getRoutes() as $route) {
@@ -31,6 +32,8 @@ final class PersistenceAuthenticationTest extends TestCase
             $persistentRoute = Str::contains($name, [
                 '.history.',
                 '.profiles.',
+                '.registry.',
+                '.versions.',
                 '.adjustments.delete',
             ]);
 
@@ -40,5 +43,4 @@ final class PersistenceAuthenticationTest extends TestCase
             );
         }
     }
-
 }

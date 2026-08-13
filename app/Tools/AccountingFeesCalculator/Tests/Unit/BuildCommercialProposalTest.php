@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\AccountingFeesCalculator\Tests\Unit;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Tools\AccountingFeesCalculator\Application\Actions\BuildCommercialProposal;
 use PHPUnit\Framework\TestCase;
 
 final class BuildCommercialProposalTest extends TestCase
 {
+    #[CoversPlusFeature('calculadora-de-honorarios-contabeis', 'commercial_proposal')]
     public function test_builds_a_printable_commercial_proposal(): void
     {
         $proposal = (new BuildCommercialProposal)->execute([

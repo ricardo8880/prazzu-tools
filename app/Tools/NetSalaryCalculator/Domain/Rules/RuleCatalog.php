@@ -8,11 +8,11 @@ use App\Core\Dates\EffectivePeriod;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Money\Money;
 use App\Core\Money\Percentage;
-use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Core\Normative\NormativeReference;
 use App\Core\Normative\NormativeRuleMetadata;
 use App\Core\Normative\NormativeRuleVersion;
 use App\Core\Normative\NormativeSourceType;
+use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 
 final class RuleCatalog
 {
@@ -52,5 +52,4 @@ final class RuleCatalog
     {
         return [MonthlyPersonalIncomeTaxRule::for2026()];
     }
-
 }

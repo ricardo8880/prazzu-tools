@@ -18,6 +18,7 @@ final class RuleCatalog
     public static function laborCompensation(): array
     {
         $period = EffectivePeriod::from('2026-01-01', '2026-12-31');
+
         return [new LaborCompensationRule(
             metadata: new NormativeRuleMetadata(
                 identifier: 'overtime.labor_compensation',

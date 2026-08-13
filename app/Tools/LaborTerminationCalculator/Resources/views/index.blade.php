@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="prazzu-page tool-page" data-tool="calculadora-de-rescisao" data-testid="tool-page-calculadora-de-rescisao">
+    <x-tools.trust-seo slug="calculadora-de-rescisao" :show-content="false" />
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -167,12 +168,12 @@
 
             <div class="col-12 col-md-6 col-lg-3">
                 <label class="form-label" for="overdue_vacation_periods">Períodos de férias vencidas</label>
-                <input class="form-control @error('overdue_vacation_periods') is-invalid @enderror" id="overdue_vacation_periods" type="number" min="0" max="3" name="overdue_vacation_periods" value="{{ old('overdue_vacation_periods', 0) }}">
+                <input class="form-control @error('overdue_vacation_periods') is-invalid @enderror" id="overdue_vacation_periods" type="number" min="0" max="3" name="overdue_vacation_periods" value="{{ old('overdue_vacation_periods') }}" placeholder="0">
                 @error('overdue_vacation_periods')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             <div class="col-12 col-md-6 col-lg-3">
                 <label class="form-label" for="double_vacation_periods">Desses, períodos em dobro</label>
-                <input class="form-control @error('double_vacation_periods') is-invalid @enderror" id="double_vacation_periods" type="number" min="0" max="3" name="double_vacation_periods" value="{{ old('double_vacation_periods', 0) }}">
+                <input class="form-control @error('double_vacation_periods') is-invalid @enderror" id="double_vacation_periods" type="number" min="0" max="3" name="double_vacation_periods" value="{{ old('double_vacation_periods') }}" placeholder="0">
                 @error('double_vacation_periods')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
             @foreach ([
@@ -182,7 +183,7 @@
             ] as $field => $label)
                 <div class="col-12 col-md-6 col-lg-4">
                     <label class="form-label" for="{{ $field }}">{{ $label }}</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error($field) is-invalid @enderror" id="{{ $field }}" name="{{ $field }}" value="{{ old($field, '0,00') }}" inputmode="decimal">@error($field)<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error($field) is-invalid @enderror" id="{{ $field }}" name="{{ $field }}" value="{{ old($field) }}" inputmode="decimal">@error($field)<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 </div>
             @endforeach
             <div class="col-12 col-md-6 col-lg-4">
@@ -200,11 +201,11 @@
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="form-label" for="article_480_discount">Desconto informado do art. 480</label>
-                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('article_480_discount') is-invalid @enderror" id="article_480_discount" name="article_480_discount" value="{{ old('article_480_discount', '0,00') }}" inputmode="decimal">@error('article_480_discount')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('article_480_discount') is-invalid @enderror" id="article_480_discount" name="article_480_discount" value="{{ old('article_480_discount') }}" inputmode="decimal">@error('article_480_discount')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="form-label" for="extraordinary_indemnities">Indenizações adicionais</label>
-                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('extraordinary_indemnities') is-invalid @enderror" id="extraordinary_indemnities" name="extraordinary_indemnities" value="{{ old('extraordinary_indemnities', '0,00') }}" inputmode="decimal">@error('extraordinary_indemnities')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('extraordinary_indemnities') is-invalid @enderror" id="extraordinary_indemnities" name="extraordinary_indemnities" value="{{ old('extraordinary_indemnities') }}" inputmode="decimal">@error('extraordinary_indemnities')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 <div class="form-text">Estabilidade, norma coletiva ou ajuste extraordinário informado manualmente.</div>
             </div>
 
@@ -212,22 +213,22 @@
 
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="form-label" for="fgts_balance">Saldo atual do FGTS</label>
-                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('fgts_balance') is-invalid @enderror" id="fgts_balance" name="fgts_balance" value="{{ old('fgts_balance', '0,00') }}" inputmode="decimal" placeholder="12.000,00">@error('fgts_balance')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('fgts_balance') is-invalid @enderror" id="fgts_balance" name="fgts_balance" value="{{ old('fgts_balance') }}" inputmode="decimal" placeholder="12.000,00">@error('fgts_balance')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 <div class="form-text">Use o saldo da conta vinculada deste contrato para estimar a multa.</div>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="form-label" for="domestic_indemnity_reserve_balance">Reserva indenizatória doméstica</label>
-                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('domestic_indemnity_reserve_balance') is-invalid @enderror" id="domestic_indemnity_reserve_balance" name="domestic_indemnity_reserve_balance" value="{{ old('domestic_indemnity_reserve_balance', '0,00') }}" inputmode="decimal" placeholder="4.800,00">@error('domestic_indemnity_reserve_balance')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('domestic_indemnity_reserve_balance') is-invalid @enderror" id="domestic_indemnity_reserve_balance" name="domestic_indemnity_reserve_balance" value="{{ old('domestic_indemnity_reserve_balance') }}" inputmode="decimal" placeholder="4.800,00">@error('domestic_indemnity_reserve_balance')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 <div class="form-text">Somente para empregado doméstico: saldo dos depósitos mensais de 3,2%.</div>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="form-label" for="other_discounts">Outros descontos</label>
-                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('other_discounts') is-invalid @enderror" id="other_discounts" name="other_discounts" value="{{ old('other_discounts', '0,00') }}" inputmode="decimal" placeholder="0,00">@error('other_discounts')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('other_discounts') is-invalid @enderror" id="other_discounts" name="other_discounts" value="{{ old('other_discounts') }}" inputmode="decimal" placeholder="0,00">@error('other_discounts')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 <div class="form-text">Adiantamentos, faltas ou descontos autorizados.</div>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="form-label" for="dependents">Dependentes para IRRF</label>
-                <input class="form-control @error('dependents') is-invalid @enderror" id="dependents" type="number" min="0" max="99" name="dependents" value="{{ old('dependents', 0) }}">
+                <input class="form-control @error('dependents') is-invalid @enderror" id="dependents" type="number" min="0" max="99" name="dependents" value="{{ old('dependents') }}" placeholder="0">
                 @error('dependents')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 

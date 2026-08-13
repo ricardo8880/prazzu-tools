@@ -11,6 +11,7 @@ use App\Core\Quality\Enums\GoldenCaseKind;
 final class GoldenCases
 {
     public const PLACEHOLDER_REFERENCE = 'TODO: substitua por fonte oficial, cálculo revisado ou caso aprovado.';
+
     private const REFERENCE = 'Manual de Orientação do Contribuinte NF-e/NFC-e e política de segurança XML do módulo. Casos revisados internamente.';
 
     public static function suite(): GoldenCaseSuite

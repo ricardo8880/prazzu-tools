@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 final class E2ECorrelation
 {
     public const RUN_HEADER = 'X-E2E-Run-Id';
+
     public const SCENARIO_HEADER = 'X-E2E-Scenario-Id';
 
     public static function fromRequest(Request $request): array

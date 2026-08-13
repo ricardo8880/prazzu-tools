@@ -9471,8 +9471,8 @@ body.tox-dialog__disable-scroll {
 [data-bs-theme="light"] .prazzu-plans__comparison thead {
     background: #edf0f6;
 }
-/* 18. Conversão contextual pós-resultado — Prazzu Plus */
-.prazzu-plus-result-cta {
+/* 18. Continuidade contextual pós-resultado */
+.prazzu-result-continuity-cta {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -9488,20 +9488,20 @@ body.tox-dialog__disable-scroll {
     transition: opacity 220ms ease, transform 220ms ease, border-color 220ms ease;
 }
 
-.prazzu-plus-result-cta[hidden] {
+.prazzu-result-continuity-cta[hidden] {
     display: none !important;
 }
 
-.prazzu-plus-result-cta.is-visible {
+.prazzu-result-continuity-cta.is-visible {
     opacity: 1;
     transform: translateY(0);
 }
 
-.prazzu-plus-result-cta:hover {
+.prazzu-result-continuity-cta:hover {
     border-color: color-mix(in srgb, var(--prazzu-color-secondary-light) 72%, var(--prazzu-color-primary) 28%);
 }
 
-.prazzu-plus-result-cta__icon {
+.prazzu-result-continuity-cta__icon {
     display: inline-flex;
     width: 2.75rem;
     height: 2.75rem;
@@ -9515,11 +9515,11 @@ body.tox-dialog__disable-scroll {
     font-size: 1.15rem;
 }
 
-.prazzu-plus-result-cta__content {
+.prazzu-result-continuity-cta__content {
     flex: 1 1 auto;
 }
 
-.prazzu-plus-result-cta__eyebrow {
+.prazzu-result-continuity-cta__eyebrow {
     display: block;
     margin-bottom: 0.2rem;
     color: var(--prazzu-color-secondary-light);
@@ -9529,16 +9529,16 @@ body.tox-dialog__disable-scroll {
     text-transform: uppercase;
 }
 
-.prazzu-plus-result-cta__content h2 {
+.prazzu-result-continuity-cta__content h2 {
     color: var(--prazzu-color-text);
 }
 
-.prazzu-plus-result-cta__content strong {
+.prazzu-result-continuity-cta__content strong {
     color: color-mix(in srgb, var(--prazzu-color-text) 88%, var(--prazzu-color-secondary-light) 12%);
     font-weight: 650;
 }
 
-.prazzu-plus-result-cta__action {
+.prazzu-result-continuity-cta__action {
     border: 1px solid color-mix(in srgb, var(--prazzu-color-primary) 64%, transparent);
     background: color-mix(in srgb, var(--prazzu-color-primary) 13%, transparent);
     color: var(--prazzu-color-primary-light);
@@ -9546,14 +9546,35 @@ body.tox-dialog__disable-scroll {
     white-space: nowrap;
 }
 
-.prazzu-plus-result-cta__action:hover,
-.prazzu-plus-result-cta__action:focus-visible {
+.prazzu-result-continuity-cta__action:hover,
+.prazzu-result-continuity-cta__action:focus-visible {
     border-color: var(--prazzu-color-primary);
     background: var(--prazzu-color-primary);
     color: #fff;
 }
 
-[data-bs-theme="light"] .prazzu-plus-result-cta {
+.prazzu-result-continuity-cta__actions {
+    display: grid;
+    justify-items: stretch;
+    gap: 0.4rem;
+    min-width: max-content;
+}
+
+.prazzu-result-continuity-cta__secondary {
+    color: var(--prazzu-color-secondary-light);
+    font-size: 0.78rem;
+    font-weight: 650;
+    text-align: center;
+    text-decoration: none;
+}
+
+.prazzu-result-continuity-cta__secondary:hover,
+.prazzu-result-continuity-cta__secondary:focus-visible {
+    color: var(--prazzu-color-primary-light);
+    text-decoration: underline;
+}
+
+[data-bs-theme="light"] .prazzu-result-continuity-cta {
     border-color: color-mix(in srgb, var(--prazzu-color-secondary) 28%, #dbe1ef 72%);
     background:
         linear-gradient(110deg, color-mix(in srgb, var(--prazzu-color-secondary) 7%, transparent), transparent 58%),
@@ -9561,35 +9582,61 @@ body.tox-dialog__disable-scroll {
     box-shadow: 0 10px 26px rgb(33 44 90 / 8%);
 }
 
-[data-bs-theme="light"] .prazzu-plus-result-cta__eyebrow {
+[data-bs-theme="light"] .prazzu-result-continuity-cta__eyebrow {
     color: var(--prazzu-color-secondary);
 }
 
-[data-bs-theme="light"] .prazzu-plus-result-cta__content h2 {
+[data-bs-theme="light"] .prazzu-result-continuity-cta__content h2 {
     color: #18213f;
 }
 
-[data-bs-theme="light"] .prazzu-plus-result-cta__content strong {
+[data-bs-theme="light"] .prazzu-result-continuity-cta__content strong {
     color: var(--prazzu-color-secondary);
 }
 
 @media (max-width: 767.98px) {
-    .prazzu-plus-result-cta {
+    .prazzu-result-continuity-cta {
         align-items: flex-start;
         flex-wrap: wrap;
     }
 
-    .prazzu-plus-result-cta__content {
+    .prazzu-result-continuity-cta__content {
         flex-basis: calc(100% - 3.75rem);
     }
 
-    .prazzu-plus-result-cta__action {
+    .prazzu-result-continuity-cta__actions,
+    .prazzu-result-continuity-cta__action {
         width: 100%;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .prazzu-plus-result-cta {
+    .prazzu-result-continuity-cta {
         transition: none;
     }
+}
+
+/* Crescimento e Retenção — Lote 3: continuidade na Home. */
+.prazzu-continuity-tools {
+    padding-top: 24px;
+}
+
+.prazzu-section-caption {
+    color: var(--prazzu-color-muted);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.prazzu-tool-card--continuity {
+    border-color: rgb(124 58 237 / 34%);
+    background:
+        radial-gradient(circle at 90% 8%, rgb(124 58 237 / 12%), transparent 34%),
+        linear-gradient(145deg, rgb(10 25 42 / 92%), rgb(7 18 31 / 82%));
+}
+
+[data-bs-theme="light"] .prazzu-tool-card--continuity {
+    border-color: rgb(124 58 237 / 22%);
+    background:
+        radial-gradient(circle at 90% 8%, rgb(124 58 237 / 8%), transparent 34%),
+        var(--bs-body-bg);
 }

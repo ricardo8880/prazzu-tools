@@ -21,6 +21,7 @@ use InvalidArgumentException;
 final class Calculator implements ToolCalculator
 {
     public const CURRENT_REFERENCE_YEAR = 2026;
+
     public const CURRENT_MEI_LIMIT_MINOR = 8_100_000;
 
     /** @var array<int, int> */

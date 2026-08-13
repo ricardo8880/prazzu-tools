@@ -59,4 +59,20 @@ final readonly class ToolScenario
             ),
         ];
     }
+
+    /** @param array<string, mixed> $properties */
+    public static function __set_state(array $properties): self
+    {
+        return new self(
+            id: (string) $properties['id'],
+            title: (string) $properties['title'],
+            kind: (string) $properties['kind'],
+            toolSlug: (string) $properties['toolSlug'],
+            steps: (array) $properties['steps'],
+            expectations: (array) $properties['expectations'],
+            tags: (array) $properties['tags'],
+            accessProfile: (string) $properties['accessProfile'],
+            downloads: (array) $properties['downloads'],
+        );
+    }
 }

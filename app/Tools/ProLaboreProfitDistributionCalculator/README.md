@@ -26,10 +26,7 @@ distribuído.
 
 A experiência Essencial de formulário e resultado consolidado para um sócio e uma competência de 2026 está implementada. O Lote 5 acrescenta simulações temporárias com dois a quatro cenários, até doze competências por cenário, até dez sócios por competência, consolidação por sócio e competência e comparação contra o cenário-base. Histórico e exportações profissionais continuam pendentes. O módulo pode ser validado em catálogo beta, mas não deve ser promovido a `active` antes das revisões técnica e de privacidade e do `composer release:check` completo.
 
-As capacidades operacionais de histórico e persistência continuarão
-desativadas até o lote específico de integração com o Core. Elas já fazem parte
-do escopo de produto Prazzu Plus, mas não podem ser declaradas como disponíveis
-antes de sua implementação.
+As capacidades de cenários, histórico e exportações estão implementadas sobre a infraestrutura compartilhada e protegidas pelo gate central Prazzu Plus.
 
 ## Público atendido
 

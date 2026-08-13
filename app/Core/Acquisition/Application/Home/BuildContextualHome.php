@@ -37,7 +37,6 @@ final readonly class BuildContextualHome
         ];
     }
 
-
     /**
      * @param array<string, mixed> $configuredHome
      * @return array<string, mixed>

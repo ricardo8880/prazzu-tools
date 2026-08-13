@@ -77,14 +77,18 @@ final class StrategicAnalyticsDecisionEngine
             'event_taxonomy' => ['score' => min(100, $eventTypes * 10), 'weight' => 20, 'reason' => 'Diversidade de eventos reconhecidos no período.'],
             'funnel_observability' => ['score' => $hasFunnel ? 100 : 0, 'weight' => 20, 'reason' => 'Disponibilidade das etapas do funil de ferramentas.'],
             'acquisition_observability' => ['score' => $hasAcquisition ? 100 : 40, 'weight' => 15, 'reason' => 'Presença de aquisição além de tráfego direto.'],
-            'sample_reliability' => ['score' => match ($sample['level']) { 'robust' => 100, 'usable' => 75, 'directional' => 45, default => 10 }, 'weight' => 10, 'reason' => 'Tamanho da amostra para interpretação.'],
+            'sample_reliability' => ['score' => match ($sample['level']) {
+                'robust' => 100, 'usable' => 75, 'directional' => 45, default => 10
+            }, 'weight' => 10, 'reason' => 'Tamanho da amostra para interpretação.'],
         ];
 
         $score = (int) round(collect($components)->sum(fn (array $item): float => $item['score'] * ($item['weight'] / 100)));
 
         return [
             'score' => $score,
-            'status' => match (true) { $score >= 85 => 'excellent', $score >= 70 => 'good', $score >= 50 => 'attention', default => 'critical' },
+            'status' => match (true) {
+                $score >= 85 => 'excellent', $score >= 70 => 'good', $score >= 50 => 'attention', default => 'critical'
+            },
             'components' => $components,
             'interpretation' => 'Este score mede observabilidade e confiabilidade do analytics, não desempenho comercial.',
         ];
@@ -292,6 +296,8 @@ final class StrategicAnalyticsDecisionEngine
             return 'no_baseline';
         }
 
-        return match (true) { (float) $change >= 10 => 'up', (float) $change <= -10 => 'down', default => 'stable' };
+        return match (true) {
+            (float) $change >= 10 => 'up', (float) $change <= -10 => 'down', default => 'stable'
+        };
     }
 }

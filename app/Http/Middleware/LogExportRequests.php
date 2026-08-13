@@ -76,7 +76,6 @@ final class LogExportRequests
         return $response;
     }
 
-
     private function isPrintableRoute(Request $request): bool
     {
         $routeName = strtolower((string) ($request->route()?->getName() ?? ''));

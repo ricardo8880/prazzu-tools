@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\AccountingFeesCalculator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Models\User;
@@ -14,6 +15,8 @@ final class AccountingFeesHistoryTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[CoversPlusFeature('calculadora-de-honorarios-contabeis', 'history')]
+    #[CoversPlusFeature('calculadora-de-honorarios-contabeis', 'history_export')]
     public function test_calculation_is_saved_and_can_be_listed_in_history(): void
     {
         $user = User::factory()->create();

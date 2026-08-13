@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="prazzu-page tool-page" data-tool="validador-de-cnpj" data-testid="tool-page-validador-de-cnpj">
+    <x-tools.trust-seo slug="validador-de-cnpj" :show-content="false" />
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ url('/') }}">Início</a></li>

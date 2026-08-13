@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="prazzu-page tool-page" data-tool="calculadora-ferias" data-testid="tool-page-calculadora-ferias">
+    <x-tools.trust-seo slug="calculadora-ferias" :show-content="false" />
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -57,7 +58,7 @@
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="form-label" for="unjustified_absences">Faltas injustificadas</label>
-                <input class="form-control @error('unjustified_absences') is-invalid @enderror" id="unjustified_absences" type="number" min="0" max="365" name="unjustified_absences" value="{{ old('unjustified_absences', 0) }}">
+                <input class="form-control @error('unjustified_absences') is-invalid @enderror" id="unjustified_absences" type="number" min="0" max="365" name="unjustified_absences" value="{{ old('unjustified_absences') }}">
                 @error('unjustified_absences')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 <div class="form-text">As faixas legais podem reduzir os dias de direito.</div>
             </div>
@@ -77,7 +78,7 @@
             ] as $field => [$label, $placeholder])
                 <div class="col-12 col-md-6 col-lg-3">
                     <label class="form-label" for="{{ $field }}">{{ $label }}</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error($field) is-invalid @enderror" id="{{ $field }}" name="{{ $field }}" value="{{ old($field, $placeholder) }}" inputmode="decimal">@error($field)<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error($field) is-invalid @enderror" id="{{ $field }}" name="{{ $field }}" value="{{ old($field) }}" inputmode="decimal">@error($field)<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                 </div>
             @endforeach
 

@@ -107,7 +107,6 @@ final class CampaignAnalyticsQuery
             })->sortByDesc('clicks')->values()->take(30);
     }
 
-
     /** @param Collection<int, PlatformAnalyticsEvent> $events */
     private function ctaPerformance(Collection $events): Collection
     {
@@ -180,7 +179,6 @@ final class CampaignAnalyticsQuery
             })->sortByDesc(fn (array $funnel): int => $funnel['steps'][0]['visitors'])->values()->take(20);
     }
 
-
     /** @param Collection<int, AnalyticsSession> $sessions @param Collection<int, PlatformAnalyticsEvent> $events */
     private function roi(AnalyticsPeriod $period, Collection $sessions, Collection $events): Collection
     {
@@ -202,6 +200,7 @@ final class CampaignAnalyticsQuery
                             return max(0, (int) $value);
                         }
                     }
+
                     return 0;
                 });
                 $accounts = $this->actionCount($related, [AnalyticsEventName::AccountCreated->value]);
@@ -243,8 +242,7 @@ final class CampaignAnalyticsQuery
                 $mature7 = $cohorts->filter(fn (AnalyticsSession $session): bool => $session->started_at->lte($now->copy()->subDays(7)));
                 $mature30 = $cohorts->filter(fn (AnalyticsSession $session): bool => $session->started_at->lte($now->copy()->subDays(30)));
                 $retained = function (AnalyticsSession $initial, int $days) use ($futureSessions): bool {
-                    return $futureSessions->contains(fn (AnalyticsSession $later): bool =>
-                        $later->visitor_id === $initial->visitor_id
+                    return $futureSessions->contains(fn (AnalyticsSession $later): bool => $later->visitor_id === $initial->visitor_id
                         && $later->acquisition_context_id === $initial->acquisition_context_id
                         && $later->started_at->gt($initial->started_at)
                         && $later->started_at->lte($initial->started_at->copy()->addDays($days))
@@ -277,6 +275,7 @@ final class CampaignAnalyticsQuery
             if ($event->visitor_id !== null) {
                 return 'visitor-'.$event->visitor_id;
             }
+
             return 'event-'.$event->event_id;
         })->unique()->count();
     }

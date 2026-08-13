@@ -36,6 +36,16 @@ final class ToolModuleValidator
             );
         }
 
+        if ($manifest->status->value === 'active') {
+            foreach ($manifest->featuresFor(ToolFeatureTier::Plus) as $feature) {
+                if (in_array($feature->key, ['advanced_productivity', 'advanced_analysis'], true)) {
+                    throw new InvalidArgumentException(
+                        "A ferramenta ativa [{$manifest->slug}] não pode usar o recurso Plus genérico [{$feature->key}].",
+                    );
+                }
+            }
+        }
+
         if (! str_starts_with($manifest->routeName, $expectedRoutePrefix)) {
             throw new InvalidArgumentException(
                 "A rota principal de [{$manifest->slug}] deve começar com [{$expectedRoutePrefix}].",

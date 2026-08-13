@@ -8,10 +8,10 @@
 <x-tools.page :title="$tool->name" :description="$tool->description" :icon="$tool->icon" :slug="$tool->slug">
 <x-tools.form-panel title="Remuneração e enquadramento"><form method="POST" action="{{route('tools.encargos-trabalhistas.calculate')}}" class="row g-3">@csrf
 <div class="col-md-6"><x-tools.form.money name="salary" label="Salário mensal" :value="old('salary')" required/></div>
-<div class="col-md-6"><x-tools.form.money name="benefits" label="Benefícios mensais" :value="old('benefits','0,00')" required/></div>
+<div class="col-md-6"><x-tools.form.money name="benefits" label="Benefícios mensais" :value="old('benefits')" required/></div>
 <div class="col-md-4"><x-tools.form.select name="regime" label="Regime" :options="['general'=>'Regime geral','simples_annex_iv'=>'Simples — Anexo IV','simples_other'=>'Simples — demais anexos']" :value="old('regime','general')" required/></div>
-<div class="col-md-4"><x-tools.form.input name="rat" label="RAT ajustado" type="number" step="0.000001" suffix="%" :value="old('rat','1')" required/></div>
-<div class="col-md-4"><x-tools.form.input name="third_parties" label="Terceiros" type="number" step="0.000001" suffix="%" :value="old('third_parties','5.8')" required/></div>
+<div class="col-md-4"><x-tools.form.input name="rat" label="RAT ajustado" type="number" step="0.000001" suffix="%" :value="old('rat')" required placeholder="Ex.: 1,20" /></div>
+<div class="col-md-4"><x-tools.form.input name="third_parties" label="Terceiros" type="number" step="0.000001" suffix="%" :value="old('third_parties')" required placeholder="Ex.: 5,80" /></div>
 <div class="col-12"><button class="btn btn-primary">Calcular encargos</button></div></form></x-tools.form-panel>
 @isset($result)
     <span data-analytics-result="main" hidden></span><x-tools.result-panel title="Custo provisionado"><div class="row g-3">@foreach($result->summary as $item)<div class="col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description"/></div>@endforeach</div>

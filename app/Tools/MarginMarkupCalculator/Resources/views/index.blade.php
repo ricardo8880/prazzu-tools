@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="prazzu-page tool-page" data-tool="calculadora-margem-markup" data-testid="tool-page-calculadora-margem-markup">
+    <x-tools.trust-seo slug="calculadora-margem-markup" :show-content="false" />
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -56,22 +57,22 @@
             </div>
             <div class="col-12 col-md-4">
                 <label class="form-label" for="additional_costs">Outros custos</label>
-                <input class="form-control" id="additional_costs" name="additional_costs" value="{{ old('additional_costs', '0,00') }}" placeholder="0,00" inputmode="decimal">
+                <input class="form-control" id="additional_costs" name="additional_costs" value="{{ old('additional_costs') }}" placeholder="0,00" inputmode="decimal">
             </div>
 
             <div class="col-12"><hr class="my-1"><h3 class="h5 mb-0">Despesas por unidade ou venda</h3></div>
 
             <div class="col-12 col-md-4">
                 <label class="form-label" for="freight_cost">Frete</label>
-                <input class="form-control" id="freight_cost" name="freight_cost" value="{{ old('freight_cost', '0,00') }}" placeholder="0,00" inputmode="decimal">
+                <input class="form-control" id="freight_cost" name="freight_cost" value="{{ old('freight_cost') }}" placeholder="0,00" inputmode="decimal">
             </div>
             <div class="col-12 col-md-4">
                 <label class="form-label" for="packaging_cost">Embalagem</label>
-                <input class="form-control" id="packaging_cost" name="packaging_cost" value="{{ old('packaging_cost', '0,00') }}" placeholder="0,00" inputmode="decimal">
+                <input class="form-control" id="packaging_cost" name="packaging_cost" value="{{ old('packaging_cost') }}" placeholder="0,00" inputmode="decimal">
             </div>
             <div class="col-12 col-md-4">
                 <label class="form-label" for="fixed_expenses">Despesas rateadas</label>
-                <input class="form-control" id="fixed_expenses" name="fixed_expenses" value="{{ old('fixed_expenses', '0,00') }}" placeholder="0,00" inputmode="decimal">
+                <input class="form-control" id="fixed_expenses" name="fixed_expenses" value="{{ old('fixed_expenses') }}" placeholder="0,00" inputmode="decimal">
                 <div class="form-text">Ex.: aluguel, energia e mão de obra rateados por item.</div>
             </div>
 

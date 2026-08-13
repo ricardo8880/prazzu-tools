@@ -11,6 +11,7 @@ use App\Core\Quality\Enums\GoldenCaseKind;
 final class GoldenCases
 {
     public const PLACEHOLDER_REFERENCE = 'TODO: substitua por fonte oficial, cálculo revisado ou caso aprovado.';
+
     public const CLT_REFERENCE = 'CLT, arts. 129, 130, 142, 143 e 145; Constituição Federal, art. 7º, XVII. Revisão interna aprovada.';
 
     public static function suite(): GoldenCaseSuite

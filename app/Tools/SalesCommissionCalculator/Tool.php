@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tools\SalesCommissionCalculator;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
@@ -46,11 +46,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('sales', 'input', selector: '[name="sales"]'),
-                    new ToolAnalyticsField('reversals', 'input', selector: '[name="reversals"]'),
-                    new ToolAnalyticsField('rate', 'input', selector: '[name="rate"]'),
-                    new ToolAnalyticsField('goal', 'input', selector: '[name="goal"]'),
-                    new ToolAnalyticsField('goal_bonus_rate', 'input', selector: '[name="goal_bonus_rate"]'),
+                        new ToolAnalyticsField('sales', 'input', selector: '[name="sales"]'),
+                        new ToolAnalyticsField('reversals', 'input', selector: '[name="reversals"]'),
+                        new ToolAnalyticsField('rate', 'input', selector: '[name="rate"]'),
+                        new ToolAnalyticsField('goal', 'input', selector: '[name="goal"]'),
+                        new ToolAnalyticsField('goal_bonus_rate', 'input', selector: '[name="goal_bonus_rate"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -70,7 +70,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             icon: 'bi-person-check',
             routeName: 'tools.comissao-vendedores.index',
             vertical: 'contabilidade',
-            version: '0.1.0',
+            version: '1.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 200,
@@ -84,7 +84,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             ],
             features: [
                 new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('advanced_productivity', 'Produtividade avançada', ToolFeatureTier::Plus),
+                new ToolFeature('batch_sellers', 'Processamento em lote de múltiplos vendedores', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),

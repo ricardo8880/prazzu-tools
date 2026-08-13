@@ -42,6 +42,7 @@ final class BlogIntegrationTest extends TestCase
             'event' => AnalyticsEventName::BlogToolClicked->value,
             'post_id' => $post->getKey(),
             'post_slug' => $post->slug,
+            'reading_id' => 'reading-test-tool-click',
             'tool_slug' => 'calculadora-simples-nacional',
         ])->assertOk()->assertJson(['recorded' => true]);
 

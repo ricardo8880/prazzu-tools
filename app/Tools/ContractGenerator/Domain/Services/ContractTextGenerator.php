@@ -74,6 +74,8 @@ final readonly class ContractTextGenerator
             'Alterações deste contrato deverão ser acordadas entre as partes por meio que permita comprovar seu conteúdo.',
         ];
 
+        $sections = array_merge($sections, $this->smartClauseSections($draft));
+
         if ($draft->additionalTerms !== null) {
             $sections[] = 'Condições adicionais: '.$draft->additionalTerms;
         }
@@ -123,6 +125,8 @@ final readonly class ContractTextGenerator
             'Qualquer alteração das condições desta compra e venda deverá ser acordada entre as partes por meio que permita comprovar seu conteúdo.',
         ];
 
+        $sections = array_merge($sections, $this->smartClauseSections($draft));
+
         if ($draft->additionalTerms !== null) {
             $sections[] = 'Condições adicionais: '.$draft->additionalTerms;
         }
@@ -130,6 +134,23 @@ final readonly class ContractTextGenerator
         $sections = array_merge($sections, $this->closingSections($draft));
 
         return new ContractText($title, implode("\n", $sections));
+    }
+
+    /** @return list<string> */
+    private function smartClauseSections(ContractDraft $draft): array
+    {
+        if ($draft->smartClauses === []) {
+            return [];
+        }
+
+        $sections = ['', 'CLÁUSULAS ADICIONAIS SELECIONADAS'];
+        foreach ($draft->smartClauses as $clause) {
+            $sections[] = strtoupper($clause->label());
+            $sections[] = $clause->text();
+            $sections[] = '';
+        }
+
+        return $sections;
     }
 
     /** @return list<string> */

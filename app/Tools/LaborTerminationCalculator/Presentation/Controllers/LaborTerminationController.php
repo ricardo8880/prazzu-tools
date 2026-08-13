@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 final class LaborTerminationController extends Controller
@@ -84,7 +85,7 @@ final class LaborTerminationController extends Controller
         CalculateLaborTerminationRequest $request,
         CalculateLaborTermination $action,
         PdfExporter $exporter,
-    ): \Symfony\Component\HttpFoundation\Response {
+    ): Response {
         $input = $request->validated();
 
         Log::info('Labor termination PDF report requested.', [
@@ -125,16 +126,19 @@ final class LaborTerminationController extends Controller
         }
     }
 
-
     public function exportExcel(
         CalculateLaborTerminationRequest $request,
         CalculateLaborTermination $action,
         SpreadsheetExporter $exporter,
         StructuredResultExportFactory $documents,
-    ): \Symfony\Component\HttpFoundation\Response {
+    ): Response {
         $input = $request->validated();
-        try { $result = $action->execute($input)->toArray(); }
-        catch (InvalidValue $exception) { throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]); }
+        try {
+            $result = $action->execute($input)->toArray();
+        } catch (InvalidValue $exception) {
+            throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
+        }
+
         return $exporter->download($documents->spreadsheet('rescisao-'.now()->format('Y-m-d'), $result, $input));
     }
 

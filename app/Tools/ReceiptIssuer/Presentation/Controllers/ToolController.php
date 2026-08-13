@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ReceiptIssuer\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
@@ -50,16 +51,22 @@ final class ToolController extends Controller
         StructuredResultExportFactory $documents,
         PdfExporter $pdf,
         SpreadsheetExporter $spreadsheet,
+        ToolFeatureRequestAuthorizer $features,
+        Tool $module,
         string $format,
     ): Response {
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         try {
             $input = $request->validated();
-            $result = $calculate->execute($build->execute($input))->toArray();
+            $features->requireIf($this->hasBranding($input), $module, 'custom_branding', $request);
+            $result = $this->withBranding($calculate->execute($build->execute($input))->toArray(), $input);
         } catch (InvalidValue|InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['receipt' => $exception->getMessage()]);
         }
-        if ($format === 'pdf') return $this->downloadPdf($result, $pdf);
+        if ($format === 'pdf') {
+            return $this->downloadPdf($result, $pdf);
+        }
+
         return $spreadsheet->download($documents->spreadsheet('recibo-'.now()->format('Y-m-d'), $result, $input));
     }
 
@@ -67,10 +74,13 @@ final class ToolController extends Controller
         ExecuteToolRequest $request,
         BuildCalculationInput $build,
         CalculateTool $calculate,
+        ToolFeatureRequestAuthorizer $features,
+        Tool $module,
     ): View {
         try {
             $input = $request->validated();
-            $result = $calculate->execute($build->execute($input))->toArray();
+            $features->requireIf($this->hasBranding($input), $module, 'custom_branding', $request);
+            $result = $this->withBranding($calculate->execute($build->execute($input))->toArray(), $input);
         } catch (InvalidValue|InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['receipt' => $exception->getMessage()]);
         }
@@ -97,14 +107,16 @@ final class ToolController extends Controller
         ToolRunRecorder $recorder,
         ToolPersistenceAuthorizer $persistence,
         Tool $module,
+        ToolFeatureRequestAuthorizer $features,
         ShowToolPage $page,
         ManageReceiptHistory $history,
         ManageReceiptPartyProfiles $profiles,
     ): View {
         $input = $request->validated();
+        $features->requireIf($this->hasBranding($input), $module, 'custom_branding', $request);
 
         try {
-            $result = $calculate->execute($build->execute($input))->toArray();
+            $result = $this->withBranding($calculate->execute($build->execute($input))->toArray(), $input);
         } catch (InvalidValue|InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['receipt' => $exception->getMessage()]);
         }
@@ -113,7 +125,7 @@ final class ToolController extends Controller
         if ($persistence->allowsHistory($module, $request->user())) {
             $run = $recorder->start(
                 $module,
-                new RuleVersion('2026.1'),
+                new RuleVersion('2026.1.0'),
                 ReferenceDate::fromString((string) $input['issued_at']),
                 $input,
                 (int) $request->user()->getAuthIdentifier(),
@@ -164,9 +176,9 @@ final class ToolController extends Controller
     {
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier());
+
         return $format === 'pdf' ? $this->downloadPdf($entry->result, $pdf) : $spreadsheet->download($documents->spreadsheet('recibo-historico', $entry->result, $entry->input));
     }
-
 
     public function batch(): View
     {
@@ -218,13 +230,34 @@ final class ToolController extends Controller
         return back()->with('profile_message', 'Perfil removido.');
     }
 
+    /** @param array<string,mixed> $input */
+    private function hasBranding(array $input): bool
+    {
+        return filled($input['brand_name'] ?? null) || filled($input['brand_document'] ?? null) || filled($input['brand_footer'] ?? null);
+    }
+
+    /** @param array<string,mixed> $result @param array<string,mixed> $input @return array<string,mixed> */
+    private function withBranding(array $result, array $input): array
+    {
+        if (! $this->hasBranding($input)) {
+            return $result;
+        }
+        $result['details']['receipt']['branding'] = [
+            'name' => trim((string) ($input['brand_name'] ?? '')),
+            'document' => trim((string) ($input['brand_document'] ?? '')),
+            'footer' => trim((string) ($input['brand_footer'] ?? '')),
+        ];
+
+        return $result;
+    }
+
     private function downloadPdf(array $result, PdfExporter $pdf): Response
     {
         $receipt = $result['details']['receipt'] ?? null;
         if (! is_array($receipt)) {
             throw ValidationException::withMessages(['receipt' => 'Não foi possível preparar o recibo para exportação.']);
         }
+
         return $pdf->download(new PdfDocument(filename: 'recibo-'.$receipt['number'], view: 'tools-emissor-de-recibos::pdf.receipt', data: ['receipt' => $receipt]));
     }
-
 }

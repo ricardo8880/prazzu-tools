@@ -251,12 +251,14 @@ final class Calculator implements ToolCalculator
     private function monthlyCumulativeLimit(int $annualLimit, int $elapsedPeriods, int $periodsInYear): Money
     {
         $annualMinor = Money::fromDecimal((string) $annualLimit)->minorAmount();
+
         return Money::fromMinor(IntegerRounding::divide($annualMinor * $elapsedPeriods, $periodsInYear, RoundingMode::HalfUp));
     }
 
     private function currentNormalAllowance(Money $cumulativeLimit, Money $priorRevenue, Money $currentRevenue): Money
     {
         $remaining = max(0, $cumulativeLimit->minorAmount() - $priorRevenue->minorAmount());
+
         return Money::fromMinor(min($remaining, $currentRevenue->minorAmount()));
     }
 

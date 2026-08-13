@@ -15,7 +15,7 @@ final class BrazilianMoneyInWordsTest extends TestCase
     #[DataProvider('amounts')]
     public function test_it_writes_positive_brl_amounts_in_portuguese(string $amount, string $expected): void
     {
-        self::assertSame($expected, (new BrazilianMoneyInWords())->convert(Money::fromDecimal($amount)));
+        self::assertSame($expected, (new BrazilianMoneyInWords)->convert(Money::fromDecimal($amount)));
     }
 
     /** @return iterable<string, array{string, string}> */
@@ -31,6 +31,6 @@ final class BrazilianMoneyInWordsTest extends TestCase
     public function test_it_rejects_zero(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        (new BrazilianMoneyInWords())->convert(Money::zero());
+        (new BrazilianMoneyInWords)->convert(Money::zero());
     }
 }

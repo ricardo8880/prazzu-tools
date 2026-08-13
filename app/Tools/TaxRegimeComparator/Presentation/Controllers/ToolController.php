@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\TaxRegimeComparator\Presentation\Controllers;
 
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer;
 use App\Core\Access\Services\ToolPersistenceAuthorizer;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Exceptions\InvalidValue;
@@ -39,9 +40,13 @@ use Throwable;
 
 final class ToolController extends Controller
 {
-    public function index(ShowToolPage $page): View
+    public function index(Request $request, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
-        return view('tools-comparador-tributario::index', $page->execute());
+        return view('tools-comparador-tributario::index', [
+            ...$page->execute(),
+            'multipleScenariosAllowed' => $features->allows($module, 'multiple_scenarios', $request),
+            'annualProjectionAllowed' => $features->allows($module, 'annual_projection', $request),
+        ]);
     }
 
     public function compare(
@@ -50,10 +55,13 @@ final class ToolController extends Controller
         TaxComparisonResultPresenter $presenter,
         ToolRunRecorder $recorder,
         ToolPersistenceAuthorizer $persistence,
+        ToolFeatureRequestAuthorizer $features,
         Tool $module,
         ShowToolPage $page,
     ): View {
         $data = $request->validated();
+        $scenarioRows = array_values(array_filter($data['scenarios'] ?? [], static fn (array $scenario): bool => trim((string) ($scenario['monthly_revenue'] ?? '')) !== ''));
+        $features->requireIf($scenarioRows !== [], $module, 'multiple_scenarios', $request);
         $run = $this->startRun($request, $recorder, $persistence, $module, $data);
 
         try {
@@ -69,11 +77,30 @@ final class ToolController extends Controller
             throw $exception;
         }
 
+        $multipleScenarioResults = [];
+        foreach ($scenarioRows as $index => $scenario) {
+            $scenarioData = $data;
+            $scenarioData['monthly_revenue'] = (string) $scenario['monthly_revenue'];
+            $scenarioData['revenue_last_twelve_months'] = (string) (($scenario['revenue_last_twelve_months'] ?? null) ?: $data['revenue_last_twelve_months']);
+            $scenarioData['payroll_last_twelve_months'] = (string) (($scenario['payroll_last_twelve_months'] ?? null) ?: $data['payroll_last_twelve_months']);
+            $presented = $presenter->present($compare->execute($this->input($scenarioData)));
+            $multipleScenarioResults[] = [
+                'label' => trim((string) ($scenario['label'] ?? '')) !== '' ? trim((string) $scenario['label']) : 'Cenário '.($index + 2),
+                'winner' => $presented['winner'],
+                'monthly_savings' => $presented['monthly_savings'],
+                'annual_savings' => $presented['annual_savings'],
+                'ranking' => $presented['ranking'],
+            ];
+        }
+
         $request->flash();
 
         return view('tools-comparador-tributario::index', [
             ...$page->execute(),
             'comparisonResult' => $result,
+            'multipleScenarioResults' => $multipleScenarioResults,
+            'multipleScenariosAllowed' => $features->allows($module, 'multiple_scenarios', $request),
+            'annualProjectionAllowed' => $features->allows($module, 'annual_projection', $request),
         ]);
     }
 
@@ -108,10 +135,15 @@ final class ToolController extends Controller
     public function document(CompareTaxRegimesRequest $request, CompareTaxRegimes $compare, TaxComparisonResultPresenter $presenter, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): SymfonyResponse
     {
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
-        try { $input=$request->validated(); $result=$presenter->present($compare->execute($this->input($input))); }
-        catch (InvalidValue $exception) { throw ValidationException::withMessages(['monthly_revenue'=>$exception->getMessage()]); }
-        $filename='comparacao-tributaria-'.now()->format('Y-m-d');
-        return $format==='pdf' ? $pdf->download($documents->pdf('Relatório de Comparação Tributária',$filename,$result,$input)) : $spreadsheet->download($documents->spreadsheet($filename,$result,$input));
+        try {
+            $input = $request->validated();
+            $result = $presenter->present($compare->execute($this->input($input)));
+        } catch (InvalidValue $exception) {
+            throw ValidationException::withMessages(['monthly_revenue' => $exception->getMessage()]);
+        }
+        $filename = 'comparacao-tributaria-'.now()->format('Y-m-d');
+
+        return $format === 'pdf' ? $pdf->download($documents->pdf('Relatório de Comparação Tributária', $filename, $result, $input)) : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));
     }
 
     public function history(Request $request, ListTaxComparisonHistory $action): View

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\VacationCalculator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -23,10 +24,13 @@ final class PlusFeaturesTest extends TestCase
         self::assertTrue(app('router')->has('tools.calculadora-ferias.plan'));
     }
 
+    #[CoversPlusFeature('calculadora-ferias', 'history')]
     public function test_authenticated_user_can_open_history_when_feature_is_available(): void
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->get(route('tools.calculadora-ferias.history.index'));
-        self::assertContains($response->status(), [200, 302, 403]);
+        $this->actingAs($user)
+            ->get(route('tools.calculadora-ferias.history.index'))
+            ->assertOk()
+            ->assertSee('Histórico de férias');
     }
 }

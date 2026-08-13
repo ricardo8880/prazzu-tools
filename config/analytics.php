@@ -35,6 +35,8 @@ return [
             AnalyticsEventName::ToolCalculationStarted->value => 5,
             AnalyticsEventName::ToolCalculationCompleted->value => 5,
             AnalyticsEventName::ToolResultExported->value => 5,
+            AnalyticsEventName::RetentionContinuityUsed->value => 5,
+            AnalyticsEventName::RetentionRelatedToolOpened->value => 5,
             'audience.context_captured' => 300,
         ],
     ],
@@ -43,8 +45,8 @@ return [
         // Deliberately conservative: only events that should be unique inside
         // the same collection window are eligible for historical removal.
         'event_windows' => [
-            AnalyticsEventName::PageViewed->value => 0,
-            AnalyticsEventName::BlogPostViewed->value => 1,
+            AnalyticsEventName::PageViewed->value => 5,
+            AnalyticsEventName::BlogPostViewed->value => 10,
             AnalyticsEventName::BlogReadingStarted->value => 30,
             AnalyticsEventName::BlogReadingCompleted->value => 30,
             AnalyticsEventName::BlogReadingAbandoned->value => 30,
@@ -61,7 +63,7 @@ return [
         'identity_metadata_keys' => [
             'percentage', 'tool_slug', 'placement', 'position', 'destination',
             'method', 'file', 'calculation_id', 'result_id', 'batch_id',
-            'subscription_id', 'account_id',
+            'subscription_id', 'account_id', 'from_tool',
         ],
     ],
 
@@ -169,6 +171,26 @@ return [
                     ['name' => 'Iniciou leitura', 'events' => [AnalyticsEventName::BlogReadingStarted->value]],
                     ['name' => 'Clicou em ferramenta', 'events' => [AnalyticsEventName::BlogToolClicked->value]],
                     ['name' => 'Concluiu resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+                ],
+            ],
+            'continuity_return' => [
+                'name' => 'Retorno por continuidade',
+                'description' => 'Mede se um resultado entregue leva a um retorno posterior por Home, Meu Prazzu, favorito ou histórico e a um novo resultado.',
+                'identity_type' => 'visitor',
+                'steps' => [
+                    ['name' => 'Recebeu um resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+                    ['name' => 'Usou um atalho de continuidade', 'events' => [AnalyticsEventName::RetentionContinuityUsed->value]],
+                    ['name' => 'Concluiu outro resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+                ],
+            ],
+            'related_tool_discovery' => [
+                'name' => 'Descoberta por ferramenta relacionada',
+                'description' => 'Mede se uma recomendação editorial leva o visitante a abrir outra ferramenta e concluir uma segunda tarefa.',
+                'identity_type' => 'visitor',
+                'steps' => [
+                    ['name' => 'Recebeu um resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+                    ['name' => 'Abriu ferramenta relacionada', 'events' => [AnalyticsEventName::RetentionRelatedToolOpened->value]],
+                    ['name' => 'Concluiu outro resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
                 ],
             ],
         ],

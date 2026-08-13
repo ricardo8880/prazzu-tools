@@ -29,6 +29,9 @@ final class ExecuteToolRequest extends FormRequest
             'description' => ['required', 'string', 'min:3', 'max:1000'],
             'issued_at' => ['required', 'date_format:Y-m-d'],
             'city' => ['nullable', 'string', 'max:120'],
+            'brand_name' => ['nullable', 'string', 'max:120'],
+            'brand_document' => ['nullable', 'string', 'max:40'],
+            'brand_footer' => ['nullable', 'string', 'max:160'],
         ];
     }
 
@@ -47,7 +50,7 @@ final class ExecuteToolRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        foreach (['number', 'payer_name', 'payer_document', 'payee_name', 'payee_document', 'amount', 'description', 'city'] as $field) {
+        foreach (['number', 'payer_name', 'payer_document', 'payee_name', 'payee_document', 'amount', 'description', 'city', 'brand_name', 'brand_document', 'brand_footer'] as $field) {
             if ($this->has($field) && is_string($this->input($field))) {
                 $this->merge([$field => trim((string) $this->input($field))]);
             }

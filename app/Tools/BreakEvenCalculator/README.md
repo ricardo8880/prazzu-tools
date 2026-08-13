@@ -19,8 +19,7 @@ premissas, valores intermediários e limitações permanecem visíveis.
 
 ## Prazzu Plus
 
-Análise por produto, cenários, gráficos e exportações. Esses recursos representam produtividade e continuidade; não alteram a
-correção do resultado Essencial.
+Comparação de cenário alternativo com variações de custos fixos, preço de venda e custo variável, mantendo o cálculo Essencial completo e gratuito.
 
 ## Regras
 

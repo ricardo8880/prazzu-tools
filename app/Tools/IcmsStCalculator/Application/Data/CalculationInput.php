@@ -32,10 +32,10 @@ final readonly class CalculationInput implements ToolCalculationInput
     public function toArray(): array
     {
         return [
-            'competence'=>$this->competence,'operation_type'=>$this->operationType,'origin_uf'=>$this->originUf,'destination_uf'=>$this->destinationUf,
-            'merchandise_value'=>$this->merchandiseValue,'freight'=>$this->freight,'insurance'=>$this->insurance,'other_charges'=>$this->otherCharges,
-            'ipi'=>$this->ipi,'discount'=>$this->discount,'original_mva'=>$this->originalMva,'internal_rate'=>$this->internalRate,
-            'interstate_rate'=>$this->interstateRate,'adjust_mva'=>$this->adjustMva,'fcp_rate'=>$this->fcpRate,'own_icms_override'=>$this->ownIcmsOverride,'items'=>$this->items,
+            'competence' => $this->competence, 'operation_type' => $this->operationType, 'origin_uf' => $this->originUf, 'destination_uf' => $this->destinationUf,
+            'merchandise_value' => $this->merchandiseValue, 'freight' => $this->freight, 'insurance' => $this->insurance, 'other_charges' => $this->otherCharges,
+            'ipi' => $this->ipi, 'discount' => $this->discount, 'original_mva' => $this->originalMva, 'internal_rate' => $this->internalRate,
+            'interstate_rate' => $this->interstateRate, 'adjust_mva' => $this->adjustMva, 'fcp_rate' => $this->fcpRate, 'own_icms_override' => $this->ownIcmsOverride, 'items' => $this->items,
         ];
     }
 }

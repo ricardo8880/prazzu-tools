@@ -2,10 +2,10 @@
 
 namespace App\Core\Analytics\Services;
 
+use App\Core\Analytics\Application\Services\BlogConversionAttribution;
 use App\Core\Analytics\Contracts\AnalyticsContextResolver;
 use App\Core\Analytics\Contracts\AnalyticsEventRepository;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
-use App\Core\Analytics\Application\Services\BlogConversionAttribution;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Analytics\Infrastructure\Http\AnalyticsCollectionPolicy;
 use Illuminate\Http\Request;

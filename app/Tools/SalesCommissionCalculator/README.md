@@ -16,7 +16,7 @@ O cálculo individual completo permanece disponível sem autenticação e exibe 
 
 ## Prazzu Plus
 
-Cenários, lotes, histórico e exportações representam produtividade e continuidade, sem alterar a regra Essencial.
+Processamento em lote de 2 a 50 vendedores usando uma regra comum de comissão, meta e bônus. O cálculo individual permanece Essencial.
 
 ## Regras
 

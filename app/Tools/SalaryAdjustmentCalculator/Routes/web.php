@@ -11,4 +11,4 @@ Route::post('/ferramentas/reajuste-salarial', [ToolController::class, 'calculate
     ->name('tools.reajuste-salarial.calculate');
 
 Route::post('/ferramentas/reajuste-salarial/exportar/pdf', [ToolController::class, 'exportPdf'])->name('tools.reajuste-salarial.export.pdf');
-Route::post('/ferramentas/reajuste-salarial/exportar/excel', [ToolController::class, 'exportExcel'])->name('tools.reajuste-salarial.export.excel');
+Route::post('/ferramentas/reajuste-salarial/exportar/excel', [ToolController::class, 'exportExcel'])->middleware('tool.feature:reajuste-salarial,spreadsheet_export')->name('tools.reajuste-salarial.export.excel');

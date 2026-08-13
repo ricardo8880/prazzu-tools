@@ -11,5 +11,9 @@ use App\Tools\InvoiceWithholdingCalculator\Domain\Services\Calculator;
 final readonly class CalculateTool
 {
     public function __construct(private Calculator $calculator) {}
-    public function execute(CalculationInput $input): ToolCalculationResult { return $this->calculator->calculate($input); }
+
+    public function execute(CalculationInput $input): ToolCalculationResult
+    {
+        return $this->calculator->calculate($input);
+    }
 }

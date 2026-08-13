@@ -9,7 +9,7 @@ use DateTimeImmutable;
 
 final class GpsDueDateCalculator
 {
-    public function __construct(private readonly WeekendBusinessCalendar $calendar = new WeekendBusinessCalendar()) {}
+    public function __construct(private readonly WeekendBusinessCalendar $calendar = new WeekendBusinessCalendar) {}
 
     public function companyMonthly(DateTimeImmutable $competence): DateTimeImmutable
     {

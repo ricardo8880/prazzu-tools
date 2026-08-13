@@ -83,6 +83,7 @@ XML,
 
             if ($line === '') {
                 $paragraphs[] = '<w:p/>';
+
                 continue;
             }
 

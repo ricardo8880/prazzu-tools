@@ -2,13 +2,13 @@
 
 namespace App\Core\Tools;
 
-use App\Core\Verticals\Application\VerticalContext;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
 use App\Core\Tools\Enums\ToolCapability;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Verticals\Application\VerticalContext;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -28,7 +28,6 @@ final class ToolCatalog
             ->sortBy('position')
             ->values();
     }
-
 
     /** @return Collection<int, array<string, mixed>> */
     public function forVertical(?string $vertical, bool $onlyCatalogVisible = true): Collection
@@ -102,12 +101,33 @@ final class ToolCatalog
             return collect();
         }
 
+        $available = $this->all()
+            ->reject(static fn (array $tool): bool => $tool['slug'] === $slug)
+            ->keyBy('slug');
+
+        $curatedSlugs = collect(config("tools.journeys.{$slug}", []))
+            ->filter(static fn (mixed $candidate): bool => is_string($candidate) && trim($candidate) !== '')
+            ->map(static fn (string $candidate): string => trim($candidate))
+            ->unique()
+            ->values();
+
+        $curated = $curatedSlugs
+            ->map(static fn (string $candidate): ?array => $available->get($candidate))
+            ->filter()
+            ->take($limit)
+            ->values();
+
+        if ($curated->count() >= $limit) {
+            return $curated;
+        }
+
         $keywords = collect($current['keywords'])
             ->map(static fn (string $keyword): string => Str::lower(Str::ascii($keyword)))
             ->all();
+        $excludedSlugs = $curated->pluck('slug')->push($slug)->all();
 
-        return $this->all()
-            ->reject(static fn (array $tool): bool => $tool['slug'] === $slug)
+        $fallback = $available
+            ->reject(static fn (array $tool): bool => in_array($tool['slug'], $excludedSlugs, true))
             ->map(function (array $tool) use ($current, $keywords): array {
                 $candidateKeywords = array_map(
                     static fn (string $keyword): string => Str::lower(Str::ascii($keyword)),
@@ -126,13 +146,15 @@ final class ToolCatalog
                 ['_related_score', 'desc'],
                 ['position', 'asc'],
             ])
-            ->take($limit)
+            ->take($limit - $curated->count())
             ->map(static function (array $tool): array {
                 unset($tool['_related_score']);
 
                 return $tool;
             })
             ->values();
+
+        return $curated->concat($fallback)->values();
     }
 
     /** @return Collection<int, array<string, mixed>> */
@@ -231,7 +253,6 @@ final class ToolCatalog
             'badge_tone' => $hasPlusFeatures ? 'purple' : 'green',
         ]);
     }
-
 
     private function belongsToActiveVertical(ToolManifest $manifest): bool
     {

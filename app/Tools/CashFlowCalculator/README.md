@@ -19,8 +19,7 @@ premissas, valores intermediários e limitações permanecem visíveis.
 
 ## Prazzu Plus
 
-Múltiplos meses, dashboards, cenários, histórico e exportações. Esses recursos representam produtividade e continuidade; não alteram a
-correção do resultado Essencial.
+Comparação automática entre cenário base, conservador e otimista, variando entradas e saídas sem alterar o cálculo Essencial de um período.
 
 ## Regras
 

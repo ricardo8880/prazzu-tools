@@ -46,7 +46,7 @@
             </div>
             @foreach(['salary' => ['Salário', null], 'variable_pay' => ['Média mensal variável', '0,00'], 'benefits' => ['Benefícios mensais', '0,00']] as $name => [$label, $default])
                 <div class="col-12 col-md-4">
-                    <x-tools.form.money :name="$name" :label="$label" :value="old($name, $default)" required />
+                    <x-tools.form.money :name="$name" :label="$label" :value="old($name)" required />
                 </div>
             @endforeach
             <div class="col-12 col-md-4">
@@ -55,13 +55,13 @@
                     :value="old('regime', 'general')" required />
             </div>
             <div class="col-12 col-md-4">
-                <x-tools.form.input name="rat" label="RAT ajustado" type="number" step="0.000001" suffix="%" :value="old('rat', '1')" required />
+                <x-tools.form.input name="rat" label="RAT ajustado" type="number" step="0.000001" suffix="%" :value="old('rat')" required />
             </div>
             <div class="col-12 col-md-4">
-                <x-tools.form.input name="third_parties" label="Terceiros" type="number" step="0.000001" suffix="%" :value="old('third_parties', '5.8')" required />
+                <x-tools.form.input name="third_parties" label="Terceiros" type="number" step="0.000001" suffix="%" :value="old('third_parties')" required />
             </div>
             <div class="col-12 col-md-4">
-                <x-tools.form.input name="monthly_hours" label="Jornada mensal" type="number" min="1" max="744" suffix="horas" :value="old('monthly_hours', '220')" required />
+                <x-tools.form.input name="monthly_hours" label="Jornada mensal" type="number" min="1" max="744" suffix="horas" :value="old('monthly_hours')" required />
             </div>
             <div class="col-12 d-flex flex-wrap gap-2">
                 <button class="btn btn-primary" type="submit"><i class="bi bi-calculator me-1"></i>Calcular custo CLT</button>
@@ -129,7 +129,7 @@
                     <div class="accordion-body">
                         <form method="post" action="{{ route('tools.custo-funcionario-clt.batch.calculate') }}" class="row g-3">
                             @csrf
-                            <div class="col-12 col-md-8"><label class="form-label">Nome do cenário</label><input class="form-control" name="scenario_name" value="{{ old('scenario_name', 'Folha atual') }}"></div>
+                            <div class="col-12 col-md-8"><label class="form-label">Nome do cenário</label><input class="form-control" name="scenario_name" value="{{ old('scenario_name') }}"></div>
                             @auth
                                 <div class="col-12 col-md-4"><label class="form-label">Empresa</label><select class="form-select" name="company_profile_id"><option value="">Sem vínculo</option>@foreach($companies as $company)<option value="{{ $company->id }}">{{ $company->name }}</option>@endforeach</select></div>
                             @endauth
@@ -139,12 +139,12 @@
                                     <div class="col-md-4"><label class="form-label">Departamento</label><input class="form-control" name="employees[{{ $index }}][department]" value="{{ old("employees.$index.department") }}"></div>
                                     <div class="col-md-4"><label class="form-label">Cargo</label><input class="form-control" name="employees[{{ $index }}][role]" value="{{ old("employees.$index.role") }}"></div>
                                     <div class="col-md-4"><label class="form-label">Salário</label><input class="form-control" name="employees[{{ $index }}][salary]" value="{{ old("employees.$index.salary") }}" placeholder="5.000,00" required></div>
-                                    <div class="col-md-4"><label class="form-label">Variável</label><input class="form-control" name="employees[{{ $index }}][variable_pay]" value="{{ old("employees.$index.variable_pay", '0,00') }}" required></div>
-                                    <div class="col-md-4"><label class="form-label">Benefícios</label><input class="form-control" name="employees[{{ $index }}][benefits]" value="{{ old("employees.$index.benefits", '0,00') }}" required></div>
+                                    <div class="col-md-4"><label class="form-label">Variável</label><input class="form-control" name="employees[{{ $index }}][variable_pay]" value="{{ old("employees.$index.variable_pay") }}" required></div>
+                                    <div class="col-md-4"><label class="form-label">Benefícios</label><input class="form-control" name="employees[{{ $index }}][benefits]" value="{{ old("employees.$index.benefits") }}" required></div>
                                     <div class="col-md-3"><label class="form-label">Regime</label><select class="form-select" name="employees[{{ $index }}][regime]"><option value="general">Geral</option><option value="simples_annex_iv">Simples Anexo IV</option><option value="simples_other">Simples demais</option></select></div>
-                                    <div class="col-md-3"><label class="form-label">RAT %</label><input class="form-control" type="number" step="0.000001" name="employees[{{ $index }}][rat]" value="1" required></div>
-                                    <div class="col-md-3"><label class="form-label">Terceiros %</label><input class="form-control" type="number" step="0.000001" name="employees[{{ $index }}][third_parties]" value="5.8" required></div>
-                                    <div class="col-md-3"><label class="form-label">Horas/mês</label><input class="form-control" type="number" name="employees[{{ $index }}][monthly_hours]" value="220" required></div>
+                                    <div class="col-md-3"><label class="form-label">RAT %</label><input class="form-control" type="number" step="0.000001" name="employees[{{ $index }}][rat]" placeholder="Ex.: 1,20" required></div>
+                                    <div class="col-md-3"><label class="form-label">Terceiros %</label><input class="form-control" type="number" step="0.000001" name="employees[{{ $index }}][third_parties]" placeholder="Ex.: 5,80" required></div>
+                                    <div class="col-md-3"><label class="form-label">Horas/mês</label><input class="form-control" type="number" name="employees[{{ $index }}][monthly_hours]" placeholder="Ex.: 200" required></div>
                                 </div></div></div>
                             @endfor
                             <div class="col-12"><button class="btn btn-primary" type="submit">Calcular lote</button></div>
@@ -183,9 +183,9 @@
                                         <legend class="float-none w-auto px-2 h6">{{ $scenarioLabel }}</legend>
                                         <div class="row g-2">
                                             <div class="col-12"><label class="form-label">Nome do cenário</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][scenario_name]" value="{{ old("scenarios.$scenarioIndex.scenario_name", $scenarioLabel) }}" required></div>
-                                            <div class="col-12"><label class="form-label">Funcionário</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][employees][0][employee_name]" value="{{ old("scenarios.$scenarioIndex.employees.0.employee_name", 'Funcionário') }}" required></div>
+                                            <div class="col-12"><label class="form-label">Funcionário</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][employees][0][employee_name]" value="{{ old("scenarios.$scenarioIndex.employees.0.employee_name") }}" required></div>
                                             <div class="col-md-6"><label class="form-label">Salário</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][employees][0][salary]" value="{{ old("scenarios.$scenarioIndex.employees.0.salary", $scenarioIndex ? '5500,00' : '5000,00') }}" required></div>
-                                            <div class="col-md-6"><label class="form-label">Benefícios</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][employees][0][benefits]" value="{{ old("scenarios.$scenarioIndex.employees.0.benefits", '800,00') }}" required></div>
+                                            <div class="col-md-6"><label class="form-label">Benefícios</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][employees][0][benefits]" value="{{ old("scenarios.$scenarioIndex.employees.0.benefits") }}" required></div>
                                             <input type="hidden" name="scenarios[{{ $scenarioIndex }}][employees][0][department]" value="">
                                             <input type="hidden" name="scenarios[{{ $scenarioIndex }}][employees][0][role]" value="">
                                             <input type="hidden" name="scenarios[{{ $scenarioIndex }}][employees][0][variable_pay]" value="0,00">
@@ -281,7 +281,7 @@
                 </tbody></table></div>
                 <h3 class="h6 mt-4">Consolidado por departamento</h3>
                 <div class="table-responsive"><table class="table table-sm"><tbody>@foreach($batchResult['departments'] as $row)<tr><th>{{ $row['department'] }}</th><td class="text-end">{{ $row['monthly_cost'] }} / mês</td><td class="text-end">{{ $row['annual_cost'] }} / ano</td></tr>@endforeach</tbody></table></div>
-                <h3 class="h6 mt-4">Projeção de 12 meses</h3><p class="small text-body-secondary">{{ $batchResult['projection_assumption'] }}</p>
+                <h3 class="h6 mt-4" data-plus-feature="projections">Projeção de 12 meses</h3><p class="small text-body-secondary">{{ $batchResult['projection_assumption'] }}</p>
                 <div class="table-responsive"><table class="table table-sm"><thead><tr>@foreach($batchResult['projection'] as $month)<th>{{ $month['competence'] }}</th>@endforeach</tr></thead><tbody><tr>@foreach($batchResult['projection'] as $month)<td>{{ $month['cost'] }}</td>@endforeach</tr></tbody></table></div>
                 <div class="d-flex flex-wrap gap-2 mt-3">
                     @foreach(['batch.export.csv' => 'CSV', 'batch.export.xlsx' => 'XLSX', 'batch.print' => 'Imprimir/PDF'] as $suffix => $label)

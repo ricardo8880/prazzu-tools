@@ -12,9 +12,12 @@ use App\Tools\WorkIncomeStatementGenerator\Application\Actions\CalculateTool;
 use App\Tools\WorkIncomeStatementGenerator\Application\Actions\ShowToolPage;
 use App\Tools\WorkIncomeStatementGenerator\Presentation\Requests\ExecuteToolRequest;
 use Illuminate\Contracts\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 final class ToolController extends Controller
 {
+    private const PLUS_SPREADSHEET_FEATURE = 'spreadsheet_export';
+
     public function index(ShowToolPage $page): View
     {
         return view('tools-declaracao-trabalho-renda::index', $page->execute());
@@ -31,8 +34,19 @@ final class ToolController extends Controller
         ]);
     }
 
-    public function downloadPdf(ExecuteToolRequest $request, CalculateTool $action, PdfExporter $exporter, ToolResultExportFactory $documents): \Symfony\Component\HttpFoundation\Response
-    { $input=$request->validated(); $result=$action->execute($input); return $exporter->download($documents->pdf('Declaração de Trabalho/Renda', 'declaracao-trabalho-renda-'.now()->format('Y-m-d'), $result, $input)); }
-    public function downloadExcel(ExecuteToolRequest $request, CalculateTool $action, SpreadsheetExporter $exporter, ToolResultExportFactory $documents): \Symfony\Component\HttpFoundation\Response
-    { $input=$request->validated(); $result=$action->execute($input); return $exporter->download($documents->spreadsheet('declaracao-trabalho-renda-'.now()->format('Y-m-d'), $result, $input)); }
+    public function downloadPdf(ExecuteToolRequest $request, CalculateTool $action, PdfExporter $exporter, ToolResultExportFactory $documents): Response
+    {
+        $input = $request->validated();
+        $result = $action->execute($input);
+
+        return $exporter->download($documents->pdf('Declaração de Trabalho/Renda', 'declaracao-trabalho-renda-'.now()->format('Y-m-d'), $result, $input));
+    }
+
+    public function downloadExcel(ExecuteToolRequest $request, CalculateTool $action, SpreadsheetExporter $exporter, ToolResultExportFactory $documents): Response
+    {
+        $input = $request->validated();
+        $result = $action->execute($input);
+
+        return $exporter->download($documents->spreadsheet('declaracao-trabalho-renda-'.now()->format('Y-m-d'), $result, $input));
+    }
 }

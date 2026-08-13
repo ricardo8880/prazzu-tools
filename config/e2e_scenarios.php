@@ -370,8 +370,6 @@ foreach (($productTools['official'] ?? []) as $tool) {
     ];
 }
 
-
-
 $tools['validador-de-cnpj'] = [
     new ToolScenario(
         id: 'fluxo-principal-valido',

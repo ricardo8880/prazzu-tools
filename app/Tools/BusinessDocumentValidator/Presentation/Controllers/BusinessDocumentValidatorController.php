@@ -10,11 +10,13 @@ use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Export\Contracts\PdfExporter;
 use App\Core\Export\Contracts\SpreadsheetExporter;
+use App\Core\Export\Data\SpreadsheetDocument;
+use App\Core\Export\Data\SpreadsheetSheet;
 use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
+use App\Core\Temporary\Contracts\TemporaryPayloadStore;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
-use App\Core\Temporary\Contracts\TemporaryPayloadStore;
 use App\Http\Controllers\Controller;
 use App\Tools\BusinessDocumentValidator\Application\Actions\AnalyzeCompanyConsistency;
 use App\Tools\BusinessDocumentValidator\Application\Actions\BuildBatchExportRows;
@@ -43,6 +45,7 @@ use Throwable;
 final class BusinessDocumentValidatorController extends Controller
 {
     private const TOOL_SLUG = 'validador-de-cnpj';
+
     public function index(Request $request, ListValidationHistory $history): View
     {
         $recentHistory = $request->user() === null
@@ -86,7 +89,7 @@ final class BusinessDocumentValidatorController extends Controller
 
         try {
             if ($request->user() !== null) {
-                $run = $recorder->start($module, new RuleVersion('batch-validation-v1'), ReferenceDate::fromDateTime(now()), $historyInput, $request->user()->id);
+                $run = $recorder->start($module, new RuleVersion('1.0.0'), ReferenceDate::fromDateTime(now()), $historyInput, $request->user()->id);
             }
             $result = $action->execute($request->validated(), $this->importOwnerKey($request));
             $payload = $result->toArray();
@@ -135,7 +138,7 @@ final class BusinessDocumentValidatorController extends Controller
         ), $request);
 
         return $format === 'excel'
-            ? $spreadsheet->download(new \App\Core\Export\Data\SpreadsheetDocument('validacao-documentos'.$suffix, [new \App\Core\Export\Data\SpreadsheetSheet('Validações', [$builder->headers(), ...$rows])]))
+            ? $spreadsheet->download(new SpreadsheetDocument('validacao-documentos'.$suffix, [new SpreadsheetSheet('Validações', [$builder->headers(), ...$rows])]))
             : $exporter->csv('validacao-documentos'.$suffix.'.csv', $builder->headers(), $rows);
     }
 
@@ -144,6 +147,7 @@ final class BusinessDocumentValidatorController extends Controller
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         $result = $this->batchResult($request, $temporary);
         $filename = 'validacao-documentos-lote-'.now()->format('Y-m-d');
+
         return $format === 'pdf'
             ? $pdf->download($documents->pdf('Validação de documentos em lote', $filename, $result))
             : $spreadsheet->download($documents->spreadsheet($filename, $result));
@@ -169,24 +173,28 @@ final class BusinessDocumentValidatorController extends Controller
     public function analyzeConsistency(AnalyzeCompanyConsistencyRequest $request, AnalyzeCompanyConsistency $action): View
     {
         $request->flash();
+
         return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'consistencyAnalysisResult' => $action->execute($request->validated())->toArray()]);
     }
 
     public function lookupCompany(LookupCompanyRegistryRequest $request, LookupCompanyRegistry $action): View
     {
         $request->flash();
+
         return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'registryLookupResult' => $action->execute((string) $request->validated('cnpj'))->toArray()]);
     }
 
     public function validateStateRegistration(ValidateStateRegistrationRequest $request, ValidateStateRegistration $action): View
     {
         $request->flash();
+
         return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'stateRegistrationResult' => $action->execute($request->validated())->toArray()]);
     }
 
     public function validateDocument(ValidateBusinessDocumentRequest $request, ValidateBusinessDocument $action): View
     {
         $request->flash();
+
         return view('tools-validador-de-cnpj::index', ['recentHistory' => [], 'validationResult' => $action->execute($request->validated())->toArray()]);
     }
 

@@ -1,3 +1,27 @@
 <?php
 
-declare(strict_types=1); namespace App\Tools\IssCalculator\Tests\Unit; use App\Tools\IssCalculator\Application\Data\CalculationInput; use App\Tools\IssCalculator\Domain\Services\Calculator; use PHPUnit\Framework\TestCase; final class CalculatorTest extends TestCase { public function test_calculates_iss_and_retention():void{$r=(new Calculator())->calculate(new CalculationInput([['municipality'=>'Teste','service'=>'Consultoria','taker'=>'Cliente','value'=>'5.000,00','rate'=>'5','retained'=>true]]));self::assertSame('R$ 250,00',$r->summary[2]->value);self::assertSame(475000,$r->details['services'][0]['net_receivable_minor']);} public function test_consolidates_services_and_scenarios():void{$r=(new Calculator())->calculate(new CalculationInput([['municipality'=>'A','service'=>'S1','value'=>'1.000,00','rate'=>'2','retained'=>false],['municipality'=>'B','service'=>'S2','value'=>'2.000,00','rate'=>'5','retained'=>true]],[['municipality'=>'C','rate'=>'3']]));self::assertSame(12000,$r->details['totals']['iss_minor']);self::assertCount(2,$r->details['municipal_consolidation']);self::assertCount(1,$r->details['municipality_scenarios']);}}
+declare(strict_types=1);
+
+namespace App\Tools\IssCalculator\Tests\Unit;
+
+use App\Tools\IssCalculator\Application\Data\CalculationInput;
+use App\Tools\IssCalculator\Domain\Services\Calculator;
+use PHPUnit\Framework\TestCase;
+
+final class CalculatorTest extends TestCase
+{
+    public function test_calculates_iss_and_retention(): void
+    {
+        $r = (new Calculator)->calculate(new CalculationInput([['municipality' => 'Teste', 'service' => 'Consultoria', 'taker' => 'Cliente', 'value' => '5.000,00', 'rate' => '5', 'retained' => true]]));
+        self::assertSame('R$ 250,00', $r->summary[2]->value);
+        self::assertSame(475000, $r->details['services'][0]['net_receivable_minor']);
+    }
+
+    public function test_consolidates_services_and_scenarios(): void
+    {
+        $r = (new Calculator)->calculate(new CalculationInput([['municipality' => 'A', 'service' => 'S1', 'value' => '1.000,00', 'rate' => '2', 'retained' => false], ['municipality' => 'B', 'service' => 'S2', 'value' => '2.000,00', 'rate' => '5', 'retained' => true]], [['municipality' => 'C', 'rate' => '3']]));
+        self::assertSame(12000, $r->details['totals']['iss_minor']);
+        self::assertCount(2, $r->details['municipal_consolidation']);
+        self::assertCount(1, $r->details['municipality_scenarios']);
+    }
+}

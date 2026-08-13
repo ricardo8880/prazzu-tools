@@ -15,6 +15,7 @@ use App\Core\Normative\NormativeSourceType;
 final class RuleCatalog
 {
     public const LATE_PAYMENT_IDENTIFIER = 'federal_payment_guide.late_payment_charges';
+
     public const CURRENT_VERSION = '2026.1.0';
 
     /** @return list<LatePaymentRule> */

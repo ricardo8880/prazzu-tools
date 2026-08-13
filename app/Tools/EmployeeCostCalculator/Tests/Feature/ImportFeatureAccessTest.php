@@ -8,6 +8,7 @@ use App\Core\Access\Enums\CommercialAccessMode;
 use App\Core\Access\Enums\SubscriptionPlan;
 use App\Core\Imports\Contracts\ImportDatasetStore;
 use App\Core\Imports\Data\TabularDataset;
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -42,6 +43,8 @@ final class ImportFeatureAccessTest extends TestCase
     }
 
     #[DataProvider('isolatedFeatureFlags')]
+    #[CoversPlusFeature('custo-funcionario-clt', 'csv_import')]
+    #[CoversPlusFeature('custo-funcionario-clt', 'xlsx_import')]
     public function test_disabled_format_is_blocked_while_plus_can_use_the_other_active_format(
         string $disabledFormat,
         string $activeFormat,

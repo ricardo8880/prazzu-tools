@@ -860,3 +860,256 @@ continuidade, compatibilidade e validação.
 - `ProfitDistributionBalanceSimulator` (`release_order` 42) compara capacidade estimada com balanço (lucro contábil informado) e sem balanço (receita × percentual de referência informado − tributos), com pró-labore, acumulados, planejamento e relatório no Plus. O escopo permanece distinto de `ProfitDistributionCalculator`.
 - `RetroactiveDasRegularizationCalculator` (`release_order` 43) reconstitui principal estimado por competência/faturamento/alíquota informada e reutiliza `LateDasRule` para mora. O Plus consolida competências e cria cronograma financeiro; o escopo permanece distinto de `LateDasCalculator`, que parte de um principal já conhecido.
 - Analytics, rotas, catálogo, E2E e exportações continuam na infraestrutura compartilhada. Os gates atuais passam a esperar 43 ferramentas.
+
+## Saneamento Prazzu Plus — Lote 1 — Fundação de governança
+
+- O estado anterior foi preservado: nenhum slug, módulo ou benefício de domínio foi removido.
+- O sistema de autorização central existente foi mantido como fonte única de decisão Plus.
+- `ToolModuleValidator` passou a impedir features genéricas em ferramentas `active`.
+- `PlusFeatureReadinessInspector` passou a integrar `tools:check-architecture` e protege novas features Plus contra implementação apenas declarativa.
+- `config/plus_feature_governance.php` registra a dívida legada congelada; cada lote de domínio deve remover apenas os itens efetivamente corrigidos.
+- `PlusFeatureAccessContractTest` protege transversalmente `Monetized + Free → bloqueado` e `Monetized + Plus → permitido` para todas as features Plus registradas.
+- Continuidade: antes do Lote 2 de monetização, reler o ZIP original, este documento, `docs/PLUS-MONETIZATION-LOT-1-FOUNDATION.md`, os lotes entregues e o inventário executável; começar pelo Gerador de Contratos sem recriar a fundação.
+
+
+## Prazzu Plus — Lote 2 — Gerador de Contratos
+
+- Estado reconstruído a partir do ZIP original + Lote 1 antes das alterações.
+- As seis features Plus do `ContractGenerator` foram materializadas: biblioteca ampliada, cláusulas inteligentes, favoritos, preenchimento por perfil empresarial, histórico e comparação de versões.
+- Autorização usa apenas `ToolFeatureRequestAuthorizer`/middleware `tool.feature`; histórico, favoritos e perfis reutilizam o Core existente.
+- As seis chaves `gerador-de-contratos:*` foram removidas da dívida legada de `plus_feature_governance`.
+- Slug e modalidades essenciais foram preservados; versão do módulo passou a `0.6.0`.
+- Antes do próximo lote, reconstruir o estado usando ZIP original + Lote 1 + Lote 2, em ordem.
+
+## Prazzu Plus — Lote 3 — Financeiro e retirada de sócios
+
+- Estado reconstruído a partir do ZIP original + Lote 1 + Lote 2 antes das alterações.
+- `WorkingCapitalCalculator`: `projections` materializada como projeção de cenário sobre ativos e passivos circulantes, com gate Plus e contrato Free × Plus.
+- `CashFlowCalculator`: removida `advanced_productivity`; criada `cash_flow_scenarios` com comparação base/conservador/otimista, gate Plus e contrato Free × Plus.
+- `BreakEvenCalculator`: removida `advanced_productivity`; criada `scenario_comparison` para variações de preço e custos, gate Plus e contrato Free × Plus.
+- `SalesCommissionCalculator`: removida `advanced_productivity`; criada `batch_sellers` para processamento de 2 a 50 vendedores, gate Plus e contrato Free × Plus.
+- `ProLaboreSimulator`: `scenarios` materializada como comparação anual de 2 a 4 valores mensais de pró-labore, protegida pelo gate Plus.
+- `ProLaboreProfitDistributionCalculator`: `scenario_planning` passou a proteger a simulação avançada; `history_exports` passou a proteger persistência, consulta de histórico e exportações. Usuário Free monetizado não recebe nem grava histórico Plus.
+- As sete chaves corrigidas foram removidas de `config/plus_feature_governance.php::legacy_debt`.
+- Nenhum slug público, fórmula Essencial ou módulo oficial foi removido.
+- Antes do Lote 4, reconstruir o estado usando ZIP original + Lote 1 + Lote 2 + Lote 3, em ordem, e reler os documentos obrigatórios da raiz.
+
+## Prazzu Plus — Lote 4 — Críticas restantes
+
+- Estado reconstruído do ZIP original com Lotes 1, 2 e 3 reaplicados em ordem.
+- As 11 críticas restantes foram saneadas: 10 módulos substituíram `advanced_productivity` por `spreadsheet_export`, usando a exportação compartilhada já existente e mantendo cálculo/PDF Essenciais.
+- `TurnoverCalculator` substituiu `advanced_analysis` por `segmented_analysis`, comparação objetiva de 2 a 12 períodos/segmentos usando o mesmo `CalculateTool` Essencial.
+- As 11 features genéricas anteriores saíram de `plus_feature_governance.legacy_debt` e agora cumprem o contrato estrito de implementação + gate central + teste Free × Plus.
+- Antes do próximo lote, reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4.
+
+
+## Prazzu Plus — Lote 5 — Ajustes parciais A
+
+- Estado reconstruído obrigatoriamente a partir do ZIP original com Lotes 1, 2, 3 e 4 reaplicados em ordem.
+- Foram saneadas 14 features em 10 ferramentas parciais: `portfolio_projection`; `multiple_scenarios`; `annual_projection` do Comparador Tributário; `partners`; `document_comparison`; `favorites`; `balance_evolution`; `report` do Parcelamento; `annual_projection`, `business_costs` e `migration_point` do MEI → Microempresa; `monthly_consolidation`; `planning`; e `regularization`.
+- Comparador Tributário recebeu comparação concreta de cenários; Distribuição de Lucros recebeu múltiplos sócios; Conversor XML recebeu comparação real entre documentos. As demais correções deste lote ligam funcionalidades já existentes ao gate individual correto.
+- As 14 chaves corrigidas saíram de `plus_feature_governance.legacy_debt`; features fora do escopo permanecem congeladas para lotes posteriores.
+- Nenhum slug, fórmula Essencial, módulo oficial ou serviço transversal foi recriado.
+- Antes do Lote 6, reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5.
+
+## Prazzu Plus — Lote 6 — Ajustes parciais B
+
+- Estado reconstruído obrigatoriamente a partir do ZIP original com Lotes 1, 2, 3, 4 e 5 reaplicados em ordem.
+- Foram saneadas 23 features em 10 ferramentas parciais restantes: DIFAL/ICMS (`interstate_assist`, `double_base`, `fcp`, `export`); IRPJ/CSLL (`history`); PIS/COFINS (`memory`, `history`); ICMS-ST (`history`); Retenções NF (`memory`, `report`, `history`); Férias (`multiple_employees`); Custo CLT (`branded_report`, `projections`); Salário Líquido (`variable_earnings`, `custom_discounts`, `history`, `export`); Hora Extra (`night`, `dsr`, `reflexes`, `export`); Emissor de Recibos (`custom_branding`).
+- Histórico nas ferramentas saneadas reutiliza `ToolRunHistory` e `persistence.auth`; nenhum storage paralelo foi criado.
+- Emissor de Recibos materializou personalização real com identidade do escritório e rodapé; Custo CLT passou a proteger identidade do escritório e projeção de 12 meses já existentes.
+- Cálculos Essenciais foram preservados: salário básico, hora extra básica, férias individuais e resumos fiscais continuam disponíveis sem depender do Plus.
+- As 23 chaves corrigidas saíram de `plus_feature_governance.legacy_debt` e agora cumprem implementação + gate central + teste Free × Plus.
+- Antes do próximo lote, reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5 → Lote 6.
+
+## Prazzu Plus — Lote 7 — Proteção contra regressão
+
+- Estado reconstruído obrigatoriamente a partir do ZIP original com Lotes 1, 2, 3, 4, 5 e 6 reaplicados em ordem.
+- A matriz comercial global passou a fixar 43 ferramentas e 137 features Plus, validando `Monetized + Free → feature.plus_required` e `Monetized + Plus → feature.plus_plan` para cada contrato declarado.
+- Foi adicionado contrato de governança para impedir duplicatas, dívida legada inexistente, crescimento silencioso da dívida e retorno de features saneadas ao legado.
+- O snapshot consolidado possui 76 contratos legados e 61 contratos sob validação estrita de implementação + gate + testes.
+- `PlusFeatureReadinessInspector` agora audita também a consistência global da governança; `tools:check-architecture` retorna 0 violações `tools.plus.*` no estado acumulado.
+- O workflow de CI executa explicitamente os dois contratos Prazzu Plus antes do `composer release:check`.
+- Antes do Lote 8, reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5 → Lote 6 → Lote 7.
+
+## Prazzu Plus — Lote 8 — Auditoria final de monetização
+
+- Estado reconstruído na ordem: ZIP original → Prazzu Plus Lotes 1, 2, 3, 4, 5, 6 e 7.
+- Auditoria final confirmou 43 ferramentas, 137 features Plus, 61 contratos saneados e 76 contratos legados congelados.
+- `plus_feature_governance.strict_contracts` passou a congelar o conjunto exato das 61 features saneadas; não basta mais preservar apenas a contagem mínima.
+- `PlusFeatureReadinessInspector` e `PlusFeatureGovernanceContractTest` detectam desaparecimento, retorno ao legado ou troca silenciosa de qualquer contrato saneado.
+- `release_readiness` foi atualizado para `plus_monetization_lot_8_audited`.
+- O padrão operacional permanece `launch_free`; ativação de `monetized` deve ser feita no ambiente somente depois de `composer release:check` aprovado no CI oficial.
+- Relatório detalhado: `docs/PLUS-MONETIZATION-LOT-8-FINAL-AUDIT.md`.
+
+## Remediação Prazzu Plus — Lote 1 — Fundação de certificação funcional
+
+- Estado reconstruído do ZIP original com reaplicação dos ajustes já entregues nesta sequência antes das alterações.
+- Os 137 recursos Plus foram separados em três garantias: acesso comercial, prontidão estrutural e certificação funcional.
+- Checksum do catálogo completo e checksum da dívida legada impedem substituições silenciosas que preservem apenas as contagens 137/76.
+- `functional_contracts` começa vazio: nenhum benefício foi declarado funcionalmente certificado apenas por possuir rota, middleware ou teste de acesso.
+- A dívida funcional inicial é de 137 contratos e não pode crescer; novos benefícios precisam nascer com certificação funcional explícita.
+- `CoversPlusFeature` torna o vínculo entre teste comportamental e `slug:feature` explícito e auditável.
+- Os próximos lotes devem implementar ou confirmar o benefício, criar teste comportamental marcado, remover a dívida estrutural quando aplicável e adicionar o contrato a `functional_contracts` somente ao final.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-1-FOUNDATION.md`.
+
+## Remediação Prazzu Plus — Lote 2 — ferramentas críticas
+
+- A base foi reconstruída do ZIP original e recebeu, em ordem, os ajustes direcionados anteriores e o Lote 1 de remediação.
+- Foram auditados e certificados 19 recursos das cinco ferramentas críticas: Simples Nacional, Honorários Contábeis, Margem/Markup, Rescisão e Validador de CNPJ.
+- Cada contrato certificado possui implementação funcional existente, gate Plus individual e teste comportamental marcado com `CoversPlusFeature`.
+- A dívida legada caiu de 76 para 57; os contratos estritos subiram de 61 para 80; a certificação funcional passou de 0 para 19.
+- O próximo lote deve reconstruir novamente o ZIP original e reaplicar todos os ZIPs anteriores, terminando por este Lote 2, antes de selecionar o próximo grupo.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-2-CRITICALS.md`.
+
+## Remediação Prazzu Plus — Lote 3 — produtividade documental
+
+- A base foi reconstruída na ordem ZIP original → correções direcionadas → Remediação Lote 1 → Remediação Lote 2.
+- Foram certificados 13 contratos em Comparador Tributário, Conversor Fiscal XML, Emissor de Recibos, DARF/GPS, Distribuição de Lucros com Balanço e MEI → Microempresa.
+- Testes comportamentais comprovam exportações, relatórios, histórico, processamento em lote e perfis salvos; os testes comerciais Free × Plus passaram a enumerar cada feature saneada.
+- A dívida legada caiu de 57 para 44; os contratos estritos subiram de 80 para 93; a certificação funcional acumulada subiu de 19 para 32.
+- Antes do Lote 4, reconstruir novamente a base e reaplicar este ZIP por último.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-3-DOCUMENTS.md`.
+
+## Remediação Prazzu Plus — Lote 4 — Custo de Funcionário CLT
+
+- O projeto foi reconstruído do ZIP original e recebeu todas as correções e os Lotes 1–3 na ordem obrigatória.
+- Foram certificados os 11 contratos legados do módulo: lote, perfis de empresa e funcionário, importações CSV/XLSX, exportações CSV/XLSX, cenários, comparação CLT/PJ/Autônomo, histórico e relatório profissional.
+- Os testes comportamentais executam fluxos reais; a matriz comercial enumera individualmente os 11 recursos.
+- A dívida legada caiu de 44 para 33; os contratos estritos subiram de 93 para 104; a certificação funcional subiu de 32 para 43.
+- Antes do Lote 5, reconstruir novamente a base e aplicar este ZIP por último.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-4-EMPLOYEE-COST.md`.
+
+## Remediação Prazzu Plus — Lote 5 — Apurações fiscais
+
+- Estado reconstruído do ZIP original com todos os ajustes direcionados e Lotes 1–4 reaplicados em ordem.
+- Foram certificados 16 benefícios já materializados em três módulos: 6 de IRPJ/CSLL no Lucro Presumido, 5 de PIS/Cofins e 5 de ICMS-ST.
+- Os testes comportamentais exercitam periodicidade, múltiplas atividades/operações/itens, cenários, créditos, MVA ajustada, FCP, interestadual e presença das exportações.
+- Os contratos Free × Plus passaram a cobrir individualmente todas as chaves desses módulos; rotas de exportação mantêm `tool.feature` e os cálculos avançados mantêm `ToolFeatureRequestAuthorizer`.
+- Estado acumulado: 59 contratos funcionais, 120 contratos estritos, 17 contratos legados e 78 contratos de dívida funcional.
+- Antes do Lote 6, reconstruir obrigatoriamente: ZIP original → ajustes direcionados → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5.
+
+## Remediação Prazzu Plus — Lote 6 — Encerramento do legado estrutural
+
+- Estado reconstruído na ordem ZIP original → ajustes direcionados → Lotes 1–5.
+- Foram auditados e certificados os 17 contratos restantes: 2 no DAS retroativo, 3 em depreciação, 3 em férias, 4 em ISS, 2 em parcelamento tributário e 3 em retenções de nota fiscal.
+- Testes comportamentais comprovam consolidação de competências, métodos e múltiplos ativos, histórico/planejamento/exportações de férias, retenção e cenários municipais, comparação de parcelamentos, regras configuráveis e múltiplas notas.
+- Todos os testes comerciais desses módulos enumeram cada chave Plus e validam Free bloqueado × Plus permitido em modo monetizado.
+- Estado acumulado: 137 contratos estritos, 76 contratos funcionalmente certificados, zero dívida legada estrutural e 61 contratos de dívida funcional.
+- Antes do Lote 7, reconstruir obrigatoriamente o ZIP original e reaplicar todos os ajustes e Lotes 1–6 em ordem. O próximo lote deve trabalhar apenas na certificação funcional dos contratos estritos ainda não certificados.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-6-LEGACY-CLOSURE.md`.
+
+## Remediação Prazzu Plus — Lote 7 — Encerramento funcional
+
+- Estado reconstruído obrigatoriamente na ordem ZIP original → ajustes direcionados → Lotes 1–6.
+- Foram auditados os 61 contratos estritos ainda pendentes em 38 módulos, cruzando manifesto, implementação, gate central, teste comercial e testes de domínio/fluxo existentes.
+- Cada contrato recebeu vínculo explícito com `CoversPlusFeature`; o conjunto de marcadores passa a coincidir exatamente com os 137 benefícios Plus declarados.
+- A governança passa a exigir piso funcional de 137 e teto de dívida funcional igual a zero, preservando também 137 contratos estritos e dívida legada estrutural vazia.
+- Nenhum controller, fórmula Essencial, rota, página, slug, inventário ou infraestrutura compartilhada foi alterado.
+- Antes do Lote 8, reconstruir novamente o ZIP original e reaplicar todos os ajustes e Lotes 1–7 em ordem. O Lote 8 deve executar a auditoria final consolidada e não criar novos benefícios por conveniência.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-7-FUNCTIONAL-CLOSURE.md`.
+
+## Remediação Prazzu Plus — Lote 8 — Auditoria final consolidada
+
+- Estado reconstruído obrigatoriamente na ordem ZIP original → correções direcionadas → Lotes 1–7.
+- A auditoria final confirmou 43 ferramentas oficiais e igualdade exata entre os 137 benefícios declarados, contratos estritos e contratos funcionalmente certificados.
+- Dívidas estrutural e funcional permanecem zeradas; não há chaves genéricas, contratos duplicados, ausentes ou excedentes nos snapshots.
+- A composição de `functional_contracts` recebeu checksum criptográfico próprio, validado tanto pelo inspector arquitetural quanto pelo teste de governança.
+- O inventário oficial passou a registrar `plus_remediation_lot_8_audited`; o teste de prontidão foi alinhado à versão real do schema e ao relatório final.
+- Nenhuma feature, fórmula, rota pública, página, slug, dependência ou abstração transversal foi adicionada.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-8-FINAL-AUDIT.md`.
+
+## Remediação Prazzu Plus — Lote 9 — Higiene de distribuição
+
+- O estado recebido após os Lotes 1–8 preservava corretamente os 137 contratos Plus, mas o ZIP completo continha `.env`, `.git`, dependências reconstruíveis e uma cópia Laravel aninhada desatualizada.
+- `scripts/package-distribution.ps1` passa a excluir automaticamente qualquer raiz Laravel aninhada no primeiro nível.
+- `scripts/verify-distribution.php` passa a rejeitar diretórios proibidos e arquivos de ambiente em qualquer profundidade, além de detectar projeto Laravel aninhado.
+- `scripts/cleanup-project.ps1` remove a cópia duplicada exata e retira `.env` somente do índice do Git, preservando o arquivo local.
+- O workflow de qualidade agora constrói e valida o pacote oficial após o `release:check`.
+- Nenhuma ferramenta, contrato Plus, fórmula, rota, página, slug ou dependência foi alterada.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-9-DISTRIBUTION-HARDENING.md`.
+
+## Remediação Prazzu Plus — Lote 10 — Correção de imports PHP
+
+- O `composer release:check` real em Windows identificou 38 imports de `CoversPlusFeature` com barras duplicadas, sintaxe inválida em declarações `use` do PHP.
+- Os 38 imports foram normalizados para `App\Core\Quality\Attributes\CoversPlusFeature`.
+- Nenhum atributo, teste comportamental, contrato, feature ou regra de acesso foi removido.
+- A matriz permanece com 137 marcadores únicos, 137 contratos estritos e 137 contratos funcionalmente certificados.
+- O lote não altera código de produção, fórmulas, rotas, páginas, slugs ou dependências.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-10-PHP-IMPORTS.md`.
+
+## Remediação Prazzu Plus — Lote 11 — Gate de qualidade e E2E
+
+- O lint real passou em 1.845 arquivos PHP após o Lote 10.
+- O gate seguinte revelou dívida de formatação Pint; ela não foi ocultada nem removida do release. `scripts/finalize-quality.ps1` aplica o formatador oficial e repete `composer release:check`.
+- Foram restaurados `scripts/e2e-environment.php`, `scripts/e2e-browser.php` e `scripts/e2e-report-txt.mjs`, todos já referenciados pelo Composer, mas ausentes no estado recebido.
+- `package.json` volta a expor `e2e:install` e `e2e:test`, necessários pelo fluxo Composer.
+- O ambiente E2E valida isolamento, cria apenas banco/storage dedicados e mantém rede externa desativada.
+- Nenhum teste, contrato Plus, fórmula, rota pública, página ou slug foi removido.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-11-QUALITY-E2E.md`.
+
+## Remediação Prazzu Plus — Lote 12 — Timeout E2E e ambiente de distribuição
+
+- A execução real confirmou ambiente isolado, Playwright e Chromium disponíveis, com 34 cenários aprovados antes de o Composer encerrar o processo aos 300 segundos.
+- `e2e:browser:test` passa a desativar explicitamente o timeout de processo do Composer; os timeouts individuais do Playwright permanecem ativos.
+- O empacotador passa a excluir `.env.e2e` e outros `.env.*` locais, preservando somente `.env.example` e `.env.e2e.example`.
+- O validador de distribuição continua bloqueando qualquer ambiente local que escape do staging.
+- O finalizador Pint do Lote 11 permanece obrigatório antes do release.
+- Nenhum contrato Plus, teste, fórmula, rota, página, slug ou dependência foi alterado.
+- Relatório detalhado: `docs/PLUS-REMEDIATION-LOT-12-E2E-TIMEOUT-DISTRIBUTION.md`.
+
+## Crescimento e Retenção — Lote 1 — captura e continuidade pós-resultado
+
+- Estado reconstruído a partir do ZIP original antes das alterações.
+- Newsletter passou a persistir inscrições de forma idempotente e a existir também abaixo do breakpoint `xxl`.
+- CTA pós-resultado deixou de priorizar venda de Plus e passou a orientar continuidade de acordo com autenticação e histórico real.
+- Nenhum cálculo, slug, fórmula, inventário ou gate comercial foi alterado.
+- Relatório detalhado: `docs/GROWTH-RETENTION-LOT-1.md`.
+
+## Crescimento e Retenção — Lote 2 — Meu Prazzu
+
+- Estado reconstruído obrigatoriamente na ordem ZIP original → Crescimento e Retenção Lote 1.
+- `/minha-conta` passa a apresentar o hub `Meu Prazzu`, sem mudar a URL pública nem a autenticação existente.
+- O hub agrega somente metadados de históricos pertencentes ao usuário: contagem de resultados, favoritos, ferramentas com histórico, continuidade e resumos por ferramenta.
+- Nenhum `input_payload` ou `result_payload` é usado para renderizar o hub; dados sensíveis dos cálculos continuam privados dentro das superfícies responsáveis.
+- O botão `Refazer cálculo` aparece somente quando a ferramenta já possui rota `history.repeat`; caso contrário, o hub oferece retorno seguro à ferramenta sem inventar um contrato de repetição.
+- Favoritos reutilizam `tool_run_favorites`; nenhum segundo sistema de favoritos, histórico ou persistência foi criado.
+- A consulta agregada permanece local ao `AccountController`; a extração para infraestrutura compartilhada só deve ser considerada se o Lote 3 reutilizar o mesmo contrato na Home.
+- Antes do próximo lote de crescimento e retenção, reconstruir obrigatoriamente: ZIP original → Crescimento e Retenção Lote 1 → Crescimento e Retenção Lote 2, relendo README, `CORE_CANDIDATES.md`, este documento e o inventário oficial.
+- Relatório detalhado: `docs/GROWTH-RETENTION-LOT-2.md`.
+
+## Crescimento e Retenção — Lote 3 — Continuidade e descoberta
+
+- Estado reconstruído obrigatoriamente na ordem ZIP original → Crescimento e Retenção Lote 1 → Crescimento e Retenção Lote 2.
+- A Home autenticada ganhou uma seção separada de continuidade com até quatro ferramentas recentes da vertical ativa, sem tocar na regra das oito ferramentas mais recentes por `release_order`.
+- O candidato de continuidade do Lote 2 foi promovido para `UserToolContinuityQuery`; `Meu Prazzu` e Home agora reutilizam a mesma camada segura, sem ler payloads para apresentação.
+- Visitantes recebem apenas atalhos temporários da sessão, armazenando exclusivamente slugs em `sessionStorage`; nenhuma persistência anônima foi criada.
+- `ToolCatalog::related()` passou a priorizar jornadas editoriais declaradas para as 43 ferramentas e usa a heurística histórica somente como fallback.
+- Home contextual de aquisição mantém prioridade e não recebe a seção personalizada enquanto o contexto estiver ativo.
+- Nenhum cálculo, slug, fórmula, contrato Plus, inventário ou migration foi alterado.
+- Antes do próximo lote de crescimento e retenção, reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2 → Lote 3 e reler README, `CORE_CANDIDATES.md`, este documento e os relatórios de crescimento.
+- Relatório detalhado: `docs/GROWTH-RETENTION-LOT-3.md`.
+
+## Crescimento e Retenção — Lote 4 — Aquisição, SEO e confiança
+
+- Estado reconstruído obrigatoriamente na ordem ZIP original → Lote 1 → Lote 2 → Lote 3.
+- SEO das ferramentas passou a usar a rota e o `ToolCatalog` como fonte compartilhada para canonical, descrição, palavras-chave e vertical, preservando overrides específicos das views.
+- As 43 ferramentas oficiais publicam JSON-LD `WebApplication` + `BreadcrumbList` sem inventar avaliações, usuários, preços ou volume de catálogo.
+- As 36 views padronizadas ganharam orientação curta de confiança por categoria; as sete views legadas preservaram suas explicações específicas e reutilizam apenas a marcação estruturada.
+- O rodapé deixou de exibir `+120`, `+50k`, `100%` e `Sempre atualizado` e passou a comunicar princípios verificáveis do produto, sem prender o layout ao tamanho atual do catálogo.
+- Nenhum cálculo, fórmula, slug, migration, feature Plus, `release_order` ou entrada do inventário foi alterado.
+- Antes do próximo lote de crescimento e retenção, reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 e reler README, `CORE_CANDIDATES.md`, este documento e os quatro relatórios de crescimento.
+- Relatório detalhado: `docs/GROWTH-RETENTION-LOT-4.md`.
+
+## Crescimento e Retenção — Lote 5 — Integração, polimento e validação final
+
+- Estado reconstruído obrigatoriamente na ordem ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4.
+- Corrigida a Home autenticada para nunca usar rota POST de `history.repeat` dentro de `<a>`; continuidade abre somente uma superfície GET existente.
+- Recentes temporários do visitante continuam apenas em `sessionStorage`, agora separados por vertical e sem qualquer payload de cálculo.
+- Analytics ganhou `retention.continuity.used` e `retention.related-tool.opened`, com atribuição controlada e dois funis padrão para medir retorno e descoberta até um novo resultado.
+- Cadastro iniciado pelo CTA pós-resultado preserva apenas a origem e o slug oficial no evento `account.created`, permitindo medir conversão sem capturar dados pessoais no Analytics.
+- Meu Prazzu recebeu atribuição dos atalhos e estado vazio útil de favoritos; reativação de newsletter renova `subscribed_at`.
+- Cabeçalhos de continuidade/recomendações e rodapé receberam ajustes responsivos em telas estreitas.
+- Nenhum cálculo, fórmula, slug, migration, feature Plus, `release_order` ou item do inventário foi alterado.
+- Esta frente de crescimento e retenção encerra seu ciclo no Lote 5. Qualquer continuação deve reconstruir ZIP original → Lotes 1–5 e partir de métricas reais antes de propor nova capacidade.
+- Relatório detalhado: `docs/GROWTH-RETENTION-LOT-5.md`.

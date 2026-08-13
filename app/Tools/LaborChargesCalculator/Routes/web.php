@@ -12,4 +12,5 @@ Route::post('/ferramentas/encargos-trabalhistas', [ToolController::class, 'calcu
 Route::post('/ferramentas/encargos-trabalhistas/exportar/pdf', [ToolController::class, 'exportPdf'])
     ->name('tools.encargos-trabalhistas.export.pdf');
 Route::post('/ferramentas/encargos-trabalhistas/exportar/excel', [ToolController::class, 'exportExcel'])
+    ->middleware('tool.feature:encargos-trabalhistas,spreadsheet_export')
     ->name('tools.encargos-trabalhistas.export.excel');

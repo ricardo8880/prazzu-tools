@@ -10,6 +10,9 @@
     </div>
 
     <x-tools.validation-summary />
+    @auth
+        <div class="mb-3"><a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-pis-cofins.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico Plus</a></div>
+    @endauth
 
     <form method="POST" action="{{ route('tools.calculadora-pis-cofins.calculate') }}" class="vstack gap-4">
         @csrf
@@ -17,7 +20,7 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label" for="period">Competência</label>
-                    <input class="form-control" type="month" id="period" name="period" min="2026-01" max="2026-12" value="{{ old('period', '2026-08') }}" required>
+                    <input class="form-control" type="month" id="period" name="period" min="2026-01" max="2026-12" value="{{ old('period', now()->format('Y-m')) }}" required>
                 </div>
                 <div class="col-md-8">
                     <label class="form-label" for="regime">Regime de apuração</label>
@@ -27,9 +30,9 @@
                     </select>
                 </div>
                 <div class="col-md-6"><x-tools.form.money name="taxable_revenue" label="Base tributável da receita" :value="old('taxable_revenue')" data-e2e-value="10.000,00" required help="Informe a base já após exclusões e ajustes aplicáveis ao caso." /></div>
-                @if($plusEnabled ?? true)<div class="col-md-6"><x-tools.form.money name="credit_base" label="Base total elegível a créditos" :value="old('credit_base','0')" required help="Usada no regime não cumulativo. No cumulativo, mantenha zero se não estiver comparando cenários." /></div>@else<input type="hidden" name="credit_base" value="0">@endif
-                <div class="col-md-6"><x-tools.form.money name="pis_withheld" label="PIS retido/compensável confirmado" :value="old('pis_withheld','0')" required /></div>
-                <div class="col-md-6"><x-tools.form.money name="cofins_withheld" label="Cofins retida/compensável confirmada" :value="old('cofins_withheld','0')" required /></div>
+                @if($plusEnabled ?? true)<div class="col-md-6"><x-tools.form.money name="credit_base" label="Base total elegível a créditos" :value="old('credit_base')" required help="Usada no regime não cumulativo. No cumulativo, mantenha zero se não estiver comparando cenários." /></div>@else<input type="hidden" name="credit_base" value="0">@endif
+                <div class="col-md-6"><x-tools.form.money name="pis_withheld" label="PIS retido/compensável confirmado" :value="old('pis_withheld')" required /></div>
+                <div class="col-md-6"><x-tools.form.money name="cofins_withheld" label="Cofins retida/compensável confirmada" :value="old('cofins_withheld')" required /></div>
             </div>
         </x-tools.form-panel>
 
@@ -46,8 +49,8 @@
                         @for($i = 0; $i < 3; $i++)
                             <tr>
                                 <td><input class="form-control" name="operations[{{ $i }}][description]" value="{{ old("operations.$i.description") }}" placeholder="Ex.: prestação de serviço"></td>
-                                <td><input class="form-control" name="operations[{{ $i }}][revenue]" value="{{ old("operations.$i.revenue", '0') }}" inputmode="decimal"></td>
-                                <td><input class="form-control" name="operations[{{ $i }}][credit_base]" value="{{ old("operations.$i.credit_base", '0') }}" inputmode="decimal"></td>
+                                <td><input class="form-control" name="operations[{{ $i }}][revenue]" value="{{ old("operations.$i.revenue") }}" inputmode="decimal"></td>
+                                <td><input class="form-control" name="operations[{{ $i }}][credit_base]" value="{{ old("operations.$i.credit_base") }}" inputmode="decimal"></td>
                             </tr>
                         @endfor
                     </tbody>
@@ -113,11 +116,15 @@
                 @endif
 
                 <h3 class="h5 mt-4">Memória de cálculo</h3>
-                <div class="accordion mb-4" id="pis-cofins-memory">
-                    @foreach($result->calculationMemory->steps as $step)
-                        <div class="accordion-item"><h4 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pis-cofins-memory-{{ $loop->index }}">{{ $step->label }}</button></h4><div id="pis-cofins-memory-{{ $loop->index }}" class="accordion-collapse collapse"><div class="accordion-body"><strong>Fórmula:</strong> {{ $step->formula }}</div></div></div>
-                    @endforeach
-                </div>
+                @if($memoryAllowed ?? true)
+                    <div class="accordion mb-4" id="pis-cofins-memory" data-plus-feature="memory">
+                        @foreach($result->calculationMemory->steps as $step)
+                            <div class="accordion-item"><h4 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pis-cofins-memory-{{ $loop->index }}">{{ $step->label }}</button></h4><div id="pis-cofins-memory-{{ $loop->index }}" class="accordion-collapse collapse"><div class="accordion-body"><strong>Fórmula:</strong> {{ $step->formula }}</div></div></div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="alert alert-secondary">O resultado essencial permanece disponível acima. A memória detalhada de fórmulas faz parte do Prazzu Plus.</div>
+                @endif
 
                 @if(!empty($historySaved))<div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>@endif
 

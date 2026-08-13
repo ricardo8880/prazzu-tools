@@ -22,8 +22,15 @@ final readonly class CompareApiAction implements ToolApiAction
 
     public function __construct(private CompareTaxRegimes $action, private TaxComparisonResultPresenter $presenter) {}
 
-    public function name(): string { return 'compare'; }
-    protected function requestClass(): string { return CompareTaxRegimesRequest::class; }
+    public function name(): string
+    {
+        return 'compare';
+    }
+
+    protected function requestClass(): string
+    {
+        return CompareTaxRegimesRequest::class;
+    }
 
     public function execute(array $input, ToolExecutionContext $context): mixed
     {

@@ -73,7 +73,7 @@ final class AnalyticsReportQuery
         $driver = DB::connection()->getDriverName();
         $bucket = match ([$driver, $grain]) {
             ['sqlite', 'hour'] => "strftime('%H', platform_analytics_events.occurred_at)",
-            ['sqlite', 'date'] => "date(platform_analytics_events.occurred_at)",
+            ['sqlite', 'date'] => 'date(platform_analytics_events.occurred_at)',
             default => $grain === 'hour'
                 ? 'HOUR(platform_analytics_events.occurred_at)'
                 : 'DATE(platform_analytics_events.occurred_at)',

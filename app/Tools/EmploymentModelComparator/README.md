@@ -53,3 +53,8 @@ Regras normativas continuam sujeitas à revisão profissional e atualização pe
 ## Alinhamento do Lote 4
 
 O resultado agora explicita premissas e limitações. As alíquotas continuam entradas do usuário porque CLT, PJ e autônomo dependem de atividade, regime, retenções, benefícios e contratação concreta. A ferramenta não importa regras internas das calculadoras trabalhistas ou societárias.
+
+## Prazzu Plus — saneamento de monetização
+
+Exportação em planilha (`spreadsheet_export`) é Plus; comparação mensal e PDF permanecem Essenciais.
+A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.

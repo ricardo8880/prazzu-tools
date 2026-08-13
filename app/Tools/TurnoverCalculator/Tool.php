@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tools\TurnoverCalculator;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
@@ -78,7 +78,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             features: [
                 new ToolFeature('calculate', 'Taxa de turnover do período', ToolFeatureTier::Essential),
                 new ToolFeature('method', 'Memória transparente da fórmula utilizada', ToolFeatureTier::Essential),
-                new ToolFeature('advanced_analysis', 'Análises avançadas por período e segmento', ToolFeatureTier::Plus),
+                new ToolFeature('segmented_analysis', 'Comparação de turnover por período ou segmento', ToolFeatureTier::Plus),
             ],
             capabilities: [
                 ToolCapability::History,

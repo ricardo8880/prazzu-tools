@@ -15,7 +15,10 @@ use App\Core\Normative\NormativeSourceType;
 
 final readonly class PisCofinsRule implements NormativeRule
 {
-    public function effectivePeriod(): EffectivePeriod { return $this->normativeMetadata()->effectivePeriod; }
+    public function effectivePeriod(): EffectivePeriod
+    {
+        return $this->normativeMetadata()->effectivePeriod;
+    }
 
     public function normativeMetadata(): NormativeRuleMetadata
     {
@@ -34,8 +37,23 @@ final readonly class PisCofinsRule implements NormativeRule
         );
     }
 
-    public function cumulativePisRate(): Percentage { return Percentage::fromString('0.65'); }
-    public function cumulativeCofinsRate(): Percentage { return Percentage::fromString('3'); }
-    public function nonCumulativePisRate(): Percentage { return Percentage::fromString('1.65'); }
-    public function nonCumulativeCofinsRate(): Percentage { return Percentage::fromString('7.6'); }
+    public function cumulativePisRate(): Percentage
+    {
+        return Percentage::fromString('0.65');
+    }
+
+    public function cumulativeCofinsRate(): Percentage
+    {
+        return Percentage::fromString('3');
+    }
+
+    public function nonCumulativePisRate(): Percentage
+    {
+        return Percentage::fromString('1.65');
+    }
+
+    public function nonCumulativeCofinsRate(): Percentage
+    {
+        return Percentage::fromString('7.6');
+    }
 }

@@ -49,5 +49,4 @@ final class RuleCatalog
     {
         return [MonthlyPersonalIncomeTaxRule::for2026()];
     }
-
 }

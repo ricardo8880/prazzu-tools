@@ -7,23 +7,26 @@
 <x-tools.page title="Calculadora de ICMS-ST" description="Estime ICMS-ST com parâmetros confirmados da operação e memória transparente do cálculo." icon="bi-box-seam" slug="calculadora-icms-st">
     <div class="alert alert-info"><strong>Ferramenta paramétrica.</strong> A incidência de ST, MVA, alíquotas, FCP, reduções e composição da base dependem da mercadoria, NCM/CEST, UF e legislação aplicável. Confirme os parâmetros antes de usar o resultado fiscalmente.</div>
     <x-tools.validation-summary />
+    @auth
+        <div class="mb-3"><a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-icms-st.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico Plus</a></div>
+    @endauth
 
     <form method="POST" action="{{ route('tools.calculadora-icms-st.calculate') }}" class="vstack gap-4">
         @csrf
         <x-tools.form-panel title="Operação principal" description="O Essencial resolve uma operação básica com MVA e alíquotas informadas." badge="Essencial">
             <div class="row g-3">
-                <div class="col-md-4"><label class="form-label" for="competence">Competência</label><input class="form-control" type="month" id="competence" name="competence" min="2026-01" max="2026-12" value="{{ old('competence','2026-08') }}" required></div>
+                <div class="col-md-4"><label class="form-label" for="competence">Competência</label><input class="form-control" type="month" id="competence" name="competence" min="2026-01" max="2026-12" value="{{ old('competence', now()->format('Y-m')) }}" required></div>
                 <div class="col-md-4"><label class="form-label" for="operation_type">Tipo de operação</label><select class="form-select" id="operation_type" name="operation_type" required><option value="internal" @selected(old('operation_type','internal')==='internal')>Interna</option>@if($plusEnabled ?? true)<option value="interstate" @selected(old('operation_type')==='interstate')>Interestadual · Plus</option>@endif</select></div>
                 <div class="col-md-2"><label class="form-label" for="origin_uf">UF origem</label><select class="form-select" id="origin_uf" name="origin_uf" required>@foreach(['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] as $uf)<option value="{{ $uf }}" @selected(old('origin_uf','SP')===$uf)>{{ $uf }}</option>@endforeach</select></div>
                 <div class="col-md-2"><label class="form-label" for="destination_uf">UF destino</label><select class="form-select" id="destination_uf" name="destination_uf" required>@foreach(['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'] as $uf)<option value="{{ $uf }}" @selected(old('destination_uf','SP')===$uf)>{{ $uf }}</option>@endforeach</select></div>
                 <div class="col-md-4"><x-tools.form.money name="merchandise_value" label="Valor da mercadoria" :value="old('merchandise_value')" data-e2e-value="1.000,00" required /></div>
-                <div class="col-md-4"><x-tools.form.money name="freight" label="Frete que integra a base" :value="old('freight','0')" required /></div>
-                <div class="col-md-4"><x-tools.form.money name="insurance" label="Seguro que integra a base" :value="old('insurance','0')" required /></div>
-                <div class="col-md-4"><x-tools.form.money name="other_charges" label="Outras despesas da base" :value="old('other_charges','0')" required /></div>
-                <div class="col-md-4"><x-tools.form.money name="ipi" label="IPI que integra a base" :value="old('ipi','0')" required /></div>
-                <div class="col-md-4"><x-tools.form.money name="discount" label="Desconto incondicional" :value="old('discount','0')" required /></div>
-                <div class="col-md-4"><label class="form-label" for="original_mva">MVA original (%)</label><input class="form-control" id="original_mva" name="original_mva" type="number" step="0.0001" min="0" max="500" value="{{ old('original_mva','40') }}" required></div>
-                <div class="col-md-4"><label class="form-label" for="internal_rate">Alíquota interna destino (%)</label><input class="form-control" id="internal_rate" name="internal_rate" type="number" step="0.0001" min="0.0001" max="99.9999" value="{{ old('internal_rate','18') }}" required></div>
+                <div class="col-md-4"><x-tools.form.money name="freight" label="Frete que integra a base" :value="old('freight')" required /></div>
+                <div class="col-md-4"><x-tools.form.money name="insurance" label="Seguro que integra a base" :value="old('insurance')" required /></div>
+                <div class="col-md-4"><x-tools.form.money name="other_charges" label="Outras despesas da base" :value="old('other_charges')" required /></div>
+                <div class="col-md-4"><x-tools.form.money name="ipi" label="IPI que integra a base" :value="old('ipi')" required /></div>
+                <div class="col-md-4"><x-tools.form.money name="discount" label="Desconto incondicional" :value="old('discount')" required /></div>
+                <div class="col-md-4"><label class="form-label" for="original_mva">MVA original (%)</label><input class="form-control" id="original_mva" name="original_mva" type="number" step="0.0001" min="0" max="500" value="{{ old('original_mva') }}" required placeholder="Ex.: 35"></div>
+                <div class="col-md-4"><label class="form-label" for="internal_rate">Alíquota interna destino (%)</label><input class="form-control" id="internal_rate" name="internal_rate" type="number" step="0.0001" min="0.0001" max="99.9999" value="{{ old('internal_rate') }}" required placeholder="Ex.: 17"></div>
                 <div class="col-md-4"><label class="form-label" for="own_icms_override">ICMS próprio destacado (opcional)</label><input class="form-control" id="own_icms_override" name="own_icms_override" inputmode="decimal" value="{{ old('own_icms_override') }}" placeholder="Em branco = cálculo automático"><div class="form-text">Se informado, substitui o ICMS próprio calculado pela alíquota da operação.</div></div>
             </div>
         </x-tools.form-panel>
@@ -31,13 +34,13 @@
         @if($plusEnabled ?? true)
         <x-tools.form-panel title="Recursos avançados" description="MVA ajustada, FCP, interestadual e múltiplos itens da mesma operação." badge="Prazzu Plus">
             <div class="row g-3 mb-3">
-                <div class="col-md-4"><label class="form-label" for="interstate_rate">Alíquota interestadual (%)</label><input class="form-control" id="interstate_rate" name="interstate_rate" type="number" step="0.0001" min="0" max="99.9999" value="{{ old('interstate_rate','12') }}"><div class="form-text">Usada somente quando a operação for interestadual.</div></div>
-                <div class="col-md-4"><label class="form-label" for="fcp_rate">FCP-ST (%)</label><input class="form-control" id="fcp_rate" name="fcp_rate" type="number" step="0.0001" min="0" max="10" value="{{ old('fcp_rate','0') }}"></div>
+                <div class="col-md-4"><label class="form-label" for="interstate_rate">Alíquota interestadual (%)</label><input class="form-control" id="interstate_rate" name="interstate_rate" type="number" step="0.0001" min="0" max="99.9999" value="{{ old('interstate_rate') }}" placeholder="Ex.: 12"><div class="form-text">Usada somente quando a operação for interestadual.</div></div>
+                <div class="col-md-4"><label class="form-label" for="fcp_rate">FCP-ST (%)</label><input class="form-control" id="fcp_rate" name="fcp_rate" type="number" step="0.0001" min="0" max="10" value="{{ old('fcp_rate') }}" placeholder="Ex.: 2"></div>
                 <div class="col-md-4 d-flex align-items-end"><div class="form-check mb-2"><input class="form-check-input" type="checkbox" name="adjust_mva" value="1" id="adjust_mva" @checked(old('adjust_mva'))><label class="form-check-label" for="adjust_mva">Calcular MVA ajustada na operação interestadual</label></div></div>
             </div>
             <h3 class="h6">Itens adicionais</h3>
             <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Descrição</th><th>Valor da mercadoria</th><th>MVA original (%)</th></tr></thead><tbody>
-                @for($i=0;$i<4;$i++)<tr><td><input class="form-control" name="items[{{ $i }}][description]" value="{{ old("items.$i.description") }}" placeholder="Ex.: Item {{ $i+2 }}"></td><td><input class="form-control" name="items[{{ $i }}][merchandise_value]" value="{{ old("items.$i.merchandise_value",'0') }}" inputmode="decimal"></td><td><input class="form-control" name="items[{{ $i }}][mva]" value="{{ old("items.$i.mva") }}" type="number" step="0.0001" min="0" max="500" placeholder="Usa MVA principal"></td></tr>@endfor
+                @for($i=0;$i<4;$i++)<tr><td><input class="form-control" name="items[{{ $i }}][description]" value="{{ old("items.$i.description") }}" placeholder="Ex.: Item {{ $i+2 }}"></td><td><input class="form-control" name="items[{{ $i }}][merchandise_value]" value="{{ old("items.$i.merchandise_value") }}" inputmode="decimal"></td><td><input class="form-control" name="items[{{ $i }}][mva]" value="{{ old("items.$i.mva") }}" type="number" step="0.0001" min="0" max="500" placeholder="Usa MVA principal"></td></tr>@endfor
             </tbody></table></div>
             <div class="form-text">Os itens adicionais usam as mesmas alíquotas da operação. Frete, seguro, IPI e outras despesas do painel principal pertencem somente ao item principal.</div>
         </x-tools.form-panel>

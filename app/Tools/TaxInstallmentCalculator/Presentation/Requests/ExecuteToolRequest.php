@@ -11,7 +11,10 @@ use Throwable;
 
 final class ExecuteToolRequest extends FormRequest
 {
-    public function authorize(): bool { return true; }
+    public function authorize(): bool
+    {
+        return true;
+    }
 
     public function rules(): array
     {
@@ -31,7 +34,9 @@ final class ExecuteToolRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            if ($validator->errors()->isNotEmpty()) return;
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
             try {
                 $debt = Money::fromDecimal((string) $this->input('debt_amount'));
                 $entry = Money::fromDecimal((string) ($this->input('entry_amount', '0') ?: '0'));
@@ -43,7 +48,9 @@ final class ExecuteToolRequest extends FormRequest
                         || trim((string) ($scenario['entry_amount'] ?? '')) !== ''
                         || trim((string) ($scenario['installments'] ?? '')) !== ''
                         || trim((string) ($scenario['monthly_charge'] ?? '')) !== '';
-                    if (! $hasValues) continue;
+                    if (! $hasValues) {
+                        continue;
+                    }
                     $scenarioEntry = Money::fromDecimal((string) (($scenario['entry_amount'] ?? '0') ?: '0'));
                     if ($scenarioEntry->minorAmount() >= $debt->minorAmount()) {
                         $validator->errors()->add("scenarios.$index.entry_amount", 'A entrada do cenário deve ser menor que a dívida.');

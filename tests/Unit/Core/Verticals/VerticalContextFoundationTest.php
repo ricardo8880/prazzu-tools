@@ -9,7 +9,6 @@ use App\Core\Acquisition\Domain\Enums\AcquisitionContextStatus;
 use App\Core\Verticals\Application\ResolveVerticalContext;
 use App\Core\Verticals\Application\VerticalContext;
 use App\Core\Verticals\Contracts\VerticalContextSource;
-use App\Core\Verticals\Contracts\VerticalRegistry;
 use App\Core\Verticals\Domain\Data\Vertical;
 use App\Core\Verticals\Infrastructure\Config\ConfigVerticalRegistry;
 use App\Core\Verticals\Infrastructure\Http\AcquisitionVerticalContextSource;

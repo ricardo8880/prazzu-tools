@@ -9,6 +9,8 @@ Route::get('/ferramentas/comissao-vendedores', [ToolController::class, 'index'])
     ->name('tools.comissao-vendedores.index');
 Route::post('/ferramentas/comissao-vendedores', [ToolController::class, 'calculate'])
     ->name('tools.comissao-vendedores.calculate');
+Route::post('/ferramentas/comissao-vendedores/lote', [ToolController::class, 'calculateBatch'])
+    ->middleware('tool.feature:comissao-vendedores,batch_sellers')->name('tools.comissao-vendedores.batch');
 
 Route::post('/ferramentas/comissao-vendedores/exportar/pdf', [ToolController::class, 'exportPdf'])->name('tools.comissao-vendedores.export.pdf');
 Route::post('/ferramentas/comissao-vendedores/exportar/excel', [ToolController::class, 'exportExcel'])->name('tools.comissao-vendedores.export.excel');

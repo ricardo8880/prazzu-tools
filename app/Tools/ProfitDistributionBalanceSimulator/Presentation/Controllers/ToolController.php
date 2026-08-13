@@ -29,12 +29,20 @@ final class ToolController extends Controller
     {
         $data = $request->validated();
         $plusEnabled = $features->plusEnabled($module, $request);
+        $usesPlanning = (int) ($data['planning_months'] ?? 1) > 1
+            || (bool) ($data['simulate_bookkeeping'] ?? false)
+            || trim((string) ($data['monthly_pro_labore'] ?? '0')) !== '' && trim((string) ($data['monthly_pro_labore'] ?? '0')) !== '0'
+            || trim((string) ($data['monthly_growth_rate'] ?? '0')) !== '' && trim((string) ($data['monthly_growth_rate'] ?? '0')) !== '0'
+            || trim((string) ($data['operating_expenses'] ?? '0')) !== '' && trim((string) ($data['operating_expenses'] ?? '0')) !== '0'
+            || trim((string) ($data['other_expenses'] ?? '0')) !== '' && trim((string) ($data['other_expenses'] ?? '0')) !== '0';
+        $features->requireIf($usesPlanning, $module, 'planning', $request);
         if (! $plusEnabled) {
             $data = [...$data, 'prior_distributions' => '0', 'monthly_pro_labore' => '0', 'monthly_growth_rate' => '0', 'planning_months' => 1, 'simulate_bookkeeping' => false, 'operating_expenses' => '0', 'other_expenses' => '0'];
         }
         $input = $this->input($data);
         $result = $action->execute($input);
         $request->flash();
+
         return view('tools-simulador-distribuicao-lucros-balanco::index', [...$page->execute(), 'result' => $result, 'calculationInput' => $data, 'plusEnabled' => $plusEnabled]);
     }
 
@@ -44,6 +52,7 @@ final class ToolController extends Controller
         $input = $this->input($request->validated());
         $result = $action->execute($input);
         $name = 'distribuicao-lucros-balanco-'.now()->format('Y-m-d');
+
         return $format === 'pdf' ? $pdf->download($documents->pdf('Distribuição de Lucros — Balanço × sem Balanço', $name, $result, $input->toArray())) : $spreadsheet->download($documents->spreadsheet($name, $result, $input->toArray()));
     }
 

@@ -4,6 +4,12 @@
 
 Calcula a depreciação de ativos a partir do bem, valor e vida útil, apresentando depreciação mensal/anual, evolução da depreciação acumulada e valor contábil.
 
+## Funcionalidades
+
+- cálculo determinístico em centavos;
+- projeção anual e memória de cálculo;
+- métodos adicionais, múltiplos ativos, consolidação e exportação no Plus.
+
 ## Experiência Essencial
 
 - um ativo por cálculo;

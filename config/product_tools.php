@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 return [
-    'schema_version' => '3.13.0',
-    'release_readiness' => 'accounting_expansion_fiscal_trio_2026',
+    'schema_version' => '3.14.0',
+    'release_readiness' => 'plus_remediation_lot_8_audited',
     'source' => 'README.md',
     'continuity_log' => 'docs/IMPLEMENTATION-LOTS.md',
     'inventory_document' => 'docs/PRODUCT-TOOLS-INVENTORY.md',

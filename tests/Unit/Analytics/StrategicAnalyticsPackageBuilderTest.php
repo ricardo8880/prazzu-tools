@@ -6,9 +6,9 @@ namespace Tests\Unit\Analytics;
 
 use App\Core\Analytics\Application\Services\AnalyticsReportFileBuilder;
 use App\Core\Analytics\Application\Services\StrategicAnalyticsPackageBuilder;
-use App\Core\Export\Services\SimpleZipArchiveBuilder;
 use App\Core\Analytics\Application\Services\StrategicAnalyticsReportBuilder;
 use App\Core\Analytics\Domain\Catalog\AnalyticsEventCatalog;
+use App\Core\Export\Services\SimpleZipArchiveBuilder;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 

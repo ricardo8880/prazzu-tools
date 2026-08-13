@@ -4,16 +4,23 @@ declare(strict_types=1);
 
 namespace App\Tools\BusinessDocumentValidator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
+use App\Core\Tools\History\Enums\ToolRunStatus;
+use App\Core\Tools\History\Models\ToolRun;
+use App\Models\User;
 use App\Tools\BusinessDocumentValidator\Domain\Contracts\CompanyRegistryProvider;
 use App\Tools\BusinessDocumentValidator\Domain\Data\CompanyActivity;
 use App\Tools\BusinessDocumentValidator\Domain\Data\CompanyRegistryData;
 use App\Tools\BusinessDocumentValidator\Domain\Data\CompanyRegistryLookupResult;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 final class BusinessDocumentValidatorToolTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_tool_page_is_available(): void
     {
         $this->get(route('tools.validador-de-cnpj.index'))
@@ -145,6 +152,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
         ])->assertOk()->assertSee('EMPRESA DIFERENTE LTDA')->assertSee('Inconsistências');
     }
 
+    #[CoversPlusFeature('validador-de-cnpj', 'batch_processing')]
     public function test_it_previews_a_csv_batch_import(): void
     {
         Storage::fake('local');
@@ -159,6 +167,25 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             ->assertSee('empresas.csv')
             ->assertSee('Processar 1 registro(s)')
             ->assertSee('name="import_token"', false);
+    }
+
+    #[CoversPlusFeature('validador-de-cnpj', 'history')]
+    public function test_authenticated_user_can_open_validation_history(): void
+    {
+        $user = User::factory()->create();
+        ToolRun::query()->create([
+            'user_id' => $user->id, 'tool_slug' => 'validador-de-cnpj', 'tool_version' => '1.0.0',
+            'schema_version' => 1, 'rule_version' => 'batch-validation-v1', 'reference_date' => now()->toDateString(),
+            'status' => ToolRunStatus::Succeeded, 'input_payload' => ['file_name' => 'clientes.csv'],
+            'result_payload' => ['summary' => ['total' => 3, 'invalid' => 1, 'with_inconsistencies' => 1]],
+            'started_at' => now(), 'finished_at' => now(), 'expires_at' => now()->addYear(),
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('tools.validador-de-cnpj.history.index'))
+            ->assertOk()
+            ->assertSee('Histórico de validações')
+            ->assertSee('clientes.csv');
     }
 
     public function test_consistency_analysis_requires_state_when_ie_is_informed(): void

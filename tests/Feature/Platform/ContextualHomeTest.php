@@ -2,8 +2,11 @@
 
 namespace Tests\Feature\Platform;
 
+use App\Core\Access\Enums\AccountRole;
 use App\Core\Acquisition\Domain\Enums\AcquisitionContextToolPlacement;
 use App\Core\Acquisition\Infrastructure\Persistence\AcquisitionContextRecord;
+use App\Core\Tools\ToolCatalog;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -49,7 +52,7 @@ final class ContextualHomeTest extends TestCase
 
     public function test_active_context_replaces_content_but_keeps_the_latest_eight_tools(): void
     {
-        $tools = app(\App\Core\Tools\ToolCatalog::class)->all(false)->take(3)->values();
+        $tools = app(ToolCatalog::class)->all(false)->take(3)->values();
         $context = AcquisitionContextRecord::query()->create([
             'name' => 'Rescisão Instagram',
             'keyword' => 'rescisao-video-01',
@@ -82,13 +85,12 @@ final class ContextualHomeTest extends TestCase
             ->assertSee('Uma jornada preparada para rescisões.')
             ->assertSee('Calcular rescisão');
 
-        $latest = app(\App\Core\Tools\ToolCatalog::class)->latest(8);
+        $latest = app(ToolCatalog::class)->latest(8);
         $homeTools = $response->viewData('featuredTools');
 
         self::assertCount(8, $homeTools);
         self::assertSame($latest->pluck('slug')->all(), $homeTools->pluck('slug')->all());
     }
-
 
     public function test_active_context_can_replace_tools_section_title(): void
     {
@@ -173,8 +175,8 @@ final class ContextualHomeTest extends TestCase
 
         $this->followingRedirects()->get('/?context=contexto-cache')->assertSee('Conteúdo antigo');
 
-        $admin = \App\Models\User::factory()->create([
-            'role' => \App\Core\Access\Enums\AccountRole::Administrator,
+        $admin = User::factory()->create([
+            'role' => AccountRole::Administrator,
         ]);
 
         $this->actingAs($admin)->put(route('admin.acquisition.contexts.update', $context->getKey()), [
@@ -200,8 +202,8 @@ final class ContextualHomeTest extends TestCase
 
         $this->followingRedirects()->get('/?context=contexto-toggle-cache')->assertSee('Conteúdo contextual');
 
-        $admin = \App\Models\User::factory()->create([
-            'role' => \App\Core\Access\Enums\AccountRole::Administrator,
+        $admin = User::factory()->create([
+            'role' => AccountRole::Administrator,
         ]);
 
         $this->actingAs($admin)
@@ -218,8 +220,8 @@ final class ContextualHomeTest extends TestCase
         $this->followingRedirects()->get('/?context=contexto-novo')
             ->assertSee(config('home.hero.title_before'));
 
-        $admin = \App\Models\User::factory()->create([
-            'role' => \App\Core\Access\Enums\AccountRole::Administrator,
+        $admin = User::factory()->create([
+            'role' => AccountRole::Administrator,
         ]);
 
         $this->actingAs($admin)->post(route('admin.acquisition.contexts.store'), [

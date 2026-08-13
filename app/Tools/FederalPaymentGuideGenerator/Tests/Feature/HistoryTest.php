@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tools\FederalPaymentGuideGenerator\Tests\Feature;
 
 use App\Core\Dates\ReferenceDate;
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Core\Tools\History\Contracts\ToolRunRecorder;
 use App\Core\Tools\History\Data\RuleVersion;
 use App\Models\User;
@@ -21,6 +22,8 @@ final class HistoryTest extends TestCase
         $this->get(route('tools.gerador-darf-gps.history.index'))->assertRedirect();
     }
 
+    #[CoversPlusFeature('gerador-darf-gps', 'history')]
+    #[CoversPlusFeature('gerador-darf-gps', 'professional_export')]
     public function test_owner_can_view_favorite_repeat_and_delete_a_run(): void
     {
         $user = User::factory()->create();

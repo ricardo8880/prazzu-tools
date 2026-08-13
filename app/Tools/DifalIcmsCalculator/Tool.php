@@ -1,6 +1,68 @@
 <?php
 
 declare(strict_types=1);
+
 namespace App\Tools\DifalIcmsCalculator;
-use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney; use App\Core\Tools\Analytics\Data\ToolAnalyticsField; use App\Core\Tools\Analytics\Data\ToolAnalyticsForm; use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney; use App\Core\ToolIntegration\Data\ToolIntegrationManifest; use App\Core\Tools\Contracts\{HasToolIntegrations,HasViews,HasWebRoutes,ToolModule}; use App\Core\Tools\Data\{ToolFeature,ToolManifest}; use App\Core\Tools\Enums\{ToolAccess,ToolCapability,ToolCategory,ToolFeatureTier,ToolStatus}; use App\Core\Tools\History\Contracts\HasHistoryPolicy; use App\Core\Tools\History\Data\ToolHistoryPolicy; use App\Core\Tools\Infrastructure\Data\{ToolExportPolicy,ToolPersistencePolicy,ToolSensitiveDataPolicy,ToolSharingPolicy};
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy,HasToolIntegrations,HasViews,HasWebRoutes,ToolModule { public const SLUG='calculadora-difal-icms'; public function integrations(): ToolIntegrationManifest { return new ToolIntegrationManifest(publishes:[],accepts:[]); } public function manifest(): ToolManifest { return new ToolManifest(slug:self::SLUG,name:'Calculadora DIFAL / ICMS Interestadual + FCP',description:'Calcule DIFAL, ICMS interestadual e FCP com base simples ou dupla, memória fiscal e parâmetros confirmados.',category:ToolCategory::Fiscal,icon:'bi-receipt-cutoff',vertical:'contabilidade',routeName:'tools.calculadora-difal-icms.index',version:'1.0.0',access:ToolAccess::Free,status:ToolStatus::Beta,position:10,featured:true,supportsHistory:true,keywords:['DIFAL','ICMS interestadual','FCP','ICMS por dentro','base dupla','consumidor final'],capabilities:[ToolCapability::History,ToolCapability::VersionedPersistence,ToolCapability::Export],features:[new ToolFeature('calculate','DIFAL por base e alíquotas confirmadas',ToolFeatureTier::Essential),new ToolFeature('memory','Memória fiscal e fontes normativas',ToolFeatureTier::Essential),new ToolFeature('interstate_assist','Alíquota interestadual assistida por UF e origem da mercadoria',ToolFeatureTier::Plus),new ToolFeature('double_base','Simulação com base dupla quando aplicável',ToolFeatureTier::Plus),new ToolFeature('fcp','Cálculo parametrizado de FCP',ToolFeatureTier::Plus),new ToolFeature('export','CSV e impressão/PDF',ToolFeatureTier::Plus)],persistence:new ToolPersistencePolicy(true,1,365,1),export:new ToolExportPolicy(true,['csv','json','pdf']),sharing:ToolSharingPolicy::disabled(),sensitiveData:ToolSensitiveDataPolicy::none()); } public function historyPolicy(): ToolHistoryPolicy { return new ToolHistoryPolicy(true,365,['competence','base','origin_uf','destination_uf','imported','interstate_rate','internal_rate','fcp_rate','method','recipient_taxpayer'],['interstate','destination_base','difal','fcp','total','summary','details','warnings','calculation_memory'],[]); } public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; } public function viewsPath(): string { return __DIR__.'/Resources/views'; } public function viewsNamespace(): string { return 'tools-calculadora-difal-icms'; }  public function analyticsJourney(): ToolAnalyticsJourney { return new ToolAnalyticsJourney(toolSlug:'calculadora-difal-icms',forms:[new ToolAnalyticsForm(key:'main',steps:['input'],fields:[new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'),new ToolAnalyticsField('base', 'input', selector: '[name="base"]'),new ToolAnalyticsField('origin_uf', 'input', selector: '[name="origin_uf"]'),new ToolAnalyticsField('destination_uf', 'input', selector: '[name="destination_uf"]'),new ToolAnalyticsField('internal_rate', 'input', selector: '[name="internal_rate"]'),new ToolAnalyticsField('interstate_rate', 'input', selector: '[name="interstate_rate"]'),new ToolAnalyticsField('fcp_rate', 'input', selector: '[name="fcp_rate"]'),new ToolAnalyticsField('method', 'input', selector: '[name="method"]'),new ToolAnalyticsField('imported', 'input', selector: '[name="imported"]'),new ToolAnalyticsField('recipient_taxpayer', 'input', selector: '[name="recipient_taxpayer"]'),new ToolAnalyticsField('confirm_rates', 'input', selector: '[name="confirm_rates"]'),],actions:['calculate','export','share'],selector:'form[action*="calculate"]',resultSelector:'[data-analytics-result="main"]')]); }}
+
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
+use App\Core\Tools\Contracts\HasToolIntegrations;
+use App\Core\Tools\Contracts\HasViews;
+use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\ToolModule;
+use App\Core\Tools\Data\ToolFeature;
+use App\Core\Tools\Data\ToolManifest;
+use App\Core\Tools\Enums\ToolAccess;
+use App\Core\Tools\Enums\ToolCapability;
+use App\Core\Tools\Enums\ToolCategory;
+use App\Core\Tools\Enums\ToolFeatureTier;
+use App\Core\Tools\Enums\ToolStatus;
+use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
+use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+{
+    public const SLUG = 'calculadora-difal-icms';
+
+    public function integrations(): ToolIntegrationManifest
+    {
+        return new ToolIntegrationManifest(publishes: [], accepts: []);
+    }
+
+    public function manifest(): ToolManifest
+    {
+        return new ToolManifest(slug: self::SLUG, name: 'Calculadora DIFAL / ICMS Interestadual + FCP', description: 'Calcule DIFAL, ICMS interestadual e FCP com base simples ou dupla, memória fiscal e parâmetros confirmados.', category: ToolCategory::Fiscal, icon: 'bi-receipt-cutoff', vertical: 'contabilidade', routeName: 'tools.calculadora-difal-icms.index', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Beta, position: 10, featured: true, supportsHistory: true, keywords: ['DIFAL', 'ICMS interestadual', 'FCP', 'ICMS por dentro', 'base dupla', 'consumidor final'], capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export], features: [new ToolFeature('calculate', 'DIFAL por base e alíquotas confirmadas', ToolFeatureTier::Essential), new ToolFeature('memory', 'Memória fiscal e fontes normativas', ToolFeatureTier::Essential), new ToolFeature('interstate_assist', 'Alíquota interestadual assistida por UF e origem da mercadoria', ToolFeatureTier::Plus), new ToolFeature('double_base', 'Simulação com base dupla quando aplicável', ToolFeatureTier::Plus), new ToolFeature('fcp', 'Cálculo parametrizado de FCP', ToolFeatureTier::Plus), new ToolFeature('export', 'CSV e impressão/PDF', ToolFeatureTier::Plus)], persistence: new ToolPersistencePolicy(true, 1, 365, 1), export: new ToolExportPolicy(true, ['csv', 'json', 'pdf']), sharing: ToolSharingPolicy::disabled(), sensitiveData: ToolSensitiveDataPolicy::none());
+    }
+
+    public function historyPolicy(): ToolHistoryPolicy
+    {
+        return new ToolHistoryPolicy(true, 365, ['competence', 'base', 'origin_uf', 'destination_uf', 'imported', 'interstate_rate', 'internal_rate', 'fcp_rate', 'method', 'recipient_taxpayer'], ['interstate', 'destination_base', 'difal', 'fcp', 'total', 'summary', 'details', 'warnings', 'calculation_memory'], []);
+    }
+
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-calculadora-difal-icms';
+    }
+
+    public function analyticsJourney(): ToolAnalyticsJourney
+    {
+        return new ToolAnalyticsJourney(toolSlug: 'calculadora-difal-icms', forms: [new ToolAnalyticsForm(key: 'main', steps: ['input'], fields: [new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'), new ToolAnalyticsField('base', 'input', selector: '[name="base"]'), new ToolAnalyticsField('origin_uf', 'input', selector: '[name="origin_uf"]'), new ToolAnalyticsField('destination_uf', 'input', selector: '[name="destination_uf"]'), new ToolAnalyticsField('internal_rate', 'input', selector: '[name="internal_rate"]'), new ToolAnalyticsField('interstate_rate', 'input', selector: '[name="interstate_rate"]'), new ToolAnalyticsField('fcp_rate', 'input', selector: '[name="fcp_rate"]'), new ToolAnalyticsField('method', 'input', selector: '[name="method"]'), new ToolAnalyticsField('imported', 'input', selector: '[name="imported"]'), new ToolAnalyticsField('recipient_taxpayer', 'input', selector: '[name="recipient_taxpayer"]'), new ToolAnalyticsField('confirm_rates', 'input', selector: '[name="confirm_rates"]')], actions: ['calculate', 'export', 'share'], selector: 'form[action*="calculate"]', resultSelector: '[data-analytics-result="main"]')]);
+    }
+}

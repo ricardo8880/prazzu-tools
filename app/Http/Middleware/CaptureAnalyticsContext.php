@@ -76,7 +76,6 @@ final readonly class CaptureAnalyticsContext
         return $destination === '' || $destination === 'document';
     }
 
-
     private function isPrefetchRequest(Request $request): bool
     {
         return strtolower((string) $request->header('Purpose')) === 'prefetch'
@@ -123,9 +122,63 @@ final readonly class CaptureAnalyticsContext
                 subjectSlug: $slug,
             ), $request);
         }
+
+        $this->captureRetentionEntry($request, $routeName, $slug);
     }
 
+    private function captureRetentionEntry(Request $request, string $routeName, string $toolSlug): void
+    {
+        $source = trim((string) $request->query('source', ''));
+        $continuitySources = [
+            'home_continuity',
+            'home_recent_session',
+            'account_continuity',
+            'account_favorite',
+            'account_history',
+        ];
 
+        if (in_array($source, $continuitySources, true)) {
+            $this->analytics->track(new AnalyticsEvent(
+                name: AnalyticsEventName::RetentionContinuityUsed->value,
+                channel: 'retention',
+                properties: [
+                    'placement' => $source,
+                    'route' => $routeName,
+                    'method' => $request->method(),
+                ],
+                subjectType: 'tool',
+                subjectSlug: $toolSlug,
+            ), $request);
+
+            return;
+        }
+
+        if ($source !== 'related_tools') {
+            return;
+        }
+
+        $fromTool = trim((string) $request->query('from_tool', ''));
+        if ($fromTool === '' || $fromTool === $toolSlug || $this->tools->find($fromTool) === null) {
+            return;
+        }
+
+        $position = filter_var($request->query('position'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1, 'max_range' => 12],
+        ]);
+
+        $this->analytics->track(new AnalyticsEvent(
+            name: AnalyticsEventName::RetentionRelatedToolOpened->value,
+            channel: 'retention',
+            properties: array_filter([
+                'placement' => 'related_tools',
+                'from_tool' => $fromTool,
+                'position' => $position === false ? null : $position,
+                'route' => $routeName,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''),
+            subjectType: 'tool',
+            subjectSlug: $toolSlug,
+        ), $request);
+    }
 
     private function deliveredToolExport(Request $request, Response $response): bool
     {

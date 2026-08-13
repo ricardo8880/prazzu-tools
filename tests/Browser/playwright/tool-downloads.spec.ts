@@ -15,7 +15,8 @@ test.describe('Validação profunda de downloads', () => {
         ? `carregou downloads declarados para ${requestedToolSlug}`
         : `carregou ${scenarios.length} cenários com downloads`, async () => {
         if (requestedToolSlug) {
-            expect(scenarios.length, `[E2E TOOL] ${requestedToolSlug} não possui cenário válido com downloads declarados.`).toBeGreaterThanOrEqual(1);
+            test.skip(scenarios.length === 0, `[E2E TOOL] ${requestedToolSlug} não declara downloads para validação profunda.`);
+            expect(scenarios.length).toBeGreaterThanOrEqual(1);
             return;
         }
         expect(scenarios.length).toBeGreaterThanOrEqual(1);

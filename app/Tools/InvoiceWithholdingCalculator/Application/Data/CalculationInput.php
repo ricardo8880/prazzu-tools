@@ -38,13 +38,13 @@ final readonly class CalculationInput implements ToolCalculationInput
     public function toArray(): array
     {
         return [
-            'competence'=>$this->competence,'invoice_number'=>$this->invoiceNumber,'service_description'=>$this->serviceDescription,'gross_value'=>$this->grossValue,
-            'apply_irrf'=>$this->applyIrrf,'irrf_rate'=>$this->irrfRate,'irrf_base_percent'=>$this->irrfBasePercent,
-            'apply_inss'=>$this->applyInss,'inss_rate'=>$this->inssRate,'inss_base_percent'=>$this->inssBasePercent,
-            'apply_iss'=>$this->applyIss,'iss_rate'=>$this->issRate,'iss_base_percent'=>$this->issBasePercent,
-            'apply_pis'=>$this->applyPis,'pis_rate'=>$this->pisRate,'pis_base_percent'=>$this->pisBasePercent,
-            'apply_cofins'=>$this->applyCofins,'cofins_rate'=>$this->cofinsRate,'cofins_base_percent'=>$this->cofinsBasePercent,
-            'apply_csll'=>$this->applyCsll,'csll_rate'=>$this->csllRate,'csll_base_percent'=>$this->csllBasePercent,'notes'=>$this->notes,
+            'competence' => $this->competence, 'invoice_number' => $this->invoiceNumber, 'service_description' => $this->serviceDescription, 'gross_value' => $this->grossValue,
+            'apply_irrf' => $this->applyIrrf, 'irrf_rate' => $this->irrfRate, 'irrf_base_percent' => $this->irrfBasePercent,
+            'apply_inss' => $this->applyInss, 'inss_rate' => $this->inssRate, 'inss_base_percent' => $this->inssBasePercent,
+            'apply_iss' => $this->applyIss, 'iss_rate' => $this->issRate, 'iss_base_percent' => $this->issBasePercent,
+            'apply_pis' => $this->applyPis, 'pis_rate' => $this->pisRate, 'pis_base_percent' => $this->pisBasePercent,
+            'apply_cofins' => $this->applyCofins, 'cofins_rate' => $this->cofinsRate, 'cofins_base_percent' => $this->cofinsBasePercent,
+            'apply_csll' => $this->applyCsll, 'csll_rate' => $this->csllRate, 'csll_base_percent' => $this->csllBasePercent, 'notes' => $this->notes,
         ];
     }
 }

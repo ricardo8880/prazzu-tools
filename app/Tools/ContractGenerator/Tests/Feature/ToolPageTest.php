@@ -53,7 +53,6 @@ final class ToolPageTest extends TestCase
         self::assertSame(1, substr_count((string) $response->getContent(), 'data-testid="tool-form-panel"'));
     }
 
-
     public function test_generation_analytics_does_not_receive_contract_personal_data(): void
     {
         $analytics = $this->mock(PlatformAnalytics::class);

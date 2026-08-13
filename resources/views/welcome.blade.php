@@ -62,6 +62,50 @@
             @endforeach
         </nav>
 
+        @if (! $acquisitionContext && $continueTools->isNotEmpty())
+            <section class="prazzu-continuity-tools" aria-labelledby="continue-tools-title">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-end justify-content-between gap-3 mb-3">
+                    <div>
+                        <span class="prazzu-eyebrow">Seu Prazzu</span>
+                        <h2 id="continue-tools-title" class="prazzu-section-title mb-1">Continue de onde parou</h2>
+                        <p class="prazzu-section-caption mb-0">Atalhos para ferramentas que você usou recentemente nesta vertical.</p>
+                    </div>
+                    <a class="prazzu-section-link text-decoration-none" href="{{ route('account.show') }}">
+                        Meu Prazzu <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                </div>
+
+                <div class="row g-3">
+                    @foreach ($continueTools as $tool)
+                        <div class="col-12 col-sm-6 col-xl-3">
+                            <article class="prazzu-tool-card prazzu-tool-card--continuity h-100">
+                                <a class="prazzu-tool-card__link text-decoration-none" href="{{ url()->query($tool['open_url'], ['source' => 'home_continuity']) }}" aria-label="Continuar em {{ $tool['tool_name'] }}"></a>
+                                <span class="prazzu-icon-tile prazzu-icon-tile--purple mb-3">
+                                    <i class="bi {{ $tool['tool_icon'] }}" aria-hidden="true"></i>
+                                </span>
+                                <h3 class="prazzu-tool-card__title">{{ $tool['tool_name'] }}</h3>
+                                <p class="prazzu-tool-card__description">{{ \Illuminate\Support\Str::limit($tool['tool_description'], 105) }}</p>
+                                <span class="prazzu-badge prazzu-badge--green">Usado recentemente</span>
+                            </article>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        @elseif (! $acquisitionContext && auth()->guest())
+            <section class="prazzu-continuity-tools" aria-labelledby="recent-tools-title" data-home-recent-tools hidden>
+                <div class="d-flex align-items-end justify-content-between gap-3 mb-3">
+                    <div>
+                        <span class="prazzu-eyebrow">Continue sua rotina</span>
+                        <h2 id="recent-tools-title" class="prazzu-section-title mb-1">Usadas recentemente</h2>
+                        <p class="prazzu-section-caption mb-0">Ficam somente nesta sessão. Nenhum valor de cálculo é armazenado aqui.</p>
+                    </div>
+                </div>
+                <div class="row g-3" data-home-recent-tools-list></div>
+            </section>
+
+            <script type="application/json" data-home-recent-tools-catalog nonce="{{ $cspNonce ?? '' }}">{!! json_encode($recentToolCandidates, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
+        @endif
+
         <section class="prazzu-featured-tools" aria-labelledby="featured-tools-title">
             <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
                 <h2 id="featured-tools-title" class="prazzu-section-title mb-0">{{ $home['tools_section_title'] }}</h2>

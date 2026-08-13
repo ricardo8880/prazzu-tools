@@ -13,7 +13,7 @@ final class ToolIntegrationContractTest extends TestCase
     public function test_declared_integration_contracts_are_registered_in_the_core(): void
     {
         $catalog = app(ToolIntegrationCatalog::class);
-        $manifest = (new Tool())->integrations();
+        $manifest = (new Tool)->integrations();
 
         if ($manifest->publishes === [] && $manifest->accepts === []) {
             self::addToAssertionCount(1);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Tools\Analytics;
 
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Tools\WorkingCapitalCalculator\Tool;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +29,7 @@ final class ToolAnalyticsPilotJourneyTest extends TestCase
 
     public static function pilots(): iterable
     {
-        yield 'capital de giro simples' => [\App\Tools\WorkingCapitalCalculator\Tool::class, 'capital-de-giro', ['main']];
+        yield 'capital de giro simples' => [Tool::class, 'capital-de-giro', ['main']];
         yield 'comparador tributário extenso' => [\App\Tools\TaxRegimeComparator\Tool::class, 'comparador-tributario', ['comparison']];
         yield 'declaração com impressão' => [\App\Tools\IncomeStatementGenerator\Tool::class, 'declaracao-rendimentos', ['statement']];
         yield 'contrato em duas fases' => [\App\Tools\ContractGenerator\Tool::class, 'gerador-de-contratos', ['draft', 'editor']];

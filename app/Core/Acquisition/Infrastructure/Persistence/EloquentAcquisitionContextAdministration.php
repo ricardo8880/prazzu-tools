@@ -9,7 +9,6 @@ use App\Core\Acquisition\Domain\Enums\AcquisitionContextToolPlacement;
 use App\Core\Acquisition\Infrastructure\Cache\AcquisitionContextCache;
 use App\Core\Tools\ToolCatalog;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentAcquisitionContextAdministration implements AcquisitionContextAdministration
@@ -243,7 +242,6 @@ final readonly class EloquentAcquisitionContextAdministration implements Acquisi
             ->all();
     }
 
-    /** @param mixed $values */
     private function insertTools(AcquisitionContextRecord $record, mixed $values, AcquisitionContextToolPlacement $placement): void
     {
         foreach ($this->uniqueStrings($values) as $position => $slug) {

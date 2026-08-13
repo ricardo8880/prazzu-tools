@@ -46,6 +46,7 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 | Persistência e histórico | Devem utilizar os mecanismos compartilhados da plataforma, mantendo no módulo somente os dados e regras do domínio. |
 | Payloads temporários entre requisições | Extraído para `App\Core\Temporary` e deve ser usado quando processamento/exportação precisam compartilhar dados efêmeros sem depender de autenticação. |
 | Perfis auxiliares reutilizáveis de empresa e funcionário | Extraído para `App\Core\ToolProfiles`; os perfis servem somente para reutilizar entradas nas ferramentas e não implementam CRM, folha ou gestão operacional. |
+| Governança de acesso e prontidão Prazzu Plus | O acesso permanece centralizado em `App\Core\Access`; o gate arquitetural de prontidão reside em `App\Core\Quality\Services\PlusFeatureReadinessInspector`. Dívida legada é registrada em configuração e removida conforme cada feature é corrigida. |
 | Validação de valores monetários em formulários | Extraída para `App\Core\Validation\BrazilianMoneyValidator`; as regras Laravel `brazilian_money` e `money_min` reutilizam `Money` e não usam ponto flutuante. |
 | Validação de percentuais em formulários | Extraída para `App\Core\Validation\BrazilianPercentageValidator`; as regras Laravel `brazilian_percentage`, `percentage_min` e `percentage_max` reutilizam `Percentage`, aceitam ponto ou vírgula e rejeitam `float` e notação científica. |
 
@@ -152,3 +153,75 @@ A nova `PisCofinsCalculator` confirma reutilização transversal de `Money`, `Pe
 ## Lote 20 — reutilização fiscal sem nova abstração
 
 A Calculadora de DAS Retroativo confirmou o uso equivalente de `App\Core\Tax\Normative\LateDasRule` fora da Calculadora de DAS em Atraso, validando a promoção já existente sem exigir novo componente. ISS e comparação de lucros reutilizam `Money`, `Percentage`, `CalculationMemory` e exportação compartilhada; suas fórmulas permanecem específicas de domínio.
+
+## Remediação Prazzu Plus — Lote 1 — certificação funcional
+
+A auditoria dos 137 benefícios confirmou que autorização comercial, prontidão estrutural e comportamento funcional são garantias diferentes. A governança existente foi ampliada no Core técnico, sem criar infraestrutura paralela: `CoversPlusFeature` identifica testes comportamentais de um benefício concreto, enquanto `PlusFeatureReadinessInspector` controla dívida funcional, snapshots do catálogo e da dívida legada. Nenhuma regra de domínio foi promovida ou duplicada neste lote.
+
+## Remediação Prazzu Plus — Lote 2 — ferramentas críticas
+
+A certificação dos 19 recursos reutilizou exportação, histórico, payload temporário e autorização já compartilhados. Propostas, contratos, cenários, projeções e validações continuam nos respectivos domínios; não surgiu repetição equivalente que justifique nova promoção ao Core técnico. `CoversPlusFeature` passou a aceitar múltiplas marcações no mesmo método quando um único fluxo comportamental comprova benefícios inseparáveis, como listar e exportar um histórico.
+
+## Remediação Prazzu Plus — Lote 3 — documentos e relatórios
+
+Os 13 contratos certificados reutilizam `ToolRunHistory`, `TemporaryPayloadStore`, exportadores PDF/XLSX e exportação tabular já extraídos. Lote, perfis e preparação de cada documento permanecem nos módulos por carregarem regras próprias. Não surgiu nova duplicação transversal nem gatilho de promoção.
+
+## Remediação Prazzu Plus — Lote 4 — Custo CLT
+
+Os fluxos de perfis de empresa e funcionário confirmaram o uso de `App\Core\ToolProfiles`; histórico, importação tabular e exportações também reutilizam capacidades compartilhadas existentes. Cenários e comparação de modalidades permanecem específicos do módulo. Não surgiu nova abstração nem alteração de status em candidatos do Core.
+
+## Remediação Prazzu Plus — Lote 5 — Apurações fiscais
+
+Nenhuma regra fiscal foi promovida ao Core. IRPJ/CSLL, PIS/Cofins e ICMS-ST permanecem isolados em seus módulos e continuam reutilizando apenas autorização, exportação, histórico, dinheiro e memória de cálculo já compartilhados. O lote adiciona contratos de teste e governança, sem criar nova infraestrutura transversal.
+
+## Remediação Prazzu Plus — Lote 6 — Encerramento do legado estrutural
+
+Os 17 contratos finais confirmaram o reaproveitamento das capacidades existentes de autorização, histórico, PDF/XLSX, exportação tabular e cálculo monetário. Planejamento de férias, métodos de depreciação, retenções e consolidações fiscais continuam específicos de seus domínios. Não surgiu duplicação nova que justifique promoção ao Core técnico.
+
+## Remediação Prazzu Plus — Lote 7 — Encerramento funcional
+
+A certificação dos 61 contratos restantes atravessou 38 módulos e confirmou que autorização, exportação, histórico, documentos e persistência já possuem infraestrutura compartilhada suficiente. As evidências foram vinculadas aos testes dos próprios módulos; nenhuma abstração, serviço ou dependência adicional foi criado no Core técnico.
+
+## Remediação Prazzu Plus — Lote 8 — Auditoria final
+
+A auditoria consolidada não identificou nova responsabilidade transversal que justificasse abstração no Core. O `PlusFeatureReadinessInspector` existente recebeu apenas a validação do checksum funcional, preservando a governança central sem criar serviço paralelo. Catálogo, autorização, implementação e testes continuam pertencendo aos módulos; apenas as invariantes globais permanecem no Core.
+
+## Remediação Prazzu Plus — Lote 9 — Higiene de distribuição
+
+O endurecimento atua somente nos scripts existentes de limpeza, empacotamento e verificação. Não surgiu responsabilidade de domínio nem capacidade reutilizável entre ferramentas que justificasse promoção ao Core técnico.
+
+## Remediação Prazzu Plus — Lote 10 — Correção de imports PHP
+
+A correção é exclusivamente sintática nos testes de módulos e não altera responsabilidades, contratos ou infraestrutura. Nenhum candidato novo ao Core técnico foi identificado.
+
+## Remediação Prazzu Plus — Lote 11 — Qualidade e E2E
+
+A restauração reutiliza Playwright, Composer, Pint e os contratos E2E já existentes. Os scripts pertencem à infraestrutura de desenvolvimento e não introduzem capacidade de produto nem candidato ao Core técnico.
+
+## Remediação Prazzu Plus — Lote 12 — Timeout e distribuição
+
+Os ajustes permanecem restritos à orquestração de testes e ao empacotamento. Não existe impacto de domínio nem novo candidato ao Core técnico.
+
+## Crescimento e Retenção — Lote 2 — continuidade agregada da conta
+
+O novo hub `Meu Prazzu` agrega metadados já existentes de `ToolRun` e `ToolRunFavorite` para mostrar continuidade, favoritos e volume de histórico sem ler `input_payload` ou `result_payload`. A leitura agregada permanece no `AccountController` neste lote porque existe apenas uma superfície concreta consumindo esse formato.
+
+**Candidato observado:** uma consulta compartilhada de continuidade do usuário (ferramentas recentes, resultados favoritos e resumo de histórico). Não promover ao Core ainda. Reavaliar no Lote 3 de crescimento e retenção se a Home personalizada também precisar dos mesmos dados; somente nessa segunda reutilização concreta a extração passa a reduzir duplicação real.
+
+## Crescimento e Retenção — Lote 3 — continuidade compartilhada e jornadas editoriais
+
+A Home autenticada passou a reutilizar a mesma necessidade concreta já observada no `Meu Prazzu`: ler metadados de execuções concluídas do usuário sem tocar em `input_payload` ou `result_payload`. Como esta é a segunda superfície real consumindo continuidade pessoal, o candidato registrado no Lote 2 foi promovido para `App\Core\Tools\History\Application\Queries\UserToolContinuityQuery`.
+
+**Promoção realizada:** a consulta compartilhada concentra contagens, ferramentas recentes, favoritos, resumo de histórico e apresentação segura das rotas já existentes. `AccountController` deixou de manter uma implementação própria e a Home consome apenas `recentTools()`, filtrada pela vertical ativa. Nenhuma persistência nova foi criada.
+
+As relações editoriais entre ferramentas passaram a ser declaradas em `config/tools/journeys.php`. Isso é configuração de produto sobre o `ToolCatalog`, não um novo domínio nem uma segunda registry. `ToolCatalog::related()` prioriza a jornada declarada e preserva a heurística histórica de categoria/palavras-chave como fallback.
+
+**Sem novo candidato ao Core neste lote:** o histórico temporário do visitante é exclusivamente client-side, guarda apenas slugs em `sessionStorage` e não constitui persistência de conta. Ele permanece na camada global de frontend enquanto houver somente esse uso concreto.
+
+## Crescimento e Retenção — Lote 4 — SEO e confiança compartilhados
+
+As 43 ferramentas possuem a mesma necessidade concreta de SEO técnico e comunicação mínima de confiança. Como a repetição é transversal e já existe `App\Core\Seo`, o lote consolidou a resolução da ferramenta ativa em `ToolSeoContext` e a orientação de confiança em `ToolTrustContent`, consumidas pela camada compartilhada de apresentação.
+
+A solução usa somente metadados já oficiais do `ToolCatalog` (nome, descrição, palavras-chave, versão, categoria, recursos e rota). Nenhuma ferramenta recebeu texto normativo inventado, data de atualização fictícia, nota, quantidade de usuários ou outra prova social não auditável. As sete telas legadas que já possuem orientação específica preservam o conteúdo próprio e reutilizam apenas a marcação estruturada compartilhada.
+
+**Sem novo candidato ao Core:** canonical, metadados por ferramenta, `WebApplication`/breadcrumb estruturados e orientação mínima de confiança já são necessidades repetidas em todo o catálogo e foram implementados dentro do Core SEO existente, sem criar registry paralela nem mover regras de domínio.

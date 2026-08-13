@@ -16,10 +16,9 @@ final class BlogCategory extends Model
         'is_active',
     ];
 
-
     protected static function booted(): void
     {
-        static::creating(static function (BlogCategory $category): void {
+        self::creating(static function (BlogCategory $category): void {
             if (! is_string($category->vertical_slug) || trim($category->vertical_slug) === '') {
                 $defaultVertical = config('verticals.default');
                 $category->vertical_slug = is_string($defaultVertical) && trim($defaultVertical) !== ''

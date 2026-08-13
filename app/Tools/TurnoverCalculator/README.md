@@ -29,3 +29,8 @@ Somente contratos compartilhados do Core. O módulo não importa classes interna
 ## Histórico de versões
 
 - `1.0.0` — primeira implementação, Lote 6 multi-nicho.
+
+## Prazzu Plus — saneamento de monetização
+
+Comparação por período ou segmento (`segmented_analysis`) é Plus; o cálculo de um período e sua memória permanecem Essenciais.
+A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.

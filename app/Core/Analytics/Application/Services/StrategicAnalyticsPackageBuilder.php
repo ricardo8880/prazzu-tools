@@ -144,7 +144,6 @@ final class StrategicAnalyticsPackageBuilder
         return $this->csv($rows);
     }
 
-
     /** @param list<array<string,mixed>> $decisions */
     private function decisionsCsv(array $decisions): string
     {
@@ -222,9 +221,9 @@ final class StrategicAnalyticsPackageBuilder
             $lines[] = '- '.$limitation;
         }
 
-        return implode("
-", $lines)."
-";
+        return implode('
+', $lines).'
+';
     }
 
     /** @param list<array<string,mixed>> $rows */

@@ -5,6 +5,9 @@
 @endphp
 
 <section aria-labelledby="receipt-document-title" style="padding-top: 42px;">
+    @if(!empty($receipt['branding']['name']) || !empty($receipt['branding']['document']))
+        <div style="margin-bottom:18px;" data-plus-feature="custom_branding"><strong>{{ $receipt['branding']['name'] ?? '' }}</strong>@if(!empty($receipt['branding']['document']))<div class="print-muted">{{ $receipt['branding']['document'] }}</div>@endif</div>
+    @endif
     <div style="display:flex;justify-content:space-between;gap:24px;align-items:flex-start;border-bottom:1px solid #adb5bd;padding-bottom:14px;margin-bottom:34px;">
         <div>
             <p class="print-muted" style="text-transform:uppercase;letter-spacing:.08em;">Recibo</p>
@@ -40,5 +43,6 @@
 
     <div class="print-footer" style="margin-top:72px;">
         Identificador do recibo: {{ $receipt['identifier'] }}
+        @if(!empty($receipt['branding']['footer']))<br><span data-plus-feature="custom_branding">{{ $receipt['branding']['footer'] }}</span>@endif
     </div>
 </section>

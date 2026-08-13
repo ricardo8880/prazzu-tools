@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\AccountingFeesCalculator\Tests\Unit;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Tools\AccountingFeesCalculator\Application\Actions\BuildServiceContract;
 use PHPUnit\Framework\TestCase;
 
 final class BuildServiceContractTest extends TestCase
 {
+    #[CoversPlusFeature('calculadora-de-honorarios-contabeis', 'service_contract')]
     public function test_it_builds_a_service_contract(): void
     {
         $contract = (new BuildServiceContract)->execute([

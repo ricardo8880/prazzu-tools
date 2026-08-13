@@ -53,3 +53,8 @@ Regras normativas continuam sujeitas à revisão profissional e atualização pe
 ## Conformidade do Lote 3
 
 A ferramenta **INSS Patronal** usa `App\Core\Labor\Normative\EmployerChargeRule` para resolver as alíquotas patronais por regime. O resultado inclui memória de cálculo versionada, snapshot das fontes oficiais e premissas explícitas para RAT/FAP e terceiros. Nenhum cálculo essencial depende de conta ou do Prazzu Plus.
+
+## Prazzu Plus — saneamento de monetização
+
+Exportação em planilha (`spreadsheet_export`) é Plus; cálculo e PDF permanecem Essenciais.
+A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.

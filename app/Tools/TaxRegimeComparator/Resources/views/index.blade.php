@@ -72,11 +72,11 @@
                 </div>
                 <div class="col-12 col-md-6">
                     <label class="form-label" for="monthly_operating_costs">Custos operacionais mensais</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_operating_costs" name="monthly_operating_costs" inputmode="decimal" value="{{ old('monthly_operating_costs', '0,00') }}" required></div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_operating_costs" name="monthly_operating_costs" inputmode="decimal" value="{{ old('monthly_operating_costs') }}" required></div>
                 </div>
                 <div class="col-12 col-md-6">
                     <label class="form-label" for="monthly_deductible_expenses">Despesas dedutíveis mensais</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_deductible_expenses" name="monthly_deductible_expenses" inputmode="decimal" value="{{ old('monthly_deductible_expenses', '0,00') }}" required></div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_deductible_expenses" name="monthly_deductible_expenses" inputmode="decimal" value="{{ old('monthly_deductible_expenses') }}" required></div>
                 </div>
             </div>
 
@@ -102,6 +102,21 @@
                     </div>
                 </div>
             </div>
+
+            @if($multipleScenariosAllowed ?? false)
+            <div class="card border-primary-subtle mt-4" data-plus-feature="multiple_scenarios"><div class="card-body">
+                <h3 class="h6">Múltiplos cenários <span class="badge text-bg-primary">Prazzu Plus</span></h3>
+                <p class="small text-body-secondary">Compare até dois cenários adicionais mantendo as demais premissas do cenário principal.</p>
+                @for($i = 0; $i < 2; $i++)
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-3"><input class="form-control" name="scenarios[{{ $i }}][label]" value="{{ old('scenarios.'.$i.'.label') }}" placeholder="Nome do cenário"></div>
+                        <div class="col-md-3"><input class="form-control" name="scenarios[{{ $i }}][monthly_revenue]" value="{{ old('scenarios.'.$i.'.monthly_revenue') }}" placeholder="Faturamento mensal"></div>
+                        <div class="col-md-3"><input class="form-control" name="scenarios[{{ $i }}][revenue_last_twelve_months]" value="{{ old('scenarios.'.$i.'.revenue_last_twelve_months') }}" placeholder="Receita 12 meses"></div>
+                        <div class="col-md-3"><input class="form-control" name="scenarios[{{ $i }}][payroll_last_twelve_months]" value="{{ old('scenarios.'.$i.'.payroll_last_twelve_months') }}" placeholder="Folha 12 meses"></div>
+                    </div>
+                @endfor
+            </div></div>
+            @endif
 
             <div class="d-grid d-md-flex justify-content-md-end mt-4">
                 <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-2" aria-hidden="true"></i>Comparar regimes</button>
@@ -136,7 +151,7 @@
                         <div class="row g-3 align-items-center">
                             <div class="col-12 col-lg-6"><div class="text-uppercase small text-success fw-semibold">Menor ônus estimado</div><div class="display-6 fw-semibold">{{ $result['winner'] }}</div></div>
                             <div class="col-6 col-lg-3"><div class="text-body-secondary small">Economia mensal</div><div class="h4 mb-0">{{ $result['monthly_savings'] }}</div></div>
-                            <div class="col-6 col-lg-3"><div class="text-body-secondary small">Economia anual</div><div class="h4 mb-0">{{ $result['annual_savings'] }}</div></div>
+                            @if($annualProjectionAllowed ?? false)<div class="col-6 col-lg-3" data-plus-feature="annual_projection"><div class="text-body-secondary small">Economia anual <span class="badge text-bg-primary">Plus</span></div><div class="h4 mb-0">{{ $result['annual_savings'] }}</div></div>@endif
                         </div>
                     </div>
                 </div>
@@ -150,13 +165,23 @@
                         <article class="card h-100 shadow-sm {{ $item['position'] === 1 ? 'border-success' : 'border-0' }}">
                             <div class="card-body d-flex flex-column">
                                 <div class="d-flex justify-content-between align-items-start gap-2 mb-3"><div><span class="badge {{ $item['position'] === 1 ? 'text-bg-success' : 'text-bg-light border' }} mb-2">{{ $item['position'] }}º lugar</span><h3 class="h4 mb-0">{{ $item['regime'] }}</h3></div></div>
-                                <dl class="row mb-3"><dt class="col-7 text-body-secondary fw-normal">Mensal</dt><dd class="col-5 text-end fw-semibold">{{ $item['monthly_tax'] }}</dd><dt class="col-7 text-body-secondary fw-normal">Anual</dt><dd class="col-5 text-end fw-semibold">{{ $item['annual_tax'] }}</dd>@if($item['position'] > 1)<dt class="col-7 text-body-secondary fw-normal">Diferença anual</dt><dd class="col-5 text-end text-danger">+ {{ $item['annual_difference'] }}</dd>@endif</dl>
+                                <dl class="row mb-3"><dt class="col-7 text-body-secondary fw-normal">Mensal</dt><dd class="col-5 text-end fw-semibold">{{ $item['monthly_tax'] }}</dd>@if($annualProjectionAllowed ?? false)<dt class="col-7 text-body-secondary fw-normal" data-plus-feature="annual_projection">Anual <span class="badge text-bg-primary">Plus</span></dt><dd class="col-5 text-end fw-semibold">{{ $item['annual_tax'] }}</dd>@endif
+                                    @if(($annualProjectionAllowed ?? false) && $item['position'] > 1)<dt class="col-7 text-body-secondary fw-normal">Diferença anual</dt><dd class="col-5 text-end text-danger">+ {{ $item['annual_difference'] }}</dd>@endif</dl>
                                 <div class="accordion mt-auto" id="details-{{ $item['position'] }}"><div class="accordion-item"><h4 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#details-panel-{{ $item['position'] }}">Ver composição e premissas</button></h4><div id="details-panel-{{ $item['position'] }}" class="accordion-collapse collapse"><div class="accordion-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Tributo</th><th class="text-end">Mensal</th></tr></thead><tbody>@foreach($item['taxes'] as $tax)<tr><td>{{ $tax['name'] }}</td><td class="text-end">{{ $tax['monthly_amount'] }}</td></tr>@endforeach</tbody></table></div>@if($item['assumptions'])<div class="p-3 border-top"><div class="fw-semibold small mb-1">Premissas</div><ul class="small mb-0 ps-3">@foreach($item['assumptions'] as $assumption)<li>{{ $assumption }}</li>@endforeach</ul></div>@endif @if($item['warnings'])<div class="p-3 border-top bg-warning-subtle"><div class="fw-semibold small mb-1">Alertas</div><ul class="small mb-0 ps-3">@foreach($item['warnings'] as $warning)<li>{{ $warning }}</li>@endforeach</ul></div>@endif</div></div></div></div>
                             </div>
                         </article>
                     </div>
                 @endforeach
             </div>
+
+            @if(!empty($multipleScenarioResults))
+                <div class="card border-primary mt-4" data-plus-feature="multiple_scenarios"><div class="card-body">
+                    <h3 class="h5">Comparação de cenários <span class="badge text-bg-primary">Plus</span></h3>
+                    <div class="table-responsive"><table class="table table-sm"><thead><tr><th>Cenário</th><th>Menor ônus estimado</th><th>Economia mensal</th>@if($annualProjectionAllowed ?? false)<th>Economia anual</th>@endif</tr></thead><tbody>
+                    @foreach($multipleScenarioResults as $scenario)<tr><td>{{ $scenario['label'] }}</td><td>{{ $scenario['winner'] ?? 'Indisponível' }}</td><td>{{ $scenario['monthly_savings'] ?? '—' }}</td>@if($annualProjectionAllowed ?? false)<td>{{ $scenario['annual_savings'] ?? '—' }}</td>@endif</tr>@endforeach
+                    </tbody></table></div>
+                </div></div>
+            @endif
 
             @if ($result['unavailable'])
                 <div class="card border-0 shadow-sm mt-4"><div class="card-body"><h3 class="h5">Regimes não comparáveis neste cenário</h3><div class="vstack gap-2">@foreach($result['unavailable'] as $item)<div class="alert alert-secondary mb-0"><div class="fw-semibold">{{ $item['regime'] }}</div>@foreach($item['warnings'] as $warning)<div>{{ $warning }}</div>@endforeach</div>@endforeach</div></div></div>

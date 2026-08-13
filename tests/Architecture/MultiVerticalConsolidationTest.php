@@ -57,9 +57,9 @@ final class MultiVerticalConsolidationTest extends TestCase
         $controller = file_get_contents(app_path('Http/Controllers/Admin/Blog/BlogPostController.php'));
         self::assertNotFalse($controller);
 
-        self::assertStringContainsString("->forVertical(\$post->vertical_slug)", $controller);
+        self::assertStringContainsString('->forVertical($post->vertical_slug)', $controller);
         self::assertStringContainsString("->where('vertical_slug', \$selectedVertical)", $controller);
-        self::assertStringContainsString("\$tool->vertical === \$selectedVertical", $controller);
+        self::assertStringContainsString('$tool->vertical === $selectedVertical', $controller);
         self::assertStringContainsString('Selecione apenas ferramentas pertencentes à mesma vertical da postagem.', $controller);
         self::assertStringNotContainsString("'selectedVertical' => \$vertical", $controller);
     }

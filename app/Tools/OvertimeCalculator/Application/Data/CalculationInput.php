@@ -49,8 +49,11 @@ final readonly class CalculationInput implements ToolCalculationInput
     private static function hours(string $value): int
     {
         $normalized = trim(str_replace(',', '.', $value));
-        if (!preg_match('/^\d+(?:\.\d{1,3})?$/', $normalized, $m)) throw new InvalidArgumentException('Quantidade de horas inválida.');
+        if (! preg_match('/^\d+(?:\.\d{1,3})?$/', $normalized, $m)) {
+            throw new InvalidArgumentException('Quantidade de horas inválida.');
+        }
         [$whole, $fraction] = array_pad(explode('.', $normalized, 2), 2, '');
-        return ((int)$whole * 1000) + (int)str_pad($fraction, 3, '0');
+
+        return ((int) $whole * 1000) + (int) str_pad($fraction, 3, '0');
     }
 }

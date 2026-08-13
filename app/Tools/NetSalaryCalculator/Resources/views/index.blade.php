@@ -10,6 +10,9 @@
     icon="bi-cash-coin"
     slug="calculadora-salario-liquido"
 >
+    @auth
+        <div class="mb-3"><a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-salario-liquido.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico Plus</a></div>
+    @endauth
     <div class="alert alert-info d-flex gap-2" role="alert">
         <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
         <div>
@@ -23,7 +26,7 @@
         <x-tools.form-panel title="Dados essenciais" description="O resultado gratuito resolve o cálculo principal do salário líquido." badge="Essencial">
             <div class="row g-3">
                 <div class="col-12 col-md-4">
-                    <x-tools.form.input name="competence" label="Competência" type="month" :value="old('competence', '2026-07')" required help="As regras normativas disponíveis neste lote cobrem 2026." />
+                    <x-tools.form.input name="competence" label="Competência" type="month" :value="old('competence', now()->format('Y-m'))" required help="As regras normativas disponíveis neste lote cobrem 2026." />
                 </div>
                 <div class="col-12 col-md-4">
                     <x-tools.form.money name="base_salary" label="Salário-base" :value="old('base_salary')" required help="Informe a remuneração fixa mensal." />
@@ -37,25 +40,25 @@
         <x-tools.form-panel title="Proventos e descontos adicionais" description="Use quando houver valores além do salário-base. Durante o lançamento, os recursos Plus permanecem disponíveis gratuitamente." badge="Prazzu Plus">
             <div class="row g-3">
                 <div class="col-12 col-md-6">
-                    <x-tools.form.money name="taxable_additional_earnings" label="Proventos tributáveis adicionais" :value="old('taxable_additional_earnings', '0,00')" help="Ex.: horas extras, comissões e adicionais que integrem as bases de INSS e IRRF. Informe apenas valores cuja incidência já tenha sido confirmada." />
+                    <x-tools.form.money name="taxable_additional_earnings" label="Proventos tributáveis adicionais" :value="old('taxable_additional_earnings')" help="Ex.: horas extras, comissões e adicionais que integrem as bases de INSS e IRRF. Informe apenas valores cuja incidência já tenha sido confirmada." />
                 </div>
                 <div class="col-12 col-md-6">
-                    <x-tools.form.money name="non_taxable_earnings" label="Proventos não tributáveis" :value="old('non_taxable_earnings', '0,00')" help="Ex.: reembolsos ou verbas que não integrem as bases, quando juridicamente aplicável." />
+                    <x-tools.form.money name="non_taxable_earnings" label="Proventos não tributáveis" :value="old('non_taxable_earnings')" help="Ex.: reembolsos ou verbas que não integrem as bases, quando juridicamente aplicável." />
                 </div>
                 <div class="col-12 col-md-4">
-                    <x-tools.form.money name="judicial_pension" label="Pensão alimentícia dedutível" :value="old('judicial_pension', '0,00')" help="Informe somente valor legalmente dedutível no IRRF e efetivamente descontado." />
+                    <x-tools.form.money name="judicial_pension" label="Pensão alimentícia dedutível" :value="old('judicial_pension')" help="Informe somente valor legalmente dedutível no IRRF e efetivamente descontado." />
                 </div>
                 <div class="col-12 col-md-4">
-                    <x-tools.form.money name="transport_discount" label="Desconto de vale-transporte" :value="old('transport_discount', '0,00')" help="Informe o desconto já apurado pela folha." />
+                    <x-tools.form.money name="transport_discount" label="Desconto de vale-transporte" :value="old('transport_discount')" help="Informe o desconto já apurado pela folha." />
                 </div>
                 <div class="col-12 col-md-4">
-                    <x-tools.form.money name="meal_discount" label="Desconto de alimentação/refeição" :value="old('meal_discount', '0,00')" help="Informe o desconto já apurado pela folha." />
+                    <x-tools.form.money name="meal_discount" label="Desconto de alimentação/refeição" :value="old('meal_discount')" help="Informe o desconto já apurado pela folha." />
                 </div>
                 <div class="col-12 col-md-6">
-                    <x-tools.form.money name="health_plan_discount" label="Desconto de plano de saúde" :value="old('health_plan_discount', '0,00')" />
+                    <x-tools.form.money name="health_plan_discount" label="Desconto de plano de saúde" :value="old('health_plan_discount')" />
                 </div>
                 <div class="col-12 col-md-6">
-                    <x-tools.form.money name="other_discounts" label="Outros descontos" :value="old('other_discounts', '0,00')" help="Somente descontos que efetivamente reduzem o valor líquido." />
+                    <x-tools.form.money name="other_discounts" label="Outros descontos" :value="old('other_discounts')" help="Somente descontos que efetivamente reduzem o valor líquido." />
                 </div>
             </div>
         </x-tools.form-panel>

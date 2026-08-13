@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\ContractGenerator;
 
-use App\Core\Tools\Contracts\HasViews;
-use App\Core\Tools\Contracts\HasWebRoutes;
-use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
+use App\Core\Tools\Contracts\HasViews;
+use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -26,7 +26,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasWebRoutes, HasViews, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'gerador-de-contratos';
 
@@ -82,7 +82,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasWebRoutes,
             icon: 'bi-file-earmark-text',
             routeName: 'tools.gerador-de-contratos.index',
             vertical: 'contabilidade',
-            version: '0.5.0',
+            version: '0.6.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             supportsHistory: true,
@@ -128,6 +128,8 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasWebRoutes,
             retentionDays: 365,
             inputFields: [
                 'contract_type',
+                'template_key',
+                'smart_clauses',
                 'first_party_name',
                 'first_party_document_type',
                 'first_party_document',
@@ -155,7 +157,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasWebRoutes,
                 'signing_date',
                 'additional_terms',
             ],
-            resultFields: ['contract_text'],
+            resultFields: ['contract_text', 'contract_title', 'template', 'saved_version'],
             sensitiveFields: [
                 'first_party_name',
                 'first_party_document',

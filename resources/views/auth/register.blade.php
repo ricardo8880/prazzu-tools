@@ -5,6 +5,14 @@
 @section('meta_robots', 'noindex,follow')
 
 @section('content')
+    @php
+        $registrationAttribution = request()->query('source') === 'result_continuity'
+            ? array_filter([
+                'source' => 'result_continuity',
+                'tool' => is_string(request()->query('tool')) ? request()->query('tool') : null,
+            ])
+            : [];
+    @endphp
     <div class="prazzu-page">
         <div class="row justify-content-center">
             <div class="col-12 col-md-9 col-lg-7 col-xl-5">
@@ -16,7 +24,7 @@
                             O cadastro não libera ferramentas: elas já estão completas para todos. A conta mantém históricos e dados disponíveis após você sair ou atualizar a página.
                         </p>
 
-                        <form method="POST" action="{{ route('register.store') }}" novalidate>
+                        <form method="POST" action="{{ route('register.store', $registrationAttribution) }}" novalidate>
                             @csrf
 
                             <div class="mb-3">

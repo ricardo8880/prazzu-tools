@@ -8,11 +8,17 @@
     'suffix' => null,
     'id' => null,
     'required' => false,
+    'placeholder' => null,
 ])
 
 @php
     $fieldId = $id ?? str_replace(['[', ']', '.'], ['_', '', '_'], $name);
     $describedBy = $help ? $fieldId.'-help' : null;
+    $resolvedPlaceholder = $placeholder;
+
+    if ($resolvedPlaceholder === null && $value === null && $type === 'number') {
+        $resolvedPlaceholder = $suffix === '%' ? 'Ex.: 5' : ($suffix === 'horas' ? 'Ex.: 220' : ($suffix === 'dias' ? 'Ex.: 30' : 'Ex.: 10'));
+    }
 @endphp
 
 <label class="form-label" for="{{ $fieldId }}">{{ $label }}</label>
@@ -25,6 +31,7 @@
             id="{{ $fieldId }}"
             name="{{ $name }}"
             value="{{ old($name, $value) }}"
+            @if($resolvedPlaceholder !== null) placeholder="{{ $resolvedPlaceholder }}" @endif
             @if($describedBy) aria-describedby="{{ $describedBy }}" @endif
             @required($required)
         >
@@ -37,6 +44,7 @@
         id="{{ $fieldId }}"
         name="{{ $name }}"
         value="{{ old($name, $value) }}"
+        @if($resolvedPlaceholder !== null) placeholder="{{ $resolvedPlaceholder }}" @endif
         @if($describedBy) aria-describedby="{{ $describedBy }}" @endif
         @required($required)
     >

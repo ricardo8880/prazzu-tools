@@ -47,6 +47,14 @@ final class InMemoryNormativeRuleCatalogTest extends TestCase
 final readonly class CatalogTestRule implements NormativeRule
 {
     public function __construct(private NormativeRuleMetadata $metadata) {}
-    public function normativeMetadata(): NormativeRuleMetadata { return $this->metadata; }
-    public function effectivePeriod(): EffectivePeriod { return $this->metadata->effectivePeriod; }
+
+    public function normativeMetadata(): NormativeRuleMetadata
+    {
+        return $this->metadata;
+    }
+
+    public function effectivePeriod(): EffectivePeriod
+    {
+        return $this->metadata->effectivePeriod;
+    }
 }

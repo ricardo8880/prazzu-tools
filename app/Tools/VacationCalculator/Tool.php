@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tools\VacationCalculator;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Api\Contracts\HasApiActions;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
@@ -27,7 +27,6 @@ use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
-
 use App\Tools\VacationCalculator\Api\Actions\CalculateApiAction;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
@@ -53,11 +52,11 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('monthly_salary', 'input', selector: '[name="monthly_salary"]'),
-                    new ToolAnalyticsField('acquisition_start_date', 'input', selector: '[name="acquisition_start_date"]'),
-                    new ToolAnalyticsField('vacation_start_date', 'input', selector: '[name="vacation_start_date"]'),
-                    new ToolAnalyticsField('unjustified_absences', 'input', selector: '[name="unjustified_absences"]'),
-                    new ToolAnalyticsField('convert_one_third_to_cash', 'input', selector: '[name="convert_one_third_to_cash"]'),
+                        new ToolAnalyticsField('monthly_salary', 'input', selector: '[name="monthly_salary"]'),
+                        new ToolAnalyticsField('acquisition_start_date', 'input', selector: '[name="acquisition_start_date"]'),
+                        new ToolAnalyticsField('vacation_start_date', 'input', selector: '[name="vacation_start_date"]'),
+                        new ToolAnalyticsField('unjustified_absences', 'input', selector: '[name="unjustified_absences"]'),
+                        new ToolAnalyticsField('convert_one_third_to_cash', 'input', selector: '[name="convert_one_third_to_cash"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -114,7 +113,18 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
         );
     }
 
-    public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; }
-    public function viewsPath(): string { return __DIR__.'/Resources/views'; }
-    public function viewsNamespace(): string { return 'tools-calculadora-ferias'; }
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-calculadora-ferias';
+    }
 }

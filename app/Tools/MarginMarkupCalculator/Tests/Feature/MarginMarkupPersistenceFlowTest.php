@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\MarginMarkupCalculator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
 use App\Models\User;
@@ -14,6 +15,7 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
 {
     use RefreshDatabase;
 
+    #[CoversPlusFeature('calculadora-margem-markup', 'history')]
     public function test_authenticated_user_can_list_repeat_export_and_delete_owned_history(): void
     {
         $user = User::factory()->create();

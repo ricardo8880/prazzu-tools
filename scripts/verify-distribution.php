@@ -36,6 +36,18 @@ foreach ($iterator as $file) {
 
     $relative = str_replace('\\', '/', substr($file->getPathname(), strlen($root) + 1));
     $name = $file->getFilename();
+    $segments = explode('/', $relative);
+
+    foreach (['.git', '.idea', '.vscode', 'vendor', 'node_modules', '.phpunit.cache'] as $forbiddenDirectory) {
+        if (in_array($forbiddenDirectory, array_slice($segments, 0, -1), true)) {
+            $violations[] = $relative;
+            break;
+        }
+    }
+
+    if (($name === '.env' || str_starts_with($name, '.env.')) && ! in_array($name, ['.env.example', '.env.e2e.example'], true)) {
+        $violations[] = $relative;
+    }
 
     if (str_starts_with($name, '~$') || in_array($name, ['.DS_Store', 'Thumbs.db'], true)) {
         $violations[] = $relative;
@@ -43,6 +55,14 @@ foreach ($iterator as $file) {
 
     if (str_ends_with($name, '.log') && ! str_ends_with($relative, '.gitignore')) {
         $violations[] = $relative;
+    }
+}
+
+$nestedProjects = glob($root.DIRECTORY_SEPARATOR.'*'.DIRECTORY_SEPARATOR.'composer.json') ?: [];
+foreach ($nestedProjects as $composerFile) {
+    $nestedRoot = dirname($composerFile);
+    if (is_file($nestedRoot.DIRECTORY_SEPARATOR.'artisan')) {
+        $violations[] = str_replace('\\', '/', substr($nestedRoot, strlen($root) + 1));
     }
 }
 

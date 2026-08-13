@@ -5,7 +5,7 @@
 
 @section('content')
 @auth
-<div class="container pt-3"><a class="btn btn-outline-primary" href="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></div>
+@if(!empty($historyAllowed))<div class="container pt-3"><a class="btn btn-outline-primary" href="{{ route('tools.calculadora-pro-labore-distribuicao-lucros.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a></div>@endif
 @endauth
 @if(session('history_message'))<div class="container pt-3"><div class="alert alert-info mb-0">{{ session('history_message') }}</div></div>@endif
 <x-tools.page
@@ -27,7 +27,7 @@
 
             <div class="col-12"><h3 class="h5 mb-0">Contexto e sócio</h3></div>
             <div class="col-12 col-md-4">
-                <x-tools.form.input name="competence" label="Competência" type="month" :value="old('competence', '2026-01')" min="2026-01" max="2026-12" required />
+                <x-tools.form.input name="competence" label="Competência" type="month" :value="old('competence', now()->format('Y-m'))" min="2026-01" max="2026-12" required />
             </div>
             <div class="col-12 col-md-8">
                 <x-tools.form.select
@@ -50,7 +50,7 @@
                 <x-tools.form.input name="ownership_percentage" label="Participação" value="100" suffix="%" readonly required />
             </div>
             <div class="col-12 col-md-3">
-                <x-tools.form.input name="dependents" label="Dependentes" type="number" min="0" max="99" :value="old('dependents', 0)" />
+                <x-tools.form.input name="dependents" label="Dependentes" type="number" min="0" max="99" :value="old('dependents')" />
             </div>
 
             <div class="col-12 mt-4"><h3 class="h5 mb-0">Pró-labore</h3></div>
@@ -58,15 +58,15 @@
                 <x-tools.form.money name="gross_pro_labore" label="Pró-labore bruto" :value="old('gross_pro_labore')" placeholder="5.000,00" required />
             </div>
             <div class="col-12 col-md-6">
-                <x-tools.form.money name="other_official_social_security" label="Contribuição oficial em outros vínculos" :value="old('other_official_social_security', '0,00')" help="Use somente valores oficiais da mesma competência para controle do teto." />
+                <x-tools.form.money name="other_official_social_security" label="Contribuição oficial em outros vínculos" :value="old('other_official_social_security')" help="Use somente valores oficiais da mesma competência para controle do teto." />
             </div>
 
             <div class="col-12 mt-4"><h3 class="h5 mb-0">Lucro e distribuição</h3></div>
             <div class="col-12 col-md-4"><x-tools.form.money name="accounting_profit" label="Lucro contábil do período" :value="old('accounting_profit')" required /></div>
-            <div class="col-12 col-md-4"><x-tools.form.money name="accumulated_losses" label="Prejuízos acumulados" :value="old('accumulated_losses', '0,00')" /></div>
-            <div class="col-12 col-md-4"><x-tools.form.money name="reserves_and_unavailable_amounts" label="Reservas e valores indisponíveis" :value="old('reserves_and_unavailable_amounts', '0,00')" /></div>
-            <div class="col-12 col-md-4"><x-tools.form.money name="adjustments" label="Ajustes (+ ou -)" :value="old('adjustments', '0,00')" /></div>
-            <div class="col-12 col-md-4"><x-tools.form.money name="prior_distributions" label="Antecipações já distribuídas" :value="old('prior_distributions', '0,00')" /></div>
+            <div class="col-12 col-md-4"><x-tools.form.money name="accumulated_losses" label="Prejuízos acumulados" :value="old('accumulated_losses')" /></div>
+            <div class="col-12 col-md-4"><x-tools.form.money name="reserves_and_unavailable_amounts" label="Reservas e valores indisponíveis" :value="old('reserves_and_unavailable_amounts')" /></div>
+            <div class="col-12 col-md-4"><x-tools.form.money name="adjustments" label="Ajustes (+ ou -)" :value="old('adjustments')" /></div>
+            <div class="col-12 col-md-4"><x-tools.form.money name="prior_distributions" label="Antecipações já distribuídas" :value="old('prior_distributions')" /></div>
             <div class="col-12 col-md-4"><x-tools.form.money name="intended_distribution" label="Distribuição pretendida" :value="old('intended_distribution')" required /></div>
 
             <div class="col-12">

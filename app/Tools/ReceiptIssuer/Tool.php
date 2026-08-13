@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tools\ReceiptIssuer;
 
+use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
-use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
@@ -29,7 +29,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasWebRoutes, HasViews, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'emissor-de-recibos';
 
@@ -50,17 +50,17 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                    new ToolAnalyticsField('number', 'input', selector: '[name="number"]'),
-                    new ToolAnalyticsField('amount', 'input', selector: '[name="amount"]'),
-                    new ToolAnalyticsField('issued_at', 'input', selector: '[name="issued_at"]'),
-                    new ToolAnalyticsField('payer_name', 'input', selector: '[name="payer_name"]'),
-                    new ToolAnalyticsField('payer_document_type', 'input', selector: '[name="payer_document_type"]'),
-                    new ToolAnalyticsField('payer_document', 'input', selector: '[name="payer_document"]'),
-                    new ToolAnalyticsField('payee_name', 'input', selector: '[name="payee_name"]'),
-                    new ToolAnalyticsField('payee_document_type', 'input', selector: '[name="payee_document_type"]'),
-                    new ToolAnalyticsField('payee_document', 'input', selector: '[name="payee_document"]'),
-                    new ToolAnalyticsField('description', 'input', selector: '[name="description"]'),
-                    new ToolAnalyticsField('city', 'input', selector: '[name="city"]'),
+                        new ToolAnalyticsField('number', 'input', selector: '[name="number"]'),
+                        new ToolAnalyticsField('amount', 'input', selector: '[name="amount"]'),
+                        new ToolAnalyticsField('issued_at', 'input', selector: '[name="issued_at"]'),
+                        new ToolAnalyticsField('payer_name', 'input', selector: '[name="payer_name"]'),
+                        new ToolAnalyticsField('payer_document_type', 'input', selector: '[name="payer_document_type"]'),
+                        new ToolAnalyticsField('payer_document', 'input', selector: '[name="payer_document"]'),
+                        new ToolAnalyticsField('payee_name', 'input', selector: '[name="payee_name"]'),
+                        new ToolAnalyticsField('payee_document_type', 'input', selector: '[name="payee_document_type"]'),
+                        new ToolAnalyticsField('payee_document', 'input', selector: '[name="payee_document"]'),
+                        new ToolAnalyticsField('description', 'input', selector: '[name="description"]'),
+                        new ToolAnalyticsField('city', 'input', selector: '[name="city"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="issue"]',
@@ -113,7 +113,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
     {
         return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['identifier', 'number', 'payer', 'payer_document', 'payee', 'payee_document', 'amount_minor', 'description', 'issued_at', 'city'], resultFields: ['receipt'], sensitiveFields: ['payer_document', 'payee_document']);
     }
-
 
     public function migrationsPath(): string
     {

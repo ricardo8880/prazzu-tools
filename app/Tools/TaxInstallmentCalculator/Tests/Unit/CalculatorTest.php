@@ -12,7 +12,7 @@ final class CalculatorTest extends TestCase
 {
     public function test_sac_calculates_average_installment_charges_and_final_cost(): void
     {
-        $result = (new Calculator())->calculate(new CalculationInput([[
+        $result = (new Calculator)->calculate(new CalculationInput([[
             'name' => 'Principal', 'debt' => '12.000,00', 'entry' => '0', 'installments' => 12, 'monthly_charge' => '1',
         ]]));
 
@@ -26,7 +26,7 @@ final class CalculatorTest extends TestCase
 
     public function test_entry_reduces_financed_balance_and_multiple_scenarios_are_compared(): void
     {
-        $result = (new Calculator())->calculate(new CalculationInput([
+        $result = (new Calculator)->calculate(new CalculationInput([
             ['name' => 'Com entrada', 'debt' => '10.000,00', 'entry' => '2.000,00', 'installments' => 8, 'monthly_charge' => '1'],
             ['name' => 'Prazo maior', 'debt' => '10.000,00', 'entry' => '0', 'installments' => 10, 'monthly_charge' => '1'],
         ]));

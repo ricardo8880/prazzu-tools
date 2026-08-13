@@ -19,6 +19,13 @@ final readonly class LaborCompensationRule implements EffectiveDated, NormativeR
         public int $reducedNightHourSeconds,
     ) {}
 
-    public function normativeMetadata(): NormativeRuleMetadata { return $this->metadata; }
-    public function effectivePeriod(): EffectivePeriod { return $this->metadata->effectivePeriod; }
+    public function normativeMetadata(): NormativeRuleMetadata
+    {
+        return $this->metadata;
+    }
+
+    public function effectivePeriod(): EffectivePeriod
+    {
+        return $this->metadata->effectivePeriod;
+    }
 }

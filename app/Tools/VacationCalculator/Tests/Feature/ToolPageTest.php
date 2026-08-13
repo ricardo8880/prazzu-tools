@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tools\VacationCalculator\Tests\Feature;
 
 use App\Core\Analytics\Contracts\PlatformAnalytics;
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Core\Usage\Contracts\UsageMetrics;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,6 +13,7 @@ use Tests\TestCase;
 final class ToolPageTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_tool_page_is_available_with_essential_form(): void
     {
         $this->get(route('tools.calculadora-ferias.index'))
@@ -22,6 +24,7 @@ final class ToolPageTest extends TestCase
             ->assertSee('Como interpretar');
     }
 
+    #[CoversPlusFeature('calculadora-ferias', 'professional_export')]
     public function test_valid_input_calculates_and_displays_the_result(): void
     {
         $metrics = $this->mock(UsageMetrics::class);
@@ -45,7 +48,10 @@ final class ToolPageTest extends TestCase
         $response->assertOk()
             ->assertSee('Resultado das férias')
             ->assertSee('R$ 4.000,00')
-            ->assertSee('29/06/2026');
+            ->assertSee('29/06/2026')
+            ->assertSee('Exportar CSV')
+            ->assertSee('Baixar PDF')
+            ->assertSee('Baixar Excel (.xlsx)');
     }
 
     public function test_invalid_money_and_dates_are_rejected(): void

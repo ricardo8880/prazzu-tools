@@ -10,10 +10,10 @@ Route::prefix('ferramentas/calculadora-pro-labore-distribuicao-lucros')
     ->group(function (): void {
         Route::get('/', [ToolController::class, 'index'])->name('index');
         Route::post('/', [ToolController::class, 'calculate'])->name('calculate');
-        Route::post('/simular-cenarios', [ToolController::class, 'simulate'])->name('simulate');
-        Route::post('/exportar/{format}', [ToolController::class, 'exportCurrent'])->whereIn('format', ['csv', 'json', 'pdf', 'xlsx'])->name('export');
+        Route::post('/simular-cenarios', [ToolController::class, 'simulate'])->middleware('tool.feature:calculadora-pro-labore-distribuicao-lucros,scenario_planning')->name('simulate');
+        Route::post('/exportar/{format}', [ToolController::class, 'exportCurrent'])->middleware('tool.feature:calculadora-pro-labore-distribuicao-lucros,history_exports')->whereIn('format', ['csv', 'json', 'pdf', 'xlsx'])->name('export');
 
-        Route::middleware('persistence.auth')->prefix('historico')->name('history.')->group(function (): void {
+        Route::middleware(['tool.feature:calculadora-pro-labore-distribuicao-lucros,history_exports', 'persistence.auth'])->prefix('historico')->name('history.')->group(function (): void {
             Route::get('/', [ToolController::class, 'history'])->name('index');
             Route::get('/{run}', [ToolController::class, 'showHistory'])->name('show');
             Route::get('/{run}/exportar/{format}', [ToolController::class, 'exportHistory'])->whereIn('format', ['csv', 'json', 'pdf', 'xlsx'])->name('export');

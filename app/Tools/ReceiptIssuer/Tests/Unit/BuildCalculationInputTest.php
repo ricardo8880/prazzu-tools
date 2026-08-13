@@ -11,7 +11,7 @@ final class BuildCalculationInputTest extends TestCase
 {
     public function test_it_builds_typed_input_from_form_data(): void
     {
-        $input = (new BuildCalculationInput())->execute([
+        $input = (new BuildCalculationInput)->execute([
             'number' => 'rec-001',
             'payer_name' => 'Empresa Pagadora',
             'payer_document_type' => 'cnpj',

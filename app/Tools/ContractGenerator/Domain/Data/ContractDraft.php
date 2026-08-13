@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Tools\ContractGenerator\Domain\Data;
 
 use App\Core\Money\Money;
+use App\Tools\ContractGenerator\Domain\Enums\ContractTemplate;
 use App\Tools\ContractGenerator\Domain\Enums\ContractType;
+use App\Tools\ContractGenerator\Domain\Enums\SmartClause;
 use DateTimeImmutable;
 
 final readonly class ContractDraft
@@ -13,6 +15,9 @@ final readonly class ContractDraft
     /** @param array<string, scalar|null> $specificTerms */
     public function __construct(
         public ContractType $type,
+        public ContractTemplate $template,
+        /** @var list<SmartClause> */
+        public array $smartClauses,
         public ContractParty $firstParty,
         public ContractParty $secondParty,
         public Money $amount,
@@ -31,6 +36,9 @@ final readonly class ContractDraft
         return [
             'type' => $this->type->value,
             'type_label' => $this->type->label(),
+            'template' => $this->template->value,
+            'template_label' => $this->template->label(),
+            'smart_clauses' => array_map(static fn (SmartClause $clause): string => $clause->value, $this->smartClauses),
             'first_party_label' => $this->type->firstPartyLabel(),
             'second_party_label' => $this->type->secondPartyLabel(),
             'first_party' => $this->firstParty->toArray(),

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Platform;
 
+use App\Core\Access\Contracts\ToolFeatureAccessGate;
 use App\Core\Access\Enums\CommercialAccessMode;
 use App\Core\Access\Enums\SubscriptionPlan;
-use App\Core\Access\Contracts\ToolFeatureAccessGate;
 use App\Core\Tools\ToolRegistry;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

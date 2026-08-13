@@ -12,7 +12,7 @@ use App\Core\Money\Money;
  */
 final readonly class BrazilianMoneyInWords
 {
-    public function __construct(private CoreBrazilianMoneyInWords $converter = new CoreBrazilianMoneyInWords()) {}
+    public function __construct(private CoreBrazilianMoneyInWords $converter = new CoreBrazilianMoneyInWords) {}
 
     public function convert(Money $money): string
     {

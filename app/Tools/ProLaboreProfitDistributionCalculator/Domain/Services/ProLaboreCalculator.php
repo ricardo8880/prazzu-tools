@@ -8,9 +8,9 @@ use App\Core\Math\IntegerRounding;
 use App\Core\Math\RoundingMode;
 use App\Core\Money\Money;
 use App\Core\Normative\NormativeRuleResolver;
+use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Data\ProLaboreInput;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Data\ProLaboreResult;
-use App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Rules\RuleCatalog;
 use App\Tools\ProLaboreProfitDistributionCalculator\Domain\Rules\SocialSecurityRule;
 

@@ -85,9 +85,20 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
         );
     }
 
-    public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; }
-    public function viewsPath(): string { return __DIR__.'/Resources/views'; }
-    public function viewsNamespace(): string { return 'tools-calculadora-irpj-csll-lucro-presumido'; }
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-calculadora-irpj-csll-lucro-presumido';
+    }
 
     public function analyticsJourney(): ToolAnalyticsJourney
     {

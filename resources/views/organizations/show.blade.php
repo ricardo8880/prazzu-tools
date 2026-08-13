@@ -21,7 +21,7 @@
                 <p class="text-body-secondary mb-0">Administração de cadastro, membros, convites e acessos Plus.</p>
             </div>
             <a class="btn btn-outline-secondary" href="{{ route('account.show') }}">
-                <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Minha conta
+                <i class="bi bi-arrow-left me-2" aria-hidden="true"></i>Meu Prazzu
             </a>
         </div>
 

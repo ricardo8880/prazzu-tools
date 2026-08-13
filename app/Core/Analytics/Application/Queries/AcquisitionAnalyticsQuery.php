@@ -177,7 +177,6 @@ final class AcquisitionAnalyticsQuery
         return $row;
     }
 
-
     /** @param list<string> $events */
     private function logicalCount(Builder $query, array $events): int
     {

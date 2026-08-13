@@ -16,9 +16,15 @@ final readonly class ValidateApiAction implements ToolApiAction
 
     public function __construct(private ValidateBusinessDocument $action) {}
 
-    public function name(): string { return 'validate'; }
+    public function name(): string
+    {
+        return 'validate';
+    }
 
-    protected function requestClass(): string { return ValidateBusinessDocumentRequest::class; }
+    protected function requestClass(): string
+    {
+        return ValidateBusinessDocumentRequest::class;
+    }
 
     public function execute(array $input, ToolExecutionContext $context): mixed
     {

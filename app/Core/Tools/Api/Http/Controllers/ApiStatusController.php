@@ -13,6 +13,7 @@ final class ApiStatusController
     public function __invoke(Request $request): JsonResponse
     {
         $client = $request->attributes->get(AuthenticateApiClient::REQUEST_ATTRIBUTE);
+
         return ApiResponse::success([
             'name' => config('tools-api.name'),
             'version' => config('tools-api.version'),

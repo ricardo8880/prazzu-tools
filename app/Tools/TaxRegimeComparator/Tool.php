@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tools\TaxRegimeComparator;
 
-use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
+use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
+use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
+use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\Tools\Contracts\HasMigrations;
 use App\Core\Tools\Contracts\HasServiceProviders;
 use App\Core\Tools\Contracts\HasToolIntegrations;
 use App\Core\Tools\Contracts\HasViews;
 use App\Core\Tools\Contracts\HasWebRoutes;
 use App\Core\Tools\Contracts\ToolModule;
-use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
-use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
-use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
-use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -29,9 +29,8 @@ use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
-use App\Tools\TaxRegimeComparator\Infrastructure\Providers\TaxRegimeComparatorServiceProvider;
-
 use App\Tools\TaxRegimeComparator\Api\Actions\CompareApiAction;
+use App\Tools\TaxRegimeComparator\Infrastructure\Providers\TaxRegimeComparatorServiceProvider;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
@@ -59,17 +58,17 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                     key: 'comparison',
                     steps: ['context', 'revenue', 'costs', 'advanced'],
                     fields: [
-                    new ToolAnalyticsField('reference_date', 'context', selector: '[name="reference_date"]'),
-                    new ToolAnalyticsField('business_activity', 'context', selector: '[name="business_activity"]'),
-                    new ToolAnalyticsField('monthly_revenue', 'revenue', selector: '[name="monthly_revenue"]'),
-                    new ToolAnalyticsField('revenue_last_twelve_months', 'revenue', selector: '[name="revenue_last_twelve_months"]'),
-                    new ToolAnalyticsField('payroll_last_twelve_months', 'revenue', selector: '[name="payroll_last_twelve_months"]'),
-                    new ToolAnalyticsField('monthly_operating_costs', 'costs', selector: '[name="monthly_operating_costs"]'),
-                    new ToolAnalyticsField('monthly_deductible_expenses', 'costs', selector: '[name="monthly_deductible_expenses"]'),
-                    new ToolAnalyticsField('monthly_pis_cofins_credit_base', 'advanced', selector: '[name="monthly_pis_cofins_credit_base"]'),
-                    new ToolAnalyticsField('indirect_tax_rate', 'advanced', selector: '[name="indirect_tax_rate"]'),
-                    new ToolAnalyticsField('state', 'advanced', selector: '[name="state"]'),
-                    new ToolAnalyticsField('municipality', 'advanced', selector: '[name="municipality"]'),
+                        new ToolAnalyticsField('reference_date', 'context', selector: '[name="reference_date"]'),
+                        new ToolAnalyticsField('business_activity', 'context', selector: '[name="business_activity"]'),
+                        new ToolAnalyticsField('monthly_revenue', 'revenue', selector: '[name="monthly_revenue"]'),
+                        new ToolAnalyticsField('revenue_last_twelve_months', 'revenue', selector: '[name="revenue_last_twelve_months"]'),
+                        new ToolAnalyticsField('payroll_last_twelve_months', 'revenue', selector: '[name="payroll_last_twelve_months"]'),
+                        new ToolAnalyticsField('monthly_operating_costs', 'costs', selector: '[name="monthly_operating_costs"]'),
+                        new ToolAnalyticsField('monthly_deductible_expenses', 'costs', selector: '[name="monthly_deductible_expenses"]'),
+                        new ToolAnalyticsField('monthly_pis_cofins_credit_base', 'advanced', selector: '[name="monthly_pis_cofins_credit_base"]'),
+                        new ToolAnalyticsField('indirect_tax_rate', 'advanced', selector: '[name="indirect_tax_rate"]'),
+                        new ToolAnalyticsField('state', 'advanced', selector: '[name="state"]'),
+                        new ToolAnalyticsField('municipality', 'advanced', selector: '[name="municipality"]'),
                     ],
                     actions: ['calculate', 'export'],
                     selector: '[data-analytics-form="comparison"]',

@@ -20,7 +20,6 @@ final class Calculator implements ToolCalculator
 {
     public function __construct(private readonly LateDasRule $rule = new LateDasRule) {}
 
-
     public function calculate(ToolCalculationInput $i): ToolCalculationResult
     {
         if (! $i instanceof CalculationInput) {

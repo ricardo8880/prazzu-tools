@@ -118,6 +118,7 @@
         "e2e:browser:install": "npm run e2e:install",
         "e2e:browser:check": "@php scripts/e2e-browser.php check",
         "e2e:browser:test": [
+            "Composer\\Config::disableProcessTimeout",
             "@e2e:verify",
             "@e2e:browser:check",
             "node scripts/e2e-report-txt.mjs",

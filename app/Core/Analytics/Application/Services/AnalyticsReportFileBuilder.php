@@ -68,6 +68,7 @@ final class AnalyticsReportFileBuilder
 
         try {
             (new Xlsx($spreadsheet))->save($path);
+
             return file_get_contents($path) ?: '';
         } finally {
             $spreadsheet->disconnectWorksheets();

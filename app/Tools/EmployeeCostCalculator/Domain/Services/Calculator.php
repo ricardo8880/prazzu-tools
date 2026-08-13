@@ -18,12 +18,16 @@ use InvalidArgumentException;
 
 final class Calculator implements ToolCalculator
 {
-    public function __construct(private readonly EmployerChargeRule $chargeRule = new EmployerChargeRule()) {}
+    public function __construct(private readonly EmployerChargeRule $chargeRule = new EmployerChargeRule) {}
 
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
-        if (! $input instanceof CalculationInput) throw new InvalidArgumentException('Entrada incompatível.');
-        if ($input->monthlyHours < 1 || $input->monthlyHours > 744) throw new InvalidArgumentException('A jornada mensal deve estar entre 1 e 744 horas.');
+        if (! $input instanceof CalculationInput) {
+            throw new InvalidArgumentException('Entrada incompatível.');
+        }
+        if ($input->monthlyHours < 1 || $input->monthlyHours > 744) {
+            throw new InvalidArgumentException('A jornada mensal deve estar entre 1 e 744 horas.');
+        }
 
         $rates = $this->chargeRule->ratesFor($input->regime, $input->rat, $input->thirdParties);
         $remuneration = $input->salary->add($input->variablePay);

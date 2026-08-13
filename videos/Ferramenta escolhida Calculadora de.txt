@@ -1,0 +1,9 @@
+Ferramenta escolhida: Calculadora de Salário Líquido
+
+Texto de abertura (narração inicial):
+
+Já ficou na dúvida de quanto realmente vai cair na sua conta no fim do mês? Olha como é rápido descobrir o salário líquido, com INSS e IRRF calculados automaticamente.
+
+Texto de encerramento (narração final):
+
+Pronto, esse é o seu salário líquido, com tudo calculado. Gostou? Acesse a Prazzu Tools e use essa e outras calculadoras de graça.

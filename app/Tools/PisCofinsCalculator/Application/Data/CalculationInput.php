@@ -13,6 +13,6 @@ final readonly class CalculationInput implements ToolCalculationInput
 
     public function toArray(): array
     {
-        return ['period'=>$this->period,'regime'=>$this->regime,'compare_regimes'=>$this->compareRegimes,'taxable_revenue'=>$this->taxableRevenue,'credit_base'=>$this->creditBase,'pis_withheld'=>$this->pisWithheld,'cofins_withheld'=>$this->cofinsWithheld,'operations'=>$this->operations];
+        return ['period' => $this->period, 'regime' => $this->regime, 'compare_regimes' => $this->compareRegimes, 'taxable_revenue' => $this->taxableRevenue, 'credit_base' => $this->creditBase, 'pis_withheld' => $this->pisWithheld, 'cofins_withheld' => $this->cofinsWithheld, 'operations' => $this->operations];
     }
 }

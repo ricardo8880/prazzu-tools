@@ -22,6 +22,7 @@ final class GoldenCaseRegressionTest extends TestCase
             if (($case->input['operation'] ?? null) === 'gps_company_monthly') {
                 $actual = (new GpsDueDateCalculator)->companyMonthly(new DateTimeImmutable($case->input['competence']))->format('Y-m-d');
                 self::assertSame($case->expected['due_date'], $actual, $case->identifier);
+
                 continue;
             }
 
@@ -32,6 +33,7 @@ final class GoldenCaseRegressionTest extends TestCase
                 } catch (InvalidArgumentException) {
                     self::addToAssertionCount(1);
                 }
+
                 continue;
             }
 

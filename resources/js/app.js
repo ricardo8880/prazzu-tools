@@ -237,10 +237,11 @@ if (currentTool && hasGeneratedResult) {
     } catch {}
 }
 
-// CTA contextual do Prazzu Plus: aparece somente quando a ferramenta já entregou um resultado.
-// A frequência é limitada a uma exibição por ferramenta durante a sessão para não competir
-// com o conteúdo nem transformar recalculações sucessivas em publicidade repetitiva.
-const PLUS_RESULT_CTA_SEEN_PREFIX = 'prazzu-plus-result-cta-seen:';
+// CTA de continuidade pós-resultado: aparece somente depois que a ferramenta entregou valor.
+// Para visitantes, a conta é apresentada apenas como persistência opcional; para usuários
+// autenticados, o CTA prioriza histórico quando a ferramenta realmente oferece essa capacidade.
+// A frequência continua limitada a uma exibição por ferramenta durante a sessão.
+const RESULT_CONTINUITY_CTA_SEEN_PREFIX = 'prazzu-result-continuity-cta-seen:';
 
 function hasMeaningfulToolResult(toolPage) {
     return Boolean(toolPage.querySelector(
@@ -248,14 +249,14 @@ function hasMeaningfulToolResult(toolPage) {
     ));
 }
 
-function revealPlusResultCta(toolPage) {
+function revealResultContinuityCta(toolPage) {
     if (!(toolPage instanceof HTMLElement) || !hasMeaningfulToolResult(toolPage)) return;
 
-    const cta = toolPage.querySelector('[data-plus-result-cta]');
+    const cta = toolPage.querySelector('[data-result-continuity-cta]');
     if (!(cta instanceof HTMLElement) || cta.classList.contains('is-visible')) return;
 
-    const toolSlug = cta.dataset.plusResultCtaTool || toolPage.dataset.tool || 'tool';
-    const storageKey = `${PLUS_RESULT_CTA_SEEN_PREFIX}${toolSlug}`;
+    const toolSlug = cta.dataset.resultContinuityTool || toolPage.dataset.tool || 'tool';
+    const storageKey = `${RESULT_CONTINUITY_CTA_SEEN_PREFIX}${toolSlug}`;
 
     try {
         if (sessionStorage.getItem(storageKey) === '1') return;
@@ -268,8 +269,8 @@ function revealPlusResultCta(toolPage) {
     }, 520);
 }
 
-function initializePlusResultCta() {
-    document.querySelectorAll('[data-tool]').forEach((toolPage) => revealPlusResultCta(toolPage));
+function initializeResultContinuityCta() {
+    document.querySelectorAll('[data-tool]').forEach((toolPage) => revealResultContinuityCta(toolPage));
 
     const observer = new MutationObserver((mutations) => {
         const changedToolPages = new Set();
@@ -286,10 +287,163 @@ function initializePlusResultCta() {
             });
         }
 
-        changedToolPages.forEach((toolPage) => revealPlusResultCta(toolPage));
+        changedToolPages.forEach((toolPage) => revealResultContinuityCta(toolPage));
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
 }
 
-initializePlusResultCta();
+initializeResultContinuityCta();
+
+// Continuidade temporária para visitantes. Guardamos somente slugs durante a
+// sessão do navegador; valores digitados e resultados nunca entram aqui.
+const RECENT_TOOLS_STORAGE_PREFIX = 'prazzu-recent-tools-session:v2:';
+const LEGACY_RECENT_TOOLS_STORAGE_KEY = 'prazzu-recent-tools-session:v1';
+const RECENT_TOOLS_LIMIT = 8;
+
+function activeVerticalSlug() {
+    const vertical = document.querySelector('meta[name="vertical"]')?.content?.trim();
+    return vertical && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(vertical) ? vertical : 'global';
+}
+
+function recentToolsStorageKey() {
+    return `${RECENT_TOOLS_STORAGE_PREFIX}${activeVerticalSlug()}`;
+}
+
+function readRecentToolSlugs() {
+    try {
+        const currentValue = sessionStorage.getItem(recentToolsStorageKey());
+        const raw = currentValue ?? sessionStorage.getItem(LEGACY_RECENT_TOOLS_STORAGE_KEY) ?? '[]';
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+
+        return parsed
+            .filter((slug) => typeof slug === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug))
+            .slice(0, RECENT_TOOLS_LIMIT);
+    } catch {
+        return [];
+    }
+}
+
+function writeRecentToolSlugs(slugs) {
+    try {
+        sessionStorage.setItem(recentToolsStorageKey(), JSON.stringify(slugs.slice(0, RECENT_TOOLS_LIMIT)));
+    } catch {}
+}
+
+function rememberCurrentTool() {
+    const toolPage = document.querySelector('[data-tool]');
+    const slug = toolPage?.dataset.tool;
+    if (!slug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return;
+
+    const recent = readRecentToolSlugs().filter((candidate) => candidate !== slug);
+    writeRecentToolSlugs([slug, ...recent]);
+}
+
+function recentToolCard(tool) {
+    const column = document.createElement('div');
+    column.className = 'col-12 col-sm-6 col-xl-3';
+
+    const article = document.createElement('article');
+    article.className = 'prazzu-tool-card prazzu-tool-card--continuity h-100';
+
+    const link = document.createElement('a');
+    link.className = 'prazzu-tool-card__link text-decoration-none';
+    try {
+        const destination = new URL(tool.url, window.location.origin);
+        destination.searchParams.set('source', 'home_recent_session');
+        link.href = destination.toString();
+    } catch {
+        link.href = tool.url;
+    }
+    link.setAttribute('aria-label', `Abrir novamente ${tool.name}`);
+
+    const iconTile = document.createElement('span');
+    iconTile.className = `prazzu-icon-tile prazzu-icon-tile--${tool.tone || 'purple'} mb-3`;
+    const icon = document.createElement('i');
+    icon.className = `bi ${tool.icon}`;
+    icon.setAttribute('aria-hidden', 'true');
+    iconTile.append(icon);
+
+    const title = document.createElement('h3');
+    title.className = 'prazzu-tool-card__title';
+    title.textContent = tool.name;
+
+    const description = document.createElement('p');
+    description.className = 'prazzu-tool-card__description';
+    const toolDescription = typeof tool.description === 'string' ? tool.description : '';
+    description.textContent = toolDescription.length > 105 ? `${toolDescription.slice(0, 102).trimEnd()}...` : toolDescription;
+
+    const badge = document.createElement('span');
+    badge.className = 'prazzu-badge prazzu-badge--green';
+    badge.textContent = 'Usada recentemente';
+
+    article.append(link, iconTile, title, description, badge);
+    column.append(article);
+
+    return column;
+}
+
+function renderRecentToolsOnHome() {
+    const section = document.querySelector('[data-home-recent-tools]');
+    const list = section?.querySelector('[data-home-recent-tools-list]');
+    const catalogScript = document.querySelector('[data-home-recent-tools-catalog]');
+    if (!(section instanceof HTMLElement) || !(list instanceof HTMLElement) || !(catalogScript instanceof HTMLScriptElement)) return;
+
+    let catalog = [];
+    try {
+        catalog = JSON.parse(catalogScript.textContent || '[]');
+    } catch {
+        return;
+    }
+    if (!Array.isArray(catalog)) return;
+
+    const bySlug = new Map(catalog
+        .filter((tool) => tool && typeof tool.slug === 'string' && typeof tool.url === 'string')
+        .map((tool) => [tool.slug, tool]));
+    const validSlugs = readRecentToolSlugs().filter((slug) => bySlug.has(slug)).slice(0, 4);
+
+    if (validSlugs.length === 0) return;
+
+    writeRecentToolSlugs(readRecentToolSlugs().filter((slug) => bySlug.has(slug)));
+    validSlugs.forEach((slug) => list.append(recentToolCard(bySlug.get(slug))));
+    section.hidden = false;
+}
+
+rememberCurrentTool();
+renderRecentToolsOnHome();
+
+// Exemplos de preenchimento devem orientar sem virar dados enviados ao cálculo.
+// Atua somente dentro de páginas de ferramentas e apenas quando a view não definiu
+// um placeholder mais específico.
+function initializeToolInputPlaceholders() {
+    const toolRoot = document.querySelector('[data-tool]');
+    if (!(toolRoot instanceof HTMLElement)) return;
+
+    const exampleFor = (control) => {
+        const name = (control.getAttribute('name') || '').toLowerCase();
+        const type = (control.getAttribute('type') || 'text').toLowerCase();
+        const inputMode = (control.getAttribute('inputmode') || '').toLowerCase();
+
+        if (['date', 'month', 'file', 'hidden', 'checkbox', 'radio'].includes(type)) return null;
+        if (/(rate|percent|percentage|aliquota|alíquota|mva|selic|markup|margin|margem)/.test(name)) return 'Ex.: 5';
+        if (/(hours|hour|horas|days|day|dias|months|month|meses|dependents|employees|partners|installments|years|anos|headcount|admissions|terminations)/.test(name)) return 'Ex.: 10';
+        if (/(document|cnpj|cpf)/.test(name)) return 'Ex.: 00.000.000/0000-00';
+        if (/(municipality|city|cidade)/.test(name)) return 'Ex.: Campinas/SP';
+        if (/(company|empresa|firm)/.test(name)) return 'Ex.: Empresa Exemplo Ltda.';
+        if (/(employee_name|partner_label|contact_name|representative|payer_name|payee_name)/.test(name)) return 'Ex.: Maria Silva';
+        if (/(scenario.*name|scenario_label)/.test(name)) return 'Ex.: Cenário conservador';
+        if (/(salary|revenue|amount|cost|fee|gross|value|balance|expense|benefit|freight|insurance|price|sales|goal|payroll|profit|income|deduction|credit|tax)/.test(name) || inputMode === 'decimal') return 'Ex.: 5.000,00';
+        if (type === 'number') return 'Ex.: 10';
+
+        return null;
+    };
+
+    toolRoot.querySelectorAll('input.form-control:not([placeholder]), textarea.form-control:not([placeholder])').forEach((control) => {
+        if (!(control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement)) return;
+        const example = exampleFor(control);
+        if (example) control.setAttribute('placeholder', example);
+    });
+}
+
+initializeToolInputPlaceholders();

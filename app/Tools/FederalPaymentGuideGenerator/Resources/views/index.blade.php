@@ -5,6 +5,7 @@
 
 @section('content')
 <div data-testid="tool-page-gerador-darf-gps">
+    <x-tools.trust-seo slug="gerador-darf-gps" :show-content="false" />
     @php($result = $result ?? session('guide_result'))
     @php($recentHistory = $recentHistory ?? [])
     <div class="container py-5">
@@ -71,7 +72,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="selic_accumulated_percent" class="form-label">Selic acumulada do período (%)</label>
-                                <input id="selic_accumulated_percent" name="selic_accumulated_percent" value="{{ old('selic_accumulated_percent', '0') }}" class="form-control" placeholder="1,25" inputmode="decimal">
+                                <input id="selic_accumulated_percent" name="selic_accumulated_percent" value="{{ old('selic_accumulated_percent') }}" class="form-control" placeholder="1,25" inputmode="decimal">
                                 <div class="form-text">Informe o percentual conferido na fonte oficial. Para pagamento no prazo, use zero.</div>
                             </div>
                             <div class="col-12">

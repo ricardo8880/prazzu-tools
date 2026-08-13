@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tools\BusinessDocumentValidator\Tests\Unit;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Tools\BusinessDocumentValidator\Application\Actions\BuildBatchExportRows;
 use PHPUnit\Framework\TestCase;
 
 final class BuildBatchExportRowsTest extends TestCase
 {
+    #[CoversPlusFeature('validador-de-cnpj', 'batch_export')]
     public function test_it_exports_only_problematic_rows_when_requested(): void
     {
         $result = ['rows' => [

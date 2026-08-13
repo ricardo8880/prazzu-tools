@@ -17,7 +17,7 @@ O visitante executa o cálculo individual completo sem autenticação e recebe v
 
 ## Prazzu Plus
 
-Cenários anuais, comparação entre sócios, histórico e exportações representam produtividade e continuidade. Esses recursos não alteram a correção do cálculo Essencial.
+Comparação anual de 2 a 4 valores mensais de pró-labore ao longo das 12 competências de 2026. O cálculo individual mensal permanece Essencial.
 
 ## Regras
 

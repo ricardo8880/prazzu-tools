@@ -12,4 +12,5 @@ Route::post('/ferramentas/comparador-clt-pj-autonomo', [ToolController::class, '
 Route::post('/ferramentas/comparador-clt-pj-autonomo/exportar/pdf', [ToolController::class, 'exportPdf'])
     ->name('tools.comparador-clt-pj-autonomo.export.pdf');
 Route::post('/ferramentas/comparador-clt-pj-autonomo/exportar/excel', [ToolController::class, 'exportExcel'])
+    ->middleware('tool.feature:comparador-clt-pj-autonomo,spreadsheet_export')
     ->name('tools.comparador-clt-pj-autonomo.export.excel');

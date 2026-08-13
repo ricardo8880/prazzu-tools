@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tools\FederalPaymentGuideGenerator\Application\Actions;
 
 use App\Core\Tools\Data\ToolManifest;
-use App\Tools\FederalPaymentGuideGenerator\Domain\Enums\GuideType;
 use App\Tools\FederalPaymentGuideGenerator\Domain\Services\RevenueCodeCatalog;
 use App\Tools\FederalPaymentGuideGenerator\Tool;
 

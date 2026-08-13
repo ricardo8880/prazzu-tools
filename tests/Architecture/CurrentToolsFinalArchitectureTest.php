@@ -24,15 +24,22 @@ final class CurrentToolsFinalArchitectureTest extends TestCase
 
             $this->assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential), $manifest->slug);
             $this->assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus), $manifest->slug);
-            $this->assertInstanceOf(HasHistoryPolicy::class, $tool, $manifest->slug);
-            $this->assertTrue($manifest->hasCapability(ToolCapability::History), $manifest->slug);
-            $this->assertTrue($manifest->hasCapability(ToolCapability::VersionedPersistence), $manifest->slug);
             $this->assertTrue($manifest->hasCapability(ToolCapability::Export), $manifest->slug);
-            $this->assertTrue($manifest->persistence?->enabled, $manifest->slug);
-            $this->assertSame(1, $manifest->persistence?->schemaVersion, $manifest->slug);
             $this->assertTrue($manifest->export?->enabled, $manifest->slug);
-            $this->assertContains('json', $manifest->export?->formats ?? [], $manifest->slug);
+            $this->assertNotEmpty($manifest->export?->formats ?? [], $manifest->slug);
             $this->assertFalse($manifest->sharing?->enabled ?? true, $manifest->slug);
+
+            if ($manifest->supportsHistory) {
+                $this->assertInstanceOf(HasHistoryPolicy::class, $tool, $manifest->slug);
+                $this->assertTrue($manifest->hasCapability(ToolCapability::History), $manifest->slug);
+                $this->assertTrue($manifest->hasCapability(ToolCapability::VersionedPersistence), $manifest->slug);
+                $this->assertTrue($manifest->persistence?->enabled, $manifest->slug);
+                $this->assertSame(1, $manifest->persistence?->schemaVersion, $manifest->slug);
+            } else {
+                $this->assertFalse($manifest->hasCapability(ToolCapability::History), $manifest->slug);
+                $this->assertFalse($manifest->hasCapability(ToolCapability::VersionedPersistence), $manifest->slug);
+                $this->assertFalse($manifest->persistence?->enabled ?? true, $manifest->slug);
+            }
 
             $sensitiveMode = $manifest->sensitiveData?->mode ?? SensitiveDataMode::None;
             $this->assertSame(

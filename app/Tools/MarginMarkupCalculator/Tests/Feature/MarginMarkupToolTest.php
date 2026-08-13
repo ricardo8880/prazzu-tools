@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\MarginMarkupCalculator\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -55,6 +56,7 @@ final class MarginMarkupToolTest extends TestCase
             ->assertSessionHasErrors('base_cost');
     }
 
+    #[CoversPlusFeature('calculadora-margem-markup', 'export')]
     public function test_export_returns_csv_and_records_metric(): void
     {
         $response = $this->post(route('tools.calculadora-margem-markup.export'), [
@@ -88,6 +90,7 @@ final class MarginMarkupToolTest extends TestCase
             ->assertSessionHasErrors('base_cost');
     }
 
+    #[CoversPlusFeature('calculadora-margem-markup', 'batch_processing')]
     public function test_batch_calculation_returns_results_for_multiple_products(): void
     {
         $response = $this->from(route('tools.calculadora-margem-markup.index'))
@@ -122,6 +125,18 @@ final class MarginMarkupToolTest extends TestCase
             'tool_slug' => 'calculadora-margem-markup',
             'event' => 'batch_calculated',
         ]);
+    }
+
+    #[CoversPlusFeature('calculadora-margem-markup', 'scenarios')]
+    public function test_scenarios_compare_two_pricing_strategies(): void
+    {
+        $this->post(route('tools.calculadora-margem-markup.scenarios.simulate'), [
+            'reference_date' => '2026-07-15', 'product_name' => 'Produto A', 'base_cost' => '100,00',
+            'scenarios' => [
+                ['name' => 'Conservador', 'desired_margin' => '20'],
+                ['name' => 'Meta', 'desired_margin' => '25'],
+            ],
+        ])->assertOk()->assertSee('Conservador')->assertSee('Meta')->assertSee('R$ 125,00')->assertSee('R$ 133,33');
     }
 
     public function test_batch_calculation_requires_at_least_one_product(): void

@@ -90,6 +90,11 @@
                 <div class="form-text">De 2 a 50 XMLs, com até 10 MB cada. Os arquivos originais não são armazenados.</div>
                 @error('xml_files')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="compare_documents" value="1" id="compare_documents" @checked(old('compare_documents'))>
+                <label class="form-check-label" for="compare_documents">Comparar os dois primeiros documentos <span class="badge text-bg-primary">Prazzu Plus</span></label>
+                <div class="form-text">Compara total, emitente e quantidade de itens dos dois primeiros XMLs processados.</div>
+            </div>
             <button class="btn btn-outline-primary" type="submit">Processar lote</button>
         </form>
     </x-tools.form-panel>
@@ -106,6 +111,15 @@
             </div>
             <p class="fw-semibold">Total dos documentos: R$ {{ number_format((float)data_get($batch, 'summary.document_total', 0), 2, ',', '.') }}</p>
             @if(!empty($batch['errors']))<div class="alert alert-warning"><ul class="mb-0">@foreach($batch['errors'] as $error)<li>{{ $error['file'] }}: {{ $error['message'] }}</li>@endforeach</ul></div>@endif
+            @if(!empty($batch['document_comparison']))
+                @php($comparison = $batch['document_comparison'])
+                <div class="card border-primary mb-3" data-plus-feature="document_comparison"><div class="card-body">
+                    <h3 class="h5">Comparação de documentos <span class="badge text-bg-primary">Plus</span></h3>
+                    <p class="mb-1"><strong>{{ $comparison['left']['source_file'] }}</strong> × <strong>{{ $comparison['right']['source_file'] }}</strong></p>
+                    <p class="mb-1">Diferença de total: {{ \App\Core\Money\Money::fromMinor($comparison['difference_minor'])->formatPtBr() }}</p>
+                    <p class="mb-0">Mesmo emitente: {{ $comparison['same_issuer'] ? 'Sim' : 'Não' }} · Diferença na quantidade de itens: {{ $comparison['item_count_difference'] }}</p>
+                </div></div>
+            @endif
             <div class="d-flex flex-wrap gap-2">
                 @foreach(['pdf'=>'PDF','xlsx'=>'Excel (.xlsx)','csv'=>'CSV','json'=>'JSON'] as $format=>$label)<a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.conversor-fiscal-xml.export', ['format' => $format, 'result_token' => $currentResultToken ?? '']) }}" @if(in_array($format, ['pdf', 'xlsx', 'csv'], true)) data-testid="download-{{ $format }}" @endif data-analytics-action="export" data-analytics-form="batch" data-analytics-format="{{ $format }}">Exportar {{ $label }}</a>@endforeach
             </div>

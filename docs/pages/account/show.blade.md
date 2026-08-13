@@ -1,35 +1,55 @@
-# Minha conta — Prazzu Tools
+# Meu Prazzu — Prazzu Tools
 
-- **Tipo:** Página da plataforma
+- **Tipo:** página autenticada de continuidade da plataforma
+- **Rota:** `account.show` (`/minha-conta`)
+- **Controller:** `App\Http\Controllers\Auth\AccountController`
 - **Implementação principal:** `resources/views/account/show.blade.php`
-- **Status:** ativa no código atual
+- **Status:** ativa
 
 ## Objetivo
 
-Apresentar e permitir a utilização da área **Minha conta — Prazzu Tools** dentro da plataforma.
+Ser o ponto de retorno da conta para históricos, favoritos e ferramentas já utilizadas, sem transformar a conta em CRM, agenda ou sistema de gestão.
 
 ## Como funciona
 
-A página é renderizada pela view Blade indicada acima e utiliza o layout, os componentes compartilhados e os dados fornecidos pelo controller ou fluxo responsável. A implementação atual contém 2 formulário(s).
+`UserToolContinuityQuery` agrega somente metadados de `ToolRun` pertencentes ao usuário autenticado. A view não lê nem renderiza `input_payload` ou `result_payload`.
 
-## Estrutura e conteúdos identificados
+A página apresenta:
 
-- Olá, conteúdo dinâmico
-- Alterar senha
-- Acessos empresariais
+- total de resultados salvos;
+- total de favoritos;
+- quantidade de ferramentas com histórico;
+- até quatro continuidades recentes;
+- favoritos recentes;
+- resumo de histórico por ferramenta;
+- conta e segurança;
+- acessos empresariais já existentes.
+
+`Refazer cálculo` aparece somente quando a rota real `history.repeat` existe e continua sendo um formulário POST com CSRF. Caso não exista, a página abre a ferramenta normalmente.
+
+## Estados vazios
+
+- conta sem histórico: explica que os resultados aparecerão quando uma ferramenta usar persistência e oferece o catálogo;
+- conta com histórico sem favoritos: explica a capacidade de favoritos sem inventar dados ou obrigar uso;
+- se uma ferramenta não possui histórico/repetição, a interface não promete essa ação.
+
+## Analytics
+
+Atalhos de continuidade, favoritos e histórico recebem uma origem controlada. No destino, o Analytics registra `retention.continuity.used` com a superfície utilizada, sem incluir payload de cálculo ou dados pessoais.
 
 ## Regras de manutenção
 
-- Ler o `README.md` da raiz e `docs/pages/README.md` antes de alterar esta página.
-- Preservar o objetivo e os fluxos descritos neste documento.
-- Usar primeiro componentes e utilitários do Bootstrap.
-- Criar CSS próprio apenas quando necessário e validar sua inclusão no build do Vite.
-- Manter a página leve, responsiva, acessível e sem dependências desnecessárias.
-- Atualizar este arquivo sempre que comportamento, objetivo, conteúdo, estados ou dependências mudarem.
+- ler README da raiz, `CORE_CANDIDATES.md` e continuidade dos lotes antes de alterar;
+- manter toda consulta limitada ao usuário autenticado;
+- nunca renderizar payloads privados no hub;
+- reutilizar rotas reais das ferramentas e os mecanismos compartilhados de histórico/favoritos;
+- não criar uma segunda persistência ou um sistema de gestão dentro da conta;
+- manter ações mutáveis como POST/PUT/DELETE com CSRF, nunca convertê-las em links GET.
 
 ## Validação mínima após alterações
 
-- Conferir renderização em telas pequenas e grandes.
-- Validar estados vazio, carregando, sucesso, erro e permissão quando aplicáveis.
-- Confirmar navegação, formulários e ações disponíveis.
-- Executar os testes relacionados e o build do Vite quando houver mudança visual ou de JavaScript.
+- conferir conta vazia, com histórico, com/sem favoritos e com ferramentas sem repetição;
+- testar isolamento entre usuários;
+- confirmar métodos HTTP das ações;
+- validar responsividade e acessibilidade;
+- executar testes de conta, histórico, autenticação e Analytics.

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Imports;
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Core\Imports\Services\XlsxTabularFileReader;
 use Illuminate\Http\UploadedFile;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Tests\TestCase;
 
 final class XlsxRoundTripTest extends TestCase

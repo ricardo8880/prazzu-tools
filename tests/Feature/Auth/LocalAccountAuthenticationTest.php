@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Analytics\Models\PlatformAnalyticsEvent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -25,6 +27,27 @@ final class LocalAccountAuthenticationTest extends TestCase
             'email' => 'usuario@example.com',
             'prazzu_account_id' => null,
         ]);
+    }
+
+    public function test_account_created_from_result_continuity_keeps_only_safe_attribution(): void
+    {
+        $this->post(route('register.store', [
+            'source' => 'result_continuity',
+            'tool' => 'calculadora-salario-liquido',
+        ]), [
+            'name' => 'Pessoa Retorno',
+            'email' => 'retorno@example.com',
+            'password' => 'senha1234',
+            'password_confirmation' => 'senha1234',
+        ])->assertRedirect(route('account.show'));
+
+        $event = PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::AccountCreated->value)
+            ->firstOrFail();
+
+        self::assertSame('result_continuity', $event->metadata['source']);
+        self::assertSame('calculadora-salario-liquido', $event->metadata['tool_slug']);
+        self::assertArrayNotHasKey('email', $event->metadata);
     }
 
     public function test_existing_user_can_login_and_logout(): void

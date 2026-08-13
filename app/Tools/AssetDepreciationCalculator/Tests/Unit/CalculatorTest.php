@@ -12,7 +12,7 @@ final class CalculatorTest extends TestCase
 {
     public function test_linear_method_calculates_monthly_annual_and_book_value(): void
     {
-        $result = (new Calculator())->calculate(new CalculationInput([
+        $result = (new Calculator)->calculate(new CalculationInput([
             ['name' => 'Notebook', 'value' => '12.000,00', 'useful_life_years' => 5, 'method' => 'linear'],
         ]));
 
@@ -24,7 +24,7 @@ final class CalculatorTest extends TestCase
 
     public function test_declining_balance_accelerates_first_year_and_finishes_at_zero(): void
     {
-        $result = (new Calculator())->calculate(new CalculationInput([
+        $result = (new Calculator)->calculate(new CalculationInput([
             ['name' => 'Máquina', 'value' => '10.000,00', 'useful_life_years' => 5, 'method' => 'declining_balance'],
         ]));
 
@@ -34,7 +34,7 @@ final class CalculatorTest extends TestCase
 
     public function test_sum_of_years_digits_and_multiple_assets_create_portfolio_projection(): void
     {
-        $result = (new Calculator())->calculate(new CalculationInput([
+        $result = (new Calculator)->calculate(new CalculationInput([
             ['name' => 'Veículo', 'value' => '15.000,00', 'useful_life_years' => 5, 'method' => 'sum_of_years_digits'],
             ['name' => 'Notebook', 'value' => '12.000,00', 'useful_life_years' => 3, 'method' => 'linear'],
         ]));

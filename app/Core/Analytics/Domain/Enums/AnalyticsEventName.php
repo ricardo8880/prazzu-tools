@@ -49,6 +49,9 @@ enum AnalyticsEventName: string
     case ToolResultExported = 'tool.result.exported';
 
     case AccountCreated = 'account.created';
+    case NewsletterSubscribed = 'newsletter.subscribed';
+    case RetentionContinuityUsed = 'retention.continuity.used';
+    case RetentionRelatedToolOpened = 'retention.related-tool.opened';
     case SubscriptionStarted = 'subscription.started';
     case SubscriptionCreated = 'subscription.created';
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ReceiptIssuer\Tests\Feature;
 
+use App\Core\Quality\Attributes\CoversPlusFeature;
 use App\Models\User;
 use App\Tools\ReceiptIssuer\Infrastructure\Models\ReceiptPartyProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,6 +19,7 @@ final class PartyProfilesTest extends TestCase
         $this->get(route('tools.emissor-de-recibos.profiles.index'))->assertRedirect();
     }
 
+    #[CoversPlusFeature('emissor-de-recibos', 'saved_profiles')]
     public function test_authenticated_user_can_save_and_delete_an_owned_profile(): void
     {
         $user = User::factory()->create();

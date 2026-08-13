@@ -19,8 +19,7 @@ premissas, valores intermediários e limitações permanecem visíveis.
 
 ## Prazzu Plus
 
-Períodos, projeções, cenários, gráficos e histórico. Esses recursos representam produtividade e continuidade; não alteram a
-correção do resultado Essencial.
+Projeção de cenário sobre a posição calculada, com variações independentes para ativos, passivos operacionais e passivos financeiros. O cálculo Essencial permanece integralmente gratuito.
 
 ## Regras
 

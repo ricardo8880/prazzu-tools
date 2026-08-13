@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tools\FiscalXmlConverter;
 
-use App\Core\Tools\Api\Contracts\HasApiActions;
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
-use App\Core\Tools\Contracts\HasToolIntegrations;
-use App\Core\Tools\Contracts\HasViews;
-use App\Core\Tools\Contracts\HasWebRoutes;
-use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
 use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
+use App\Core\Tools\Api\Contracts\HasApiActions;
+use App\Core\Tools\Contracts\HasToolIntegrations;
+use App\Core\Tools\Contracts\HasViews;
+use App\Core\Tools\Contracts\HasWebRoutes;
+use App\Core\Tools\Contracts\ToolModule;
 use App\Core\Tools\Data\ToolFeature;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\Enums\ToolAccess;
@@ -28,7 +28,6 @@ use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
-
 use App\Tools\FiscalXmlConverter\Api\Actions\ConvertApiAction;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
@@ -109,7 +108,6 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
         );
     }
 
-
     public function historyPolicy(): ToolHistoryPolicy
     {
         return new ToolHistoryPolicy(
@@ -121,7 +119,18 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
         );
     }
 
-    public function webRoutesPath(): string { return __DIR__.'/Routes/web.php'; }
-    public function viewsPath(): string { return __DIR__.'/Resources/views'; }
-    public function viewsNamespace(): string { return 'tools-conversor-fiscal-xml'; }
+    public function webRoutesPath(): string
+    {
+        return __DIR__.'/Routes/web.php';
+    }
+
+    public function viewsPath(): string
+    {
+        return __DIR__.'/Resources/views';
+    }
+
+    public function viewsNamespace(): string
+    {
+        return 'tools-conversor-fiscal-xml';
+    }
 }

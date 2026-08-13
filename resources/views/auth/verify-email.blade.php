@@ -22,7 +22,7 @@
                             @csrf
                             <button class="btn btn-primary" type="submit">Reenviar e-mail de confirmação</button>
                         </form>
-                        <a class="btn btn-link mt-2" href="{{ route('account.show') }}">Voltar para minha conta</a>
+                        <a class="btn btn-link mt-2" href="{{ route('account.show') }}">Voltar para Meu Prazzu</a>
                     </div>
                 </section>
             </div>

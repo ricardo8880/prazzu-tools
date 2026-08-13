@@ -11,8 +11,8 @@
             @csrf
             <div class="col-12 col-md-6"><x-tools.form.money name="current_salary" label="Salário atual" :value="old('current_salary')" required /></div>
             <div class="col-12 col-md-6"><x-tools.form.input name="adjustment_rate" label="Percentual de reajuste" type="number" step="0.000001" min="0" max="100" suffix="%" :value="old('adjustment_rate')" required /></div>
-            <div class="col-12 col-md-6"><x-tools.form.money name="fixed_addition" label="Aumento fixo adicional" :value="old('fixed_addition', '0,00')" required /></div>
-            <div class="col-12 col-md-6"><x-tools.form.input name="retroactive_months" label="Meses retroativos" type="number" min="0" max="60" :value="old('retroactive_months', 0)" required /></div>
+            <div class="col-12 col-md-6"><x-tools.form.money name="fixed_addition" label="Aumento fixo adicional" :value="old('fixed_addition')" required /></div>
+            <div class="col-12 col-md-6"><x-tools.form.input name="retroactive_months" label="Meses retroativos" type="number" min="0" max="60" :value="old('retroactive_months')" required /></div>
             <div class="col-12"><button class="btn btn-primary" type="submit">Calcular reajuste</button></div>
         </form>
     </x-tools.form-panel>

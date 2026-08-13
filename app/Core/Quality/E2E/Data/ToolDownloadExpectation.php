@@ -47,4 +47,19 @@ final readonly class ToolDownloadExpectation
             'required_entries' => $this->requiredEntries,
         ];
     }
+
+    /** @param array<string, mixed> $properties */
+    public static function __set_state(array $properties): self
+    {
+        return new self(
+            id: (string) $properties['id'],
+            testId: (string) $properties['testId'],
+            format: (string) $properties['format'],
+            extension: (string) $properties['extension'],
+            minimumBytes: (int) $properties['minimumBytes'],
+            filenameContains: isset($properties['filenameContains']) ? (string) $properties['filenameContains'] : null,
+            mimeType: isset($properties['mimeType']) ? (string) $properties['mimeType'] : null,
+            requiredEntries: (array) $properties['requiredEntries'],
+        );
+    }
 }

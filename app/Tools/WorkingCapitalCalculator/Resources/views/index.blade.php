@@ -6,6 +6,7 @@
 
 @section('content')
 <x-tools.page :title="$tool->name" :description="$tool->description" :icon="$tool->icon" :slug="$tool->slug">
+
     <x-tools.form-panel title="Posição financeira atual" description="Informe os saldos na mesma data-base. Use zero quando uma rubrica não existir.">
         <form method="POST" action="{{ route('tools.capital-de-giro.calculate') }}" class="row g-3" data-analytics-form="main">
             @csrf
@@ -20,7 +21,7 @@
                 'other_current_liabilities' => ['Outras obrigações circulantes', 'Demais passivos de curto prazo.'],
             ] as $name => [$label, $help])
                 <div class="col-12 col-md-6">
-                    <x-tools.form.money :name="$name" :label="$label" :help="$help" :value="old($name, '0,00')" required />
+                    <x-tools.form.money :name="$name" :label="$label" :help="$help" :value="old($name)" required />
                 </div>
             @endforeach
             <div class="col-12 d-flex gap-2">
@@ -46,6 +47,20 @@
                 </tbody></table>
             </div>
         <x-tools.export-buttons :pdf-route="route('tools.capital-de-giro.export.pdf')" :excel-route="route('tools.capital-de-giro.export.excel')" :input="$calculationInput ?? []" /></x-tools.result-panel>
+        <x-tools.form-panel class="mt-4" title="Prazzu Plus — projeção de cenário" description="Projete a posição informada aplicando variações aos grupos financeiros.">
+            <form method="POST" action="{{ route('tools.capital-de-giro.projections') }}" class="row g-3">@csrf
+                @foreach (($calculationInput ?? []) as $name => $value)<input type="hidden" name="{{ $name }}" value="{{ $value }}">@endforeach
+                <div class="col-md-4"><x-tools.form.input name="asset_growth_rate" label="Variação dos ativos" type="number" step="0.01" placeholder="Ex.: 12" suffix="%" required /></div>
+                <div class="col-md-4"><x-tools.form.input name="operating_liability_growth_rate" label="Passivos operacionais" type="number" step="0.01" placeholder="Ex.: 6" suffix="%" required /></div>
+                <div class="col-md-4"><x-tools.form.input name="financial_liability_growth_rate" label="Passivos financeiros" type="number" step="0.01" placeholder="Ex.: 2" suffix="%" required /></div>
+                <div class="col-12"><button class="btn btn-outline-primary">Projetar cenário</button></div>
+            </form>
+        </x-tools.form-panel>
+    @endisset
+    @isset($projectionScenarios)
+        <x-tools.result-panel class="mt-4" title="Comparação de capital de giro">
+            @foreach($projectionScenarios as $scenario)<h3 class="h5 mt-3">{{ $scenario['name'] }}</h3><div class="row g-3">@foreach($scenario['result']->summary as $item)<div class="col-12 col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" /></div>@endforeach</div>@endforeach
+        </x-tools.result-panel>
     @endisset
 </x-tools.page>
 @endsection

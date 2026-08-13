@@ -60,7 +60,6 @@ return [
             'ignore_exceptions' => false,
         ],
 
-
         'e2e' => [
             'driver' => 'single',
             'path' => env('E2E_LOG_PATH', storage_path('app/e2e/logs/e2e.jsonl')),

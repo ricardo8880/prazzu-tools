@@ -16,9 +16,15 @@ final readonly class ConvertApiAction implements ToolApiAction
 
     public function __construct(private ConvertUploadedXml $action) {}
 
-    public function name(): string { return 'convert'; }
+    public function name(): string
+    {
+        return 'convert';
+    }
 
-    protected function requestClass(): string { return ConvertFiscalXmlRequest::class; }
+    protected function requestClass(): string
+    {
+        return ConvertFiscalXmlRequest::class;
+    }
 
     public function execute(array $input, ToolExecutionContext $context): mixed
     {

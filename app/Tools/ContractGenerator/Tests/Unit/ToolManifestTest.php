@@ -15,12 +15,12 @@ final class ToolManifestTest extends TestCase
 {
     public function test_manifest_declares_contract_generator_capabilities(): void
     {
-        $manifest = (new Tool())->manifest();
+        $manifest = (new Tool)->manifest();
 
         self::assertSame('gerador-de-contratos', $manifest->slug);
         self::assertSame(ToolCategory::Generators, $manifest->category);
         self::assertSame(ToolStatus::Beta, $manifest->status);
-        self::assertSame('0.5.0', $manifest->version);
+        self::assertSame('0.6.0', $manifest->version);
         self::assertCount(4, $manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertCount(6, $manifest->featuresFor(ToolFeatureTier::Plus));
         self::assertTrue($manifest->supportsHistory);

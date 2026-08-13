@@ -1,4 +1,5 @@
-<x-tools.page :tool="app(\App\Tools\FiscalXmlConverter\Tool::class)->manifest()">
+@php($tool = app(\App\Tools\FiscalXmlConverter\Tool::class)->manifest())
+<x-tools.page :title="$tool->name" :description="$tool->description" :icon="$tool->icon" :slug="$tool->slug" badge="Prazzu Plus" tone="green">
     <h1 class="h3 mb-4">Histórico do Conversor Fiscal de XML</h1>
     @if(session('history_message'))<div class="alert alert-success">{{ session('history_message') }}</div>@endif
     <div class="card"><div class="card-body">

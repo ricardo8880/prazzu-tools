@@ -78,6 +78,7 @@ final class ToolResultExportFactory
                 (string) ($item['description'] ?? ''),
             ];
         }
+
         return $rows;
     }
 

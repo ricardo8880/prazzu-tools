@@ -52,3 +52,8 @@ Regras normativas continuam sujeitas à revisão profissional e atualização pe
 ## Lote 6 — acréscimos normativos e estimativa
 
 Multa diária, limite de multa e adicional do mês do pagamento passaram a ser fornecidos por `LateDasRule`. A Selic acumulada continua sendo uma entrada explícita, pois depende do período analisado. O resultado é identificado como estimativa e não substitui a guia oficial do Simples Nacional.
+
+## Prazzu Plus — saneamento de monetização
+
+Exportação em planilha (`spreadsheet_export`) é Plus; atualização do DAS e PDF permanecem Essenciais.
+A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.

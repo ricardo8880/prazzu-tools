@@ -13,12 +13,12 @@
             <div class="row g-3">
                 <div class="col-12 col-md-6">
                     <label class="form-label" for="current_annual_revenue">Faturamento anual atual</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input data-testid="field-current-revenue" class="form-control @error('current_annual_revenue') is-invalid @enderror" id="current_annual_revenue" name="current_annual_revenue" value="{{ old('current_annual_revenue', '72.000,00') }}" inputmode="decimal" required></div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input data-testid="field-current-revenue" class="form-control @error('current_annual_revenue') is-invalid @enderror" id="current_annual_revenue" name="current_annual_revenue" value="{{ old('current_annual_revenue') }}" placeholder="Ex.: 68.000,00" inputmode="decimal" required></div>
                     <div class="form-text">Use a receita bruta anual acumulada/estimada do cenário atual.</div>
                 </div>
                 <div class="col-12 col-md-6">
                     <label class="form-label" for="projected_annual_revenue">Faturamento anual projetado</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input data-testid="field-projected-revenue" class="form-control @error('projected_annual_revenue') is-invalid @enderror" id="projected_annual_revenue" name="projected_annual_revenue" value="{{ old('projected_annual_revenue', '96.000,00') }}" inputmode="decimal" required></div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input data-testid="field-projected-revenue" class="form-control @error('projected_annual_revenue') is-invalid @enderror" id="projected_annual_revenue" name="projected_annual_revenue" value="{{ old('projected_annual_revenue') }}" placeholder="Ex.: 92.000,00" inputmode="decimal" required></div>
                     <div class="form-text">Informe quanto espera faturar no ano completo.</div>
                 </div>
             </div>
@@ -29,33 +29,33 @@
             <div class="row g-3">
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="me_effective_tax_rate">Alíquota efetiva estimada da ME</label>
-                    <div class="input-group"><input class="form-control" id="me_effective_tax_rate" name="me_effective_tax_rate" value="{{ old('me_effective_tax_rate', '6') }}" inputmode="decimal"><span class="input-group-text">%</span></div>
+                    <div class="input-group"><input class="form-control" id="me_effective_tax_rate" name="me_effective_tax_rate" value="{{ old('me_effective_tax_rate') }}" placeholder="Ex.: 7,50" inputmode="decimal"><span class="input-group-text">%</span></div>
                     <div class="form-text">Informe a alíquota efetiva estimada para o seu caso. Não inferimos anexo/CNAE.</div>
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="monthly_accounting_cost">Custo contábil mensal</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_accounting_cost" name="monthly_accounting_cost" value="{{ old('monthly_accounting_cost', '500,00') }}" inputmode="decimal"></div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_accounting_cost" name="monthly_accounting_cost" value="{{ old('monthly_accounting_cost') }}" placeholder="Ex.: 650,00" inputmode="decimal"></div>
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="monthly_other_cost">Outros custos empresariais mensais</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_other_cost" name="monthly_other_cost" value="{{ old('monthly_other_cost', '250,00') }}" inputmode="decimal"></div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_other_cost" name="monthly_other_cost" value="{{ old('monthly_other_cost') }}" placeholder="Ex.: 300,00" inputmode="decimal"></div>
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="monthly_mei_cost">Custo mensal atual do MEI</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_mei_cost" name="monthly_mei_cost" value="{{ old('monthly_mei_cost', '0') }}" inputmode="decimal"></div>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_mei_cost" name="monthly_mei_cost" value="{{ old('monthly_mei_cost') }}" placeholder="Ex.: 80,00" inputmode="decimal"></div>
                     <div class="form-text">Informe DAS e outros custos mensais que deseja usar como referência de comparação.</div>
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="annual_growth_rate">Crescimento anual projetado</label>
-                    <div class="input-group"><input class="form-control" id="annual_growth_rate" name="annual_growth_rate" value="{{ old('annual_growth_rate', '10') }}" inputmode="decimal"><span class="input-group-text">%</span></div>
+                    <div class="input-group"><input class="form-control" id="annual_growth_rate" name="annual_growth_rate" value="{{ old('annual_growth_rate') }}" placeholder="Ex.: 12" inputmode="decimal"><span class="input-group-text">%</span></div>
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="projection_years">Anos de projeção</label>
-                    <input class="form-control" id="projection_years" name="projection_years" type="number" min="1" max="10" value="{{ old('projection_years', 3) }}">
+                    <input class="form-control" id="projection_years" name="projection_years" type="number" min="1" max="10" value="{{ old('projection_years') }}" placeholder="Ex.: 2">
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="target_fixed_cost_burden">Meta de peso adicional da migração</label>
-                    <div class="input-group"><input class="form-control" id="target_fixed_cost_burden" name="target_fixed_cost_burden" value="{{ old('target_fixed_cost_burden', '10') }}" inputmode="decimal"><span class="input-group-text">%</span></div>
+                    <div class="input-group"><input class="form-control" id="target_fixed_cost_burden" name="target_fixed_cost_burden" value="{{ old('target_fixed_cost_burden') }}" placeholder="Ex.: 8" inputmode="decimal"><span class="input-group-text">%</span></div>
                     <div class="form-text">Usada para encontrar o faturamento em que o custo adicional estimado da ME, comparado ao custo atual do MEI informado, cai para essa parcela da receita.</div>
                 </div>
             </div>

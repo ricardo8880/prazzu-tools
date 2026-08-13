@@ -36,10 +36,9 @@ final class BlogPost extends Model
         'should_index',
     ];
 
-
     protected static function booted(): void
     {
-        static::creating(static function (BlogPost $post): void {
+        self::creating(static function (BlogPost $post): void {
             if (! is_string($post->vertical_slug) || trim($post->vertical_slug) === '') {
                 $defaultVertical = config('verticals.default');
                 $post->vertical_slug = is_string($defaultVertical) && trim($defaultVertical) !== ''
@@ -50,7 +49,7 @@ final class BlogPost extends Model
 
         // Do not depend on database-specific FK cascade behavior in tests or
         // installations that were created before the pivot constraint existed.
-        static::deleting(static function (BlogPost $post): void {
+        self::deleting(static function (BlogPost $post): void {
             DB::table('blog_post_tool')
                 ->where('blog_post_id', $post->getKey())
                 ->delete();
