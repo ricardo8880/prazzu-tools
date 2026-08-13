@@ -9,6 +9,7 @@ use App\Core\Acquisition\Domain\Data\AcquisitionContext;
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
+use App\Core\Tools\Favorites\Services\UserToolFavorites;
 use App\Core\Tools\History\Application\Queries\UserToolContinuityQuery;
 use App\Core\Tools\ToolCatalog;
 use App\Core\Verticals\Application\VerticalContext;
@@ -27,6 +28,7 @@ final class HomeController extends Controller
         AcquisitionContextSession $contextSession,
         PlatformAnalytics $analytics,
         UserToolContinuityQuery $continuity,
+        UserToolFavorites $toolFavorites,
         ToolCatalog $toolCatalog,
         VerticalContext $verticalContext,
     ): View|RedirectResponse {
@@ -92,6 +94,26 @@ final class HomeController extends Controller
                 'url' => route($tool['route_name']),
             ])->values()
             : collect();
+
+        // Catálogo enxuto usado apenas pela busca inteligente da Home. Mantemos
+        // os dados no próprio HTML para a abertura do painel ser instantânea e
+        // continuar funcionando sem uma chamada extra à API.
+        $payload['searchToolCatalog'] = $toolCatalog->all()->map(static fn (array $tool): array => [
+            'slug' => $tool['slug'],
+            'name' => $tool['name'],
+            'description' => $tool['description'],
+            'icon' => $tool['icon'],
+            'category' => $tool['category'],
+            'category_name' => $tool['category_name'],
+            'keywords' => $tool['keywords'],
+            'url' => route($tool['route_name']),
+        ])->values();
+
+        $payload['favoriteToolSlugs'] = $request->user() === null
+            ? collect()
+            : $toolFavorites->forUser((int) $request->user()->getAuthIdentifier())
+                ->pluck('slug')
+                ->values();
 
         return view('welcome', $payload);
     }

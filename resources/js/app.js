@@ -439,6 +439,411 @@ function renderRecentToolsOnHome() {
 rememberCurrentTool();
 renderRecentToolsOnHome();
 
+// Busca inteligente da Home. O campo continua sendo um formulário GET normal,
+// mas ganha uma camada de descoberta instantânea com favoritas, recentes,
+// categorias, palavras-chave e navegação por teclado.
+function initializeHomeSmartSearch() {
+    const root = document.querySelector('[data-home-smart-search]');
+    const input = root?.querySelector('[data-home-smart-search-input]');
+    const panel = root?.querySelector('[data-home-smart-search-panel]');
+    const content = root?.querySelector('[data-home-smart-search-content]');
+    const catalogScript = root?.querySelector('[data-home-smart-search-catalog]');
+
+    if (!(root instanceof HTMLElement)
+        || !(input instanceof HTMLInputElement)
+        || !(panel instanceof HTMLElement)
+        || !(content instanceof HTMLElement)
+        || !(catalogScript instanceof HTMLScriptElement)) return;
+
+    let payload;
+    try {
+        payload = JSON.parse(catalogScript.textContent || '{}');
+    } catch {
+        return;
+    }
+
+    const tools = Array.isArray(payload?.tools)
+        ? payload.tools.filter((tool) => tool && typeof tool.slug === 'string' && typeof tool.name === 'string' && typeof tool.url === 'string')
+        : [];
+    const categories = Array.isArray(payload?.categories)
+        ? payload.categories.filter((category) => category && typeof category.slug === 'string' && typeof category.name === 'string' && typeof category.url === 'string')
+        : [];
+    const bySlug = new Map(tools.map((tool) => [tool.slug, tool]));
+    const favoriteSlugs = new Set(Array.isArray(payload?.favoriteSlugs) ? payload.favoriteSlugs.filter((slug) => bySlug.has(slug)) : []);
+    const serverRecentSlugs = Array.isArray(payload?.recentSlugs) ? payload.recentSlugs.filter((slug) => bySlug.has(slug)) : [];
+    const sessionRecentSlugs = readRecentToolSlugs().filter((slug) => bySlug.has(slug));
+    const recentSlugs = [...new Set([...serverRecentSlugs, ...sessionRecentSlugs])];
+    const recentSet = new Set(recentSlugs);
+    const featuredSlugs = Array.isArray(payload?.featuredSlugs) ? payload.featuredSlugs.filter((slug) => bySlug.has(slug)) : [];
+    const featuredSet = new Set(featuredSlugs);
+    const allToolsUrl = typeof payload?.allToolsUrl === 'string' ? payload.allToolsUrl : root.querySelector('form')?.action;
+
+    if (tools.length === 0) return;
+
+    let activeIndex = -1;
+    let hideTimer = null;
+
+    const normalize = (value) => String(value ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+
+    const compact = (value, limit = 92) => {
+        const text = String(value ?? '').replace(/\s+/g, ' ').trim();
+        return text.length > limit ? `${text.slice(0, limit - 3).trimEnd()}...` : text;
+    };
+
+    const destinationWithSource = (url, source, query = null) => {
+        try {
+            const destination = new URL(url, window.location.href);
+            if (source) destination.searchParams.set('source', source);
+            if (typeof query === 'string' && query.trim() !== '') destination.searchParams.set('q', query.trim());
+            return destination.toString();
+        } catch {
+            return url;
+        }
+    };
+
+    const node = (tag, className = null, text = null) => {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (text !== null) element.textContent = text;
+        return element;
+    };
+
+    const iconNode = (icon, className = 'prazzu-smart-search__option-icon') => {
+        const holder = node('span', className);
+        const iconElement = node('i', `bi ${icon || 'bi-stars'}`);
+        iconElement.setAttribute('aria-hidden', 'true');
+        holder.append(iconElement);
+        return holder;
+    };
+
+    const optionElements = () => [...content.querySelectorAll('[data-home-search-option]')]
+        .filter((option) => option instanceof HTMLAnchorElement);
+
+    const setActiveOption = (index, scroll = true) => {
+        const options = optionElements();
+        if (options.length === 0) {
+            activeIndex = -1;
+            return;
+        }
+
+        activeIndex = ((index % options.length) + options.length) % options.length;
+        options.forEach((option, optionIndex) => {
+            const active = optionIndex === activeIndex;
+            option.classList.toggle('is-active', active);
+            option.setAttribute('aria-selected', String(active));
+        });
+
+        if (scroll) options[activeIndex]?.scrollIntoView({block: 'nearest'});
+    };
+
+    const decorateOption = (link) => {
+        link.dataset.homeSearchOption = 'true';
+        link.setAttribute('role', 'option');
+        link.setAttribute('aria-selected', 'false');
+        link.addEventListener('mousemove', () => {
+            const index = optionElements().indexOf(link);
+            if (index >= 0 && index !== activeIndex) setActiveOption(index, false);
+        });
+        return link;
+    };
+
+    const toolReason = (slug) => {
+        if (favoriteSlugs.has(slug)) return {label: 'Favorita', icon: 'bi-star-fill'};
+        if (recentSet.has(slug)) return {label: 'Recente', icon: 'bi-clock-history'};
+        if (featuredSet.has(slug)) return {label: 'Sugestão', icon: 'bi-stars'};
+        return null;
+    };
+
+    const toolOption = (tool, reason = null) => {
+        const link = decorateOption(node('a', 'prazzu-smart-search__option'));
+        link.href = destinationWithSource(tool.url, 'home_smart_search');
+        link.setAttribute('aria-label', `Abrir ${tool.name}`);
+        link.append(iconNode(tool.icon));
+
+        const body = node('span', 'prazzu-smart-search__option-body');
+        body.append(node('strong', null, tool.name));
+        body.append(node('small', null, compact(tool.description)));
+        link.append(body);
+
+        const meta = node('span', 'prazzu-smart-search__option-meta');
+        if (reason?.label) {
+            const badge = node('span', 'prazzu-smart-search__reason', reason.label);
+            if (reason.icon) {
+                const reasonIcon = node('i', `bi ${reason.icon}`);
+                reasonIcon.setAttribute('aria-hidden', 'true');
+                badge.prepend(reasonIcon);
+            }
+            meta.append(badge);
+        } else if (tool.category_name) {
+            meta.append(node('span', 'prazzu-smart-search__category-label', tool.category_name));
+        }
+        const arrow = node('i', 'bi bi-arrow-up-right prazzu-smart-search__option-arrow');
+        arrow.setAttribute('aria-hidden', 'true');
+        meta.append(arrow);
+        link.append(meta);
+
+        return link;
+    };
+
+    const categoryOption = (category) => {
+        const link = decorateOption(node('a', 'prazzu-smart-search__category'));
+        link.href = destinationWithSource(category.url, 'home_smart_search_category');
+        link.append(iconNode(category.icon, 'prazzu-smart-search__category-icon'));
+
+        const body = node('span');
+        body.append(node('strong', null, category.name));
+        const count = Number(category.count) || 0;
+        body.append(node('small', null, `${count} ${count === 1 ? 'ferramenta' : 'ferramentas'}`));
+        link.append(body);
+
+        const arrow = node('i', 'bi bi-chevron-right');
+        arrow.setAttribute('aria-hidden', 'true');
+        link.append(arrow);
+        return link;
+    };
+
+    const section = (title, subtitle = null) => {
+        const wrapper = node('section', 'prazzu-smart-search__section');
+        const heading = node('div', 'prazzu-smart-search__section-heading');
+        heading.append(node('strong', null, title));
+        if (subtitle) heading.append(node('small', null, subtitle));
+        wrapper.append(heading);
+        return wrapper;
+    };
+
+    const appendAllResultsAction = (query = '') => {
+        if (!allToolsUrl) return;
+        const link = decorateOption(node('a', 'prazzu-smart-search__all-results'));
+        link.href = destinationWithSource(allToolsUrl, 'home_smart_search_all', query);
+        link.append(iconNode(query ? 'bi-search' : 'bi-grid', 'prazzu-smart-search__all-results-icon'));
+
+        const label = node('span');
+        label.append(node('strong', null, query ? `Ver todos os resultados para “${compact(query, 38)}”` : 'Ver todas as ferramentas'));
+        label.append(node('small', null, query ? 'Abrir a busca completa com este termo' : 'Explorar o catálogo completo do Prazzu'));
+        link.append(label);
+
+        const arrow = node('i', 'bi bi-arrow-right');
+        arrow.setAttribute('aria-hidden', 'true');
+        link.append(arrow);
+        content.append(link);
+    };
+
+    const personalizedTools = () => {
+        const ordered = [];
+        const seen = new Set();
+        const add = (slug) => {
+            const tool = bySlug.get(slug);
+            if (!tool || seen.has(slug)) return;
+            seen.add(slug);
+            ordered.push(tool);
+        };
+
+        favoriteSlugs.forEach(add);
+        recentSlugs.forEach(add);
+        featuredSlugs.forEach(add);
+        tools.forEach((tool) => add(tool.slug));
+
+        return ordered.slice(0, 5);
+    };
+
+    const renderDiscovery = () => {
+        activeIndex = -1;
+        content.replaceChildren();
+
+        const intro = node('div', 'prazzu-smart-search__intro');
+        intro.append(iconNode('bi-stars', 'prazzu-smart-search__intro-icon'));
+        const introCopy = node('span');
+        introCopy.append(node('strong', null, 'Busca inteligente'));
+        introCopy.append(node('small', null, favoriteSlugs.size || recentSlugs.length
+            ? 'Atalhos escolhidos com base nas suas favoritas e no que você usou recentemente.'
+            : 'Escolha um atalho ou descreva o que você precisa fazer.'));
+        intro.append(introCopy);
+        content.append(intro);
+
+        const toolsSection = section('Para você', 'Acesso rápido');
+        const toolList = node('div', 'prazzu-smart-search__options');
+        personalizedTools().forEach((tool) => toolList.append(toolOption(tool, toolReason(tool.slug))));
+        toolsSection.append(toolList);
+        content.append(toolsSection);
+
+        const visibleCategories = categories.filter((category) => category.slug !== 'todas');
+        if (visibleCategories.length > 0) {
+            const categoriesSection = section('Explorar por categoria', 'Ir direto ao tipo de tarefa');
+            const categoryGrid = node('div', 'prazzu-smart-search__categories');
+            visibleCategories.forEach((category) => categoryGrid.append(categoryOption(category)));
+            categoriesSection.append(categoryGrid);
+            content.append(categoriesSection);
+        }
+
+        appendAllResultsAction();
+    };
+
+    const scoreTool = (tool, rawQuery) => {
+        const query = normalize(rawQuery);
+        if (!query) return 0;
+
+        const terms = query.split(/\s+/).filter(Boolean);
+        const name = normalize(tool.name);
+        const description = normalize(tool.description);
+        const category = normalize(`${tool.category ?? ''} ${tool.category_name ?? ''}`);
+        const keywords = normalize(Array.isArray(tool.keywords) ? tool.keywords.join(' ') : tool.keywords);
+        const slug = normalize(tool.slug);
+        const haystack = `${name} ${keywords} ${category} ${description} ${slug}`;
+
+        if (!terms.every((term) => haystack.includes(term))) return -1;
+
+        let score = 0;
+        if (name === query) score += 520;
+        if (name.startsWith(query)) score += 300;
+        if (name.includes(query)) score += 190;
+        if (keywords.includes(query)) score += 145;
+        if (category.includes(query)) score += 95;
+        if (description.includes(query)) score += 55;
+        if (slug.includes(query)) score += 45;
+
+        terms.forEach((term) => {
+            if (name.startsWith(term)) score += 75;
+            else if (name.includes(term)) score += 50;
+            if (keywords.includes(term)) score += 32;
+            if (category.includes(term)) score += 18;
+            if (description.includes(term)) score += 8;
+        });
+
+        if (favoriteSlugs.has(tool.slug)) score += 28;
+        if (recentSet.has(tool.slug)) score += 18;
+        if (featuredSet.has(tool.slug)) score += 8;
+
+        return score;
+    };
+
+    const renderResults = (query) => {
+        activeIndex = -1;
+        content.replaceChildren();
+
+        const matches = tools
+            .map((tool) => ({tool, score: scoreTool(tool, query)}))
+            .filter((entry) => entry.score >= 0)
+            .sort((a, b) => b.score - a.score || a.tool.name.localeCompare(b.tool.name, 'pt-BR'));
+
+        const resultsSection = section(
+            matches.length ? 'Resultados inteligentes' : 'Nenhuma correspondência exata',
+            matches.length ? `${matches.length} ${matches.length === 1 ? 'ferramenta encontrada' : 'ferramentas encontradas'}` : 'Tente outra palavra ou use a busca completa',
+        );
+
+        if (matches.length > 0) {
+            const list = node('div', 'prazzu-smart-search__options');
+            matches.slice(0, 7).forEach(({tool}) => list.append(toolOption(tool, toolReason(tool.slug))));
+            resultsSection.append(list);
+        } else {
+            const empty = node('div', 'prazzu-smart-search__empty');
+            empty.append(iconNode('bi-lightbulb', 'prazzu-smart-search__empty-icon'));
+            const copy = node('span');
+            copy.append(node('strong', null, `Não encontrei “${compact(query, 44)}” no catálogo rápido.`));
+            copy.append(node('small', null, 'A busca completa ainda pode encontrar conteúdo relacionado e novas ferramentas.'));
+            empty.append(copy);
+            resultsSection.append(empty);
+        }
+
+        content.append(resultsSection);
+        appendAllResultsAction(query);
+    };
+
+    const render = () => {
+        const query = input.value.trim();
+        if (query) renderResults(query);
+        else renderDiscovery();
+    };
+
+    const openPanel = () => {
+        if (hideTimer) window.clearTimeout(hideTimer);
+        render();
+        panel.hidden = false;
+        input.setAttribute('aria-expanded', 'true');
+        window.requestAnimationFrame(() => root.classList.add('is-open'));
+    };
+
+    const closePanel = () => {
+        root.classList.remove('is-open');
+        input.setAttribute('aria-expanded', 'false');
+        activeIndex = -1;
+        optionElements().forEach((option) => {
+            option.classList.remove('is-active');
+            option.setAttribute('aria-selected', 'false');
+        });
+
+        if (hideTimer) window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(() => {
+            if (!root.classList.contains('is-open')) panel.hidden = true;
+        }, 150);
+    };
+
+    input.addEventListener('focus', openPanel);
+    input.addEventListener('click', () => {
+        if (!root.classList.contains('is-open')) openPanel();
+    });
+    input.addEventListener('input', () => {
+        if (!root.classList.contains('is-open')) openPanel();
+        else render();
+    });
+
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closePanel();
+            input.blur();
+            return;
+        }
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (!root.classList.contains('is-open')) openPanel();
+            const options = optionElements();
+            if (options.length === 0) return;
+
+            const nextIndex = activeIndex < 0
+                ? (event.key === 'ArrowDown' ? 0 : options.length - 1)
+                : activeIndex + (event.key === 'ArrowDown' ? 1 : -1);
+            setActiveOption(nextIndex);
+            return;
+        }
+
+        if (event.key === 'Enter' && activeIndex >= 0) {
+            const option = optionElements()[activeIndex];
+            if (option) {
+                event.preventDefault();
+                option.click();
+            }
+        }
+    });
+
+    root.addEventListener('focusout', () => {
+        window.setTimeout(() => {
+            if (!root.contains(document.activeElement)) closePanel();
+        }, 0);
+    });
+
+    document.addEventListener('pointerdown', (event) => {
+        if (event.target instanceof Node && !root.contains(event.target)) closePanel();
+    });
+
+    document.addEventListener('keydown', (event) => {
+        const shortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+        if (!shortcut) return;
+
+        event.preventDefault();
+        input.focus();
+        input.select();
+        openPanel();
+    });
+}
+
+initializeHomeSmartSearch();
+
 // Exemplos de preenchimento devem orientar sem virar dados enviados ao cálculo.
 // Atua somente dentro de páginas de ferramentas e apenas quando a view não definiu
 // um placeholder mais específico.

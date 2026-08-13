@@ -15,22 +15,60 @@
 
                     <p class="prazzu-hero__description mb-4">{{ $home['hero']['description'] }}</p>
 
-                    <form class="prazzu-search" action="{{ route('tools.index') }}" method="get" role="search">
-                        <label class="visually-hidden" for="home-tool-search">Buscar ferramentas</label>
-                        <i class="bi bi-search" aria-hidden="true"></i>
-                        <input type="hidden" name="source" value="home_search">
-                        <input
-                            id="home-tool-search"
-                            class="form-control"
-                            type="search"
-                            name="q"
-                            placeholder="{{ $home['hero']['search_placeholder'] }}"
-                            autocomplete="off"
-                        >
-                        <button class="btn" type="submit" aria-label="Buscar ferramentas">
+                    <div class="prazzu-smart-search" data-home-smart-search>
+                        <form class="prazzu-search" action="{{ route('tools.index') }}" method="get" role="search">
+                            <label class="visually-hidden" for="home-tool-search">Buscar ferramentas</label>
                             <i class="bi bi-search" aria-hidden="true"></i>
-                        </button>
-                    </form>
+                            <input type="hidden" name="source" value="home_search">
+                            <input
+                                id="home-tool-search"
+                                class="form-control"
+                                type="search"
+                                name="q"
+                                placeholder="{{ $home['hero']['search_placeholder'] }}"
+                                autocomplete="off"
+                                spellcheck="false"
+                                aria-autocomplete="list"
+                                aria-controls="home-smart-search-panel"
+                                aria-expanded="false"
+                                data-home-smart-search-input
+                            >
+                            <button class="btn" type="submit" aria-label="Buscar ferramentas">
+                                <i class="bi bi-search" aria-hidden="true"></i>
+                            </button>
+                        </form>
+
+                        <div
+                            id="home-smart-search-panel"
+                            class="prazzu-smart-search__panel"
+                            data-home-smart-search-panel
+                            aria-label="Sugestões de ferramentas"
+                            hidden
+                        >
+                            <div class="prazzu-smart-search__content" data-home-smart-search-content role="listbox"></div>
+                            <div class="prazzu-smart-search__footer" aria-hidden="true">
+                                <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
+                                <span><kbd>Enter</kbd> abrir</span>
+                                <span><kbd>Esc</kbd> fechar</span>
+                                <span class="prazzu-smart-search__shortcut"><kbd>Ctrl</kbd><kbd>K</kbd> buscar</span>
+                            </div>
+                        </div>
+
+                        <script type="application/json" data-home-smart-search-catalog nonce="{{ $cspNonce ?? '' }}">{!! json_encode([
+                            'tools' => $searchToolCatalog->values()->all(),
+                            'categories' => $categories->map(static fn (array $category): array => [
+                                'slug' => $category['slug'],
+                                'name' => $category['name'],
+                                'icon' => $category['icon'],
+                                'count' => $category['count'],
+                                'url' => $category['url'],
+                            ])->values()->all(),
+                            'favoriteSlugs' => $favoriteToolSlugs->values()->all(),
+                            'recentSlugs' => $continueTools->pluck('tool_slug')->values()->all(),
+                            'featuredSlugs' => $featuredTools->pluck('slug')->values()->all(),
+                            'allToolsUrl' => route('tools.index'),
+                        ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
+                    </div>
 
                     <ul class="prazzu-benefits list-unstyled mb-0 mt-4" aria-label="Vantagens da plataforma">
                         @foreach ($home['hero']['benefits'] as $benefit)
