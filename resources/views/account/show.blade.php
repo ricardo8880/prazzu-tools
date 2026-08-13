@@ -36,8 +36,8 @@
                             </div>
                             <div class="col-12 col-sm-4">
                                 <div class="border rounded-3 p-3 h-100">
-                                    <div class="small text-body-secondary mb-1">Favoritos</div>
-                                    <div class="fs-3 fw-semibold">{{ number_format($favoriteCount, 0, ',', '.') }}</div>
+                                    <div class="small text-body-secondary mb-1">Ferramentas favoritas</div>
+                                    <div class="fs-3 fw-semibold">{{ number_format($toolFavoriteCount, 0, ',', '.') }}</div>
                                 </div>
                             </div>
                             <div class="col-12 col-sm-4">
@@ -118,47 +118,54 @@
                     </section>
                 @endif
 
-                @if($favoriteRuns->isNotEmpty())
-                    <section class="mb-4" aria-labelledby="favorites-title">
-                        <div class="mb-3">
-                            <h2 class="h4 mb-1" id="favorites-title">Seus favoritos</h2>
-                            <p class="text-body-secondary mb-0">Resultados que você marcou para encontrar novamente com mais facilidade.</p>
+                <section class="mb-4" aria-labelledby="favorite-tools-title">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 mb-3">
+                        <div>
+                            <h2 class="h4 mb-1" id="favorite-tools-title">Ferramentas favoritas</h2>
+                            <p class="text-body-secondary mb-0">Marque as ferramentas que você usa mais para voltar a elas sem procurar no catálogo.</p>
                         </div>
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.index') }}">Explorar ferramentas</a>
+                    </div>
 
+                    @if($favoriteTools->isNotEmpty())
                         <div class="row g-3">
-                            @foreach($favoriteRuns as $run)
+                            @foreach($favoriteTools as $tool)
                                 <div class="col-12 col-md-6 col-xl-4">
                                     <article class="card border h-100">
-                                        <div class="card-body d-flex flex-column">
-                                            <div class="d-flex align-items-start gap-3 mb-3">
-                                                <i class="bi bi-star-fill text-warning fs-5" aria-hidden="true"></i>
+                                        <div class="card-body d-flex flex-column gap-3">
+                                            <div class="d-flex align-items-start gap-3">
+                                                <i class="bi {{ $tool['icon'] }} fs-5" aria-hidden="true"></i>
                                                 <div>
-                                                    <h3 class="h6 mb-1">{{ $run['tool_name'] }}</h3>
-                                                    <div class="small text-body-secondary">
-                                                        Salvo em {{ $run['finished_at']->format('d/m/Y \à\s H:i') }}
-                                                    </div>
+                                                    <h3 class="h6 mb-1">{{ $tool['name'] }}</h3>
+                                                    <p class="small text-body-secondary mb-0">{{ \Illuminate\Support\Str::limit($tool['description'], 110) }}</p>
                                                 </div>
                                             </div>
-                                            <a class="btn btn-sm btn-outline-primary mt-auto align-self-start" href="{{ url()->query($run['open_url'], ['source' => 'account_favorite']) }}">
-                                                Abrir favorito
-                                            </a>
+                                            <div class="d-flex flex-wrap gap-2 mt-auto">
+                                                <a class="btn btn-sm btn-primary" href="{{ url()->query($tool['url'], ['source' => 'account_tool_favorite']) }}">Abrir ferramenta</a>
+                                                <form method="POST" action="{{ route('account.tools.favorite', ['tool' => $tool['slug']]) }}">
+                                                    @csrf
+                                                    <button class="btn btn-sm btn-outline-secondary" type="submit">
+                                                        <i class="bi bi-star-fill me-1" aria-hidden="true"></i>Desfavoritar
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </article>
                                 </div>
                             @endforeach
                         </div>
-                    </section>
-                @elseif($historyCount > 0)
-                    <section class="card border mb-4" aria-labelledby="favorites-title">
-                        <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                            <div>
-                                <h2 class="h5 mb-1" id="favorites-title">Seus favoritos</h2>
-                                <p class="text-body-secondary mb-0">Você ainda não marcou resultados como favoritos. Use a estrela nos históricos que quiser encontrar mais rápido depois.</p>
+                    @else
+                        <div class="card border">
+                            <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                <div>
+                                    <h3 class="h5 mb-1">Nenhuma ferramenta favorita ainda</h3>
+                                    <p class="text-body-secondary mb-0">Ao abrir uma ferramenta, use o botão <strong>Favoritar</strong> no topo dela. Ela aparecerá aqui.</p>
+                                </div>
+                                <i class="bi bi-star fs-3 text-body-secondary flex-shrink-0" aria-hidden="true"></i>
                             </div>
-                            <i class="bi bi-star fs-3 text-body-secondary flex-shrink-0" aria-hidden="true"></i>
                         </div>
-                    </section>
-                @endif
+                    @endif
+                </section>
 
                 @if($historyTools->isNotEmpty())
                     <section class="card border mb-4" aria-labelledby="history-title">

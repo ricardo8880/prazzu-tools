@@ -225,3 +225,9 @@ As 43 ferramentas possuem a mesma necessidade concreta de SEO técnico e comunic
 A solução usa somente metadados já oficiais do `ToolCatalog` (nome, descrição, palavras-chave, versão, categoria, recursos e rota). Nenhuma ferramenta recebeu texto normativo inventado, data de atualização fictícia, nota, quantidade de usuários ou outra prova social não auditável. As sete telas legadas que já possuem orientação específica preservam o conteúdo próprio e reutilizam apenas a marcação estruturada compartilhada.
 
 **Sem novo candidato ao Core:** canonical, metadados por ferramenta, `WebApplication`/breadcrumb estruturados e orientação mínima de confiança já são necessidades repetidas em todo o catálogo e foram implementados dentro do Core SEO existente, sem criar registry paralela nem mover regras de domínio.
+
+## 2026-08-13 — Favoritos de ferramentas
+
+**Capacidade compartilhada materializada:** favoritos da própria ferramenta, distintos de favoritos de resultados (`ToolRunFavorite`). A necessidade passou a ser concreta porque o hub `Meu Prazzu` já expunha favoritos, mas o usuário não tinha uma ação global para marcar ferramentas que usa com frequência.
+
+A implementação fica no Core (`UserToolFavorites`), usa uma única tabela global por usuário + slug e é oferecida pelo wrapper compartilhado `<x-tools.page>`, sem duplicação nos módulos e sem depender do Plus. Favoritos de resultados permanecem separados porque representam execuções persistidas, enquanto favoritos de ferramentas representam apenas atalhos de navegação. Reavaliar unificação de apresentação apenas se surgir uma terceira superfície concreta que consuma ambos os tipos juntos.

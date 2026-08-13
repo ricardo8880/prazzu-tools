@@ -22,6 +22,9 @@
     );
 
     $historyUrl = null;
+    $toolIsFavorite = auth()->check()
+        ? app(\App\Core\Tools\Favorites\Services\UserToolFavorites::class)->isFavorite($slug, (int) auth()->id())
+        : false;
     $toolRouteName = is_array($catalogTool) ? ($catalogTool['route_name'] ?? null) : null;
     if (($catalogTool['supports_history'] ?? false) && is_string($toolRouteName) && str_ends_with($toolRouteName, '.index')) {
         $historyRouteName = substr($toolRouteName, 0, -strlen('.index')).'.history.index';
@@ -45,10 +48,29 @@
     </nav>
 
     <x-tools.intro :icon="$icon" :tone="$tone" :title="$title" :description="$description" :badge="$badge">
-        @isset($actions)
-            <x-slot:actions>{{ $actions }}</x-slot:actions>
-        @endisset
+        @if(isset($actions) || auth()->check())
+            <x-slot:actions>
+                <div class="d-flex flex-wrap gap-2">
+                    @isset($actions)
+                        {{ $actions }}
+                    @endisset
+                    @auth
+                        <form method="POST" action="{{ route('account.tools.favorite', ['tool' => $slug]) }}">
+                            @csrf
+                            <button class="btn btn-sm {{ $toolIsFavorite ? 'btn-warning' : 'btn-outline-secondary' }}" type="submit" aria-pressed="{{ $toolIsFavorite ? 'true' : 'false' }}">
+                                <i class="bi {{ $toolIsFavorite ? 'bi-star-fill' : 'bi-star' }} me-1" aria-hidden="true"></i>
+                                {{ $toolIsFavorite ? 'Desfavoritar' : 'Favoritar' }}
+                            </button>
+                        </form>
+                    @endauth
+                </div>
+            </x-slot:actions>
+        @endif
     </x-tools.intro>
+
+    @if(session('tool_favorite_status'))
+        <div class="alert alert-success py-2" role="status">{{ session('tool_favorite_status') }}</div>
+    @endif
 
     <x-tool-feature-tiers :slug="$slug" />
 

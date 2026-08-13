@@ -30,6 +30,7 @@ use App\Http\Controllers\Analytics\TrackAcquisitionEventController;
 use App\Http\Controllers\Analytics\TrackToolEventController;
 use App\Http\Controllers\Analytics\TrackToolPresenceController;
 use App\Http\Controllers\Auth\AccountController;
+use App\Http\Controllers\Auth\ToolFavoriteController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -287,6 +288,9 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/convites/empresa/{token}/aceitar', [InvitationAcceptanceController::class, 'accept'])
         ->name('organizations.invitations.accept');
     Route::get('/minha-conta', AccountController::class)->name('account.show');
+    Route::post('/minha-conta/ferramentas/{tool}/favorito', ToolFavoriteController::class)
+        ->middleware('throttle:30,1')
+        ->name('account.tools.favorite');
     Route::get('/confirmar-email', EmailVerificationPromptController::class)->name('verification.notice');
     Route::get('/confirmar-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
