@@ -19,7 +19,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label" for="accounting_profit">Lucro contábil</label>
-                <input class="form-control" id="accounting_profit" name="accounting_profit" value="{{ old('accounting_profit') }}" required placeholder="Ex.: 60.000,00">
+                <input class="form-control" id="accounting_profit" name="accounting_profit" value="{{ old('accounting_profit') }}" required placeholder="Ex.: 60.000,00" data-e2e-value="50000,00">
             </div>
             <div class="col-md-4">
                 <label class="form-label" for="accumulated_losses">Prejuízos acumulados</label>
@@ -39,7 +39,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label" for="intended_distribution">Distribuição pretendida</label>
-                <input class="form-control" id="intended_distribution" name="intended_distribution" value="{{ old('intended_distribution') }}" required placeholder="Ex.: 45.000,00">
+                <input class="form-control" id="intended_distribution" name="intended_distribution" value="{{ old('intended_distribution') }}" required placeholder="Ex.: 45.000,00" data-e2e-value="10000,00">
             </div>
             @if($plusEnabled ?? true)
             <div class="col-12">

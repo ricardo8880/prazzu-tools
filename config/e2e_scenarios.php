@@ -623,6 +623,22 @@ $tools['custo-funcionario-clt'] = [
     ),
 ];
 
+
+$tools['calculadora-lucro-real'] = [
+    new ToolScenario(id: 'calculo-valido', title: 'Calcula Lucro Real', kind: 'valid', toolSlug: 'calculadora-lucro-real', tags: ['accounting-pains-lot-4','minimum-coverage'], steps: [['action'=>'auto_fill_form','scope_test_id'=>'tool-form-panel'],['action'=>'submit','scope_test_id'=>'tool-form-panel']], expectations: [['type'=>'visible','test_id'=>'tool-result']]),
+    new ToolScenario(id: 'entrada-invalida', title: 'Rejeita entrada inválida', kind: 'invalid', toolSlug: 'calculadora-lucro-real', tags: ['accounting-pains-lot-4','minimum-coverage'], steps: [['action'=>'auto_fill_form','scope_test_id'=>'tool-form-panel'],['action'=>'invalidate_required','scope_test_id'=>'tool-form-panel'],['action'=>'submit','scope_test_id'=>'tool-form-panel']], expectations: [['type'=>'form_invalid','test_id'=>'tool-form-panel']]),
+];
+$tools['simulador-reforma-tributaria-consumo'] = [
+    new ToolScenario(id: 'simulacao-valida', title: 'Simula transição tributária', kind: 'valid', toolSlug: 'simulador-reforma-tributaria-consumo', tags: ['accounting-pains-lot-4','minimum-coverage'], steps: [['action'=>'auto_fill_form','scope_test_id'=>'tool-form-panel'],['action'=>'submit','scope_test_id'=>'tool-form-panel']], expectations: [['type'=>'visible','test_id'=>'tool-result']]),
+    new ToolScenario(id: 'entrada-invalida', title: 'Rejeita entrada inválida', kind: 'invalid', toolSlug: 'simulador-reforma-tributaria-consumo', tags: ['accounting-pains-lot-4','minimum-coverage'], steps: [['action'=>'auto_fill_form','scope_test_id'=>'tool-form-panel'],['action'=>'invalidate_required','scope_test_id'=>'tool-form-panel'],['action'=>'submit','scope_test_id'=>'tool-form-panel']], expectations: [['type'=>'form_invalid','test_id'=>'tool-form-panel']]),
+];
+
+
+$tools['simulador-ecad-direitos-autorais'] = [
+    new ToolScenario(id: 'simulacao-valida', title: 'Simula referência ECAD', kind: 'valid', toolSlug: 'simulador-ecad-direitos-autorais', tags: ['accounting-pains-lot-5','minimum-coverage'], steps: [['action'=>'auto_fill_form','scope_test_id'=>'tool-form-panel'],['action'=>'submit','scope_test_id'=>'tool-form-panel']], expectations: [['type'=>'visible','test_id'=>'tool-result']]),
+    new ToolScenario(id: 'entrada-invalida', title: 'Rejeita entrada inválida', kind: 'invalid', toolSlug: 'simulador-ecad-direitos-autorais', tags: ['accounting-pains-lot-5','minimum-coverage'], steps: [['action'=>'auto_fill_form','scope_test_id'=>'tool-form-panel'],['action'=>'invalidate_required','scope_test_id'=>'tool-form-panel'],['action'=>'submit','scope_test_id'=>'tool-form-panel']], expectations: [['type'=>'form_invalid','test_id'=>'tool-form-panel']]),
+];
+
 ksort($tools);
 
 return [
@@ -630,7 +646,7 @@ return [
     'allowed_step_actions' => ['fill', 'select', 'check', 'uncheck', 'click', 'submit', 'auto_fill_form', 'invalidate_required'],
     'allowed_expectations' => ['visible', 'hidden', 'text', 'url', 'field_value', 'form_invalid', 'in_viewport'],
     'minimum_coverage' => [
-        'expected_tool_count' => 43,
+        'expected_tool_count' => 50,
         'required_kinds' => ['valid', 'invalid'],
     ],
     'tools' => $tools,

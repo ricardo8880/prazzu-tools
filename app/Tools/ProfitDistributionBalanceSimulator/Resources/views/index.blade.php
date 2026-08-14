@@ -11,7 +11,7 @@
             <div class="row g-3">
                 <div class="col-md-6"><label class="form-label">Faturamento do período</label><div class="input-group"><span class="input-group-text">R$</span><input class="form-control" name="annual_revenue" value="{{ old('annual_revenue') }}" required placeholder="Ex.: 260.000,00"></div></div>
                 <div class="col-md-6"><label class="form-label">Lucro contábil apurado</label><div class="input-group"><span class="input-group-text">R$</span><input class="form-control" name="accounting_profit" value="{{ old('accounting_profit') }}" required placeholder="Ex.: 78.000,00"></div><div class="form-text">Usado no Essencial e como referência quando a simulação de escrituração não estiver marcada.</div></div>
-                <div class="col-md-6"><label class="form-label">Percentual de referência sem balanço</label><div class="input-group"><input class="form-control" name="reference_margin" value="{{ old('reference_margin') }}" required placeholder="Ex.: 30"><span class="input-group-text">%</span></div></div>
+                <div class="col-md-6"><label class="form-label">Percentual de referência sem balanço</label><div class="input-group"><input class="form-control" name="reference_margin" value="{{ old('reference_margin') }}" data-e2e-value="30" required placeholder="Ex.: 30"><span class="input-group-text">%</span></div></div>
                 <div class="col-md-6"><label class="form-label">Tributos sobre a receita no período</label><div class="input-group"><span class="input-group-text">R$</span><input class="form-control" name="taxes_on_revenue" value="{{ old('taxes_on_revenue') }}" required placeholder="Ex.: 15.600,00"></div></div>
             </div>
         </x-tools.form-panel>

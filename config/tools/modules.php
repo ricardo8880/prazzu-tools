@@ -33,6 +33,13 @@ return [
         App\Tools\PisCofinsCalculator\Tool::class,
         App\Tools\IcmsStCalculator\Tool::class,
         App\Tools\InvoiceWithholdingCalculator\Tool::class,
+        \App\Tools\DigitalCertificateAnalyzer\Tool::class,
+        App\Tools\CfopAdvisor\Tool::class,
+        App\Tools\SefazFiscalValidator\Tool::class,
+        App\Tools\IcmsCalculator\Tool::class,
+        App\Tools\ActualProfitCalculator\Tool::class,
+        App\Tools\TaxReformSimulator\Tool::class,
+        App\Tools\EcadRoyaltySimulator\Tool::class,
         // <tools:fiscal>
     ],
     'labor' => [

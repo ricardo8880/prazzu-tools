@@ -120,7 +120,7 @@ A Home utiliza `release_order` do inventário executável para mostrar exatament
 
 A URL combinada de Pró-Labore e Distribuição de Lucros funciona temporariamente como ponte de compatibilidade e não deve voltar a expor um terceiro cálculo duplicado. A remoção física depende de substituição explícita que preserve a quantidade oficial vigente do catálogo e migre histórico, métricas e integrações.
 
-A consolidação multi-vertical dos Lotes 1 a 7 está concluída. O estado de referência atual possui `contabilidade` e `rh` registradas, 43 ferramentas oficiais e infraestrutura compartilhada para Home, Blog, Analytics, SEO, Admin, busca, observabilidade e E2E. Superfícies globais não podem assumir Contabilidade implicitamente; conteúdo específico deve declarar ou receber sua vertical.
+A consolidação multi-vertical dos Lotes 1 a 7 está concluída. O estado de referência atual possui `contabilidade` e `rh` registradas, 47 ferramentas oficiais e infraestrutura compartilhada para Home, Blog, Analytics, SEO, Admin, busca, observabilidade e E2E. Superfícies globais não podem assumir Contabilidade implicitamente; conteúdo específico deve declarar ou receber sua vertical.
 
 Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
 

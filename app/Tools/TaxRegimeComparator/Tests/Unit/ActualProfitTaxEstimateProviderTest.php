@@ -8,7 +8,7 @@ use App\Core\Money\Money;
 use App\Core\Money\Percentage;
 use App\Core\Taxation\Data\TaxEstimateRequest;
 use App\Tools\TaxRegimeComparator\Application\Taxation\ActualProfitTaxEstimateProvider;
-use App\Tools\TaxRegimeComparator\Domain\Rules\ActualProfitTaxRule;
+use App\Core\Tax\Normative\ActualProfitIncomeTaxRule;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ final class ActualProfitTaxEstimateProviderTest extends TestCase
 {
     public function test_estimates_actual_profit_with_explicit_credit_base(): void
     {
-        $provider = new ActualProfitTaxEstimateProvider(new ActualProfitTaxRule);
+        $provider = new ActualProfitTaxEstimateProvider(new ActualProfitIncomeTaxRule);
 
         $result = $provider->estimate(new TaxEstimateRequest(
             referenceDate: new DateTimeImmutable('2025-07-01'),
@@ -42,7 +42,7 @@ final class ActualProfitTaxEstimateProviderTest extends TestCase
 
     public function test_does_not_create_irpj_or_csll_when_estimated_result_is_negative(): void
     {
-        $provider = new ActualProfitTaxEstimateProvider(new ActualProfitTaxRule);
+        $provider = new ActualProfitTaxEstimateProvider(new ActualProfitIncomeTaxRule);
 
         $result = $provider->estimate(new TaxEstimateRequest(
             referenceDate: new DateTimeImmutable('2025-07-01'),
@@ -63,7 +63,7 @@ final class ActualProfitTaxEstimateProviderTest extends TestCase
 
     public function test_rejects_period_after_supported_transition_window(): void
     {
-        $provider = new ActualProfitTaxEstimateProvider(new ActualProfitTaxRule);
+        $provider = new ActualProfitTaxEstimateProvider(new ActualProfitIncomeTaxRule);
 
         $request = new TaxEstimateRequest(
             referenceDate: new DateTimeImmutable('2027-01-01'),

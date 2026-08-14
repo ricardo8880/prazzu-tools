@@ -88,6 +88,18 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 ### Página de ferramenta
 
+- [Calculadora de Retenções na Nota Fiscal](../../app/Tools/InvoiceWithholdingCalculator/pages/index.blade.md) — `app/Tools/InvoiceWithholdingCalculator/Resources/views/index.blade.php`
+- [Calculadora PIS e COFINS](../../app/Tools/PisCofinsCalculator/pages/index.blade.md) — `app/Tools/PisCofinsCalculator/Resources/views/index.blade.php`
+- [Calculadora de ICMS-ST](../../app/Tools/IcmsStCalculator/pages/index.blade.md) — `app/Tools/IcmsStCalculator/Resources/views/index.blade.php`
+- [Calculadora DIFAL / ICMS Interestadual + FCP](../../app/Tools/DifalIcmsCalculator/pages/index.blade.md) — `app/Tools/DifalIcmsCalculator/Resources/views/index.blade.php`
+- [Analisador de Certificado Digital A1](../../app/Tools/DigitalCertificateAnalyzer/pages/index.blade.md) — `app/Tools/DigitalCertificateAnalyzer/Resources/views/index.blade.php`
+- [Calculadora de Lucro Real](../../app/Tools/ActualProfitCalculator/pages/index.blade.md) — `app/Tools/ActualProfitCalculator/Resources/views/index.blade.php`
+- [Simulador da Reforma Tributária do Consumo](../../app/Tools/TaxReformSimulator/pages/index.blade.md) — `app/Tools/TaxReformSimulator/Resources/views/index.blade.php`
+- [Simulador Orientativo de ECAD e Direitos Autorais](../../app/Tools/EcadRoyaltySimulator/pages/index.blade.md) — `app/Tools/EcadRoyaltySimulator/Resources/views/index.blade.php`
+- [Consultor e Validador de CFOP](../../app/Tools/CfopAdvisor/pages/index.blade.md) — `app/Tools/CfopAdvisor/Resources/views/index.blade.php`
+- [Validador Fiscal SEFAZ](../../app/Tools/SefazFiscalValidator/pages/index.blade.md) — `app/Tools/SefazFiscalValidator/Resources/views/index.blade.php`
+- [Calculadora de ICMS Próprio](../../app/Tools/IcmsCalculator/pages/index.blade.md) — `app/Tools/IcmsCalculator/Resources/views/index.blade.php`
+
 - [Gerador de Contratos — Prazzu Tools](app/Tools/ContractGenerator/pages/index.blade.md) — `app/Tools/ContractGenerator/Resources/views/index.blade.php`
 
 - [Emissor de Recibos — Prazzu Tools](app/Tools/ReceiptIssuer/pages/index.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/index.blade.php`

@@ -12,7 +12,7 @@ use App\Tools\TaxRegimeComparator\Application\Taxation\ActualProfitTaxEstimatePr
 use App\Tools\TaxRegimeComparator\Domain\Data\TaxComparisonScenario;
 use App\Tools\TaxRegimeComparator\Domain\Enums\BusinessActivity;
 use App\Tools\TaxRegimeComparator\Domain\Enums\EstimateStatus;
-use App\Tools\TaxRegimeComparator\Domain\Rules\ActualProfitTaxRule;
+use App\Core\Tax\Normative\ActualProfitIncomeTaxRule;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +21,7 @@ final class EstimateActualProfitTest extends TestCase
     public function test_returns_available_estimate_when_required_data_exists(): void
     {
         $registry = new InMemoryTaxEstimateProviderRegistry;
-        $registry->register(new ActualProfitTaxEstimateProvider(new ActualProfitTaxRule));
+        $registry->register(new ActualProfitTaxEstimateProvider(new ActualProfitIncomeTaxRule));
 
         $estimate = (new EstimateActualProfit($registry))->execute($this->scenario(
             Percentage::fromString('5'),

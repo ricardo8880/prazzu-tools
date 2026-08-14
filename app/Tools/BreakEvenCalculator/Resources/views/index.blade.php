@@ -11,8 +11,8 @@
         <form method="POST" action="{{ route('tools.ponto-de-equilibrio.calculate') }}" class="row g-3">
             @csrf
             <div class="col-12 col-md-4"><x-tools.form.money name="fixed_costs" label="Custos fixos do período" :value="old('fixed_costs')" required /></div>
-            <div class="col-12 col-md-4"><x-tools.form.money name="sale_price" label="Preço de venda unitário" :value="old('sale_price')" required /></div>
-            <div class="col-12 col-md-4"><x-tools.form.money name="variable_cost" label="Custo variável unitário" :value="old('variable_cost')" required /></div>
+            <div class="col-12 col-md-4"><x-tools.form.money name="sale_price" label="Preço de venda unitário" :value="old('sale_price')" placeholder="Ex.: 100,00" data-e2e-value="100,00" required /></div>
+            <div class="col-12 col-md-4"><x-tools.form.money name="variable_cost" label="Custo variável unitário" :value="old('variable_cost')" placeholder="Ex.: 60,00" data-e2e-value="60,00" required /></div>
             <div class="col-12"><button class="btn btn-primary" type="submit">Calcular ponto de equilíbrio</button></div>
         </form>
     </x-tools.form-panel>

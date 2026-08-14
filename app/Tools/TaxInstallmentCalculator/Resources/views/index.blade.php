@@ -18,12 +18,12 @@
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="installments">Parcelas</label>
-                    <div class="input-group"><input class="form-control @error('installments') is-invalid @enderror" id="installments" name="installments" type="number" min="1" max="240" value="{{ old('installments') }}" required placeholder="Ex.: 18"><span class="input-group-text">meses</span></div>
+                    <div class="input-group"><input class="form-control @error('installments') is-invalid @enderror" id="installments" name="installments" type="number" min="1" max="240" value="{{ old('installments') }}" data-e2e-value="12" required placeholder="Ex.: 18"><span class="input-group-text">meses</span></div>
                     @error('installments')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-12 col-md-4">
                     <label class="form-label" for="monthly_charge">Encargos mensais</label>
-                    <div class="input-group"><input class="form-control @error('monthly_charge') is-invalid @enderror" id="monthly_charge" name="monthly_charge" value="{{ old('monthly_charge') }}" inputmode="decimal" required placeholder="Ex.: 1,15"><span class="input-group-text">% a.m.</span></div>
+                    <div class="input-group"><input class="form-control @error('monthly_charge') is-invalid @enderror" id="monthly_charge" name="monthly_charge" value="{{ old('monthly_charge') }}" data-e2e-value="1,15" inputmode="decimal" required placeholder="Ex.: 1,15"><span class="input-group-text">% a.m.</span></div>
                     @error('monthly_charge')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                     <div class="form-text">Use a taxa efetivamente informada pelo programa/órgão. Digite 0 se não houver encargo mensal.</div>
                 </div>

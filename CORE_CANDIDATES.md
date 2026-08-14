@@ -35,6 +35,8 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 | Geração e download de modelos CSV | Modelo específico da importação em lote do Emissor de Recibos; leitura já usa o Core compartilhado | Emissor de Recibos | **Aguardando segunda ferramenta** | Reavaliar quando outra ferramenta também precisar disponibilizar um arquivo-modelo CSV com resposta, cabeçalhos e regras de download equivalentes. |
 | Exportação de documentos Word/DOCX | `ContractDocxExporter` dentro do Gerador de Contratos | Gerador de Contratos | **Aguardando segunda ferramenta** | Reavaliar quando outra ferramenta também precisar gerar DOCX; até lá, manter a composição OpenXML específica no módulo e reutilizar apenas o empacotamento ZIP compartilhado. |
 | Armazenamento temporário de payloads entre processamento e exportação | `App\Core\Temporary\Contracts\TemporaryPayloadStore` + implementação em cache | Validador de CNPJ/CPF/IE; Conversor Fiscal XML | **Extraído para o Core** | Reutilizar para resultados efêmeros que precisam sobreviver entre requisições sem transformar login/sessão autenticada em requisito. |
+| Referência compartilhada de CFOP | `App\Core\Tax\Fiscal\CfopCatalog` concentra classificação estrutural e o recorte de descrições rápidas usado pela consulta; o XML reutiliza a validação estrutural sem depender do módulo de CFOP | FiscalXmlConverter + CfopAdvisor | **Extraído para o Core** | Expandir o dataset exato somente com fonte oficial versionada e casos dourados; manter busca/interface no módulo e validação neutra no Core. |
+| Regra normativa de IRPJ/CSLL no Lucro Real | `App\Core\Tax\Normative\ActualProfitIncomeTaxRule` | TaxRegimeComparator + ActualProfitCalculator | **Extraído para o Core** | Reutilizar somente alíquotas e limites equivalentes; PIS/Cofins e CBS/IBS permanecem fora. |
 
 ## Componentes já compartilhados relacionados
 
@@ -231,3 +233,26 @@ A solução usa somente metadados já oficiais do `ToolCatalog` (nome, descriç�
 **Capacidade compartilhada materializada:** favoritos da própria ferramenta, distintos de favoritos de resultados (`ToolRunFavorite`). A necessidade passou a ser concreta porque o hub `Meu Prazzu` já expunha favoritos, mas o usuário não tinha uma ação global para marcar ferramentas que usa com frequência.
 
 A implementação fica no Core (`UserToolFavorites`), usa uma única tabela global por usuário + slug e é oferecida pelo wrapper compartilhado `<x-tools.page>`, sem duplicação nos módulos e sem depender do Plus. Favoritos de resultados permanecem separados porque representam execuções persistidas, enquanto favoritos de ferramentas representam apenas atalhos de navegação. Reavaliar unificação de apresentação apenas se surgir uma terceira superfície concreta que consuma ambos os tipos juntos.
+
+## Cobertura das dores contábeis — Lote 1
+
+A auditoria confirmou duas possíveis reutilizações futuras: catálogo normativo de CFOP e regra normativa de Lucro Real. Nenhuma foi extraída antecipadamente. O analisador de Certificado Digital A1 permanece no domínio da nova ferramenta; o candidato histórico de assinatura digital continua sem promoção porque leitura/inspeção de certificado não equivale a assinatura.
+
+## Cobertura das dores contábeis — Lote 2
+
+O `DigitalCertificateAnalyzer` confirmou que leitura PKCS#12, interpretação X.509 e tratamento da senha são atualmente uma responsabilidade de um único módulo. **Não promover ao Core agora.** Se uma segunda ferramenta precisar abrir o mesmo A1 — por exemplo, assinatura digital ou autenticação SEFAZ — reavaliar a extração de uma camada criptográfica compartilhada que receba bytes e senha em memória e nunca persista chave privada.
+
+A infraestrutura E2E recebeu `data-e2e-fixture` como capacidade genérica de teste para uploads binários. Isso pertence à infraestrutura de qualidade, não ao domínio das ferramentas, e não cria candidato adicional de produto.
+
+
+## Cobertura das dores contábeis — Lote 4
+A segunda utilização concreta promoveu a regra neutra de IRPJ/CSLL ao Core. A transição CBS/IBS permanece no domínio do simulador até existir segunda reutilização real.
+
+
+## Cobertura das dores contábeis — Lote 5 — ECAD
+
+O `EcadRoyaltySimulator` reutiliza apenas capacidades transversais já existentes (`Money`, `Percentage`, `IntegerRounding` e `CalculationMemory`). A tabela/parametrização do ECAD permanece no domínio porque não existe segunda ferramenta com necessidade equivalente. Não foi criada abstração de tarifas no Core. Reavaliar somente se outra ferramenta consumir exatamente a mesma referência normativa e a mesma mecânica sem condicionais específicas.
+
+## Cobertura das dores contábeis — Lote 6 — encerramento
+
+A auditoria final do ciclo não encontrou nova duplicação transversal que justifique promoção. Leitura PKCS#12 continua específica do `DigitalCertificateAnalyzer`, e a linha do tempo da Reforma do Consumo continua específica do `TaxReformSimulator`. `CfopCatalog` e `ActualProfitIncomeTaxRule` permanecem as duas promoções fiscais deste ciclo já sustentadas por reutilização concreta.

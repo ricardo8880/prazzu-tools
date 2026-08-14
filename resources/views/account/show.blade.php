@@ -50,6 +50,10 @@
                     </div>
                 </section>
 
+                @if($historyCount > 0 && $favoriteCount === 0)
+                    <div class="alert alert-light border small mb-4" role="note">Você ainda não marcou resultados como favoritos.</div>
+                @endif
+
                 @if($continueRuns->isNotEmpty())
                     <section class="mb-4" aria-labelledby="continue-title">
                         <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 mb-3">

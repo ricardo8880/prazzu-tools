@@ -18,7 +18,8 @@
 - O parser extrai os valores declarados; não refaz a apuração tributária.
 - Ausência de um tributo é representada por zero no resumo numérico.
 - A chave de acesso é obtida do atributo `Id` de `infNFe`.
-- Chave ausente ou diferente de 44 dígitos gera alerta, sem inventar valor.
+- Chave ausente ou diferente de 44 caracteres gera alerta, sem inventar valor.
+- O CFOP de cada item passa por validação estrutural compartilhada; descrição/enquadramento material continuam sendo conferência fiscal, não uma inferência automática do XML.
 
 ## Fora do escopo deste lote
 

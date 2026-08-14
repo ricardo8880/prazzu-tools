@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 return [
-    'schema_version' => '3.14.0',
-    'release_readiness' => 'plus_remediation_lot_8_audited',
+    'schema_version' => '3.18.0',
+    'release_readiness' => 'accounting_pains_lot_6_final_audited',
     'source' => 'README.md',
     'continuity_log' => 'docs/IMPLEMENTATION-LOTS.md',
     'inventory_document' => 'docs/PRODUCT-TOOLS-INVENTORY.md',
-    'expected_module_count' => 43,
+    'expected_module_count' => 50,
 
     'official' => [
         ['id' => 1, 'key' => 'employee-cost', 'name' => 'Calculadora de Custo de Funcionário CLT', 'slug' => 'custo-funcionario-clt', 'module' => 'EmployeeCostCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 10],
@@ -54,6 +54,13 @@ return [
         ['id' => 41, 'key' => 'iss', 'name' => 'Calculadora de ISS', 'slug' => 'calculadora-iss', 'module' => 'IssCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 41],
         ['id' => 42, 'key' => 'profit-distribution-balance-comparison', 'name' => 'Simulador de Distribuição de Lucros com Balanço × sem Balanço', 'slug' => 'simulador-distribuicao-lucros-balanco', 'module' => 'ProfitDistributionBalanceSimulator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 42],
         ['id' => 43, 'key' => 'retroactive-das-regularization', 'name' => 'Calculadora de DAS Retroativo + Regularização do Simples', 'slug' => 'calculadora-das-retroativo-regularizacao-simples', 'module' => 'RetroactiveDasRegularizationCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 43],
+        ['id' => 44, 'key' => 'digital-certificate-a1', 'name' => 'Analisador de Certificado Digital A1', 'slug' => 'analisador-certificado-digital-a1', 'module' => 'DigitalCertificateAnalyzer', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 44],
+        ['id' => 45, 'key' => 'cfop-advisor', 'name' => 'Consultor e Validador de CFOP', 'slug' => 'consultor-validador-cfop', 'module' => 'CfopAdvisor', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 45],
+        ['id' => 46, 'key' => 'sefaz-fiscal-validator', 'name' => 'Validador Fiscal SEFAZ', 'slug' => 'validador-fiscal-sefaz', 'module' => 'SefazFiscalValidator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 46],
+        ['id' => 47, 'key' => 'icms-own', 'name' => 'Calculadora de ICMS Próprio', 'slug' => 'calculadora-icms-proprio', 'module' => 'IcmsCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 47],
+        ['id' => 48, 'key' => 'actual-profit', 'name' => 'Calculadora de Lucro Real', 'slug' => 'calculadora-lucro-real', 'module' => 'ActualProfitCalculator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 48],
+        ['id' => 49, 'key' => 'tax-reform-consumption', 'name' => 'Simulador da Reforma Tributária do Consumo', 'slug' => 'simulador-reforma-tributaria-consumo', 'module' => 'TaxReformSimulator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 49],
+        ['id' => 50, 'key' => 'ecad-royalty', 'name' => 'Simulador Orientativo de ECAD e Direitos Autorais', 'slug' => 'simulador-ecad-direitos-autorais', 'module' => 'EcadRoyaltySimulator', 'state' => 'implemented', 'vertical' => 'contabilidade', 'release_order' => 50],
     ],
 
     'functional_overlap_reviews' => [

@@ -1,0 +1,6 @@
+<?php
+
+declare(strict_types=1);
+namespace App\Tools\CfopAdvisor\Presentation\Controllers;
+use App\Core\Access\Services\ToolFeatureRequestAuthorizer; use App\Http\Controllers\Controller; use App\Tools\CfopAdvisor\Tool; use App\Tools\CfopAdvisor\Application\Actions\CalculateTool; use App\Tools\CfopAdvisor\Application\Actions\ShowToolPage; use App\Tools\CfopAdvisor\Application\Data\CalculationInput; use App\Tools\CfopAdvisor\Presentation\Requests\ExecuteToolRequest; use Illuminate\Contracts\View\View; use Illuminate\Http\Request;
+final class ToolController extends Controller { public function index(Request $request, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module): View { return view('tools-consultor-validador-cfop::index',[...$page->execute(),'catalogDetailsAllowed'=>$features->allows($module,'catalog_details',$request)]); } public function calculate(ExecuteToolRequest $request, CalculateTool $action, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module): View { $d=$request->validated(); $result=$action->execute(new CalculationInput($d['cfop'])); $request->flash(); return view('tools-consultor-validador-cfop::index',[...$page->execute(),'result'=>$result,'catalogDetailsAllowed'=>$features->allows($module,'catalog_details',$request)]); } }

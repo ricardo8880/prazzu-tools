@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:8010';
-const healthURL = process.env.E2E_HEALTH_URL ?? `${baseURL.replace(/\/$/, '')}/up`;
+const readinessURL = process.env.E2E_READINESS_URL ?? `${baseURL.replace(/\/$/, '')}/robots.txt`;
 const artifacts = 'storage/app/e2e/artifacts';
 
 export default defineConfig({
@@ -26,11 +26,15 @@ export default defineConfig({
         navigationTimeout: 20_000,
     },
     webServer: {
-        command: 'php artisan serve --env=e2e --host=127.0.0.1 --port=8010',
-        url: healthURL,
+        command: 'php artisan serve --host=127.0.0.1 --port=8010 --tries=1 --no-reload',
+        env: { APP_ENV: 'e2e' },
+        // Use a static public asset for process readiness. Laravel's /up route
+        // renders a framework health view and cached routes may embed machine-specific
+        // absolute paths, which makes that endpoint unsuitable for Playwright startup.
+        url: readinessURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
-        stdout: 'ignore',
+        stdout: 'pipe',
         stderr: 'pipe',
     },
     projects: [

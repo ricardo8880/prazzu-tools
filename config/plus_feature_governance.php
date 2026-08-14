@@ -19,14 +19,14 @@ return [
     ],
 
     // Snapshot final de proteção contra regressão auditado no Prazzu Plus Lote 8.
-    'catalog_tool_count' => 43,
-    'declared_plus_feature_count' => 137,
+    'catalog_tool_count' => 50,
+    'declared_plus_feature_count' => 144,
     'legacy_debt_ceiling' => 0,
-    'strict_contract_floor' => 137,
+    'strict_contract_floor' => 144,
 
     // Snapshots criptográficos impedem trocar contratos silenciosamente sem
     // alterar as contagens consolidadas. As listas são ordenadas antes do hash.
-    'declared_contracts_checksum' => '0fbd26b5ac1fb9e0cb681ba2972e7df5ad330ca1d9428909b8c46f52e68e626a',
+    'declared_contracts_checksum' => 'd3584e3826fa8b696c5256d8962162592e2b103ac5fbebcb4fdb23583c134f2d',
     'legacy_debt_checksum' => 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
 
     /*
@@ -41,6 +41,13 @@ return [
     |
     */
     'functional_contracts' => [
+        'simulador-ecad-direitos-autorais:period_projection',
+        'calculadora-lucro-real:tax_base_diagnostics',
+        'simulador-reforma-tributaria-consumo:transition_diagnostics',
+        'calculadora-icms-proprio:inside_calculation',
+        'consultor-validador-cfop:catalog_details',
+        'validador-fiscal-sefaz:key_breakdown',
+        'analisador-certificado-digital-a1:technical_report',
         'calculadora-de-honorarios-contabeis:commercial_proposal',
         'calculadora-de-honorarios-contabeis:history',
         'calculadora-de-honorarios-contabeis:history_export',
@@ -179,13 +186,20 @@ return [
         'calculadora-retencoes-nota-fiscal:export',
         'calculadora-retencoes-nota-fiscal:multiple_notes',
     ],
-    'functional_contract_floor' => 137,
+    'functional_contract_floor' => 144,
     'functional_debt_ceiling' => 0,
-    'functional_contracts_checksum' => '0fbd26b5ac1fb9e0cb681ba2972e7df5ad330ca1d9428909b8c46f52e68e626a',
+    'functional_contracts_checksum' => 'd3584e3826fa8b696c5256d8962162592e2b103ac5fbebcb4fdb23583c134f2d',
 
     // Snapshot exato dos contratos estruturais saneados até o Lote 7.
     // Nenhum deles pode desaparecer, voltar ao legado ou ser trocado silenciosamente.
     'strict_contracts' => [
+        'simulador-ecad-direitos-autorais:period_projection',
+        'calculadora-lucro-real:tax_base_diagnostics',
+        'simulador-reforma-tributaria-consumo:transition_diagnostics',
+        'calculadora-icms-proprio:inside_calculation',
+        'consultor-validador-cfop:catalog_details',
+        'validador-fiscal-sefaz:key_breakdown',
+        'analisador-certificado-digital-a1:technical_report',
         'calculadora-de-honorarios-contabeis:commercial_proposal',
         'calculadora-de-honorarios-contabeis:history',
         'calculadora-de-honorarios-contabeis:history_export',

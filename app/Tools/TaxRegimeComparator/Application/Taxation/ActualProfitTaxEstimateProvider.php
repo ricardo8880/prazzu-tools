@@ -11,14 +11,14 @@ use App\Core\Taxation\Data\TaxEstimateItem;
 use App\Core\Taxation\Data\TaxEstimateRequest;
 use App\Core\Taxation\Data\TaxEstimateResult;
 use App\Tools\TaxRegimeComparator\Domain\Enums\BusinessActivity;
-use App\Tools\TaxRegimeComparator\Domain\Rules\ActualProfitTaxRule;
+use App\Core\Tax\Normative\ActualProfitIncomeTaxRule;
 use InvalidArgumentException;
 
 final readonly class ActualProfitTaxEstimateProvider implements TaxEstimateProvider
 {
     public const REGIME = 'lucro_real';
 
-    public function __construct(private ActualProfitTaxRule $rule) {}
+    public function __construct(private ActualProfitIncomeTaxRule $rule) {}
 
     public function regime(): string
     {
@@ -33,7 +33,7 @@ final readonly class ActualProfitTaxEstimateProvider implements TaxEstimateProvi
             && $request->monthlyOperatingCosts !== null
             && $request->monthlyDeductibleExpenses !== null
             && $request->monthlyPisCofinsCreditBase !== null
-            && $this->rule->supports($request->referenceDate);
+            && in_array($request->referenceDate->format('Y'), ['2025', '2026'], true);
     }
 
     public function estimate(TaxEstimateRequest $request): TaxEstimateResult
@@ -46,18 +46,18 @@ final readonly class ActualProfitTaxEstimateProvider implements TaxEstimateProvi
         $taxableProfit = $this->taxableProfit($request);
         $irpj = $taxableProfit->percentage($this->rule->irpjRate());
         $additionalBase = Money::fromMinor(
-            max(0, $taxableProfit->minorAmount() - 2_000_000),
+            max(0, $taxableProfit->minorAmount() - $this->rule->additionalThresholdMinorPerMonth()),
             $taxableProfit->currency(),
         );
         $irpjAdditional = $additionalBase->percentage($this->rule->irpjAdditionalRate());
         $csll = $taxableProfit->percentage($this->rule->csllRate());
 
-        $pisDebit = $request->monthlyRevenue->percentage($this->rule->pisRate());
-        $pisCredit = $request->monthlyPisCofinsCreditBase->percentage($this->rule->pisRate());
+        $pisDebit = $request->monthlyRevenue->percentage(Percentage::fromString('1.65'));
+        $pisCredit = $request->monthlyPisCofinsCreditBase->percentage(Percentage::fromString('1.65'));
         $pis = Money::fromMinor(max(0, $pisDebit->minorAmount() - $pisCredit->minorAmount()), $pisDebit->currency());
 
-        $cofinsDebit = $request->monthlyRevenue->percentage($this->rule->cofinsRate());
-        $cofinsCredit = $request->monthlyPisCofinsCreditBase->percentage($this->rule->cofinsRate());
+        $cofinsDebit = $request->monthlyRevenue->percentage(Percentage::fromString('7.6'));
+        $cofinsCredit = $request->monthlyPisCofinsCreditBase->percentage(Percentage::fromString('7.6'));
         $cofins = Money::fromMinor(max(0, $cofinsDebit->minorAmount() - $cofinsCredit->minorAmount()), $cofinsDebit->currency());
 
         $indirectTaxes = $request->monthlyRevenue->percentage($request->indirectTaxRate);
@@ -66,8 +66,8 @@ final readonly class ActualProfitTaxEstimateProvider implements TaxEstimateProvi
             $this->item('IRPJ', 'IRPJ sobre o lucro tributável estimado', $irpj, $this->rule->irpjRate()),
             $this->item('IRPJ_ADDITIONAL', 'Adicional de IRPJ', $irpjAdditional, $this->rule->irpjAdditionalRate()),
             $this->item('CSLL', 'CSLL sobre o lucro tributável estimado', $csll, $this->rule->csllRate()),
-            $this->item('PIS', 'PIS/Pasep não cumulativo líquido estimado', $pis, $this->rule->pisRate()),
-            $this->item('COFINS', 'Cofins não cumulativa líquida estimada', $cofins, $this->rule->cofinsRate()),
+            $this->item('PIS', 'PIS/Pasep não cumulativo líquido estimado', $pis, Percentage::fromString('1.65')),
+            $this->item('COFINS', 'Cofins não cumulativa líquida estimada', $cofins, Percentage::fromString('7.6')),
             $this->item('INDIRECT_TAXES', $this->indirectTaxLabel($activity), $indirectTaxes, $request->indirectTaxRate),
         ];
 
@@ -99,7 +99,7 @@ final readonly class ActualProfitTaxEstimateProvider implements TaxEstimateProvi
                 'PIS/Pasep e Cofins estimados no regime não cumulativo pelas alíquotas de 1,65% e 7,6%, descontando créditos sobre a base mensal informada.',
                 'Tributos indiretos calculados pela alíquota efetiva informada de '.$request->indirectTaxRate->toDecimalString().'%.',
                 'Projeção anual calculada pela repetição do cenário mensal por 12 meses.',
-                'Regra '.$this->rule::VERSION.' vigente de '.$this->rule::VALID_FROM.' até '.$this->rule::VALID_UNTIL.'.',
+                'Regra compartilhada de IRPJ/CSLL versão '.$this->rule::VERSION.'.',
             ],
             warnings: $warnings,
         );

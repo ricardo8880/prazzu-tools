@@ -135,7 +135,10 @@ function deterministicValue(name: string, type: string, min?: string | null, max
     if (key.includes('cnpj')) return '11222333000181';
     if (key.includes('cpf')) return '52998224725';
     if (key.includes('cep')) return '01001000';
-    if (key.includes('percent') || key.includes('aliquot') || key.includes('taxa') || key.includes('rate')) return decimalText ? '10,00' : '10';
+    if (key.includes('percent') || key.includes('aliquot') || key.includes('taxa') || key.includes('rate')) {
+        if (type === 'number' || type === 'range') return '10';
+        return decimalText ? '10,00' : '10';
+    }
     if (key.includes('hour') || key.includes('hora')) return '8';
     if (key.includes('day') || key.includes('dia')) return '30';
     if (decimalText || key.includes('salario') || key.includes('salary') || key.includes('receita') || key.includes('revenue') || key.includes('valor') || key.includes('amount') || key.includes('sales') || key.includes('goal') || key.includes('cost') || key.includes('custo') || key.includes('payroll')) {
@@ -186,11 +189,19 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
             const inputMode = await control.getAttribute('inputmode');
             const placeholder = await control.getAttribute('placeholder');
             const e2eValue = await control.getAttribute('data-e2e-value');
+            const e2eSecret = await control.getAttribute('data-e2e-secret');
             const required = await control.getAttribute('required') !== null;
 
             if (type === 'file') {
                 if (!required || (await control.inputValue()) !== '') continue;
                 const accept = (await control.getAttribute('accept') ?? '').toLowerCase();
+                const e2eFixture = await control.getAttribute('data-e2e-fixture');
+                if (e2eFixture) {
+                    await control.setInputFiles(resolve(process.cwd(), e2eFixture));
+                    filled.add(`${name || '(arquivo)'}=[fixture e2e]`);
+                    changed = true;
+                    continue;
+                }
                 const isXml = accept.includes('xml') || name.toLowerCase().includes('xml');
                 const multiple = await control.getAttribute('multiple') !== null;
                 const fiscalXml = (suffix = '') => {
@@ -252,8 +263,17 @@ async function autoFillForm(scope: Locator): Promise<string[]> {
             }
             if (!(await control.isEditable()) || !required) continue;
             const currentValue = (await control.inputValue()).trim();
-            if (e2eValue !== null || currentValue === '') {
-                const generated = e2eValue ?? deterministicValue(name, type, min, max, inputMode, placeholder);
+            if (e2eValue !== null || e2eSecret !== null || currentValue === '') {
+                const secretFallbacks: Record<string, string> = {
+                    PRAZZU_E2E_CERTIFICATE_PASSWORD: 'prazzu-e2e-2026',
+                };
+                const secretValue = e2eSecret === null
+                    ? null
+                    : process.env[e2eSecret] ?? secretFallbacks[e2eSecret];
+                if (e2eSecret !== null && !secretValue) {
+                    throw new Error(`O segredo E2E ${e2eSecret} não foi configurado.`);
+                }
+                const generated = secretValue ?? e2eValue ?? deterministicValue(name, type, min, max, inputMode, placeholder);
                 if (currentValue !== generated) {
                     await control.fill(generated);
                     filled.add(`${name || '(campo)'}=${type === 'password' ? '[oculto]' : generated}`);

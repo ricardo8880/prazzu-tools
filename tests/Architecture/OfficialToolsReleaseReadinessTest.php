@@ -19,12 +19,12 @@ final class OfficialToolsReleaseReadinessTest extends TestCase
 
     public function test_all_current_tools_are_in_the_governed_inventory(): void
     {
-        self::assertSame('3.14.0', $this->inventory['schema_version']);
-        self::assertSame('plus_remediation_lot_8_audited', $this->inventory['release_readiness']);
-        self::assertCount(43, $this->inventory['official']);
+        self::assertSame('3.18.0', $this->inventory['schema_version']);
+        self::assertSame('accounting_pains_lot_6_final_audited', $this->inventory['release_readiness']);
+        self::assertCount(50, $this->inventory['official']);
         self::assertSame(['implemented'], array_values(array_unique(array_column($this->inventory['official'], 'state'))));
-        self::assertCount(43, array_unique(array_column($this->inventory['official'], 'module')));
-        self::assertCount(43, array_unique(array_column($this->inventory['official'], 'slug')));
+        self::assertCount(50, array_unique(array_column($this->inventory['official'], 'module')));
+        self::assertCount(50, array_unique(array_column($this->inventory['official'], 'slug')));
     }
 
     public function test_official_modules_exist_and_are_registered(): void
@@ -43,7 +43,7 @@ final class OfficialToolsReleaseReadinessTest extends TestCase
     public function test_no_tool_is_hidden_in_a_parallel_inventory(): void
     {
         self::assertArrayNotHasKey('additional_modules', $this->inventory);
-        self::assertSame(43, $this->inventory['expected_module_count']);
+        self::assertSame(50, $this->inventory['expected_module_count']);
     }
 
     public function test_surgical_lot_documentation_exists(): void

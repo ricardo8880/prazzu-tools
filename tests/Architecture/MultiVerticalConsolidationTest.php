@@ -13,8 +13,8 @@ final class MultiVerticalConsolidationTest extends TestCase
         $registered = collect(app(VerticalRegistry::class)->all())->pluck('slug')->all();
         $inventory = collect(config('product_tools.official', []));
 
-        self::assertCount(43, $inventory);
-        self::assertCount(42, $inventory->where('vertical', 'contabilidade'));
+        self::assertCount(50, $inventory);
+        self::assertCount(49, $inventory->where('vertical', 'contabilidade'));
         self::assertCount(1, $inventory->where('vertical', 'rh'));
         self::assertEmpty($inventory->pluck('vertical')->diff($registered));
 

@@ -24,7 +24,7 @@ final class HomeContinuityTest extends TestCase
         $this->runFor($user, 'calculadora-ferias', now()->subMinute());
         $this->runFor($other, 'capital-de-giro', now()->addMinute());
 
-        $this->actingAs($user)
+        $response = $this->actingAs($user)
             ->get(route('home'))
             ->assertOk()
             ->assertSee('Continue de onde parou')
@@ -32,8 +32,11 @@ final class HomeContinuityTest extends TestCase
             ->assertSee('Calculadora de Férias')
             ->assertSee(url()->query(route('tools.calculadora-salario-liquido.history.index'), ['source' => 'home_continuity']), false)
             ->assertDontSee(route('tools.calculadora-salario-liquido.history.repeat', [$salaryRun->id]).'?source=home_continuity', false)
-            ->assertDontSee('Capital de Giro')
             ->assertDontSee($secret);
+
+        $response->assertViewHas('continueTools', static function ($tools): bool {
+            return ! $tools->pluck('tool_slug')->contains('capital-de-giro');
+        });
     }
 
     public function test_guest_home_contains_only_a_temporary_recent_tools_shell(): void

@@ -60,11 +60,11 @@ final class ToolDiscoveryTest extends TestCase
             ->all();
 
         $this->assertSame([
-            'todas' => 42,
+            'todas' => 49,
             'geradores' => 6,
             'calculadoras' => 9,
             'validadores' => 1,
-            'fiscal' => 16,
+            'fiscal' => 23,
             'trabalhista' => 10,
         ], $counts);
 

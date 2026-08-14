@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tools\FiscalXmlConverter\Domain\Services;
 
+use App\Core\Tax\Fiscal\CfopCatalog;
+
 use App\Tools\FiscalXmlConverter\Domain\Data\FiscalDocument;
 use App\Tools\FiscalXmlConverter\Domain\Data\FiscalItem;
 use App\Tools\FiscalXmlConverter\Domain\Data\FiscalParty;
@@ -15,6 +17,13 @@ use DOMXPath;
 
 final class NfeXmlParser
 {
+    private readonly CfopCatalog $cfopCatalog;
+
+    public function __construct(?CfopCatalog $cfopCatalog = null)
+    {
+        $this->cfopCatalog = $cfopCatalog ?? new CfopCatalog;
+    }
+
     public const MAX_XML_BYTES = 10_485_760;
 
     public function parse(string $xml): FiscalDocument
@@ -78,7 +87,12 @@ final class NfeXmlParser
         $id = preg_replace('/^NFe/', '', $infNfe->getAttribute('Id')) ?: '';
         $warnings = [];
         if ($id === '' || strlen($id) !== 44) {
-            $warnings[] = 'A chave de acesso não foi localizada ou não possui 44 dígitos.';
+            $warnings[] = 'A chave de acesso não foi localizada ou não possui 44 caracteres.';
+        }
+        foreach ($items as $item) {
+            if ($item->cfop !== null && ! $this->cfopCatalog->isStructurallyValid($item->cfop)) {
+                $warnings[] = 'O item '.$item->number.' contém CFOP fora da estrutura válida: '.$item->cfop.'.';
+            }
         }
 
         return new FiscalDocument(

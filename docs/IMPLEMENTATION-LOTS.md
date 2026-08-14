@@ -1113,3 +1113,96 @@ continuidade, compatibilidade e validação.
 - Nenhum cálculo, fórmula, slug, migration, feature Plus, `release_order` ou item do inventário foi alterado.
 - Esta frente de crescimento e retenção encerra seu ciclo no Lote 5. Qualquer continuação deve reconstruir ZIP original → Lotes 1–5 e partir de métricas reais antes de propor nova capacidade.
 - Relatório detalhado: `docs/GROWTH-RETENTION-LOT-5.md`.
+
+## Cobertura das dores contábeis — ciclo de fechamento funcional
+
+Este ciclo foi aberto para fechar de forma auditável as dores de Nota Fiscal, CFOP, Certificado Digital, Simples Nacional, Lucro Presumido, Lucro Real, Fator R, Reforma Tributária, PIS/Cofins, SEFAZ, ICMS, ECAD e DIFAL. Ele não substitui os lotes históricos; parte do catálogo oficial consolidado de 43 ferramentas.
+
+| Lote | Escopo | Estado |
+|---:|---|---|
+| 1 | Auditoria definitiva, classificação e arquitetura | Concluído |
+| 2 | Certificado Digital A1 | Concluído |
+| 3 | CFOP + SEFAZ + ICMS próprio | Concluído |
+| 4 | Lucro Real + Reforma Tributária | Concluído |
+| 5 | ECAD + saneamento fiscal dirigido | Concluído |
+| 6 | Regressão consolidada e auditoria final | Planejado |
+
+### Resultado do Lote 1 — auditoria das dores contábeis
+
+- O estado foi reconstruído a partir do ZIP original antes da análise.
+- As 13 dores agrupadas da referência foram auditadas por capacidade funcional, e não por ocorrência de palavras no código.
+- Simples Nacional, Lucro Presumido, Fator R, PIS/Cofins e DIFAL foram classificados como cobertos por ferramentas dedicadas; Nota Fiscal é coberta por composição de retenções + leitura fiscal XML.
+- CFOP, Lucro Real, Reforma Tributária, SEFAZ e ICMS foram classificados como parciais; Certificado Digital e ECAD como ausentes.
+- Foram reservados sete módulos de implementação futura, sem adicioná-los prematuramente ao catálogo oficial.
+- `config/product_tools.php`, slugs, rotas, fórmulas, páginas e dependências permaneceram inalterados neste lote.
+- Os possíveis compartilhamentos de catálogo CFOP e regra normativa de Lucro Real foram registrados em `CORE_CANDIDATES.md`; assinatura digital continua fora do Core até existir integração concreta.
+- A tentativa de gate completo foi bloqueada pelo ambiente de análise (`composer` ausente e extensões PHP obrigatórias indisponíveis); nenhuma dependência do projeto foi modificada para mascarar a limitação.
+- Relatório detalhado: `docs/ACCOUNTING-PAINS-LOT-1-AUDIT.md`.
+
+Antes do Lote 2 deste ciclo, reconstruir obrigatoriamente **ZIP original → Cobertura das dores contábeis Lote 1**, reler README, `CORE_CANDIDATES.md`, este documento, o relatório do Lote 1 e `config/product_tools.php`, e então conferir o código real antes de alterar qualquer arquivo.
+
+## Cobertura das dores contábeis — Lote 2 — Certificado Digital A1
+
+- Estado reconstruído obrigatoriamente na ordem **ZIP original → Cobertura das dores contábeis Lote 1** antes da implementação.
+- Criado o módulo oficial `DigitalCertificateAnalyzer`, publicado como **Analisador de Certificado Digital A1**, slug `analisador-certificado-digital-a1`, vertical `contabilidade`, `release_order` 44.
+- O catálogo oficial passa de 43 para **44 ferramentas**, mantendo os 43 módulos anteriores sem renomear ou remover nenhum deles.
+- A experiência Essencial abre PKCS#12 `.pfx/.p12`, mostra titular, emissor, período de validade, dias restantes e CPF/CNPJ quando um documento válido puder ser identificado nos campos lidos.
+- O status “válido” é deliberadamente temporal: o módulo não afirma confiança da cadeia, não consulta revogação/OCSP/CRL, não autentica em SEFAZ, não assina documentos e não emite certificado ICP-Brasil.
+- Arquivo, senha e chave privada não entram em histórico, persistência, resultado serializável ou exportação. O upload é limitado a 5 MB e os erros internos do OpenSSL não são expostos.
+- `technical_report` é o único recurso Plus do módulo: diagnóstico técnico + relatório PDF. O contrato foi incluído nos snapshots estrutural e funcional da governança Plus, elevando-os de 137 para 138 sem dívida nova.
+- O helper E2E ganhou apenas um contrato genérico `data-e2e-fixture` para uploads que precisam de fixture binária real. A mudança não conhece o domínio do certificado e pode ser reutilizada por qualquer ferramenta futura.
+- O fixture PKCS#12 é autoassinado, fictício, exclusivo para testes e usa senha conhecida somente no ambiente de teste.
+- O analisador permanece dentro do próprio módulo. Não foi criada abstração criptográfica no Core porque ainda existe apenas uma ferramenta consumindo essa responsabilidade.
+- Relatório detalhado: `docs/ACCOUNTING-PAINS-LOT-2-DIGITAL-CERTIFICATE.md`.
+
+Antes do Lote 3 deste ciclo, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos Lotes 1 e 2 e conferir `config/product_tools.php` e o código real antes de qualquer alteração.
+
+
+## Cobertura das dores contábeis — Lote 3 — CFOP + SEFAZ + ICMS próprio
+
+- Estado reconstruído obrigatoriamente na ordem **ZIP original → Lote 1 → Lote 2** antes de qualquer alteração.
+- Criados e publicados `CfopAdvisor`, `SefazFiscalValidator` e `IcmsCalculator`, elevando o catálogo oficial de 44 para **47 ferramentas**.
+- `CfopAdvisor` valida qualquer CFOP pela estrutura dos grupos 1/2/3/5/6/7, classifica entrada/saída e abrangência e entrega descrição rápida para um conjunto de códigos recorrentes. Quando o código não está nesse recorte, a ferramenta não inventa descrição e orienta conferência no Anexo II vigente do CONFAZ.
+- A segunda necessidade concreta de CFOP promoveu a referência neutra para `App\Core\Tax\Fiscal\CfopCatalog`. O `FiscalXmlConverter` passou a reutilizar a validação estrutural dos CFOPs dos itens sem importar classes do `CfopAdvisor`.
+- O `FiscalXmlConverter` também deixou de tratar a chave como obrigatoriamente “44 dígitos” e passou a documentar “44 caracteres”, compatível com a evolução técnica para CNPJ/chaves alfanuméricas sem tentar validar uma regra que não esteja implementada.
+- `SefazFiscalValidator` entrega diagnóstico **offline** de chave NF-e/NFC-e: 44 caracteres, cUF, AAMM, modelo, série, número, tipo de emissão e DV para chave totalmente numérica. Não consulta autorização, cancelamento, protocolo, cadastro ou disponibilidade de webservice estadual.
+- `IcmsCalculator` calcula ICMS próprio com base, alíquota e redução informadas; o Plus `inside_calculation` calcula o imposto por dentro quando o valor informado está sem ICMS. ICMS-ST, DIFAL e FCP permanecem nos módulos especializados já existentes.
+- Foram adicionados três contratos Plus concretos e certificados no snapshot (`catalog_details`, `key_breakdown`, `inside_calculation`), elevando a governança de 138 para **141 contratos**, com dívida estrutural e funcional preservadas em zero.
+- O catálogo oficial passa a 47 ferramentas, com `release_order` 45, 46 e 47 e atualização das oito ferramentas mais recentes.
+- `php scripts/lint-php.php`, `php artisan tools:check-architecture` e `php artisan analytics:check` passaram no ambiente disponível. O `route:list`/gate completo continua limitado pela ausência da extensão PHP `dom` no ambiente, não por alteração de dependência do projeto.
+- Relatório detalhado: `docs/ACCOUNTING-PAINS-LOT-3-CFOP-SEFAZ-ICMS.md`.
+
+Antes do Lote 4 deste ciclo, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos Lotes 1–3 e conferir `config/product_tools.php`, `config/tools/modules.php` e o código real antes de qualquer alteração. O Lote 4 permanece limitado a Lucro Real + Reforma Tributária e às extrações de Core que forem comprovadas por segunda reutilização concreta.
+
+## Cobertura das dores contábeis — Lote 4 — Lucro Real + Reforma Tributária
+- Reconstruído em ZIP original → Lote 1 → Lote 2 → Lote 3.
+- Publicados `ActualProfitCalculator` (48) e `TaxReformSimulator` (49).
+- Regra equivalente de IRPJ/CSLL promovida para `ActualProfitIncomeTaxRule` no Core e reutilizada pelo comparador.
+- Reforma 2026–2033 versionada, sem inventar alíquotas futuras.
+- Plus: 141 → 143 contratos, sem dívida nova.
+- Relatório: `docs/ACCOUNTING-PAINS-LOT-4-ACTUAL-PROFIT-TAX-REFORM.md`.
+
+Antes do Lote 5, reconstruir **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4**.
+
+
+## Cobertura das dores contábeis — Lote 5 — ECAD + saneamento fiscal dirigido
+
+- Estado reconstruído obrigatoriamente na ordem **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4** antes de qualquer alteração.
+- Publicado `EcadRoyaltySimulator`, ferramenta oficial **50**, slug `simulador-ecad-direitos-autorais`.
+- O Essencial calcula parâmetros já confirmados pelo usuário em três formas compatíveis com a tabela: quantidade de UDA, UDA por m² e percentual sobre base monetária. O módulo não escolhe automaticamente ramo, grau de utilização, região, forma musical, mínimo, desconto ou licença.
+- A referência oficial embarcada para 2026 é UDA de **R$ 107,31**, vigente até dezembro de 2026, com fonte no Regulamento de Arrecadação do Ecad revisado em 12/01/2026. O campo permanece explícito para impedir reutilização silenciosa após a vigência.
+- `period_projection` é recurso Plus concreto e projeta o mesmo valor por múltiplos períodos sem presumir reajustes futuros. A governança Plus passa de 143 para **144 contratos**, sem dívida estrutural ou funcional.
+- O saneamento dirigido corrigiu o estado real deixado pelo Lote 4: `config/product_tools.php` ainda declarava 47 módulos e readiness do Lote 3 apesar de possuir as ferramentas 48 e 49. O inventário executável, os testes constitucionais/current-state, cobertura Analytics e snapshot E2E foram alinhados ao catálogo de 50 ferramentas.
+- Simples Nacional, Lucro Presumido, Fator R, PIS/Cofins, Nota Fiscal e DIFAL foram preservados funcionalmente: a revisão não encontrou justificativa para duplicar ou alterar fórmulas apenas para este ciclo.
+- Nenhuma integração externa, scraping ou persistência foi adicionada ao ECAD.
+- Relatório detalhado: `docs/ACCOUNTING-PAINS-LOT-5-ECAD-FISCAL-SANITIZATION.md`.
+
+Antes do Lote 6, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, todos os relatórios do ciclo, `config/product_tools.php` e o código real. O Lote 6 é de regressão consolidada e auditoria final; não deve ampliar escopo sem necessidade comprovada.
+
+## Cobertura das dores contábeis — Lote 6 — auditoria final
+
+O ciclo específico das dores contábeis foi encerrado após reconstrução obrigatória do ZIP original e reaplicação, em ordem, dos Lotes 1 a 5. O estado final mantém **50 ferramentas oficiais**, sendo **49 em Contabilidade e 1 em RH**, sem criar nova ferramenta neste lote.
+
+A auditoria final confirmou as 13 dores agrupadas do ciclo: Nota Fiscal, CFOP, Certificado Digital, Simples Nacional, Lucro Presumido, Lucro Real, Fator R, Reforma Tributária, PIS/Cofins, SEFAZ, ICMS, ECAD e DIFAL. O lote corrigiu lacunas documentais das páginas fiscais do ciclo, adicionou um verificador estático reproduzível em `scripts/check-accounting-pains.php` e regenerou o cache de rotas herdado do ZIP original para que as ferramentas 44–50 não fiquem ocultas no fluxo de aplicação dos patches. A distribuição oficial completa continua sem caches gerados.
+
+O `release_readiness` passa a `accounting_pains_lot_6_final_audited`; a contagem, os slugs e a ordem de lançamento permanecem inalterados. Qualquer evolução posterior dessas ferramentas deve iniciar do estado acumulado deste ciclo, reler os documentos obrigatórios da raiz e tratar alterações normativas em lote explícito.

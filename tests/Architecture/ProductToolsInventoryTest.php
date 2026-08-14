@@ -21,12 +21,12 @@ final class ProductToolsInventoryTest extends TestCase
     {
         $tools = $this->inventory['official'];
 
-        self::assertSame(43, $this->inventory['expected_module_count']);
-        self::assertCount(43, $tools);
-        self::assertSame(range(1, 43), array_column($tools, 'id'));
+        self::assertSame(50, $this->inventory['expected_module_count']);
+        self::assertCount(50, $tools);
+        self::assertSame(range(1, 50), array_column($tools, 'id'));
 
         foreach (['key', 'name', 'slug', 'module'] as $field) {
-            self::assertCount(43, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
+            self::assertCount(50, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
         }
     }
 
@@ -35,22 +35,22 @@ final class ProductToolsInventoryTest extends TestCase
         $tools = $this->inventory['official'];
         $releaseOrders = array_column($tools, 'release_order');
 
-        self::assertCount(43, array_unique($releaseOrders));
+        self::assertCount(50, array_unique($releaseOrders));
         sort($releaseOrders);
-        self::assertSame(range(1, 43), $releaseOrders);
+        self::assertSame(range(1, 50), $releaseOrders);
 
         usort($tools, static fn (array $left, array $right): int => $right['release_order'] <=> $left['release_order']);
         $latest = array_column(array_slice($tools, 0, 8), 'slug');
 
         self::assertSame([
+            'simulador-ecad-direitos-autorais',
+            'simulador-reforma-tributaria-consumo',
+            'calculadora-lucro-real',
+            'calculadora-icms-proprio',
+            'validador-fiscal-sefaz',
+            'consultor-validador-cfop',
+            'analisador-certificado-digital-a1',
             'calculadora-das-retroativo-regularizacao-simples',
-            'simulador-distribuicao-lucros-balanco',
-            'calculadora-iss',
-            'simulador-mei-microempresa',
-            'calculadora-parcelamento-tributario',
-            'calculadora-depreciacao-ativos',
-            'calculadora-retencoes-nota-fiscal',
-            'calculadora-icms-st',
         ], $latest);
     }
 
@@ -64,7 +64,7 @@ final class ProductToolsInventoryTest extends TestCase
         sort($officialModules);
 
         self::assertSame($actualModules, $officialModules);
-        self::assertCount(43, array_unique($officialModules));
+        self::assertCount(50, array_unique($officialModules));
         self::assertArrayNotHasKey('additional_modules', $this->inventory);
     }
 

@@ -23,8 +23,8 @@
                     required
                 />
             </div>
-            <div class="col-12 col-md-6"><x-tools.form.input name="adjusted_rat" label="RAT ajustado pelo FAP" type="number" step="0.000001" min="0" max="15" suffix="%" :value="old('adjusted_rat')" required placeholder="Ex.: 1,20" /></div>
-            <div class="col-12 col-md-6"><x-tools.form.input name="third_parties" label="Terceiros" type="number" step="0.000001" min="0" max="15" suffix="%" :value="old('third_parties')" required placeholder="Ex.: 5,80" /></div>
+            <div class="col-12 col-md-6"><x-tools.form.input name="adjusted_rat" label="RAT ajustado pelo FAP" type="number" step="0.000001" min="0" max="15" suffix="%" :value="old('adjusted_rat')" data-e2e-value="1.2" required placeholder="Ex.: 1,20" /></div>
+            <div class="col-12 col-md-6"><x-tools.form.input name="third_parties" label="Terceiros" type="number" step="0.000001" min="0" max="15" suffix="%" :value="old('third_parties')" data-e2e-value="5.8" required placeholder="Ex.: 5,80" /></div>
             <div class="col-12"><button class="btn btn-primary" type="submit">Calcular INSS patronal</button></div>
         </form>
     </x-tools.form-panel>
