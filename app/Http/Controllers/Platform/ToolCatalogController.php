@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Platform;
 
 use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
+use App\Core\Tools\Favorites\Services\UserToolFavorites;
 use App\Core\Tools\ToolCatalog;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ final class ToolCatalogController extends Controller
     public function index(
         Request $request,
         PlatformAnalytics $analytics,
+        UserToolFavorites $toolFavorites,
         ?string $category = null,
     ): View {
         $query = trim((string) $request->query('q', ''));
@@ -60,12 +62,31 @@ final class ToolCatalogController extends Controller
             );
         }
 
+        $searchToolCatalog = $this->catalog->all()->map(static fn (array $tool): array => [
+            'slug' => $tool['slug'],
+            'name' => $tool['name'],
+            'description' => $tool['description'],
+            'icon' => $tool['icon'],
+            'category' => $tool['category'],
+            'category_name' => $tool['category_name'],
+            'keywords' => $tool['keywords'],
+            'url' => route($tool['route_name']),
+        ])->values();
+
+        $favoriteToolSlugs = $request->user() === null
+            ? collect()
+            : $toolFavorites->forUser((int) $request->user()->getAuthIdentifier())
+                ->pluck('slug')
+                ->values();
+
         return view('pages.tools.index', [
             'tools' => $tools,
             'categories' => $categories,
             'activeCategory' => $activeCategory,
             'query' => $query,
             'totalTools' => $this->catalog->all()->count(),
+            'searchToolCatalog' => $searchToolCatalog,
+            'favoriteToolSlugs' => $favoriteToolSlugs,
         ]);
     }
 }

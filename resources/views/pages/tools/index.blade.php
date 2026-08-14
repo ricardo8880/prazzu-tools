@@ -18,11 +18,57 @@
         </header>
 
         <form class="prazzu-catalog-toolbar" action="{{ $activeCategory ? route('tools.category', $activeCategory['slug']) : route('tools.index') }}" method="get" role="search">
-            <div class="prazzu-search flex-grow-1">
-                <label class="visually-hidden" for="catalog-search">Buscar no catálogo</label>
-                <i class="bi bi-search" aria-hidden="true"></i>
-                <input id="catalog-search" class="form-control" type="search" name="q" value="{{ $query }}" placeholder="Buscar por nome, categoria ou problema...">
-                <button class="btn" type="submit" aria-label="Buscar"><i class="bi bi-search" aria-hidden="true"></i></button>
+            <div class="prazzu-smart-search flex-grow-1" data-smart-search data-smart-search-source="catalog_smart_search">
+                <div class="prazzu-search">
+                    <label class="visually-hidden" for="catalog-search">Buscar no catálogo</label>
+                    <i class="bi bi-search" aria-hidden="true"></i>
+                    <input
+                        id="catalog-search"
+                        class="form-control"
+                        type="search"
+                        name="q"
+                        value="{{ $query }}"
+                        placeholder="Buscar por nome, categoria ou problema..."
+                        autocomplete="off"
+                        spellcheck="false"
+                        aria-autocomplete="list"
+                        aria-controls="catalog-smart-search-panel"
+                        aria-expanded="false"
+                        data-smart-search-input
+                    >
+                    <button class="btn" type="submit" aria-label="Buscar"><i class="bi bi-search" aria-hidden="true"></i></button>
+                </div>
+
+                <div
+                    id="catalog-smart-search-panel"
+                    class="prazzu-smart-search__panel"
+                    data-smart-search-panel
+                    aria-label="Sugestões de ferramentas"
+                    hidden
+                >
+                    <div class="prazzu-smart-search__content" data-smart-search-content role="listbox"></div>
+                    <div class="prazzu-smart-search__footer" aria-hidden="true">
+                        <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
+                        <span><kbd>Enter</kbd> abrir</span>
+                        <span><kbd>Esc</kbd> fechar</span>
+                        <span class="prazzu-smart-search__shortcut"><kbd>Ctrl</kbd><kbd>K</kbd> buscar</span>
+                    </div>
+                </div>
+
+                <script type="application/json" data-smart-search-catalog nonce="{{ $cspNonce ?? '' }}">{!! json_encode([
+                    'tools' => $searchToolCatalog->values()->all(),
+                    'categories' => $categories->map(static fn (array $category): array => [
+                        'slug' => $category['slug'],
+                        'name' => $category['name'],
+                        'icon' => $category['icon'],
+                        'count' => $category['count'],
+                        'url' => $category['url'],
+                    ])->values()->all(),
+                    'favoriteSlugs' => $favoriteToolSlugs->values()->all(),
+                    'recentSlugs' => [],
+                    'featuredSlugs' => [],
+                    'allToolsUrl' => $activeCategory ? route('tools.category', $activeCategory['slug']) : route('tools.index'),
+                ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
             </div>
             @if ($query !== '')
                 <a class="btn prazzu-btn-outline" href="{{ $activeCategory ? route('tools.category', $activeCategory['slug']) : route('tools.index') }}">Limpar</a>

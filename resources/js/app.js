@@ -442,12 +442,12 @@ renderRecentToolsOnHome();
 // Busca inteligente da Home. O campo continua sendo um formulário GET normal,
 // mas ganha uma camada de descoberta instantânea com favoritas, recentes,
 // categorias, palavras-chave e navegação por teclado.
-function initializeHomeSmartSearch() {
-    const root = document.querySelector('[data-home-smart-search]');
-    const input = root?.querySelector('[data-home-smart-search-input]');
-    const panel = root?.querySelector('[data-home-smart-search-panel]');
-    const content = root?.querySelector('[data-home-smart-search-content]');
-    const catalogScript = root?.querySelector('[data-home-smart-search-catalog]');
+function initializeSmartSearch() {
+    document.querySelectorAll('[data-home-smart-search], [data-smart-search]').forEach((root) => {
+    const input = root.querySelector('[data-home-smart-search-input], [data-smart-search-input]');
+    const panel = root.querySelector('[data-home-smart-search-panel], [data-smart-search-panel]');
+    const content = root.querySelector('[data-home-smart-search-content], [data-smart-search-content]');
+    const catalogScript = root.querySelector('[data-home-smart-search-catalog], [data-smart-search-catalog]');
 
     if (!(root instanceof HTMLElement)
         || !(input instanceof HTMLInputElement)
@@ -462,6 +462,7 @@ function initializeHomeSmartSearch() {
         return;
     }
 
+    const searchSource = root.dataset.smartSearchSource || 'home_smart_search';
     const tools = Array.isArray(payload?.tools)
         ? payload.tools.filter((tool) => tool && typeof tool.slug === 'string' && typeof tool.name === 'string' && typeof tool.url === 'string')
         : [];
@@ -521,7 +522,7 @@ function initializeHomeSmartSearch() {
         return holder;
     };
 
-    const optionElements = () => [...content.querySelectorAll('[data-home-search-option]')]
+    const optionElements = () => [...content.querySelectorAll('[data-smart-search-option]')]
         .filter((option) => option instanceof HTMLAnchorElement);
 
     const setActiveOption = (index, scroll = true) => {
@@ -542,7 +543,7 @@ function initializeHomeSmartSearch() {
     };
 
     const decorateOption = (link) => {
-        link.dataset.homeSearchOption = 'true';
+        link.dataset.smartSearchOption = 'true';
         link.setAttribute('role', 'option');
         link.setAttribute('aria-selected', 'false');
         link.addEventListener('mousemove', () => {
@@ -561,7 +562,7 @@ function initializeHomeSmartSearch() {
 
     const toolOption = (tool, reason = null) => {
         const link = decorateOption(node('a', 'prazzu-smart-search__option'));
-        link.href = destinationWithSource(tool.url, 'home_smart_search');
+        link.href = destinationWithSource(tool.url, searchSource);
         link.setAttribute('aria-label', `Abrir ${tool.name}`);
         link.append(iconNode(tool.icon));
 
@@ -592,7 +593,7 @@ function initializeHomeSmartSearch() {
 
     const categoryOption = (category) => {
         const link = decorateOption(node('a', 'prazzu-smart-search__category'));
-        link.href = destinationWithSource(category.url, 'home_smart_search_category');
+        link.href = destinationWithSource(category.url, `${searchSource}_category`);
         link.append(iconNode(category.icon, 'prazzu-smart-search__category-icon'));
 
         const body = node('span');
@@ -619,7 +620,7 @@ function initializeHomeSmartSearch() {
     const appendAllResultsAction = (query = '') => {
         if (!allToolsUrl) return;
         const link = decorateOption(node('a', 'prazzu-smart-search__all-results'));
-        link.href = destinationWithSource(allToolsUrl, 'home_smart_search_all', query);
+        link.href = destinationWithSource(allToolsUrl, `${searchSource}_all`, query);
         link.append(iconNode(query ? 'bi-search' : 'bi-grid', 'prazzu-smart-search__all-results-icon'));
 
         const label = node('span');
@@ -840,9 +841,10 @@ function initializeHomeSmartSearch() {
         input.select();
         openPanel();
     });
+    });
 }
 
-initializeHomeSmartSearch();
+initializeSmartSearch();
 
 // Exemplos de preenchimento devem orientar sem virar dados enviados ao cálculo.
 // Atua somente dentro de páginas de ferramentas e apenas quando a view não definiu

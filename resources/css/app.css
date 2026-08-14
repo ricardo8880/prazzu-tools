@@ -10211,3 +10211,16 @@ body.tox-dialog__disable-scroll {
         transition: none;
     }
 }
+
+/* Catálogo — a busca inteligente ocupa o mesmo espaço do campo original. */
+.prazzu-catalog-toolbar .prazzu-smart-search {
+    width: auto;
+    max-width: none;
+    flex: 1 1 auto;
+}
+
+@media (min-width: 1400px) {
+    .prazzu-catalog-toolbar .prazzu-smart-search {
+        width: auto;
+    }
+}
