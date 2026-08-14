@@ -93,6 +93,34 @@ final class ToolCatalog
     }
 
     /** @return Collection<int, array<string, mixed>> */
+    public function nextSteps(string $slug, int $limit = 4): Collection
+    {
+        $current = $this->find($slug);
+
+        if ($current === null || $limit < 1) {
+            return collect();
+        }
+
+        $available = $this->all()
+            ->reject(static fn (array $tool): bool => $tool['slug'] === $slug)
+            ->keyBy('slug');
+
+        return collect(config("tools.journeys.{$slug}", []))
+            ->filter(static fn (mixed $candidate): bool => is_string($candidate) && trim($candidate) !== '')
+            ->map(static fn (string $candidate): string => trim($candidate))
+            ->unique()
+            ->map(static fn (string $candidate): ?array => $available->get($candidate))
+            ->filter()
+            ->take($limit)
+            ->values()
+            ->map(static fn (array $tool, int $index): array => [
+                ...$tool,
+                'journey_position' => $index + 1,
+                'is_primary_next_step' => $index === 0,
+            ]);
+    }
+
+    /** @return Collection<int, array<string, mixed>> */
     public function related(string $slug, int $limit = 4): Collection
     {
         $current = $this->find($slug);

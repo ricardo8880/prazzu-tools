@@ -12,6 +12,7 @@
 /.vscode export-ignore
 /node_modules export-ignore
 /vendor export-ignore
+/backup export-ignore
 /public/build export-ignore
 /storage/logs export-ignore
 /database/database.sqlite export-ignore

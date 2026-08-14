@@ -16,8 +16,6 @@
 
     <x-tools.intro icon="calendar2-check" tone="blue" title="Calculadora de Férias" description="Estime os dias de direito, a remuneração das férias, o terço constitucional, o abono pecuniário e os principais prazos." badge="Grátis" />
 
-    <x-tool-feature-tiers slug="calculadora-ferias" />
-
     <div class="d-flex flex-wrap gap-2 mb-3">
         <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-ferias.planner') }}"><i class="bi bi-people me-1"></i>Planejamento em equipe <span class="badge text-bg-primary ms-1">Plus</span></a>
         @auth<a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-ferias.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>@endauth
@@ -105,7 +103,7 @@
         @php($summary = collect($result['summary'])->keyBy('key'))
         @php($remuneration = $result['details']['remuneration'])
         @php($periods = $result['details']['periods'])
-        <section class="prazzu-form-panel mt-4" aria-labelledby="vacation-result-title" data-testid="tool-result">
+        <section class="prazzu-form-panel mt-4 prazzu-tool-result-surface" aria-labelledby="vacation-result-title" data-testid="tool-result" data-tool-result-panel>
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div><span class="badge text-bg-success mb-2">Estimativa calculada</span><h2 id="vacation-result-title" class="prazzu-section-title mb-1">Resultado das férias</h2><p class="text-body-secondary mb-0">Memória baseada na remuneração e nas condições informadas.</p></div>
                 <div class="text-lg-end"><small class="text-body-secondary d-block">Total líquido estimado</small><strong class="fs-3 text-success">{{ $summary['net_total']['value'] }}</strong></div>
@@ -162,5 +160,7 @@
             <div class="col-12 col-md-4"><div class="prazzu-form-panel h-100"><h3 class="h6">Resultado estimado</h3><p class="text-body-secondary mb-0">Médias e descontos dependem dos dados fornecidos. Tributos automáticos e casos especiais serão ampliados em etapas posteriores.</p></div></div>
         </div>
     </section>
+    <x-tool-feature-tiers slug="calculadora-ferias" />
+
 </div>
 @endsection

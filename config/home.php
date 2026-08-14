@@ -3,14 +3,21 @@
 $accounting = [
     'page_title' => 'Prazzu Tools — Ferramentas para contabilidade',
     'meta_description' => 'Ferramentas contábeis gratuitas e profissionais para facilitar a rotina de contadores e empresas.',
-    'tools_section_title' => 'Ferramentas mais recentes',
+    'tools_section_title' => 'Novas ferramentas para resolver sua rotina',
 
     'hero' => [
-        'title_before' => 'Ferramentas que facilitam',
-        'title_line' => 'o seu',
-        'title_highlight' => 'dia a dia',
-        'description' => 'Tudo que você precisa em um só lugar. Agilidade, precisão e praticidade para o seu dia a dia contábil.',
-        'search_placeholder' => 'Buscar ferramentas...',
+        'title_before' => 'O que você precisa',
+        'title_line' => 'resolver',
+        'title_highlight' => 'hoje?',
+        'description' => 'Descreva sua necessidade e encontre a ferramenta certa para calcular, validar, simular ou gerar o que você precisa.',
+        'search_label' => 'Descreva o que você precisa resolver',
+        'search_placeholder' => 'Ex.: calcular rescisão, validar CNPJ, comparar impostos...',
+        'problem_shortcuts' => [
+            ['label' => 'Calcular rescisão', 'query' => 'rescisão'],
+            ['label' => 'Validar CNPJ ou CPF', 'query' => 'CNPJ CPF'],
+            ['label' => 'Calcular impostos', 'query' => 'impostos'],
+            ['label' => 'Custo de funcionário', 'query' => 'custo funcionário'],
+        ],
         'benefits' => [
             ['label' => '100% Gratuito em muitos', 'icon' => 'bi-check-circle-fill'],
             ['label' => 'Sem cadastro para usar', 'icon' => 'bi-check-circle-fill'],
@@ -30,14 +37,18 @@ $accounting = [
 $hr = [
     'page_title' => 'Prazzu Tools — Ferramentas para Recursos Humanos',
     'meta_description' => 'Ferramentas práticas para apoiar indicadores, rotinas e decisões de Recursos Humanos.',
-    'tools_section_title' => 'Ferramentas de RH',
+    'tools_section_title' => 'Ferramentas para resolver sua rotina de RH',
 
     'hero' => [
-        'title_before' => 'Ferramentas que apoiam',
-        'title_line' => 'a sua',
-        'title_highlight' => 'gestão de pessoas',
-        'description' => 'Indicadores e utilitários para apoiar decisões de Recursos Humanos em uma experiência dedicada, sobre a mesma plataforma Prazzu.',
-        'search_placeholder' => 'Buscar ferramentas de RH...',
+        'title_before' => 'O que você precisa',
+        'title_line' => 'resolver em',
+        'title_highlight' => 'RH hoje?',
+        'description' => 'Descreva sua necessidade de Recursos Humanos e encontre a ferramenta certa para chegar à resposta com rapidez.',
+        'search_label' => 'Descreva o que você precisa resolver em RH',
+        'search_placeholder' => 'Ex.: calcular turnover...',
+        'problem_shortcuts' => [
+            ['label' => 'Calcular turnover', 'query' => 'turnover'],
+        ],
         'benefits' => $accounting['hero']['benefits'],
     ],
 
@@ -52,14 +63,16 @@ $hr = [
 $global = [
     'page_title' => 'Prazzu Tools — Ferramentas para o seu dia a dia',
     'meta_description' => 'Ferramentas práticas para diferentes áreas de negócio em uma única plataforma.',
-    'tools_section_title' => 'Ferramentas em destaque',
+    'tools_section_title' => 'Ferramentas para resolver agora',
 
     'hero' => [
-        'title_before' => 'Ferramentas que facilitam',
-        'title_line' => 'o seu',
-        'title_highlight' => 'dia a dia',
-        'description' => 'Encontre ferramentas práticas para diferentes áreas de negócio em uma única plataforma.',
-        'search_placeholder' => 'Buscar ferramentas...',
+        'title_before' => 'O que você precisa',
+        'title_line' => 'resolver',
+        'title_highlight' => 'hoje?',
+        'description' => 'Descreva sua necessidade e encontre a ferramenta certa entre as áreas disponíveis no Prazzu.',
+        'search_label' => 'Descreva o que você precisa resolver',
+        'search_placeholder' => 'Ex.: calcular, validar, simular ou gerar...',
+        'problem_shortcuts' => [],
         'benefits' => $accounting['hero']['benefits'],
     ],
 

@@ -12,12 +12,10 @@
 
     <x-tools.trust-seo slug="emissor-de-recibos" :show-content="false" />
 
-    <div class="container py-5" data-testid="tool-page-emissor-de-recibos">
+    <div class="container py-5 tool-page" data-tool="emissor-de-recibos" data-testid="tool-page-emissor-de-recibos">
         <div class="row justify-content-center">
             <div class="col-xl-10">
                 <x-tools.intro icon="receipt" tone="green" title="Emissor de Recibos" description="Preencha, revise e gere um recibo completo sem depender de modelos improvisados." badge="Em desenvolvimento" />
-
-                <x-tool-feature-tiers slug="emissor-de-recibos" />
 
                 @if(session('profile_message'))
                     <div class="alert alert-success">{{ session('profile_message') }}</div>
@@ -143,7 +141,7 @@
                 </div>
 
                 @if (is_array($receipt))
-                    <section aria-labelledby="recibo-gerado" class="mb-4">
+                    <section aria-labelledby="recibo-gerado" class="mb-4 prazzu-tool-result-surface" data-testid="tool-result" data-tool-result-panel>
                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                             <h2 id="recibo-gerado" class="h3 mb-0">Revisão do recibo</h2>
                             <div class="d-flex flex-wrap gap-2">
@@ -248,6 +246,8 @@
                     <h2 class="h4">Como funciona</h2>
                     <p>O Prazzu valida os dados principais, transforma o valor em reais por extenso e monta o texto completo do recibo. O uso continua disponível sem login; usuários autenticados podem salvar e reutilizar recibos pelo histórico.</p>
                 </section>
+                <x-tool-feature-tiers slug="emissor-de-recibos" />
+
             </div>
         </div>
     </div>

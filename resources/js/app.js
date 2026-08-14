@@ -250,15 +250,45 @@ document.addEventListener('submit', (event) => {
     }
 });
 
-// Após o POST de cálculo/geração, confirma que o resultado está pronto para exportar.
+// Resultado principal da ferramenta. O seletor compartilhado cobre tanto o componente
+// moderno quanto as telas legadas que ainda usam o marcador de teste/Analytics.
+function findToolResultSurface(toolPage) {
+    if (!(toolPage instanceof HTMLElement)) return null;
+
+    return toolPage.querySelector('[data-tool-result-panel], [data-testid="tool-result"]')
+        || toolPage.querySelector('[data-analytics-result="main"]')?.parentElement
+        || toolPage.querySelector('[data-result-export-actions]')?.closest('section, .card, div');
+}
+
+function positionFeatureTiersAfterResult(toolPage) {
+    if (!(toolPage instanceof HTMLElement)) return;
+
+    const tiers = toolPage.querySelector('[data-tool-feature-tiers]');
+    const resultSurface = findToolResultSurface(toolPage);
+    if (!(tiers instanceof HTMLElement) || !(resultSurface instanceof HTMLElement)) return;
+
+    resultSurface.insertAdjacentElement('afterend', tiers);
+}
+
+// Após o POST de cálculo/geração, leva o usuário diretamente para a resposta que acabou
+// de pedir. O foco é apenas visual/navegacional e não altera payload, cálculo ou histórico.
 const currentTool = document.querySelector('[data-tool]');
-const hasGeneratedResult = document.querySelector('[data-analytics-result="main"], [data-result-export-actions]');
+const hasGeneratedResult = currentTool ? findToolResultSurface(currentTool) : null;
 if (currentTool && hasGeneratedResult) {
+    positionFeatureTiersAfterResult(currentTool);
+
     try {
         const pendingTool = sessionStorage.getItem(TOOL_GENERATION_KEY);
         if (pendingTool === currentTool.dataset.tool) {
             sessionStorage.removeItem(TOOL_GENERATION_KEY);
-            showFriendlyNotice('Tudo certo! O resultado foi gerado e os arquivos já podem ser baixados.');
+            showFriendlyNotice('Tudo certo! Seu resultado está pronto.');
+
+            window.setTimeout(() => {
+                hasGeneratedResult.setAttribute('tabindex', '-1');
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                hasGeneratedResult.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+                hasGeneratedResult.focus({ preventScroll: true });
+            }, 160);
         }
     } catch {}
 }
@@ -275,8 +305,18 @@ function hasMeaningfulToolResult(toolPage) {
     ));
 }
 
+function revealToolNextSteps(toolPage) {
+    if (!(toolPage instanceof HTMLElement) || !hasMeaningfulToolResult(toolPage)) return;
+
+    const nextSteps = toolPage.querySelector('[data-tool-next-steps]');
+    if (nextSteps instanceof HTMLElement) nextSteps.hidden = false;
+}
+
 function revealResultContinuityCta(toolPage) {
     if (!(toolPage instanceof HTMLElement) || !hasMeaningfulToolResult(toolPage)) return;
+
+    revealToolNextSteps(toolPage);
+    positionFeatureTiersAfterResult(toolPage);
 
     const cta = toolPage.querySelector('[data-result-continuity-cta]');
     if (!(cta instanceof HTMLElement) || cta.classList.contains('is-visible')) return;
@@ -462,6 +502,7 @@ function initializeSmartSearch() {
         return;
     }
 
+    const isHomeSearch = root.hasAttribute('data-home-smart-search');
     const searchSource = root.dataset.smartSearchSource || 'home_smart_search';
     const tools = Array.isArray(payload?.tools)
         ? payload.tools.filter((tool) => tool && typeof tool.slug === 'string' && typeof tool.name === 'string' && typeof tool.url === 'string')
@@ -659,14 +700,18 @@ function initializeSmartSearch() {
         const intro = node('div', 'prazzu-smart-search__intro');
         intro.append(iconNode('bi-stars', 'prazzu-smart-search__intro-icon'));
         const introCopy = node('span');
-        introCopy.append(node('strong', null, 'Busca inteligente'));
+        introCopy.append(node('strong', null, isHomeSearch ? 'O que você precisa resolver?' : 'Busca inteligente'));
         introCopy.append(node('small', null, favoriteSlugs.size || recentSlugs.length
-            ? 'Atalhos escolhidos com base nas suas favoritas e no que você usou recentemente.'
-            : 'Escolha um atalho ou descreva o que você precisa fazer.'));
+            ? (isHomeSearch
+                ? 'Você pode retomar um atalho conhecido ou descrever uma nova necessidade.'
+                : 'Atalhos escolhidos com base nas suas favoritas e no que você usou recentemente.')
+            : (isHomeSearch
+                ? 'Descreva a tarefa em linguagem simples ou escolha um atalho abaixo.'
+                : 'Escolha um atalho ou descreva o que você precisa fazer.')));
         intro.append(introCopy);
         content.append(intro);
 
-        const toolsSection = section('Para você', 'Acesso rápido');
+        const toolsSection = section(isHomeSearch ? 'Atalhos para resolver' : 'Para você', 'Acesso rápido');
         const toolList = node('div', 'prazzu-smart-search__options');
         personalizedTools().forEach((tool) => toolList.append(toolOption(tool, toolReason(tool.slug))));
         toolsSection.append(toolList);
@@ -674,7 +719,7 @@ function initializeSmartSearch() {
 
         const visibleCategories = categories.filter((category) => category.slug !== 'todas');
         if (visibleCategories.length > 0) {
-            const categoriesSection = section('Explorar por categoria', 'Ir direto ao tipo de tarefa');
+            const categoriesSection = section(isHomeSearch ? 'Explorar por tipo de tarefa' : 'Explorar por categoria', isHomeSearch ? 'Outra forma de encontrar a ferramenta certa' : 'Ir direto ao tipo de tarefa');
             const categoryGrid = node('div', 'prazzu-smart-search__categories');
             visibleCategories.forEach((category) => categoryGrid.append(categoryOption(category)));
             categoriesSection.append(categoryGrid);

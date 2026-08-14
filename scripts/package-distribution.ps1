@@ -14,7 +14,7 @@ if ([string]::IsNullOrWhiteSpace($OutputPath)) {
 $temporaryRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("prazzu-package-" + [guid]::NewGuid().ToString('N'))
 $stagingRoot = Join-Path $temporaryRoot $projectName
 
-$excludedDirectories = @('.git', '.idea', '.vscode', 'node_modules', 'vendor', '.phpunit.cache')
+$excludedDirectories = @('.git', '.idea', '.vscode', 'node_modules', 'vendor', 'backup', '.phpunit.cache')
 $excludedFiles = @('.env', '.phpunit.result.cache', 'ARQUIVOS_REMOVIDOS.txt', 'database.sqlite')
 
 try {

@@ -68,9 +68,9 @@
 
         @isset($result)
     <span data-analytics-result="main" hidden></span>
-            <div class="card mt-4">
+            <section class="card mt-4 prazzu-tool-result-surface" aria-labelledby="profit-distribution-result-title" data-testid="tool-result" data-tool-result-panel>
                 <div class="card-body">
-                    <h2 class="h4">Resultado</h2>
+                    <h2 class="h4" id="profit-distribution-result-title">Resultado</h2>
                     @foreach ($result->summary as $item)
                         <p><strong>{{ $item->label }}:</strong> {{ $item->value }}</p>
                     @endforeach
@@ -81,7 +81,7 @@
                         </tbody></table></div>
                     @endif
                 </div>
-            </div>
+            </section>
             <div class="d-flex gap-2 mt-3 flex-wrap">
                 @foreach (['pdf' => 'Baixar PDF', 'excel' => 'Baixar Excel (.xlsx)'] as $format => $label)
                     <form method="post" action="{{ route('tools.distribuicao-de-lucros.export.'.$format) }}">

@@ -44,6 +44,30 @@ final class ToolCatalogRelatedTest extends TestCase
         ], $related);
     }
 
+
+    public function test_next_steps_use_only_the_editorial_journey_and_mark_the_primary_action(): void
+    {
+        $steps = $this->app->make(ToolCatalog::class)
+            ->nextSteps('calculadora-salario-liquido');
+
+        self::assertSame([
+            'custo-funcionario-clt',
+            'calculadora-hora-extra',
+            'calculadora-ferias',
+            'calculadora-de-rescisao',
+        ], $steps->pluck('slug')->all());
+        self::assertTrue((bool) $steps->first()['is_primary_next_step']);
+        self::assertSame([1, 2, 3, 4], $steps->pluck('journey_position')->all());
+        self::assertSame(1, $steps->where('is_primary_next_step', true)->count());
+    }
+
+    public function test_next_steps_do_not_invent_cross_vertical_fallbacks(): void
+    {
+        self::assertTrue(
+            $this->app->make(ToolCatalog::class)->nextSteps('calculadora-turnover')->isEmpty(),
+        );
+    }
+
     public function test_every_official_tool_has_an_editorial_journey_entry_and_only_points_to_official_tools(): void
     {
         $official = collect(config('product_tools.official', []))->pluck('slug')->all();

@@ -90,7 +90,7 @@
     @if ($result)
         <span data-analytics-result="main" hidden></span>
 
-        <section class="mt-4" aria-labelledby="calculation-result-title">
+        <section class="mt-4 prazzu-tool-result-surface" aria-labelledby="calculation-result-title" data-testid="tool-result" data-tool-result-panel>
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
                 <h2 id="calculation-result-title" class="prazzu-section-title mb-0">Resultado estimado</h2>
                 <div class="d-flex flex-wrap gap-2 align-items-center">

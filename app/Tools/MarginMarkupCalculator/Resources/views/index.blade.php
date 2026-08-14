@@ -22,8 +22,6 @@
         </x-slot:actions>
     </x-tools.intro>
 
-    <x-tool-feature-tiers slug="calculadora-margem-markup" />
-
     @if(session('history_message'))<div class="alert alert-success">{{ session('history_message') }}</div>@endif
 
     <x-tools.validation-summary class="mb-4" />
@@ -119,7 +117,7 @@
     @endphp
     @if ($result)
         <span data-analytics-result="main" hidden></span>
-        <section class="mt-4" aria-labelledby="calculation-result-title" data-testid="tool-result">
+        <section class="mt-4 prazzu-tool-result-surface" aria-labelledby="calculation-result-title" data-testid="tool-result" data-tool-result-panel>
             <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-3">
                 <div>
                     <h2 id="calculation-result-title" class="prazzu-section-title mb-1">Resultado da formação de preço</h2>
@@ -197,6 +195,8 @@
     @include('tools-calculadora-margem-markup::partials.pricing-scenarios')
     @include('tools-calculadora-margem-markup::partials.product-import')
     @include('tools-calculadora-margem-markup::partials.batch-calculator')
+    <x-tool-feature-tiers slug="calculadora-margem-markup" />
+
 </div>
 @if ($taxSnapshotIntegration)
     <script nonce="{{ $cspNonce ?? '' }}">

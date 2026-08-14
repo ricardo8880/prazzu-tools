@@ -35,7 +35,8 @@
 
 - [ ] `.env` não está no pacote.
 - [ ] `.env` não está versionado (`git ls-files .env` não retorna resultado).
-- [ ] `.git`, `.idea`, `vendor` e `node_modules` não estão no pacote.
+- [ ] `.git`, `.idea`, `vendor`, `node_modules` e `backup` não estão no pacote.
+- [ ] Dumps SQL e backups locais não estão no pacote nem versionados.
 - [ ] Não existe outra raiz Laravel aninhada no pacote.
 - [ ] Banco SQLite local não está no pacote.
 - [ ] Logs locais não estão no pacote.

@@ -6,7 +6,7 @@ $root = $argv[1] ?? getcwd();
 $root = realpath($root) ?: $root;
 
 $forbiddenPaths = [
-    '.env', '.git', '.idea', '.vscode', 'vendor', 'node_modules',
+    '.env', '.git', '.idea', '.vscode', 'vendor', 'node_modules', 'backup',
     '.phpunit.cache', '.phpunit.result.cache', 'database/database.sqlite',
     'storage/logs/laravel.log',
 ];
@@ -38,7 +38,7 @@ foreach ($iterator as $file) {
     $name = $file->getFilename();
     $segments = explode('/', $relative);
 
-    foreach (['.git', '.idea', '.vscode', 'vendor', 'node_modules', '.phpunit.cache'] as $forbiddenDirectory) {
+    foreach (['.git', '.idea', '.vscode', 'vendor', 'node_modules', 'backup', '.phpunit.cache'] as $forbiddenDirectory) {
         if (in_array($forbiddenDirectory, array_slice($segments, 0, -1), true)) {
             $violations[] = $relative;
             break;

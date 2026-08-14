@@ -84,21 +84,25 @@
                                                 </div>
                                             </div>
 
+                                            @if($run['reference_date'])
+                                                <div class="small text-body-secondary">Referência: {{ $run['reference_date']->format('d/m/Y') }}</div>
+                                            @endif
+
                                             <div class="d-flex flex-wrap gap-2 mt-auto">
+                                                <a class="btn btn-primary btn-sm" href="{{ url()->query($run['open_url'], ['source' => 'account_continuity']) }}">
+                                                    <i class="bi {{ $run['has_result_detail'] ? 'bi-box-arrow-up-right' : ($run['history_url'] ? 'bi-clock-history' : 'bi-arrow-right-circle') }} me-1" aria-hidden="true"></i>{{ $run['open_label'] }}
+                                                </a>
+
                                                 @if($run['repeat_url'])
                                                     <form method="POST" action="{{ url()->query($run['repeat_url'], ['source' => 'account_continuity']) }}">
                                                         @csrf
-                                                        <button class="btn btn-primary btn-sm" type="submit">
+                                                        <button class="btn btn-outline-secondary btn-sm" type="submit">
                                                             <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Refazer cálculo
                                                         </button>
                                                     </form>
-                                                @else
-                                                    <a class="btn btn-primary btn-sm" href="{{ url()->query($run['tool_url'], ['source' => 'account_continuity']) }}">
-                                                        <i class="bi bi-arrow-right-circle me-1" aria-hidden="true"></i>Usar novamente
-                                                    </a>
                                                 @endif
 
-                                                @if($run['history_url'])
+                                                @if($run['history_url'] && $run['history_url'] !== $run['open_url'])
                                                     <a class="btn btn-outline-secondary btn-sm" href="{{ url()->query($run['history_url'], ['source' => 'account_continuity']) }}">
                                                         <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Histórico
                                                     </a>

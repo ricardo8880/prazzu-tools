@@ -30,6 +30,10 @@ final class HomeContinuityTest extends TestCase
             ->assertSee('Continue de onde parou')
             ->assertSee('Calculadora de Salário Líquido')
             ->assertSee('Calculadora de Férias')
+            ->assertSee('Último trabalho')
+            ->assertSee('Resultado salvo em')
+            ->assertSee('Ver resultados salvos')
+            ->assertSee($salaryRun->reference_date->format('d/m/Y'))
             ->assertSee(url()->query(route('tools.calculadora-salario-liquido.history.index'), ['source' => 'home_continuity']), false)
             ->assertDontSee(route('tools.calculadora-salario-liquido.history.repeat', [$salaryRun->id]).'?source=home_continuity', false)
             ->assertDontSee($secret);

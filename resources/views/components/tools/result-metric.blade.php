@@ -7,7 +7,7 @@
 
 @php($iconClass = str_starts_with($icon, 'bi-') ? $icon : 'bi-'.$icon)
 
-<div {{ $attributes->class(['card', 'h-100', 'border-0', 'shadow-sm']) }}>
+<div {{ $attributes->class(['card', 'h-100', 'border-0', 'shadow-sm', 'prazzu-result-metric']) }}>
     <div class="card-body d-flex align-items-center gap-3">
         <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-body-tertiary flex-shrink-0 p-3" aria-hidden="true">
             <i class="bi {{ $iconClass }} fs-5"></i>

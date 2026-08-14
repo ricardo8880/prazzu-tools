@@ -7,6 +7,7 @@
 /.phpunit.cache
 /node_modules
 /vendor
+/backup
 /public/build
 /public/hot
 /bootstrap/cache/*.php
@@ -19,3 +20,8 @@
 /database/e2e.sqlite
 /database/e2e.sqlite-shm
 /database/e2e.sqlite-wal
+
+# Resíduos locais de sistema e editores
+**/~$*
+**/.DS_Store
+**/Thumbs.db

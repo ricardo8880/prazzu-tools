@@ -48,13 +48,13 @@
 
         @isset($result)
             <span data-analytics-result="main" hidden></span>
-            <div class="card mt-4"><div class="card-body">
-                <h2 class="h4">Resultado</h2>
+            <section class="card mt-4 prazzu-tool-result-surface" aria-labelledby="pro-labore-result-title" data-testid="tool-result" data-tool-result-panel><div class="card-body">
+                <h2 class="h4" id="pro-labore-result-title">Resultado</h2>
                 @foreach ($result->summary as $item)
                     <p><strong>{{ $item->label }}:</strong> {{ $item->value }}</p>
                 @endforeach
                 <x-tools.export-buttons :pdf-route="route('tools.simulador-pro-labore-ideal.export.pdf')" :excel-route="route('tools.simulador-pro-labore-ideal.export.excel')" :input="$calculationInput ?? []" />
-            </div></div>
+            </div></section>
         @endisset
         <div class="card mt-4"><div class="card-body"><h2 class="h4">Prazzu Plus — cenários anuais</h2><form method="POST" action="{{ route('tools.simulador-pro-labore-ideal.scenarios') }}" class="row g-3">@csrf <div class="col-md-6"><label class="form-label">Regime</label><select class="form-select" name="company_regime"><option value="simples_outside_annex_iv">Simples fora do Anexo IV</option><option value="simples_annex_iv">Simples Anexo IV</option><option value="presumed_profit">Lucro Presumido</option><option value="actual_profit">Lucro Real</option></select></div><div class="col-md-3"><x-tools.form.input name="dependents" label="Dependentes" type="number" min="0" placeholder="0" /></div><div class="col-md-3"><x-tools.form.money name="other_official_social_security" label="Outras contribuições" placeholder="0,00" /></div><div class="col-12"><label class="form-label">Valores mensais</label><input class="form-control" name="scenario_values" value="{{ old('scenario_values') }}" placeholder="Digite os valores mensais" aria-describedby="scenario-values-help" required><div id="scenario-values-help" class="form-text">Para comparar mais de um valor, separe-os por ponto e vírgula (;).</div></div><div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="confirm_scenario_assumptions" value="1" id="confirm-scenarios" required><label class="form-check-label" for="confirm-scenarios">Confirmo as premissas dos cenários.</label></div><div class="col-12"><button class="btn btn-outline-primary">Comparar ano</button></div></form></div></div>
         @isset($proLaboreScenarios)<div class="card mt-4"><div class="card-body"><h2 class="h4">Comparação anual</h2><table class="table"><thead><tr><th>Cenário</th><th>Líquido anual</th><th>Custo empresarial anual</th></tr></thead><tbody>@foreach($proLaboreScenarios as $scenario)<tr><th>{{ $scenario['name'] }}</th><td>R$ {{ number_format($scenario['annual_net_minor']/100,2,',','.') }}</td><td>R$ {{ number_format($scenario['annual_company_cost_minor']/100,2,',','.') }}</td></tr>@endforeach</tbody></table></div></div>@endisset

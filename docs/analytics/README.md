@@ -99,3 +99,22 @@ O contrato declara apenas identificadores semânticos. Rótulos digitados, valor
 O endpoint `POST /analytics/tools` aceita os eventos públicos de jornada e somente os metadados definidos por `ToolAnalyticsMetadata`. Chaves desconhecidas são descartadas; tipos, limites e identificadores são validados antes da publicação.
 
 A implementação dos módulos deve reutilizar esse contrato em vez de criar listeners, payloads ou serviços de Analytics próprios.
+
+## Métricas de UX e retorno
+
+O painel de ferramentas usa a jornada declarada pelas 50 ferramentas para separar três etapas de experiência:
+
+1. `tool.opened` — abriu a ferramenta;
+2. `tool.started` — começou a interagir com a tarefa principal;
+3. `tool.result.viewed` — o resultado principal chegou efetivamente à área visível.
+
+As taxas de início e de resultado após início devem ser usadas para localizar a transição com maior perda antes de propor um redesign. `tool.abandoned`, `tool.validation.error`, etapa e campo complementam o diagnóstico, mas não substituem o funil.
+
+A métrica central de retorno usa resultados válidos concluídos (`tool.calculation.completed` e o evento oficial de lote do Validador de Documentos):
+
+- **Problemas resolvidos**: quantidade de resultados válidos concluídos;
+- **Pessoas que resolveram**: usuários autenticados ou visitantes persistentes identificáveis que concluíram pelo menos um resultado;
+- **Voltaram e resolveram**: essas pessoas concluíram novamente em pelo menos dois dias distintos dentro do período selecionado;
+- **Taxa de retorno**: `voltaram e resolveram / pessoas que resolveram`.
+
+Dois cálculos no mesmo dia não contam como retorno. Sessões isoladas e eventos sem identidade persistente também não são usados para afirmar recorrência, evitando inflar retenção. Nenhum valor digitado, documento ou conteúdo do resultado é necessário para essas métricas.

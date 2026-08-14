@@ -16,8 +16,6 @@
 
     <x-tools.intro icon="calculator" title="Calculadora de Honorários Contábeis" description="Estruture uma precificação coerente considerando o perfil e a complexidade de cada cliente." badge="Grátis" />
 
-    <x-tool-feature-tiers slug="calculadora-de-honorarios-contabeis" />
-
     @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
 
     @if ($successMessage ?? session('success'))
@@ -142,7 +140,7 @@
         <span data-analytics-result="main" hidden></span>
         @php($complexityVariant = match ($result['complexity_level']) { 'Baixa' => 'success', 'Média' => 'warning', 'Alta', 'Muito alta' => 'danger', default => 'secondary' })
 
-        <section class="mt-4" aria-labelledby="calculation-result-title" data-testid="tool-result">
+        <section class="mt-4 prazzu-tool-result-surface" aria-labelledby="calculation-result-title" data-testid="tool-result" data-tool-result-panel>
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-3">
                 <div>
                     <h2 id="calculation-result-title" class="prazzu-section-title mb-1">Resultado da precificação</h2>
@@ -523,6 +521,8 @@
             </div>
         </section>
     @endif
+    <x-tool-feature-tiers slug="calculadora-de-honorarios-contabeis" />
+
 </div>
 @if ($taxSnapshotIntegration)
     <script nonce="{{ $cspNonce ?? '' }}">

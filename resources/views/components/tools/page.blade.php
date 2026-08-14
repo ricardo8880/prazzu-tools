@@ -72,38 +72,44 @@
         <div class="alert alert-success py-2" role="status">{{ session('tool_favorite_status') }}</div>
     @endif
 
-    <x-tool-feature-tiers :slug="$slug" />
-
     @if ($showValidation)
         <x-tools.validation-summary class="mb-4" />
     @endif
 
     {{ $slot }}
 
+    <x-tool-feature-tiers :slug="$slug" />
+
     <x-tools.plus-result-cta :slug="$slug" :history-url="$historyUrl" />
 
     <x-tools.trust-seo :slug="$slug" />
 
-    @php($relatedTools = $toolCatalog->related($slug))
-    @if ($relatedTools->isNotEmpty())
-        <section class="mt-5" aria-labelledby="{{ $slug }}-related-title">
+    @php($nextSteps = $toolCatalog->nextSteps($slug))
+    @if ($nextSteps->isNotEmpty())
+        <section class="mt-5 prazzu-next-steps" aria-labelledby="{{ $slug }}-next-steps-title" data-tool-next-steps hidden>
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 gap-sm-3 mb-3">
                 <div>
-                    <span class="prazzu-eyebrow">Continue sua análise</span>
-                    <h2 class="h4 mb-0" id="{{ $slug }}-related-title">Ferramentas relacionadas</h2>
+                    <span class="prazzu-eyebrow">Depois deste resultado</span>
+                    <h2 class="h4 mb-1" id="{{ $slug }}-next-steps-title">Próximos passos</h2>
+                    <p class="small text-body-secondary mb-0">Continue por uma ação que faz sentido a partir desta ferramenta.</p>
                 </div>
                 <a class="small" href="{{ route('tools.index') }}">Ver catálogo completo</a>
             </div>
             <div class="row g-3">
-                @foreach ($relatedTools as $related)
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <a class="card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ url()->query(route($related['route_name']), ['source' => 'related_tools', 'from_tool' => $slug, 'position' => $loop->iteration]) }}">
+                @foreach ($nextSteps as $nextStep)
+                    <div class="{{ $nextStep['is_primary_next_step'] ? 'col-12 col-xl-6' : 'col-12 col-md-6 col-xl-2' }}">
+                        <a class="card border-0 shadow-sm h-100 text-decoration-none text-body prazzu-next-step-card{{ $nextStep['is_primary_next_step'] ? ' prazzu-next-step-card--primary' : '' }}" href="{{ url()->query(route($nextStep['route_name']), ['source' => 'related_tools', 'from_tool' => $slug, 'position' => $nextStep['journey_position']]) }}">
                             <div class="card-body">
+                                @if ($nextStep['is_primary_next_step'])
+                                    <span class="prazzu-badge prazzu-badge--green mb-3">Próximo passo recomendado</span>
+                                @else
+                                    <span class="prazzu-eyebrow mb-2 d-block">Também pode ajudar</span>
+                                @endif
                                 <div class="d-flex align-items-start gap-3">
-                                    <span class="prazzu-tool-icon prazzu-tool-icon-sm" aria-hidden="true"><i class="bi {{ $related['icon'] }}"></i></span>
+                                    <span class="prazzu-tool-icon prazzu-tool-icon-sm" aria-hidden="true"><i class="bi {{ $nextStep['icon'] }}"></i></span>
                                     <div>
-                                        <h3 class="h6 mb-1">{{ $related['name'] }}</h3>
-                                        <p class="small text-body-secondary mb-0">{{ \Illuminate\Support\Str::limit($related['description'], 105) }}</p>
+                                        <h3 class="h6 mb-1">{{ $nextStep['name'] }}</h3>
+                                        <p class="small text-body-secondary mb-0">{{ \Illuminate\Support\Str::limit($nextStep['description'], $nextStep['is_primary_next_step'] ? 150 : 90) }}</p>
                                     </div>
                                 </div>
                             </div>

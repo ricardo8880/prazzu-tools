@@ -143,6 +143,11 @@ final readonly class UserToolContinuityQuery
             ? route($repeatRoute, [$run->id])
             : null;
 
+        $openUrl = $showUrl ?? $historyUrl ?? route($manifest->routeName);
+        $openLabel = $showUrl !== null
+            ? 'Abrir último resultado'
+            : ($historyUrl !== null ? 'Ver resultados salvos' : 'Usar novamente');
+
         return [
             'id' => (string) $run->id,
             'tool_slug' => $manifest->slug,
@@ -152,7 +157,9 @@ final readonly class UserToolContinuityQuery
             'tool_vertical' => $manifest->vertical,
             'tool_url' => route($manifest->routeName),
             'history_url' => $historyUrl,
-            'open_url' => $showUrl ?? $historyUrl ?? route($manifest->routeName),
+            'open_url' => $openUrl,
+            'open_label' => $openLabel,
+            'has_result_detail' => $showUrl !== null,
             'repeat_url' => $repeatUrl,
             'reference_date' => $run->reference_date,
             'finished_at' => $run->finished_at ?? $run->created_at,

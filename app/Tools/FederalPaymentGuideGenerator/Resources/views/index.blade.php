@@ -4,7 +4,7 @@
 @section('meta_description', 'Calcule de forma orientativa multa e juros de DARF e GPS com memória transparente e conferência obrigatória nas fontes oficiais.')
 
 @section('content')
-<div data-testid="tool-page-gerador-darf-gps">
+<div class="tool-page" data-tool="gerador-darf-gps" data-testid="tool-page-gerador-darf-gps">
     <x-tools.trust-seo slug="gerador-darf-gps" :show-content="false" />
     @php($result = $result ?? session('guide_result'))
     @php($recentHistory = $recentHistory ?? [])
@@ -12,8 +12,6 @@
         <div class="row justify-content-center">
             <div class="col-xl-10">
                 <x-tools.intro icon="receipt-cutoff" tone="green" title="Gerador Inteligente de DARF/GPS" description="Identifique um código inicial, confira vencimento e calcule multa e juros com memória transparente." badge="Ativa" />
-
-                <x-tool-feature-tiers slug="gerador-darf-gps" />
 
                 <div class="alert alert-warning">
                     Esta ferramenta auxilia a conferência. Ela não transmite, não emite e não substitui o SicalcWeb, e-CAC ou outro sistema oficial.
@@ -91,7 +89,7 @@
 
                 @if (is_array($result))
                     <span data-analytics-result="main" hidden></span>
-                    <section aria-labelledby="resultado-guia" class="mb-4">
+                    <section aria-labelledby="resultado-guia" class="mb-4 prazzu-tool-result-surface" data-testid="tool-result" data-tool-result-panel>
                         <h2 id="resultado-guia" class="h3">Resultado orientativo</h2>
                         <div class="row g-3 mb-3">
                             <div class="col-md-3"><div class="card h-100"><div class="card-body"><div class="text-muted small">Principal</div><div class="h4 mb-0">{{ $result['amounts']['principal'] }}</div></div></div></div>
@@ -150,6 +148,8 @@
             </div>
         </div>
     </div>
+
+    <x-tool-feature-tiers slug="gerador-darf-gps" />
 
     @push('scripts')
         <script nonce="{{ $cspNonce ?? '' }}">

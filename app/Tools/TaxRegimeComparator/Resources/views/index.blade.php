@@ -126,7 +126,7 @@
 
     @php($result = $comparisonResult ?? session('comparison_result'))
     @if ($result)
-        <section class="mt-5" aria-labelledby="comparison-result-title" data-analytics-result="comparison">
+        <section class="mt-5 prazzu-tool-result-surface" aria-labelledby="comparison-result-title" data-analytics-result="comparison" data-testid="tool-result" data-tool-result-panel>
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
                 <div><h2 id="comparison-result-title" class="h3 mb-1">Resultado da comparação</h2><p class="text-body-secondary mb-0">Referência {{ $result['reference_date'] }} · regras {{ $result['rule_version'] }}</p></div>
                 <div class="d-flex flex-wrap gap-2 align-self-lg-start">

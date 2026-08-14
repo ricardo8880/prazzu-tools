@@ -9980,11 +9980,11 @@ body.tox-dialog__disable-scroll {
 }
 
 .prazzu-smart-search__option-body strong {
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .prazzu-smart-search__option-body small {
-    font-size: 10.5px;
+    font-size: 12px;
     line-height: 1.35;
 }
 
@@ -10222,5 +10222,295 @@ body.tox-dialog__disable-scroll {
 @media (min-width: 1400px) {
     .prazzu-catalog-toolbar .prazzu-smart-search {
         width: auto;
+    }
+}
+
+
+/* ========================================================================== */
+/* 30. UX de ferramentas — valor primeiro                                      */
+/* Lote UX 1: reduz pré-cálculo, destaca resultado e desloca Essencial/Plus.   */
+/* ========================================================================== */
+.tool-page .prazzu-tool-intro {
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    gap: 14px;
+}
+
+.tool-page .prazzu-tool-intro .prazzu-icon-tile {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+    font-size: 1.2rem;
+}
+
+.tool-page .prazzu-tool-intro h1 {
+    margin-top: 1px;
+    margin-bottom: 4px;
+    font-size: clamp(1.45rem, 2vw, 1.9rem);
+}
+
+.tool-page .prazzu-tool-intro p {
+    max-width: 760px;
+    line-height: 1.5;
+}
+
+.prazzu-tool-result-surface {
+    padding: clamp(1.15rem, 2.4vw, 1.75rem);
+    border: 1px solid color-mix(in srgb, var(--prazzu-color-primary) 46%, var(--prazzu-border-color) 54%);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--prazzu-color-primary) 10%, transparent), transparent 34%),
+        var(--prazzu-color-surface);
+    box-shadow: 0 18px 42px rgb(0 0 0 / 12%);
+    scroll-margin-top: calc(var(--prazzu-header-height) + 18px);
+}
+
+.prazzu-tool-result-panel {
+    position: relative;
+    min-height: 0;
+    padding: clamp(1.15rem, 2.4vw, 1.75rem);
+    border-color: color-mix(in srgb, var(--prazzu-color-primary) 46%, var(--prazzu-border-color) 54%);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--prazzu-color-primary) 13%, transparent), transparent 34%),
+        var(--prazzu-color-surface);
+    box-shadow: 0 18px 42px rgb(0 0 0 / 14%);
+    scroll-margin-top: calc(var(--prazzu-header-height) + 18px);
+}
+
+.prazzu-tool-result-panel:hover {
+    transform: none;
+    border-color: color-mix(in srgb, var(--prazzu-color-primary) 58%, var(--prazzu-border-color) 42%);
+    background:
+        radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--prazzu-color-primary) 13%, transparent), transparent 34%),
+        var(--prazzu-color-surface);
+}
+
+.prazzu-tool-result-panel:focus {
+    outline: 3px solid color-mix(in srgb, var(--prazzu-color-primary) 38%, transparent);
+    outline-offset: 3px;
+}
+
+.prazzu-tool-result-panel__header {
+    padding-bottom: 0.95rem;
+    border-bottom: 1px solid var(--prazzu-border-color);
+}
+
+.prazzu-tool-result-panel__header .prazzu-section-title {
+    margin-top: 0.15rem;
+    font-size: clamp(1.35rem, 2vw, 1.65rem);
+    font-weight: 760;
+}
+
+.prazzu-tool-result-panel .prazzu-result-metric {
+    border: 1px solid var(--prazzu-border-color) !important;
+    background: color-mix(in srgb, var(--prazzu-color-surface) 90%, var(--prazzu-color-primary) 10%);
+    box-shadow: none !important;
+}
+
+.prazzu-tool-result-panel .prazzu-result-metric strong {
+    font-size: clamp(1.25rem, 2vw, 1.55rem) !important;
+    letter-spacing: -0.02em;
+}
+
+.prazzu-tool-tiers {
+    scroll-margin-top: calc(var(--prazzu-header-height) + 18px);
+}
+
+.prazzu-tool-tiers__details {
+    overflow: hidden;
+    border: 1px solid var(--prazzu-border-color);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--prazzu-color-surface) 94%, transparent);
+}
+
+.prazzu-tool-tiers__summary {
+    display: flex;
+    min-height: 64px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 13px 16px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.prazzu-tool-tiers__summary::-webkit-details-marker {
+    display: none;
+}
+
+.prazzu-tool-tiers__summary > span:first-child {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.prazzu-tool-tiers__summary strong {
+    color: var(--prazzu-color-text);
+    font-size: 0.95rem;
+}
+
+.prazzu-tool-tiers__summary .bi-chevron-down {
+    transition: transform 160ms ease;
+}
+
+.prazzu-tool-tiers__details[open] .prazzu-tool-tiers__summary .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.prazzu-tool-tiers__content {
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--prazzu-border-color);
+    padding-top: 16px;
+}
+
+@media (max-width: 575.98px) {
+    .tool-page .prazzu-tool-intro {
+        padding: 16px;
+    }
+
+    .tool-page .prazzu-tool-intro .prazzu-icon-tile {
+        display: none;
+    }
+
+    .prazzu-tool-tiers__summary {
+        align-items: flex-start;
+    }
+
+    .prazzu-tool-tiers__summary .badge {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .prazzu-tool-tiers__summary .bi-chevron-down {
+        transition: none;
+    }
+}
+
+/* Experiência do Usuário — Lote 2: continuidade orientada ao último trabalho e próximos passos. */
+.prazzu-continuity-card__meta,
+.prazzu-continuity-card__reference {
+    color: var(--prazzu-color-muted);
+    font-size: 0.78rem;
+    line-height: 1.45;
+}
+
+.prazzu-continuity-card__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--bs-link-color);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.prazzu-tool-card--continuity:hover .prazzu-continuity-card__action,
+.prazzu-tool-card--continuity:focus-within .prazzu-continuity-card__action {
+    text-decoration: underline;
+}
+
+.prazzu-next-step-card {
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.prazzu-next-step-card--primary {
+    border: 1px solid rgb(124 58 237 / 28%) !important;
+    background: linear-gradient(145deg, rgb(124 58 237 / 9%), transparent 58%);
+}
+
+.prazzu-next-step-card:hover,
+.prazzu-next-step-card:focus-visible {
+    transform: translateY(-2px);
+}
+
+[data-bs-theme="light"] .prazzu-next-step-card--primary {
+    background: linear-gradient(145deg, rgb(124 58 237 / 7%), rgb(255 255 255 / 96%) 58%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .prazzu-next-step-card {
+        transition: none;
+    }
+
+    .prazzu-next-step-card:hover,
+    .prazzu-next-step-card:focus-visible {
+        transform: none;
+    }
+}
+
+/* UX Lote 3 — Home orientada ao problema */
+.prazzu-hero__resolver {
+    max-width: 610px;
+}
+
+.prazzu-hero__search-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--prazzu-color-text);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.prazzu-hero__search-label i {
+    color: var(--prazzu-color-secondary-light);
+}
+
+.prazzu-hero__resolver .prazzu-search {
+    width: 100%;
+}
+
+.prazzu-problem-shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.prazzu-problem-shortcuts__label {
+    color: var(--prazzu-color-muted);
+    font-size: 11px;
+}
+
+.prazzu-problem-shortcut {
+    position: relative;
+    z-index: 1;
+    padding: 5px 9px;
+    border: 1px solid var(--prazzu-border-color);
+    border-radius: 999px;
+    color: var(--prazzu-color-text-muted);
+    background: color-mix(in srgb, var(--prazzu-color-surface-hover) 55%, transparent);
+    font-size: 11px;
+    line-height: 1.2;
+    transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.prazzu-problem-shortcut:hover,
+.prazzu-problem-shortcut:focus-visible {
+    border-color: var(--prazzu-border-color-strong);
+    color: var(--prazzu-color-primary-light);
+    background: var(--prazzu-color-surface-hover);
+}
+
+.prazzu-category-discovery {
+    margin-bottom: 8px;
+}
+
+.prazzu-category-discovery__title {
+    color: var(--prazzu-color-text);
+    font-size: 14px;
+    font-weight: 650;
+}
+
+@media (max-width: 575.98px) {
+    .prazzu-problem-shortcuts {
+        gap: 6px;
+    }
+
+    .prazzu-problem-shortcut {
+        padding-inline: 8px;
     }
 }

@@ -26,16 +26,20 @@ ARQUIVOS_REMOVIDOS.txt
 ferramentas/
 ```
 
-Ele preserva deliberadamente:
+Além dos alvos históricos, o script remove arquivos temporários de Office/sistema (`~$*`, `.DS_Store`, `Thumbs.db`) encontrados na árvore.
+
+Ele preserva deliberadamente os arquivos locais no disco, incluindo:
 
 ```text
 .git/
 .env
+node_modules/
 vendor/
+backup/
 database/database.sqlite
 ```
 
-Esses itens podem ser necessários no ambiente local, embora não devam estar em um pacote público.
+Esses itens podem ser necessários no ambiente local, embora não devam estar em um pacote público. Quando Git está disponível, o script também remove `.env`, `node_modules` e `backup` apenas do índice (`git rm --cached`), sem apagar as cópias locais.
 
 Para visualizar as remoções sem executá-las:
 
@@ -58,6 +62,7 @@ O pacote gerado exclui dados locais e reconstruíveis e executa uma validação 
 - `.env`;
 - `vendor`;
 - `node_modules`;
+- `backup` e dumps locais;
 - cache do PHPUnit;
 - banco SQLite local;
 - logs locais.

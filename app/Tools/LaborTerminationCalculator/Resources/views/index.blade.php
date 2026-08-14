@@ -22,8 +22,6 @@
         </x-slot:actions>
     </x-tools.intro>
 
-    <x-tool-feature-tiers slug="calculadora-de-rescisao" />
-
     @if (session('history_message'))
         <div class="alert alert-success d-flex gap-2 align-items-start" role="status">
             <i class="bi bi-check-circle-fill mt-1" aria-hidden="true"></i>
@@ -262,7 +260,7 @@
         @php($result = $calculationResult ?? session('calculation_result'))
         <span data-analytics-result="main" hidden></span>
         @php($exportInput = ! empty($calculationInput ?? []) ? $calculationInput : session('calculation_input', []))
-        <section class="prazzu-form-panel mt-4" aria-labelledby="termination-result-title" data-testid="tool-result">
+        <section class="prazzu-form-panel mt-4 prazzu-tool-result-surface" aria-labelledby="termination-result-title" data-testid="tool-result" data-tool-result-panel>
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div>
                     <span class="badge text-bg-success mb-2">Estimativa calculada</span>
@@ -434,5 +432,7 @@
         <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
         Os resultados serão estimativos e não substituirão a conferência do termo de rescisão por profissional qualificado.
     </div>
+    <x-tool-feature-tiers slug="calculadora-de-rescisao" />
+
 </div>
 @endsection

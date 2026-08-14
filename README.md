@@ -114,13 +114,13 @@ Antes de iniciar qualquer lote, também é obrigatório ler [`docs/IMPLEMENTATIO
 
 Cada lote deve partir do estado real deixado pelos anteriores. Não se deve recriar decisões já consolidadas, alterar slugs públicos, remover módulos existentes ou mudar o escopo oficial sem registrar a decisão, preservar compatibilidade e atualizar as verificações automatizadas.
 
-O catálogo oficial atual está documentado em [`docs/PRODUCT-TOOLS-INVENTORY.md`](docs/PRODUCT-TOOLS-INVENTORY.md). O Lote Cirúrgico 1 consolidou os 32 módulos históricos; o Lote 6 multi-nicho é uma expansão explícita e eleva o inventário atual para 33 ferramentas oficiais, mantendo os 32 módulos anteriores e adicionando `TurnoverCalculator` na vertical `rh`. Nenhum módulo pode permanecer escondido por classificação paralela. Expansões, substituições ou remoções futuras exigem lote explícito, preservação de compatibilidade e atualização dos gates automatizados.
+O catálogo oficial atual está documentado em [`docs/PRODUCT-TOOLS-INVENTORY.md`](docs/PRODUCT-TOOLS-INVENTORY.md) e no inventário executável [`config/product_tools.php`](config/product_tools.php). O estado vigente possui **50 ferramentas oficiais**, sendo **49 em `contabilidade` e 1 em `rh`**. A evolução histórica dos 32 módulos iniciais até o catálogo atual permanece registrada em [`docs/IMPLEMENTATION-LOTS.md`](docs/IMPLEMENTATION-LOTS.md); números históricos não substituem o inventário executável como fonte de verdade. Nenhum módulo pode permanecer escondido por classificação paralela. Expansões, substituições ou remoções futuras exigem lote explícito, preservação de compatibilidade e atualização dos gates automatizados.
 
 A Home utiliza `release_order` do inventário executável para mostrar exatamente as 8 ferramentas mais recentes. O campo `position` continua reservado à ordenação editorial do catálogo, e `featured` não pode ampliar a lista principal da Home. Toda nova publicação deve receber uma nova ordem de lançamento em lote explícito.
 
 A URL combinada de Pró-Labore e Distribuição de Lucros funciona temporariamente como ponte de compatibilidade e não deve voltar a expor um terceiro cálculo duplicado. A remoção física depende de substituição explícita que preserve a quantidade oficial vigente do catálogo e migre histórico, métricas e integrações.
 
-A consolidação multi-vertical dos Lotes 1 a 7 está concluída. O estado de referência atual possui `contabilidade` e `rh` registradas, 47 ferramentas oficiais e infraestrutura compartilhada para Home, Blog, Analytics, SEO, Admin, busca, observabilidade e E2E. Superfícies globais não podem assumir Contabilidade implicitamente; conteúdo específico deve declarar ou receber sua vertical.
+A consolidação multi-vertical permanece concluída. O estado de referência atual possui `contabilidade` e `rh` registradas, **50 ferramentas oficiais** e infraestrutura compartilhada para Home, Blog, Analytics, SEO, Admin, busca, observabilidade e E2E. Superfícies globais não podem assumir Contabilidade implicitamente; conteúdo específico deve declarar ou receber sua vertical.
 
 Enquanto executa qualquer tarefa (criação de ferramentas, correção de bugs, refatorações ou novas funcionalidades), observe continuamente se existe alguma oportunidade de evolução da plataforma.
 
@@ -930,7 +930,7 @@ Toda nova página deve nascer com sua documentação oficial. Toda página remov
 
 ## Estado do saneamento cirúrgico do catálogo
 
-Após o Lote Cirúrgico 4, o catálogo histórico mantinha 32 ferramentas visíveis. O Lote 6 multi-nicho expande explicitamente esse catálogo para 33, sem remover nenhuma das 32 anteriores. O antigo módulo combinado permanece reposicionado como `Planejador de Retirada de Sócios`, com propósito distinto de consolidação e comparação de cenários. Os simuladores especializados de Pró-Labore e Distribuição de Lucros permanecem independentes. A Home continua limitada às 8 maiores ordens de lançamento da vertical ativa.
+Após o Lote Cirúrgico 4, o catálogo histórico mantinha 32 ferramentas visíveis e o Lote 6 multi-nicho adicionou `TurnoverCalculator` como a 33ª. Expansões posteriores elevaram o inventário executável ao estado atual de **50 ferramentas oficiais**, sem remover os módulos históricos. O antigo módulo combinado permanece reposicionado como `Planejador de Retirada de Sócios`, com propósito distinto de consolidação e comparação de cenários. Os simuladores especializados de Pró-Labore e Distribuição de Lucros permanecem independentes. A Home continua limitada às 8 maiores ordens de lançamento da vertical ativa. A fonte de verdade quantitativa é `config/product_tools.php`; a cronologia completa permanece em `docs/IMPLEMENTATION-LOTS.md`.
 
 ## Remediação Prazzu Plus — certificação funcional
 

@@ -22,8 +22,6 @@
         </x-slot:actions>
     </x-tools.intro>
 
-    <x-tool-feature-tiers slug="validador-de-cnpj" />
-
     <div class="row g-4">
         <div class="col-12 col-xl-8">
             <x-tools.validation-summary class="mb-4" />
@@ -395,7 +393,7 @@
             @php($result = $validationResult ?? session('validation_result'))
             @if ($result)
                 <span data-analytics-result="main" hidden></span>
-                <section class="mt-4" aria-labelledby="validation-result-title">
+                <section class="mt-4 prazzu-tool-result-surface" aria-labelledby="validation-result-title" data-testid="tool-result" data-tool-result-panel>
                     <div class="card border-{{ $result['valid'] ? 'success' : 'danger' }} shadow-sm">
                         <div class="card-header bg-{{ $result['valid'] ? 'success' : 'danger' }}-subtle border-{{ $result['valid'] ? 'success' : 'danger' }}-subtle">
                             <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
@@ -534,7 +532,7 @@
 
             @php($batch = $batchValidationResult ?? session('batch_validation_result'))
             @if ($batch)
-                <section class="mt-4" aria-labelledby="batch-result-title" data-testid="tool-result">
+                <section class="mt-4 prazzu-tool-result-surface" aria-labelledby="batch-result-title" data-testid="tool-result" data-tool-result-panel>
                     <div class="card shadow-sm">
                         <div class="card-header">
                             <h2 id="batch-result-title" class="h5 mb-1">Resultado do processamento em lote</h2>
@@ -657,5 +655,7 @@
             </div>
         </div>
     </div>
+    <x-tool-feature-tiers slug="validador-de-cnpj" />
+
 </div>
 @endsection

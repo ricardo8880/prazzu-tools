@@ -15,7 +15,13 @@
 
                     <p class="prazzu-hero__description mb-4">{{ $home['hero']['description'] }}</p>
 
-                    <div class="prazzu-smart-search" data-home-smart-search>
+                    <div class="prazzu-hero__resolver">
+                        <p class="prazzu-hero__search-label mb-2">
+                            <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
+                            {{ $home['hero']['search_label'] ?? 'Descreva o que você precisa resolver' }}
+                        </p>
+
+                        <div class="prazzu-smart-search" data-home-smart-search>
                         <form class="prazzu-search" action="{{ route('tools.index') }}" method="get" role="search">
                             <label class="visually-hidden" for="home-tool-search">Buscar ferramentas</label>
                             <i class="bi bi-search" aria-hidden="true"></i>
@@ -68,6 +74,21 @@
                             'featuredSlugs' => $featuredTools->pluck('slug')->values()->all(),
                             'allToolsUrl' => route('tools.index'),
                         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
+                        </div>
+
+                        @if(! $acquisitionContext && ! empty($home['hero']['problem_shortcuts']))
+                            <div class="prazzu-problem-shortcuts" aria-label="Exemplos do que você pode resolver">
+                                <span class="prazzu-problem-shortcuts__label">Exemplos:</span>
+                                @foreach($home['hero']['problem_shortcuts'] as $shortcut)
+                                    <a
+                                        class="prazzu-problem-shortcut text-decoration-none"
+                                        href="{{ route('tools.index', ['q' => $shortcut['query'], 'source' => 'home_search']) }}"
+                                    >
+                                        {{ $shortcut['label'] }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <ul class="prazzu-benefits list-unstyled mb-0 mt-4" aria-label="Vantagens da plataforma">
@@ -136,7 +157,11 @@
             </div>
         </section>
 
-        <nav class="prazzu-category-strip" aria-label="Categorias de ferramentas">
+        <div class="prazzu-category-discovery">
+            <span class="prazzu-eyebrow">Outra forma de encontrar</span>
+            <p class="prazzu-category-discovery__title mb-2">Explore pelo tipo de tarefa</p>
+        </div>
+        <nav class="prazzu-category-strip" aria-label="Explorar ferramentas pelo tipo de tarefa">
             @foreach ($categories as $category)
                 <a class="prazzu-category-item text-decoration-none" href="{{ url($category['url']) }}">
                     <span class="prazzu-category-item__icon">
@@ -154,7 +179,7 @@
                     <div>
                         <span class="prazzu-eyebrow">Seu Prazzu</span>
                         <h2 id="continue-tools-title" class="prazzu-section-title mb-1">Continue de onde parou</h2>
-                        <p class="prazzu-section-caption mb-0">Atalhos para ferramentas que você usou recentemente nesta vertical.</p>
+                        <p class="prazzu-section-caption mb-0">Retome seus últimos trabalhos e resultados salvos nesta vertical.</p>
                     </div>
                     <a class="prazzu-section-link text-decoration-none" href="{{ route('account.show') }}">
                         Meu Prazzu <i class="bi bi-arrow-right" aria-hidden="true"></i>
@@ -165,13 +190,23 @@
                     @foreach ($continueTools as $tool)
                         <div class="col-12 col-sm-6 col-xl-3">
                             <article class="prazzu-tool-card prazzu-tool-card--continuity h-100">
-                                <a class="prazzu-tool-card__link text-decoration-none" href="{{ url()->query($tool['open_url'], ['source' => 'home_continuity']) }}" aria-label="Continuar em {{ $tool['tool_name'] }}"></a>
-                                <span class="prazzu-icon-tile prazzu-icon-tile--purple mb-3">
-                                    <i class="bi {{ $tool['tool_icon'] }}" aria-hidden="true"></i>
-                                </span>
+                                <a class="prazzu-tool-card__link text-decoration-none" href="{{ url()->query($tool['open_url'], ['source' => 'home_continuity']) }}" aria-label="{{ $tool['open_label'] }} em {{ $tool['tool_name'] }}"></a>
+                                <div class="d-flex align-items-start justify-content-between gap-3 mb-3">
+                                    <span class="prazzu-icon-tile prazzu-icon-tile--purple">
+                                        <i class="bi {{ $tool['tool_icon'] }}" aria-hidden="true"></i>
+                                    </span>
+                                    <span class="prazzu-badge prazzu-badge--green">Último trabalho</span>
+                                </div>
                                 <h3 class="prazzu-tool-card__title">{{ $tool['tool_name'] }}</h3>
-                                <p class="prazzu-tool-card__description">{{ \Illuminate\Support\Str::limit($tool['tool_description'], 105) }}</p>
-                                <span class="prazzu-badge prazzu-badge--green">Usado recentemente</span>
+                                <p class="prazzu-continuity-card__meta mb-1">
+                                    Resultado salvo em {{ $tool['finished_at']->format('d/m/Y \à\s H:i') }}
+                                </p>
+                                @if($tool['reference_date'])
+                                    <p class="prazzu-continuity-card__reference mb-0">Referência: {{ $tool['reference_date']->format('d/m/Y') }}</p>
+                                @endif
+                                <span class="prazzu-continuity-card__action mt-auto pt-3">
+                                    {{ $tool['open_label'] }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                </span>
                             </article>
                         </div>
                     @endforeach
