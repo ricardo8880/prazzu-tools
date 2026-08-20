@@ -81,7 +81,7 @@
             @endforeach
 
             @if ($errors->any())
-                <div class="col-12"><div class="alert alert-danger mb-0" role="alert"><strong>Revise os dados informados.</strong><ul class="mb-0 mt-2">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div></div>
+                <div class="col-12"><div class="alert alert-danger mb-0" role="alert" data-testid="validation-summary" tabindex="-1"><strong>Revise os dados informados.</strong><ul class="mb-0 mt-2">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div></div>
             @endif
 
             <div class="col-12 d-flex flex-column flex-sm-row gap-2 pt-2">
@@ -106,7 +106,7 @@
         <section class="prazzu-form-panel mt-4 prazzu-tool-result-surface" aria-labelledby="vacation-result-title" data-testid="tool-result" data-tool-result-panel>
             <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
                 <div><span class="badge text-bg-success mb-2">Estimativa calculada</span><h2 id="vacation-result-title" class="prazzu-section-title mb-1">Resultado das férias</h2><p class="text-body-secondary mb-0">Memória baseada na remuneração e nas condições informadas.</p></div>
-                <div class="text-lg-end"><small class="text-body-secondary d-block">Total líquido estimado</small><strong class="fs-3 text-success">{{ $summary['net_total']['value'] }}</strong></div>
+                <div class="text-lg-end"><small class="text-body-secondary d-block">Total após descontos informados</small><strong class="fs-3 text-success">{{ $summary['net_total']['value'] }}</strong></div>
             </div>
 
             <div class="row g-3 mb-4">
@@ -161,6 +161,7 @@
         </div>
     </section>
     <x-tool-feature-tiers slug="calculadora-ferias" />
+    <x-tools.plus-result-cta slug="calculadora-ferias" />
 
 </div>
 @endsection

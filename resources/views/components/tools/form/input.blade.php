@@ -13,7 +13,14 @@
 
 @php
     $fieldId = $id ?? str_replace(['[', ']', '.'], ['_', '', '_'], $name);
-    $describedBy = $help ? $fieldId.'-help' : null;
+    $describedByIds = [];
+    if ($errors->has($name)) {
+        $describedByIds[] = $fieldId.'-error';
+    }
+    if ($help) {
+        $describedByIds[] = $fieldId.'-help';
+    }
+    $describedBy = $describedByIds === [] ? null : implode(' ', $describedByIds);
     $resolvedPlaceholder = $placeholder;
 
     if ($resolvedPlaceholder === null && $value === null && $type === 'number') {
@@ -32,6 +39,7 @@
             name="{{ $name }}"
             value="{{ old($name, $value) }}"
             @if($resolvedPlaceholder !== null) placeholder="{{ $resolvedPlaceholder }}" @endif
+            @if($errors->has($name)) aria-invalid="true" @endif
             @if($describedBy) aria-describedby="{{ $describedBy }}" @endif
             @required($required)
         >
@@ -45,9 +53,10 @@
         name="{{ $name }}"
         value="{{ old($name, $value) }}"
         @if($resolvedPlaceholder !== null) placeholder="{{ $resolvedPlaceholder }}" @endif
+        @if($errors->has($name)) aria-invalid="true" @endif
         @if($describedBy) aria-describedby="{{ $describedBy }}" @endif
         @required($required)
     >
 @endif
-@error($name)<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+@error($name)<div id="{{ $fieldId }}-error" class="invalid-feedback d-block">{{ $message }}</div>@enderror
 @if ($help)<div id="{{ $fieldId }}-help" class="form-text">{{ $help }}</div>@endif

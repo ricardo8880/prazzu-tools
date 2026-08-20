@@ -27,8 +27,21 @@ final class CalculatorTest extends TestCase
         self::assertSame('R$ 3.000,00', $result->summary[2]->value);
         self::assertSame('R$ 1.000,00', $result->summary[3]->value);
         self::assertSame('100,00 %', $result->summary[4]->value);
-        self::assertSame('1.1.0', $result->schemaVersion);
+        self::assertSame('1.2.0', $result->schemaVersion);
         self::assertTrue($result->calculationMemory?->isEstimate);
         self::assertSame(4, count($result->calculationMemory?->steps ?? []));
+    }
+
+    public function test_goal_can_be_omitted_without_changing_base_commission(): void
+    {
+        $result = (new Calculator)->calculate(new CalculationInput(
+            Money::fromDecimal('10000'),
+            Percentage::fromString('5'),
+            Money::fromDecimal('0'),
+            Percentage::fromString('0'),
+        ));
+
+        self::assertSame('R$ 500,00', $result->summary[0]->value);
+        self::assertSame('Meta não definida', $result->summary[4]->value);
     }
 }

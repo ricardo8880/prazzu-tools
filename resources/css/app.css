@@ -10514,3 +10514,265 @@ body.tox-dialog__disable-scroll {
         padding-inline: 8px;
     }
 }
+
+/* Product satisfaction — trust surface for normative results */
+.prazzu-normative-trust {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--bs-body-bg) 92%, var(--bs-primary) 8%);
+}
+
+.prazzu-normative-trust__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.prazzu-normative-trust__rule,
+.prazzu-normative-trust__scope {
+    border: 1px solid var(--bs-border-color);
+    border-radius: .75rem;
+    background: var(--bs-body-bg);
+    overflow: hidden;
+}
+
+.prazzu-normative-trust__rule > summary,
+.prazzu-normative-trust__scope > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: .85rem 1rem;
+    cursor: pointer;
+    list-style: none;
+}
+
+.prazzu-normative-trust__rule > summary::-webkit-details-marker,
+.prazzu-normative-trust__scope > summary::-webkit-details-marker {
+    display: none;
+}
+
+.prazzu-normative-trust__rule > summary:focus-visible,
+.prazzu-normative-trust__scope > summary:focus-visible {
+    outline: 3px solid rgba(var(--bs-primary-rgb), .28);
+    outline-offset: 3px;
+    border-radius: .5rem;
+}
+
+.prazzu-normative-trust__rule > summary .bi-chevron-down,
+.prazzu-normative-trust__scope > summary .bi-chevron-down {
+    transition: transform .2s ease;
+}
+
+.prazzu-normative-trust__rule[open] > summary .bi-chevron-down,
+.prazzu-normative-trust__scope[open] > summary .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.prazzu-normative-trust__body {
+    border-top: 1px solid var(--bs-border-color);
+    padding: 1rem;
+}
+
+.prazzu-normative-trust dt {
+    color: var(--bs-secondary-color);
+    font-weight: 500;
+}
+
+@media (max-width: 575.98px) {
+    .prazzu-normative-trust {
+        padding: .85rem;
+    }
+}
+
+/* Product satisfaction — progressive disclosure for optional form fields */
+.prazzu-form-disclosure {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--bs-body-bg) 96%, var(--bs-secondary-bg) 4%);
+    overflow: hidden;
+}
+
+.prazzu-form-disclosure__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    cursor: pointer;
+    list-style: none;
+}
+
+.prazzu-form-disclosure__summary::-webkit-details-marker {
+    display: none;
+}
+
+.prazzu-form-disclosure__summary:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--bs-primary) 35%, transparent);
+    outline-offset: -3px;
+}
+
+.prazzu-form-disclosure__title {
+    color: var(--bs-body-color);
+    font-weight: 650;
+}
+
+.prazzu-form-disclosure__description {
+    display: block;
+    margin-top: .2rem;
+    color: var(--bs-secondary-color);
+    font-size: .875rem;
+}
+
+.prazzu-form-disclosure__action {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: .45rem;
+    color: var(--bs-primary);
+    font-size: .8125rem;
+    font-weight: 600;
+}
+
+.prazzu-form-disclosure__action .bi-chevron-down {
+    transition: transform .2s ease;
+}
+
+.prazzu-form-disclosure[open] .prazzu-form-disclosure__action-label {
+    font-size: 0;
+}
+
+.prazzu-form-disclosure[open] .prazzu-form-disclosure__action-label::after {
+    content: "Ocultar campos";
+    font-size: .8125rem;
+}
+
+.prazzu-form-disclosure[open] .prazzu-form-disclosure__action .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.prazzu-form-disclosure__body {
+    border-top: 1px solid var(--bs-border-color);
+    padding: 1.1rem;
+}
+
+@media (max-width: 575.98px) {
+    .prazzu-form-disclosure__summary,
+    .prazzu-form-disclosure__body {
+        padding: .9rem;
+    }
+
+    .prazzu-form-disclosure__action-label {
+        display: none;
+    }
+}
+
+/* Product satisfaction — Lote 5: problem-oriented discovery journeys */
+.prazzu-problem-journeys {
+    margin-block: 1.5rem 2rem;
+}
+
+.prazzu-problem-journeys__header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.prazzu-problem-journey {
+    display: flex;
+    flex-direction: column;
+    padding: 1.15rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+    background: var(--bs-body-bg);
+    box-shadow: 0 0.5rem 1.5rem rgba(15, 23, 42, 0.04);
+}
+
+.prazzu-problem-journey__heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+}
+
+.prazzu-problem-journey__heading h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.prazzu-problem-journey__heading p {
+    margin: 0;
+    color: var(--bs-secondary-color);
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.prazzu-problem-journey__steps {
+    display: grid;
+    gap: 0.55rem;
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+}
+
+.prazzu-problem-journey__steps li {
+    display: grid;
+    grid-template-columns: 1.65rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--bs-secondary-color);
+    font-size: 0.84rem;
+    line-height: 1.35;
+}
+
+.prazzu-problem-journey__steps li.is-start {
+    color: var(--bs-body-color);
+    font-weight: 650;
+}
+
+.prazzu-problem-journey__step-number {
+    display: inline-grid;
+    width: 1.55rem;
+    height: 1.55rem;
+    place-items: center;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.prazzu-problem-journey__steps li.is-start .prazzu-problem-journey__step-number {
+    border-color: color-mix(in srgb, var(--bs-primary) 45%, var(--bs-border-color));
+    background: color-mix(in srgb, var(--bs-primary) 9%, transparent);
+}
+
+.prazzu-problem-journey__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.25rem;
+    color: var(--bs-primary);
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.prazzu-problem-journey__action:hover,
+.prazzu-problem-journey__action:focus-visible {
+    text-decoration: underline !important;
+}
+
+@media (max-width: 767.98px) {
+    .prazzu-problem-journeys__header {
+        align-items: flex-start;
+    }
+
+    .prazzu-problem-journey {
+        padding: 1rem;
+    }
+}

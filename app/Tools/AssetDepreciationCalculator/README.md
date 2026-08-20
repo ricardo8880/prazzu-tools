@@ -13,7 +13,7 @@ Calcula a depreciação de ativos a partir do bem, valor e vida útil, apresenta
 ## Experiência Essencial
 
 - um ativo por cálculo;
-- nome do bem, valor e vida útil em anos;
+- nome do bem, valor, valor residual e vida útil em anos;
 - método linear;
 - depreciação mensal e anual;
 - valor contábil após o primeiro ano;
@@ -32,7 +32,7 @@ Durante a fase gratuita de lançamento, os recursos Plus permanecem disponíveis
 
 ## Regras de domínio
 
-A versão 1.0.0 considera valor residual igual a zero. Se houver valor residual material, o usuário deve informar como valor do bem a base efetivamente depreciável.
+O usuário informa diretamente o valor do bem e o valor residual estimado. A base depreciável é calculada como `valor do bem - valor residual`, e o residual deve ser menor que o valor do bem.
 
 ### Linear
 
@@ -54,7 +54,7 @@ Todos os valores monetários são tratados em centavos, sem `float`. Ajustes res
 
 ## Limites
 
-A ferramenta não define automaticamente vida útil contábil/fiscal, valor residual, enquadramento tributário, taxas normativas ou elegibilidade do ativo. Esses parâmetros dependem da política e do contexto aplicáveis.
+A ferramenta não define automaticamente vida útil contábil/fiscal, valor residual, enquadramento tributário, taxas normativas ou elegibilidade do ativo. Ela apenas aplica os parâmetros informados. Esses parâmetros dependem da política e do contexto aplicáveis.
 
 ## Dependências
 
@@ -77,4 +77,5 @@ A ferramenta não define automaticamente vida útil contábil/fiscal, valor resi
 
 ## Histórico de versões
 
+- `1.1.0` — valor residual explícito, base depreciável calculada e projeção que preserva o residual até o fim da vida útil.
 - `1.0.0` — implementação inicial em 12/08/2026.

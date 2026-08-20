@@ -20,7 +20,7 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('60'),
         ));
 
-        self::assertSame('1.1.0', $result->schemaVersion);
+        self::assertSame('1.2.0', $result->schemaVersion);
         self::assertSame('R$ 25.000,00', $result->summary[0]->value);
         self::assertSame('250 unidades', $result->summary[1]->value);
         self::assertSame('R$ 40,00', $result->summary[2]->value);
@@ -39,5 +39,25 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('50'),
             Money::fromDecimal('50'),
         ));
+    }
+
+    public function test_it_exposes_the_rounding_surplus_at_the_first_whole_unit(): void
+    {
+        $result = (new Calculator)->calculate(new CalculationInput(
+            Money::fromDecimal('100'), Money::fromDecimal('10'), Money::fromDecimal('7'),
+        ));
+
+        self::assertSame('34 unidades', $result->summary[1]->value);
+        self::assertSame('R$ 2,00', $result->summary[4]->value);
+    }
+
+    public function test_zero_fixed_costs_returns_zero_units_with_explanatory_warning(): void
+    {
+        $result = (new Calculator)->calculate(new CalculationInput(
+            Money::fromDecimal('0'), Money::fromDecimal('10'), Money::fromDecimal('7'),
+        ));
+
+        self::assertSame('0 unidades', $result->summary[1]->value);
+        self::assertSame('no_fixed_costs', $result->warnings[0]->code);
     }
 }

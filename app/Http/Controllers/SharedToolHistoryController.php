@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Core\Tools\History\Services\ToolHistoryContextResolver;
 use App\Core\Tools\History\Services\ToolHistoryExporter;
 use App\Core\Tools\History\Services\ToolHistoryManager;
 use App\Core\Tools\ToolRegistry;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class SharedToolHistoryController extends Controller
 {
-    public function index(Request $request, ToolHistoryManager $history, ToolRegistry $registry): View
+    public function index(Request $request, ToolHistoryManager $history, ToolRegistry $registry, ToolHistoryContextResolver $contexts): View
     {
         [$slug, $routePrefix] = $this->context($request);
         $page = $history->paginate($slug, (int) $request->user()->getAuthIdentifier(), max(1, $request->integer('page', 1)));
@@ -25,17 +26,22 @@ final class SharedToolHistoryController extends Controller
             'tool' => $registry->findManifest($slug),
             'routePrefix' => $routePrefix,
             'historyPage' => $page,
+            'historyContexts' => collect($page->items)->mapWithKeys(
+                static fn ($entry): array => [$entry->id => $contexts->resolveEntry($entry)],
+            )->all(),
         ]);
     }
 
-    public function show(Request $request, string $run, ToolHistoryManager $history, ToolRegistry $registry): View
+    public function show(Request $request, string $run, ToolHistoryManager $history, ToolRegistry $registry, ToolHistoryContextResolver $contexts): View
     {
         [$slug, $routePrefix] = $this->context($request);
+        $entry = $history->find($slug, $run, (int) $request->user()->getAuthIdentifier());
 
         return view('tools.shared.history.show', [
             'tool' => $registry->findManifest($slug),
             'routePrefix' => $routePrefix,
-            'entry' => $history->find($slug, $run, (int) $request->user()->getAuthIdentifier()),
+            'entry' => $entry,
+            'contextLabel' => $contexts->resolveEntry($entry),
         ]);
     }
 

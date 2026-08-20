@@ -69,7 +69,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             icon: 'bi-currency-dollar',
             routeName: 'tools.reajuste-salarial.index',
             vertical: 'contabilidade',
-            version: '1.0.0',
+            version: '1.1.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 230,
@@ -94,7 +94,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['current_salary', 'adjustment_rate', 'fixed_addition', 'retroactive_months'], resultFields: ['new_salary', 'monthly_increase', 'retroactive_difference', 'annual_payroll_impact'], sensitiveFields: []);
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['current_salary', 'adjustment_rate', 'fixed_addition', 'retroactive_months'], resultFields: ['new_salary', 'monthly_increase', 'effective_adjustment', 'retroactive_difference', 'annual_payroll_impact'], sensitiveFields: []);
     }
 
     public function webRoutesPath(): string

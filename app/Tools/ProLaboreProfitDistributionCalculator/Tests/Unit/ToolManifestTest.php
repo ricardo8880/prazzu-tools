@@ -16,7 +16,7 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
         self::assertSame('3.2.0', $manifest->version);
-        self::assertSame(ToolStatus::Active, $manifest->status);
+        self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertSame('Planejador de Retirada de Sócios', $manifest->name);
         self::assertTrue($manifest->supportsHistory);
         self::assertTrue($manifest->hasCapability(ToolCapability::History));

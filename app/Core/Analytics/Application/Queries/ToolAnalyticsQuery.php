@@ -54,6 +54,10 @@ final readonly class ToolAnalyticsQuery
                 'errors' => (int) $tools->sum('errors'),
                 'exports' => (int) $tools->sum('exports'),
                 'shares' => (int) $tools->sum('shares'),
+                'resolution_feedback' => (int) $tools->sum('resolution_feedback'),
+                'resolved_yes' => (int) $tools->sum('resolved_yes'),
+                'resolved_partially' => (int) $tools->sum('resolved_partially'),
+                'resolved_no' => (int) $tools->sum('resolved_no'),
             ],
             'session_funnel' => $this->journeyFunnel($events, 'session'),
             'people_funnel' => $this->journeyFunnel($events, 'person'),
@@ -89,6 +93,7 @@ final readonly class ToolAnalyticsQuery
             'people_funnel' => $this->journeyFunnel($events, 'person'),
             'journey_funnel' => $this->journeyFunnel($events, 'session'),
             'retention' => $this->retentionMetrics($events, $period->end),
+            'resolution_reasons' => $this->resolutionReasons($events),
             'daily' => $this->daily($period, $slug),
             'devices' => $this->audienceBreakdown($period, $slug, 'device_type', 'unknown'),
             'sources' => $this->audienceBreakdown($period, $slug, 'source', 'direct')->take(10),
@@ -119,6 +124,11 @@ final readonly class ToolAnalyticsQuery
                 $peopleOpens = $people(AnalyticsEventName::ToolOpened);
                 $peopleStarts = $people(AnalyticsEventName::ToolStarted);
                 $peopleResults = $people(AnalyticsEventName::ToolResultViewed);
+                $resolutionEvents = $events->whereIn('event_name', $this->names([AnalyticsEventName::ToolResolutionSubmitted]));
+                $resolutionFeedback = $resolutionEvents->count();
+                $resolvedYes = $resolutionEvents->filter(fn ($event): bool => data_get($event->metadata, 'resolution') === 'yes')->count();
+                $resolvedPartially = $resolutionEvents->filter(fn ($event): bool => data_get($event->metadata, 'resolution') === 'partially')->count();
+                $resolvedNo = $resolutionEvents->filter(fn ($event): bool => data_get($event->metadata, 'resolution') === 'no')->count();
                 $calculationTimes = $this->elapsedTimes($events, AnalyticsEventName::ToolStarted, AnalyticsEventName::ToolCalculationExecuted);
                 $abandonmentTimes = $this->elapsedTimes($events, AnalyticsEventName::ToolStarted, AnalyticsEventName::ToolAbandoned);
 
@@ -139,6 +149,12 @@ final readonly class ToolAnalyticsQuery
                     'people_opens' => $peopleOpens,
                     'people_starts' => $peopleStarts,
                     'people_results' => $peopleResults,
+                    'resolution_feedback' => $resolutionFeedback,
+                    'resolved_yes' => $resolvedYes,
+                    'resolved_partially' => $resolvedPartially,
+                    'resolved_no' => $resolvedNo,
+                    'resolution_feedback_rate' => $this->conversionRate($resolutionFeedback, $results),
+                    'confirmed_resolution_rate' => $this->conversionRate($resolvedYes, $resolutionFeedback),
                     // Compatibilidade interna com relatórios anteriores: "unique" significava sessão única.
                     'unique_opens' => $sessionOpens,
                     'unique_starts' => $sessionStarts,
@@ -287,6 +303,24 @@ final readonly class ToolAnalyticsQuery
         return null;
     }
 
+    private function resolutionReasons(Collection $events): Collection
+    {
+        $labels = collect(\App\Core\Feedback\Enums\ToolResolutionReason::cases())
+            ->mapWithKeys(fn ($reason): array => [$reason->value => $reason->label()]);
+
+        return $events->whereIn('event_name', $this->names([AnalyticsEventName::ToolResolutionSubmitted]))
+            ->map(fn ($event): ?string => data_get($event->metadata, 'reason'))
+            ->filter()
+            ->countBy()
+            ->sortDesc()
+            ->map(fn (int $total, string $reason): object => (object) [
+                'reason' => $reason,
+                'label' => $labels->get($reason, $reason),
+                'total' => $total,
+            ])
+            ->values();
+    }
+
     private function conversionRate(int $converted, int $base): float
     {
         if ($base <= 0) {
@@ -303,6 +337,8 @@ final readonly class ToolAnalyticsQuery
             'abandonments' => 0, 'errors' => 0, 'exports' => 0, 'shares' => 0, 'fields_completed' => 0,
             'session_opens' => 0, 'session_starts' => 0, 'session_results' => 0,
             'people_opens' => 0, 'people_starts' => 0, 'people_results' => 0,
+            'resolution_feedback' => 0, 'resolved_yes' => 0, 'resolved_partially' => 0, 'resolved_no' => 0,
+            'resolution_feedback_rate' => 0.0, 'confirmed_resolution_rate' => 0.0,
             'unique_opens' => 0, 'unique_starts' => 0, 'unique_results' => 0,
             'start_rate' => 0.0, 'completion_rate' => 0.0, 'result_after_start_rate' => 0.0,
             'people_start_rate' => 0.0, 'people_completion_rate' => 0.0, 'people_result_after_start_rate' => 0.0,

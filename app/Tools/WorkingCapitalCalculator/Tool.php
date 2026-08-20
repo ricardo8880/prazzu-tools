@@ -70,7 +70,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             icon: 'bi-cash-stack',
             routeName: 'tools.capital-de-giro.index',
             vertical: 'contabilidade',
-            version: '1.1.0',
+            version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 170,
@@ -95,7 +95,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             enabled: true,
             retentionDays: 365,
             inputFields: ['cash', 'receivables', 'inventory', 'other_current_assets', 'suppliers', 'other_operating_liabilities', 'loans', 'other_current_liabilities'],
-            resultFields: ['required_capital', 'operating_need', 'net_working_capital', 'funding_gap'],
+            resultFields: ['required_capital', 'operating_need', 'net_working_capital', 'funding_gap', 'funding_surplus'],
             sensitiveFields: [],
         );
     }

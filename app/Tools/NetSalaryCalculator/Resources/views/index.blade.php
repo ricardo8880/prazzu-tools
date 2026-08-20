@@ -37,7 +37,7 @@
             </div>
         </x-tools.form-panel>
 
-        <x-tools.form-panel title="Proventos e descontos adicionais" description="Use quando houver valores além do salário-base. Durante o lançamento, os recursos Plus permanecem disponíveis gratuitamente." badge="Prazzu Plus">
+        <x-tools.form-disclosure title="Tenho outros proventos ou descontos" description="Abra somente se houver valores além do salário-base." badge="Prazzu Plus" :open="$errors->hasAny(['taxable_additional_earnings', 'non_taxable_earnings', 'judicial_pension', 'transport_discount', 'meal_discount', 'health_plan_discount', 'other_discounts'])">
             <div class="row g-3">
                 <div class="col-12 col-md-6">
                     <x-tools.form.money name="taxable_additional_earnings" label="Proventos tributáveis adicionais" :value="old('taxable_additional_earnings')" help="Ex.: horas extras, comissões e adicionais que integrem as bases de INSS e IRRF. Informe apenas valores cuja incidência já tenha sido confirmada." />
@@ -61,7 +61,7 @@
                     <x-tools.form.money name="other_discounts" label="Outros descontos" :value="old('other_discounts')" help="Somente descontos que efetivamente reduzem o valor líquido." />
                 </div>
             </div>
-        </x-tools.form-panel>
+        </x-tools.form-disclosure>
 
         <div class="form-check">
             <input class="form-check-input" type="checkbox" value="1" id="confirm_assumptions" name="confirm_assumptions" @checked(old('confirm_assumptions')) required>
@@ -83,7 +83,7 @@
         @endphp
 
         <div class="mt-5">
-            <x-tools.result-panel title="Resultado" description="Estimativa transparente com INSS e IRRF calculados pelas regras versionadas de 2026.">
+            <x-tools.result-panel title="Salário líquido calculado" description="Estimativa transparente com INSS e IRRF calculados pelas regras versionadas de 2026." eyebrow="Cálculo concluído">
                 <div class="row g-3 mb-4">
                     @foreach ($result->summary as $item)
                         <div class="col-12 col-md-6 col-xl">
@@ -91,6 +91,23 @@
                         </div>
                     @endforeach
                 </div>
+
+                @php
+                    $netShareHundredths = $details['total_earnings_minor'] > 0
+                        ? intdiv(($details['net_minor'] * 10_000) + intdiv($details['total_earnings_minor'], 2), $details['total_earnings_minor'])
+                        : 0;
+                    $netShare = number_format($netShareHundredths / 100, 2, ',', '.');
+                @endphp
+                <x-tools.result-insight
+                    :title="'O líquido estimado é '.$money($details['net_minor'])"
+                    :description="'Dos '.$money($details['total_earnings_minor']).' em proventos, '.$money($details['total_discounts_minor']).' foram considerados como descontos neste cenário. O líquido representa '.$netShare.'% dos proventos informados.'"
+                    :items="[
+                        'INSS calculado: '.$money($details['inss_minor']).'.',
+                        'IRRF calculado: '.$money($details['irrf_minor']).' usando '.($details['irrf_deduction_method'] === 'simplified' ? 'o desconto simplificado mensal' : 'as deduções legais').'.',
+                        $details['user_discounts_minor'] > 0 ? 'Outros descontos informados representam '.$money($details['user_discounts_minor']).' do total.' : 'Nenhum outro desconto informado além dos tributos calculados.',
+                    ]"
+                    icon="bi-wallet2"
+                />
 
                 @foreach ($result->warnings as $warning)
                     <div class="alert alert-warning">{{ $warning->message }}</div>
@@ -132,12 +149,11 @@
                     @endforeach
                 </div>
 
-                <h3 class="h5">Regras normativas utilizadas</h3>
-                <ul class="small text-body-secondary">
-                    @foreach ($result->calculationMemory->normativeRules as $rule)
-                        <li>{{ $rule->identifier }} — versão {{ $rule->version }} — referência {{ $rule->referenceDate }}</li>
-                    @endforeach
-                </ul>
+                <x-tools.normative-trust
+                    :rules="$result->calculationMemory->normativeRules"
+                    :assumptions="$result->calculationMemory->assumptions"
+                    :is-estimate="$result->calculationMemory->isEstimate"
+                />
 
                 @if (!empty($historySaved))
                     <div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>

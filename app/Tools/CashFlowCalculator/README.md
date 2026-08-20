@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Calcula entradas, saídas, geração operacional e saldo previsto.
+Calcula entradas, saídas, geração operacional e saldo previsto, destacando déficits de caixa e geração operacional negativa.
 
 ## Funcionalidades
 
@@ -37,6 +37,7 @@ visuais compartilhados do Core técnico.
 
 ## Histórico de versões
 
+- `1.2.0`: adiciona alertas explícitos para saldo final negativo e geração operacional negativa.
 - `1.1.0`: memória financeira estruturada, período e regime de caixa explícitos, política de centavos e natureza estimativa do saldo final.
 - `1.0.0`: motor ou gerador funcional, validação, interface, memória,
   documentação e testes.

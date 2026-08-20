@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Calcula quantidade e faturamento mínimos para cobrir custos.
+Calcula quantidade e faturamento mínimos para cobrir custos e mostra a folga criada pelo arredondamento para unidade inteira.
 
 ## Funcionalidades
 
@@ -37,6 +37,7 @@ visuais compartilhados do Core técnico.
 
 ## Histórico de versões
 
+- `1.2.0`: passa a mostrar a folga de contribuição causada pelo arredondamento e explica o caso de custos fixos iguais a zero.
 - `1.1.0`: memória financeira estruturada, proteção de intervalo monetário, arredondamento para unidade inteira e premissas temporais explícitas.
 - `1.0.0`: motor ou gerador funcional, validação, interface, memória,
   documentação e testes.

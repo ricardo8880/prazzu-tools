@@ -1,67 +1,15 @@
-# Qualidade de Sales Commission Calculator
+# Qualidade — Calculadora de Comissão de Vendedores
 
-Este arquivo complementa o README da ferramenta. O README da raiz continua sendo a autoridade máxima.
+## Evidência revisada no Beta Activation — Lote 2
 
-## Perfil de risco gerado
+- [x] Base comissionável é faturamento menos estornos; estorno acima do faturamento é rejeitado.
+- [x] Comissão-base e bônus usam `Money::percentage` e não usam `float` no domínio.
+- [x] Meta e bônus são opcionais no cálculo individual; o usuário não precisa preencher zero artificialmente.
+- [x] A meta, quando informada, é avaliada sobre a mesma base líquida de estornos usada na comissão.
+- [x] O resultado mostra base, comissão-base, bônus, total e atingimento da meta.
+- [x] Limites contratuais, competência, teto e devoluções futuras não são inferidos silenciosamente.
+- [x] Golden cases concretos cobrem meta atingida, base zerada, estorno inválido, percentual fracionário, não aplicação e mudança de política.
+- [x] Testes unitários protegem meta atingida e cálculo sem meta.
+- [x] O cálculo individual permanece Essencial; processamento em lote continua produtividade Plus.
 
-- Natureza: `Calculation`
-- Dependência normativa: `low`
-- Dados pessoais: `None`
-- Integração externa: `None`
-- Persistência: `Temporary`
-- Processamento: `Synchronous`
-- Risco do resultado: `Financial`
-- Frequência de atualização: `Rare`
-- Exportações: pdf, csv
-
-O perfil executável está em `Quality/RiskProfile.php`. Revise-o antes de implementar o domínio.
-
-## Casos dourados
-
-Os casos de regressão de `Tests/Fixtures/GoldenCases.php` estão preenchidos. O módulo está publicado em beta e deve ser revalidado quando suas regras normativas mudarem.
-
-Documente para cada caso:
-
-- entrada completa;
-- resultado esperado;
-- fonte ou revisão responsável;
-- versão normativa, quando aplicável;
-- política de arredondamento, quando aplicável.
-
-## Segurança e privacidade
-
-- [ ] Form Requests validam todas as entradas.
-- [ ] Nenhum dado pessoal é enviado para analytics.
-- [ ] Logs não armazenam documentos, salários ou conteúdo sensível sem mascaramento.
-- [ ] Uploads, quando existirem, validam tamanho, MIME e extensão.
-- [ ] Integrações, quando existirem, possuem timeout, retry e tratamento de indisponibilidade.
-- [ ] Persistência e exclusão seguem as políticas do Core.
-- [ ] Rotas protegidas usam gates e middlewares centrais.
-
-## Integração entre ferramentas
-
-- Contratos publicados: Nenhum.
-- Contratos aceitos: Nenhum.
-
-- [ ] Todos os contratos declarados estão registrados no Core.
-- [ ] A ferramenta funciona normalmente sem integração.
-- [ ] O reaproveitamento é iniciado por ação explícita do usuário.
-- [ ] Dados importados permanecem revisáveis antes da execução.
-- [ ] Contratos ausentes, incompatíveis e não autorizados possuem testes.
-- [ ] Nenhuma classe interna de outro módulo em `app/Tools` é importada.
-
-## Interface
-
-- [ ] Bootstrap e componentes compartilhados foram usados antes de CSS específico.
-- [ ] A interface funciona em mobile, tablet e desktop.
-- [ ] Estados de foco, erro, carregamento e vazio estão cobertos.
-- [ ] O fluxo principal funciona por teclado.
-
-## Verificação antes da ativação
-
-- [ ] Perfil de risco revisado.
-- [ ] Casos dourados completos e aprovados.
-- [ ] Fontes normativas registradas quando aplicável.
-- [ ] Testes Unit, Feature e Browser exigidos pelo classificador implementados.
-- [ ] Regras financeiras não usam `float`.
-- [ ] `composer release:check` está verde.
+A ferramenta permanece `beta` até os gates globais dos lotes 10/11. A ferramenta é paramétrica e não afirma existir percentual legal universal de comissão.

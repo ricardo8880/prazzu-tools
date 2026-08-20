@@ -65,7 +65,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             icon: 'bi-graph-up-arrow',
             routeName: 'tools.fluxo-de-caixa.index',
             vertical: 'contabilidade',
-            version: '1.1.0',
+            version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 180,

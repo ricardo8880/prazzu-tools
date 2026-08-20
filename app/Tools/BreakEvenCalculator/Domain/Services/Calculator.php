@@ -9,6 +9,8 @@ use App\Core\Tools\Calculation\Data\CalculationMemory;
 use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Core\Tools\Calculation\Data\ToolCalculationResult;
 use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
+use App\Core\Tools\Calculation\Data\ToolCalculationWarning;
+use App\Core\Tools\Calculation\Enums\ToolCalculationWarningLevel;
 use App\Core\Tools\Contracts\ToolCalculationInput;
 use App\Core\Tools\Contracts\ToolCalculator;
 use App\Tools\BreakEvenCalculator\Application\Data\CalculationInput;
@@ -37,25 +39,39 @@ final class Calculator implements ToolCalculator
         $revenue = Money::fromMinor($units * $price);
         $marginBasisPoints = intdiv($contribution * 10000, $price);
         $unitContribution = Money::fromMinor($contribution);
+        $coverageSurplus = Money::fromMinor(($units * $contribution) - $fixed);
         $formattedMargin = number_format($marginBasisPoints / 100, 2, ',', '.').' %';
+
+        $warnings = [];
+        if ($fixed === 0) {
+            $warnings[] = new ToolCalculationWarning(
+                code: 'no_fixed_costs',
+                message: 'Com custos fixos iguais a zero, o ponto de equilíbrio contábil ocorre antes da primeira unidade. A ferramenta mantém quantidade e faturamento mínimos em zero.',
+                level: ToolCalculationWarningLevel::Info,
+                title: 'Sem custos fixos informados',
+            );
+        }
 
         return new ToolCalculationResult(
             toolSlug: 'ponto-de-equilibrio',
-            schemaVersion: '1.1.0',
+            schemaVersion: '1.2.0',
             summary: [
                 new ToolCalculationSummaryItem('break_even_revenue', 'Faturamento mínimo', $revenue->formatPtBr(), 'Faturamento na primeira unidade inteira que cobre os custos.'),
                 new ToolCalculationSummaryItem('break_even_units', 'Quantidade mínima', $units.' unidade'.($units === 1 ? '' : 's')),
                 new ToolCalculationSummaryItem('unit_contribution', 'Margem de contribuição unitária', $unitContribution->formatPtBr()),
                 new ToolCalculationSummaryItem('contribution_margin', 'Índice de margem de contribuição', $formattedMargin),
+                new ToolCalculationSummaryItem('coverage_surplus', 'Folga após o arredondamento', $coverageSurplus->formatPtBr(), 'Contribuição excedente na primeira quantidade inteira que cobre os custos fixos.'),
             ],
             details: ['input' => $input->toArray()],
+            warnings: $warnings,
             calculationMemory: new CalculationMemory(
-                schemaVersion: '1.0.0',
+                schemaVersion: '1.2.0',
                 steps: [
                     new CalculationMemoryStep('unit_contribution', 'Margem de contribuição unitária', 'preço de venda − custo variável unitário', ['sale_price' => $price, 'variable_cost' => $input->variableCost->minorAmount()], $contribution),
                     new CalculationMemoryStep('contribution_margin', 'Índice de margem de contribuição', 'margem unitária ÷ preço de venda', ['unit_contribution' => $contribution, 'sale_price' => $price], $formattedMargin, 'Percentual truncado em basis points para duas casas decimais.'),
                     new CalculationMemoryStep('break_even_units', 'Quantidade mínima', 'teto(custos fixos ÷ margem unitária)', ['fixed_costs' => $fixed, 'unit_contribution' => $contribution], $units, 'Arredondamento obrigatório para cima até a primeira unidade inteira.'),
                     new CalculationMemoryStep('break_even_revenue', 'Faturamento mínimo', 'quantidade mínima × preço de venda', ['break_even_units' => $units, 'sale_price' => $price], $revenue->minorAmount(), 'Multiplicação em centavos, sem ponto flutuante.'),
+                    new CalculationMemoryStep('coverage_surplus', 'Folga após o arredondamento', '(quantidade mínima × margem unitária) − custos fixos', ['break_even_units' => $units, 'unit_contribution' => $contribution, 'fixed_costs' => $fixed], $coverageSurplus->minorAmount(), 'Mostra somente o excesso criado pelo arredondamento para unidade inteira.'),
                 ],
                 assumptions: [
                     'Custos fixos, preço e custo variável devem representar o mesmo período e uma estrutura operacional comparável.',

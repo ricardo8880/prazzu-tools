@@ -47,6 +47,31 @@ final class ToolFavoritesTest extends TestCase
             ->exists());
     }
 
+    public function test_guest_sees_favorite_intent_without_losing_access_to_the_tool(): void
+    {
+        $favoriteIntentUrl = route('register', [
+            'source' => 'tool_favorite',
+            'tool' => 'calculadora-salario-liquido',
+        ]);
+
+        $this->get(route('tools.calculadora-salario-liquido.index'))
+            ->assertOk()
+            ->assertSee('Favoritar')
+            ->assertSee($favoriteIntentUrl, false)
+            ->assertSee('Calcular salário líquido');
+
+        $this->get($favoriteIntentUrl)
+            ->assertOk()
+            ->assertSee('Salve esta ferramenta para encontrar depois')
+            ->assertSee('O cadastro é opcional e não libera cálculos')
+            ->assertSee(route('login', [
+                'source' => 'tool_favorite',
+                'tool' => 'calculadora-salario-liquido',
+            ]), false);
+
+        $this->assertDatabaseCount('user_tool_favorites', 0);
+    }
+
     public function test_guest_cannot_toggle_tool_favorite(): void
     {
         $this->post(route('account.tools.favorite', ['tool' => 'calculadora-salario-liquido']))

@@ -25,13 +25,27 @@
 
     <div class="row g-3 mb-4">
         @foreach([
-            ['Problemas resolvidos',$retention->problems_solved,'Resultados válidos concluídos no período.'],
-            ['Pessoas que resolveram',$retention->solvers,'Usuários ou visitantes identificáveis com pelo menos um resultado.'],
-            ['Voltaram e resolveram',$retention->returning_solvers,'Resolveram novamente em outro dia dentro do período.'],
+            ['Resultados entregues',$retention->problems_solved,'Resultados válidos concluídos no período.'],
+            ['Pessoas com resultado',$retention->solvers,'Usuários ou visitantes identificáveis com pelo menos um resultado.'],
+            ['Voltaram e receberam outro resultado',$retention->returning_solvers,'Receberam outro resultado em outro dia dentro do período.'],
             ['Taxa de retorno',number_format($retention->return_rate,1,',','.').'%','Percentual de pessoas que voltaram em outro dia e resolveram novamente.'],
         ] as [$label,$value,$help])
             <div class="col-6 col-xl-3"><div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">{{ $label }}</div><div class="h3 mt-2 mb-1">{{ is_numeric($value) ? number_format((float)$value,0,',','.') : $value }}</div><div class="small text-body-secondary">{{ $help }}</div></div></div></div>
         @endforeach
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-transparent">
+            <div class="fw-semibold">Problema realmente resolvido</div>
+            <div class="small text-body-secondary">Feedback voluntário exibido somente depois que um resultado é entregue. “Resolveu” usa apenas quem respondeu como base.</div>
+        </div>
+        <div class="card-body"><div class="row g-3">
+            @php($resolutionTotal = max(1, (int) $summary['resolution_feedback']))
+            <div class="col-6 col-md-3"><div class="small text-body-secondary">Respostas</div><div class="h3 my-1">{{ number_format($summary['resolution_feedback'],0,',','.') }}</div></div>
+            <div class="col-6 col-md-3"><div class="small text-body-secondary">Resolveu</div><div class="h3 my-1">{{ $summary['resolution_feedback'] > 0 ? number_format($summary['resolved_yes'] / $resolutionTotal * 100,1,',','.').'%' : '—' }}</div><div class="small text-body-secondary">{{ $summary['resolved_yes'] }} respostas “Sim”</div></div>
+            <div class="col-6 col-md-3"><div class="small text-body-secondary">Parcialmente</div><div class="h3 my-1">{{ $summary['resolved_partially'] }}</div></div>
+            <div class="col-6 col-md-3"><div class="small text-body-secondary">Não resolveu</div><div class="h3 my-1">{{ $summary['resolved_no'] }}</div></div>
+        </div></div>
     </div>
 
     <div class="row g-4 mb-4">
@@ -67,7 +81,7 @@
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-transparent"><div class="fw-semibold">Retenção de coorte</div><div class="small text-body-secondary">D1, D7 e D30 medem quem resolveu novamente exatamente 1, 7 ou 30 dias após o primeiro resultado observado no período. “—” significa que a coorte ainda não teve tempo para maturar.</div></div>
+        <div class="card-header bg-transparent"><div class="fw-semibold">Retenção de coorte</div><div class="small text-body-secondary">D1, D7 e D30 medem quem recebeu outro resultado exatamente 1, 7 ou 30 dias após o primeiro resultado observado no período. “—” significa que a coorte ainda não teve tempo para maturar.</div></div>
         <div class="card-body"><div class="row g-3">
             @foreach(['D1' => $retention->d1, 'D7' => $retention->d7, 'D30' => $retention->d30] as $label => $cohort)
                 <div class="col-md-4"><div class="border rounded p-3 h-100"><div class="small text-body-secondary">{{ $label }}</div><div class="h3 my-2">{{ $cohort->rate === null ? '—' : number_format($cohort->rate,1,',','.').'%' }}</div><div class="small text-body-secondary">{{ $cohort->eligible }} pessoas elegíveis · {{ $cohort->returned }} retornaram</div></div></div>
@@ -82,7 +96,7 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-transparent"><div class="fw-semibold">Desempenho por ferramenta</div><div class="small text-body-secondary">Compare descoberta, início e entrega de resultado antes de decidir qualquer redesign.</div></div>
         <div class="table-responsive"><table class="table table-sm align-middle mb-0">
-            <thead><tr><th>Ferramenta</th><th class="text-end">Aberturas</th><th class="text-end">Começaram</th><th class="text-end">Início</th><th class="text-end">Resultado</th><th class="text-end">Após início</th><th class="text-end">Abandono</th><th class="text-end">Erros</th><th class="text-end">Média</th></tr></thead>
+            <thead><tr><th>Ferramenta</th><th class="text-end">Aberturas</th><th class="text-end">Começaram</th><th class="text-end">Início</th><th class="text-end">Resultado</th><th class="text-end">Após início</th><th class="text-end">Resolveu?</th><th class="text-end">Abandono</th><th class="text-end">Erros</th><th class="text-end">Média</th></tr></thead>
             <tbody>@forelse($tools as $row)<tr>
                 <td><a class="fw-semibold text-decoration-none" href="{{ route('admin.analytics.tools.show',['tool'=>$row->slug,'period'=>$selected_period]) }}">{{ $row->name }}</a><div class="small text-body-secondary">{{ $row->slug }}</div></td>
                 <td class="text-end">{{ $row->session_opens }}<div class="small text-body-secondary">{{ $row->people_opens }} pessoas</div></td>
@@ -90,10 +104,11 @@
                 <td class="text-end"><span class="badge text-bg-{{ $row->start_rate < 40 && $row->session_opens >= 10 ? 'warning' : 'secondary' }}">{{ number_format($row->start_rate,1,',','.') }}%</span></td>
                 <td class="text-end">{{ $row->session_results }}<div class="small text-body-secondary">{{ $row->people_results }} pessoas</div></td>
                 <td class="text-end"><span class="badge text-bg-{{ $row->result_after_start_rate < 40 && $row->session_starts >= 10 ? 'warning' : 'success' }}">{{ number_format($row->result_after_start_rate,1,',','.') }}%</span></td>
+                <td class="text-end">@if($row->resolution_feedback > 0)<span class="badge text-bg-{{ $row->confirmed_resolution_rate < 60 ? 'warning' : 'success' }}">{{ number_format($row->confirmed_resolution_rate,1,',','.') }}%</span><div class="small text-body-secondary">{{ $row->resolution_feedback }} resp.</div>@else<span class="text-body-secondary">—</span>@endif</td>
                 <td class="text-end"><span class="badge text-bg-{{ $row->abandonment_rate > 40 ? 'danger':'secondary' }}">{{ number_format($row->abandonment_rate,1,',','.') }}%</span></td>
                 <td class="text-end">{{ $row->errors }}</td>
                 <td class="text-end">{{ number_format($row->average_calculation_seconds,1,',','.') }}s</td>
-            </tr>@empty<tr><td colspan="9" class="text-center text-body-secondary py-4">Sem dados.</td></tr>@endforelse</tbody>
+            </tr>@empty<tr><td colspan="10" class="text-center text-body-secondary py-4">Sem dados.</td></tr>@endforelse</tbody>
         </table></div>
     </div>
 

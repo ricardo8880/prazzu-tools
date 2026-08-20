@@ -16,6 +16,7 @@ $stagingRoot = Join-Path $temporaryRoot $projectName
 
 $excludedDirectories = @('.git', '.idea', '.vscode', 'node_modules', 'vendor', 'backup', '.phpunit.cache')
 $excludedFiles = @('.env', '.phpunit.result.cache', 'ARQUIVOS_REMOVIDOS.txt', 'database.sqlite')
+$forbiddenLocalDataPatterns = @('*.sql', '*.sql.gz', '*.dump', '*.bak', '*.sqlite', '*.sqlite3', '*.sqlite-shm', '*.sqlite-wal')
 
 try {
     New-Item -ItemType Directory -Path $stagingRoot -Force | Out-Null
@@ -40,8 +41,15 @@ try {
         Copy-Item -LiteralPath $_.FullName -Destination $stagingRoot -Recurse -Force
     }
 
-    $databaseFile = Join-Path $stagingRoot 'database\database.sqlite'
-    if (Test-Path -LiteralPath $databaseFile) { Remove-Item -LiteralPath $databaseFile -Force }
+    Get-ChildItem -LiteralPath $stagingRoot -Recurse -Force -File |
+        Where-Object {
+            $name = $_.Name.ToLowerInvariant()
+            foreach ($pattern in $forbiddenLocalDataPatterns) {
+                if ($name -like $pattern) { return $true }
+            }
+            return $false
+        } |
+        Remove-Item -Force
 
     $logsDirectory = Join-Path $stagingRoot 'storage\logs'
     if (Test-Path -LiteralPath $logsDirectory) {
@@ -58,6 +66,9 @@ try {
     Get-ChildItem -LiteralPath $stagingRoot -Recurse -Force -File |
         Where-Object { $_.Name.StartsWith('~$') -or $_.Name -in @('.DS_Store', 'Thumbs.db') } |
         Remove-Item -Force
+
+    & php (Join-Path $stagingRoot 'scripts\check-repository-integrity.php')
+    if ($LASTEXITCODE -ne 0) { throw 'A integridade do pacote falhou.' }
 
     & php (Join-Path $projectRoot 'scripts\verify-distribution.php') $stagingRoot
     if ($LASTEXITCODE -ne 0) { throw 'A validação do pacote falhou.' }

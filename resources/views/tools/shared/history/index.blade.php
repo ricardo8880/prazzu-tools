@@ -36,7 +36,7 @@
                     <table class="table align-middle mb-0">
                         <thead>
                             <tr>
-                                <th>Referência</th>
+                                <th>Contexto</th>
                                 <th>Salvo em</th>
                                 <th>Versão</th>
                                 <th class="text-end">Ações</th>
@@ -45,7 +45,14 @@
                         <tbody>
                             @foreach ($historyPage->items as $entry)
                                 <tr>
-                                    <td>{{ $entry->referenceDate->format('d/m/Y') }}</td>
+                                    <td>
+                                        @if($historyContexts[$entry->id] ?? null)
+                                            <strong>{{ $historyContexts[$entry->id] }}</strong>
+                                            <div class="small text-body-secondary">Referência {{ $entry->referenceDate->format('d/m/Y') }}</div>
+                                        @else
+                                            {{ $entry->referenceDate->format('d/m/Y') }}
+                                        @endif
+                                    </td>
                                     <td>{{ $entry->createdAt->format('d/m/Y H:i') }}</td>
                                     <td><span class="badge text-bg-light">{{ $entry->ruleVersion }}</span></td>
                                     <td class="text-end">

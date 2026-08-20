@@ -28,6 +28,8 @@ final class Calculator implements ToolCalculator
         $newSalary = $input->currentSalary->add($monthlyIncrease);
         $retroactive = $monthlyIncrease->multiply($input->retroactiveMonths);
         $annualPayrollImpact = $monthlyIncrease->multiply(40)->divide(3);
+        $effectiveBasisPoints = intdiv($monthlyIncrease->minorAmount() * 10000, $input->currentSalary->minorAmount());
+        $effectiveAdjustment = number_format($effectiveBasisPoints / 100, 2, ',', '.').' %';
 
         $memory = new CalculationMemory(
             schemaVersion: self::RULE_VERSION,
@@ -36,6 +38,7 @@ final class Calculator implements ToolCalculator
                 new CalculationMemoryStep('monthly_increase', 'Diferença mensal', 'parcela percentual + aumento fixo', ['percentage_increase' => $percentageIncrease->minorAmount(), 'fixed_addition' => $input->fixedAddition->minorAmount()], $monthlyIncrease->minorAmount(), 'Valores monetários em centavos.'),
                 new CalculationMemoryStep('new_salary', 'Novo salário', 'salário atual + diferença mensal', ['current_salary' => $input->currentSalary->minorAmount(), 'monthly_increase' => $monthlyIncrease->minorAmount()], $newSalary->minorAmount(), 'Valores monetários em centavos.'),
                 new CalculationMemoryStep('retroactive', 'Diferença retroativa', 'diferença mensal × meses retroativos', ['monthly_increase' => $monthlyIncrease->minorAmount(), 'months' => $input->retroactiveMonths], $retroactive->minorAmount(), 'Valores monetários em centavos.'),
+                new CalculationMemoryStep('effective_adjustment', 'Reajuste efetivo', 'diferença mensal ÷ salário atual', ['monthly_increase' => $monthlyIncrease->minorAmount(), 'current_salary' => $input->currentSalary->minorAmount()], $effectiveAdjustment, 'Percentual truncado em basis points para duas casas decimais.'),
                 new CalculationMemoryStep('annual_impact', 'Impacto anual da remuneração', 'diferença mensal × (12 + 1 + 1/3)', ['monthly_increase' => $monthlyIncrease->minorAmount()], $annualPayrollImpact->minorAmount(), 'Multiplicação por 40 e divisão por 3 com Money.'),
             ],
             assumptions: ['O impacto anual considera 12 salários, 13º salário e adicional constitucional de férias; encargos patronais não estão incluídos.'],
@@ -48,6 +51,7 @@ final class Calculator implements ToolCalculator
             [
                 new ToolCalculationSummaryItem('new_salary', 'Novo salário', $newSalary->formatPtBr()),
                 new ToolCalculationSummaryItem('monthly_increase', 'Diferença mensal', $monthlyIncrease->formatPtBr()),
+                new ToolCalculationSummaryItem('effective_adjustment', 'Reajuste efetivo', $effectiveAdjustment, 'Percentual efetivo considerando reajuste percentual e aumento fixo.'),
                 new ToolCalculationSummaryItem('retroactive_difference', 'Diferença retroativa', $retroactive->formatPtBr(), $input->retroactiveMonths.' mês(es) informado(s).'),
                 new ToolCalculationSummaryItem('annual_payroll_impact', 'Impacto anual da remuneração', $annualPayrollImpact->formatPtBr(), '12 salários, 13º e adicional constitucional de férias.'),
             ],

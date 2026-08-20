@@ -37,7 +37,7 @@
         </x-tools.form-panel>
 
         @if($plusEnabled ?? true)
-        <x-tools.form-panel title="Operações e análise avançada" description="Detalhe outras operações da competência e compare os dois regimes com a mesma base informada." badge="Prazzu Plus">
+        <x-tools.form-disclosure title="Operações e análise avançada" description="Abra para comparar regimes ou adicionar outras operações da competência." badge="Prazzu Plus" :open="$errors->hasAny(['compare_regimes', 'operations.*'])">
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" name="compare_regimes" value="1" id="compare_regimes" @checked(old('compare_regimes'))>
                 <label class="form-check-label" for="compare_regimes">Exibir comparação cumulativo × não cumulativo</label>
@@ -57,7 +57,7 @@
                 </table>
             </div>
             <div class="form-text">As linhas adicionais são somadas à base principal. Informe crédito apenas quando a operação/aquisição efetivamente gerar crédito no regime não cumulativo.</div>
-        </x-tools.form-panel>
+        </x-tools.form-disclosure>
         @endif
 
         <div class="form-check">
@@ -73,12 +73,24 @@
         @php($money = static fn (int $minor) => \App\Core\Money\Money::fromMinor($minor)->formatPtBr())
         @php($selected = $result->details['selected'])
         <div class="mt-5">
-            <x-tools.result-panel title="Resultado da competência" description="Apuração estimada conforme as bases e premissas confirmadas no formulário.">
+            <x-tools.result-panel title="PIS e Cofins apurados" description="Apuração estimada conforme as bases e premissas confirmadas no formulário." eyebrow="Apuração concluída">
                 <div class="row g-3 mb-4">
                     @foreach($result->summary as $item)
                         <div class="col-12 col-md-6 col-xl-3"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="percent" /></div>
                     @endforeach
                 </div>
+
+                <x-tools.result-insight
+                    :title="'No regime '.$selected['label'].', o total estimado a recolher é '.$money($selected['total_payable_minor'])"
+                    :description="'A apuração parte de '.$money($result->details['revenue_minor']).' de base tributável e considera os créditos e retenções/compensações que você informou.'"
+                    :items="[
+                        'Débitos antes de créditos e retenções: '.$money($selected['pis_debit_minor'] + $selected['cofins_debit_minor']).'.',
+                        $selected['credits_total_minor'] > 0 ? 'Créditos considerados: '.$money($selected['credits_total_minor']).'.' : 'Nenhuma base de crédito reduziu esta apuração.',
+                        ($selected['pis_withheld_minor'] + $selected['cofins_withheld_minor']) > 0 ? 'Retenções/compensações informadas: '.$money($selected['pis_withheld_minor'] + $selected['cofins_withheld_minor']).'.' : 'Nenhuma retenção/compensação foi informada.',
+                        $result->details['compare_regimes'] ? 'A comparação entre regimes é apenas matemática e não define o enquadramento jurídico aplicável.' : '',
+                    ]"
+                    icon="bi-percent"
+                />
 
                 @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach
 
@@ -116,15 +128,11 @@
                 @endif
 
                 <h3 class="h5 mt-4">Memória de cálculo</h3>
-                @if($memoryAllowed ?? true)
-                    <div class="accordion mb-4" id="pis-cofins-memory" data-plus-feature="memory">
+                <div class="accordion mb-4" id="pis-cofins-memory" data-essential-transparency="memory">
                         @foreach($result->calculationMemory->steps as $step)
                             <div class="accordion-item"><h4 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pis-cofins-memory-{{ $loop->index }}">{{ $step->label }}</button></h4><div id="pis-cofins-memory-{{ $loop->index }}" class="accordion-collapse collapse"><div class="accordion-body"><strong>Fórmula:</strong> {{ $step->formula }}</div></div></div>
                         @endforeach
-                    </div>
-                @else
-                    <div class="alert alert-secondary">O resultado essencial permanece disponível acima. A memória detalhada de fórmulas faz parte do Prazzu Plus.</div>
-                @endif
+                </div>
 
                 @if(!empty($historySaved))<div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>@endif
 
@@ -133,7 +141,13 @@
                     <a class="btn btn-outline-danger" data-testid="download-pdf" href="{{ route('tools.calculadora-pis-cofins.export', array_merge(['format'=>'pdf'],$exportInput)) }}">Exportar PDF</a>
                     <a class="btn btn-outline-success" data-testid="download-xlsx" href="{{ route('tools.calculadora-pis-cofins.export', array_merge(['format'=>'xlsx'],$exportInput)) }}">Baixar Excel</a>
                 </div>
-            </x-tools.result-panel>
+
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
+</x-tools.result-panel>
         </div>
     @endisset
 </x-tools.page>

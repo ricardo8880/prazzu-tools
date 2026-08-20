@@ -232,7 +232,7 @@
 
             @if ($errors->any())
                 <div class="col-12">
-                    <div class="alert alert-danger mb-0" role="alert">
+                    <div class="alert alert-danger mb-0" role="alert" data-testid="validation-summary" tabindex="-1">
                         <strong>Revise os dados informados.</strong>
                         <ul class="mb-0 mt-2">
                             @foreach ($errors->all() as $error)
@@ -433,6 +433,7 @@
         Os resultados serão estimativos e não substituirão a conferência do termo de rescisão por profissional qualificado.
     </div>
     <x-tool-feature-tiers slug="calculadora-de-rescisao" />
+    <x-tools.plus-result-cta slug="calculadora-de-rescisao" />
 
 </div>
 @endsection

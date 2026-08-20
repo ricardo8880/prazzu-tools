@@ -21,13 +21,16 @@ use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Contracts\ProvidesHistoryContext;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\History\Support\HistoryPeriodFormatter;
 use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use DateTimeImmutable;
 
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHistoryContext, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-salario-liquido';
 
@@ -77,7 +80,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
-            status: ToolStatus::Beta,
+            status: ToolStatus::Active,
             position: 5,
             featured: true,
             supportsHistory: true,
@@ -111,6 +114,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             resultFields: ['gross', 'inss', 'irrf', 'discounts', 'net', 'summary', 'details', 'warnings', 'calculation_memory'],
             sensitiveFields: [],
         );
+    }
+
+    public function historyContext(array $input, DateTimeImmutable $referenceDate): ?string
+    {
+        return HistoryPeriodFormatter::yearMonth($input['competence'] ?? null);
     }
 
     public function webRoutesPath(): string

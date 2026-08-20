@@ -16,9 +16,11 @@ final class CalculatorTest extends TestCase
             ['name' => 'Notebook', 'value' => '12.000,00', 'useful_life_years' => 5, 'method' => 'linear'],
         ]));
 
-        self::assertSame('R$ 200,00', $result->summary[1]->value);
-        self::assertSame('R$ 2.400,00', $result->summary[2]->value);
-        self::assertSame('R$ 9.600,00', $result->summary[3]->value);
+        self::assertSame('R$ 0,00', $result->summary[1]->value);
+        self::assertSame('R$ 12.000,00', $result->summary[2]->value);
+        self::assertSame('R$ 200,00', $result->summary[3]->value);
+        self::assertSame('R$ 2.400,00', $result->summary[4]->value);
+        self::assertSame('R$ 9.600,00', $result->summary[5]->value);
         self::assertSame(0, $result->details['assets'][0]['schedule'][4]['book_value_minor']);
     }
 
@@ -44,5 +46,27 @@ final class CalculatorTest extends TestCase
         self::assertSame(2700000, $result->details['portfolio_cost_minor']);
         self::assertCount(5, $result->details['portfolio']);
         self::assertSame(0, $result->details['portfolio'][4]['book_value_minor']);
+    }
+
+    public function test_linear_method_respects_residual_value(): void
+    {
+        $result = (new Calculator)->calculate(new CalculationInput([
+            ['name' => 'Notebook', 'value' => '12.000,00', 'residual_value' => '2.000,00', 'useful_life_years' => 5, 'method' => 'linear'],
+        ]));
+
+        self::assertSame('R$ 2.000,00', $result->summary[1]->value);
+        self::assertSame('R$ 10.000,00', $result->summary[2]->value);
+        self::assertSame('R$ 166,67', $result->summary[3]->value);
+        self::assertSame(200000, $result->details['assets'][0]['schedule'][4]['book_value_minor']);
+    }
+
+    public function test_portfolio_keeps_residual_value_after_shorter_asset_life_ends(): void
+    {
+        $result = (new Calculator)->calculate(new CalculationInput([
+            ['name' => 'Curto', 'value' => '1.000,00', 'residual_value' => '100,00', 'useful_life_years' => 1, 'method' => 'linear'],
+            ['name' => 'Longo', 'value' => '2.000,00', 'residual_value' => '200,00', 'useful_life_years' => 2, 'method' => 'linear'],
+        ]));
+
+        self::assertSame(30000, $result->details['portfolio'][1]['book_value_minor']);
     }
 }

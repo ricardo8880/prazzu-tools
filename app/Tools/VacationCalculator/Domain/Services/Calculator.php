@@ -32,7 +32,7 @@ final readonly class Calculator implements ToolCalculator
                 new ToolCalculationSummaryItem('leave_days', 'Dias de descanso', $result->leaveDays),
                 new ToolCalculationSummaryItem('cash_allowance_days', 'Dias convertidos em abono', $result->cashAllowanceDays),
                 new ToolCalculationSummaryItem('gross_total', 'Total bruto', $result->grossTotal->formatPtBr()),
-                new ToolCalculationSummaryItem('net_total', 'Total líquido estimado', $result->netTotal->formatPtBr()),
+                new ToolCalculationSummaryItem('net_total', 'Total após descontos informados', $result->netTotal->formatPtBr()),
             ],
             details: [
                 'input' => $input->toArray(),

@@ -37,6 +37,7 @@ return [
             AnalyticsEventName::ToolResultExported->value => 5,
             AnalyticsEventName::RetentionContinuityUsed->value => 5,
             AnalyticsEventName::RetentionRelatedToolOpened->value => 5,
+            AnalyticsEventName::DiscoveryProblemJourneyOpened->value => 5,
             'audience.context_captured' => 300,
         ],
     ],
@@ -63,7 +64,7 @@ return [
         'identity_metadata_keys' => [
             'percentage', 'tool_slug', 'placement', 'position', 'destination',
             'method', 'file', 'calculation_id', 'result_id', 'batch_id',
-            'subscription_id', 'account_id', 'from_tool',
+            'subscription_id', 'account_id', 'from_tool', 'journey',
         ],
     ],
 
@@ -181,6 +182,15 @@ return [
                     ['name' => 'Recebeu um resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
                     ['name' => 'Usou um atalho de continuidade', 'events' => [AnalyticsEventName::RetentionContinuityUsed->value]],
                     ['name' => 'Concluiu outro resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
+                ],
+            ],
+            'problem_journey_discovery' => [
+                'name' => 'Descoberta por rotina',
+                'description' => 'Mede se uma jornada orientada ao problema leva o visitante a abrir a ferramenta de entrada e concluir uma tarefa.',
+                'identity_type' => 'visitor',
+                'steps' => [
+                    ['name' => 'Iniciou uma jornada por problema', 'events' => [AnalyticsEventName::DiscoveryProblemJourneyOpened->value]],
+                    ['name' => 'Concluiu um resultado', 'events' => [AnalyticsEventName::ToolCalculationCompleted->value, AnalyticsEventName::BusinessDocumentValidatorBatchProcessed->value]],
                 ],
             ],
             'related_tool_discovery' => [

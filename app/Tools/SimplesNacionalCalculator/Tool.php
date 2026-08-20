@@ -24,7 +24,9 @@ use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Contracts\ProvidesHistoryContext;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\History\Support\HistoryPeriodFormatter;
 use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
@@ -32,6 +34,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 use App\Tools\SimplesNacionalCalculator\Api\Actions\CalculateApiAction;
 use App\Tools\SimplesNacionalCalculator\Infrastructure\Providers\SimplesNacionalServiceProvider;
+use DateTimeImmutable;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasMigrations, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
@@ -141,6 +144,11 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function serviceProviders(): array
     {
         return [SimplesNacionalServiceProvider::class];
+    }
+
+    public function historyContext(array $input, DateTimeImmutable $referenceDate): ?string
+    {
+        return HistoryPeriodFormatter::yearMonth($input['reference_month'] ?? null);
     }
 
     public function webRoutesPath(): string

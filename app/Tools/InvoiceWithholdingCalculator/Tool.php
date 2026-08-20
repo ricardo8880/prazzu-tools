@@ -39,15 +39,15 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: self::SLUG, name: 'Calculadora de Retenções na Nota Fiscal', description: 'Estime IRRF, INSS, ISS, PIS/Pasep, Cofins e CSLL com parâmetros revisáveis, memória de cálculo e conferência em lote.', category: ToolCategory::Fiscal, icon: 'bi-receipt-cutoff', routeName: 'tools.calculadora-retencoes-nota-fiscal.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Beta, position: 14, featured: true, supportsHistory: true, storesSensitiveData: false,
+            slug: self::SLUG, name: 'Calculadora de Retenções na Nota Fiscal', description: 'Estime IRRF, INSS, ISS, PIS/Pasep, Cofins e CSLL com parâmetros revisáveis, memória de cálculo e conferência em lote.', category: ToolCategory::Fiscal, icon: 'bi-receipt-cutoff', routeName: 'tools.calculadora-retencoes-nota-fiscal.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Active, position: 14, featured: true, supportsHistory: true, storesSensitiveData: false,
             keywords: ['retenções', 'nota fiscal', 'IRRF', 'INSS', 'ISS', 'PIS', 'COFINS', 'CSLL', 'retenção na fonte'],
             capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export],
             features: [
                 new ToolFeature('calculate', 'Estimativa de retenções de uma nota/serviço', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Memória de cálculo e premissas', ToolFeatureTier::Plus),
+                new ToolFeature('memory', 'Memória de cálculo e premissas', ToolFeatureTier::Essential),
                 new ToolFeature('custom_rules', 'Bases e alíquotas configuráveis por tributo', ToolFeatureTier::Plus),
                 new ToolFeature('multiple_notes', 'Múltiplas notas ou serviços no mesmo cálculo', ToolFeatureTier::Plus),
-                new ToolFeature('report', 'Relatório de conferência por nota e tributo', ToolFeatureTier::Plus),
+                new ToolFeature('report', 'Conferência por tributo e nota', ToolFeatureTier::Essential),
                 new ToolFeature('export', 'Exportação PDF e XLSX', ToolFeatureTier::Plus),
                 new ToolFeature('history', 'Histórico autenticado', ToolFeatureTier::Plus),
             ],

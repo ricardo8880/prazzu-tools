@@ -14,77 +14,21 @@ final class GoldenCases
 
     public static function suite(): GoldenCaseSuite
     {
-        return new GoldenCaseSuite(
-            toolSlug: 'fluxo-de-caixa',
-            cases: [
-                new GoldenCase(
-                    identifier: 'typical',
-                    title: 'Fluxo principal validado',
-                    kind: GoldenCaseKind::Typical,
-                    input: ['scenario' => 'valid-typical-input'],
-                    expected: ['outcome' => 'calculation-or-document-completed'],
-                    reference: 'CalculatorTest do módulo e memória de cálculo da versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-                new GoldenCase(
-                    identifier: 'boundary',
-                    title: 'Limite do domínio validado',
-                    kind: GoldenCaseKind::Boundary,
-                    input: ['scenario' => 'valid-boundary-input'],
-                    expected: ['outcome' => 'boundary-handled-without-loss'],
-                    reference: 'Regras de validação e CalculatorTest do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-                new GoldenCase(
-                    identifier: 'invalid-input',
-                    title: 'Entrada inválida rejeitada',
-                    kind: GoldenCaseKind::InvalidInput,
-                    input: ['scenario' => 'invalid-domain-input'],
-                    expected: ['outcome' => 'validation-error'],
-                    reference: 'FormRequest e invariantes do domínio do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                ),
-                new GoldenCase(
-                    identifier: 'rounding',
-                    title: 'Arredondamento monetário estável',
-                    kind: GoldenCaseKind::Rounding,
-                    input: ['scenario' => 'fractional-monetary-input'],
-                    expected: ['outcome' => 'integer-cent-result'],
-                    reference: 'Política Money do Core e CalculatorTest do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-                new GoldenCase(
-                    identifier: 'non-applicable',
-                    title: 'Cenário não aplicável identificado',
-                    kind: GoldenCaseKind::NonApplicable,
-                    input: ['scenario' => 'non-applicable-input'],
-                    expected: ['outcome' => 'explicit-non-applicable-result'],
-                    reference: 'Invariantes e avisos do domínio do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                ),
-                new GoldenCase(
-                    identifier: 'normative-transition',
-                    title: 'Versão normativa identificada',
-                    kind: GoldenCaseKind::NormativeTransition,
-                    input: ['scenario' => 'rule-version-transition'],
-                    expected: ['outcome' => 'versioned-rule-result'],
-                    reference: 'Memória de cálculo e metadados normativos do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                ),
-                new GoldenCase(
-                    identifier: 'regression',
-                    title: 'Resultado principal protegido contra regressão',
-                    kind: GoldenCaseKind::Regression,
-                    input: ['scenario' => 'known-regression-input'],
-                    expected: ['outcome' => 'stable-versioned-result'],
-                    reference: 'CalculatorTest do módulo aprovado para a versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-            ],
-        );
+        $reference = 'Fórmulas do README e regressões do CalculatorTest, revisadas para o schema 1.2.0.';
+
+        return new GoldenCaseSuite('fluxo-de-caixa', [
+            new GoldenCase('typical-positive', 'Período com geração e saldo final positivos', GoldenCaseKind::Typical,
+                ['opening_balance_minor' => 500000, 'sales_receipts_minor' => 2000000, 'other_inflows_minor' => 100000, 'operating_payments_minor' => 1200000, 'tax_payments_minor' => 200000, 'investments_minor' => 100000, 'financing_payments_minor' => 50000, 'other_outflows_minor' => 50000],
+                ['closing_balance_minor' => 1000000, 'net_movement_minor' => 500000, 'operating_generation_minor' => 600000], $reference, '1.2.0', 'Centavos inteiros; sem float.'),
+            new GoldenCase('boundary-zero-closing', 'Movimento líquido consome exatamente o saldo inicial', GoldenCaseKind::Boundary,
+                ['opening_balance_minor' => 100000, 'total_inflows_minor' => 200000, 'total_outflows_minor' => 300000],
+                ['closing_balance_minor' => 0], $reference, '1.2.0'),
+            new GoldenCase('invalid-negative-outflow', 'Saída negativa é rejeitada', GoldenCaseKind::InvalidInput,
+                ['operating_payments' => '-0,01'], ['outcome' => 'validation-error'], 'ExecuteToolRequest exige money_min:0 nas movimentações.', '1.2.0'),
+            new GoldenCase('rounding-cents', 'Entradas e saídas preservam centavos', GoldenCaseKind::Rounding,
+                ['opening_balance_minor' => 1, 'total_inflows_minor' => 102, 'total_outflows_minor' => 100], ['closing_balance_minor' => 3], $reference, '1.2.0', 'Somas e subtrações em centavos inteiros.'),
+            new GoldenCase('non-applicable-accrual', 'Valores por competência não devem ser tratados como fluxo realizado', GoldenCaseKind::NonApplicable,
+                ['scenario' => 'receitas-e-despesas-sem-data-de-caixa'], ['outcome' => 'use-cash-basis-values'], 'README limita o cálculo ao regime de caixa de um único período.', '1.2.0'),
+        ]);
     }
 }

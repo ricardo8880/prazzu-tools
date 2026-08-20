@@ -19,7 +19,7 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('2000'), Money::fromDecimal('1000'),
         ));
 
-        self::assertSame('1.1.0', $result->schemaVersion);
+        self::assertSame('1.2.0', $result->schemaVersion);
         self::assertSame('R$ 29.000,00', $result->summary[0]->value);
         self::assertSame('R$ 19.000,00', $result->summary[1]->value);
         self::assertSame('R$ 55.000,00', $result->summary[2]->value);
@@ -29,5 +29,17 @@ final class CalculatorTest extends TestCase
         self::assertTrue($result->calculationMemory->isEstimate);
         self::assertNotEmpty($result->calculationMemory->steps);
         self::assertNotEmpty($result->calculationMemory->assumptions);
+    }
+
+    public function test_it_warns_when_closing_balance_and_operating_generation_are_negative(): void
+    {
+        $result = (new Calculator)->calculate(new CalculationInput(
+            Money::fromDecimal('1000'), Money::fromDecimal('2000'), Money::fromDecimal('0'),
+            Money::fromDecimal('2500'), Money::fromDecimal('1000'), Money::fromDecimal('0'),
+            Money::fromDecimal('0'), Money::fromDecimal('0'),
+        ));
+
+        self::assertSame('-R$ 500,00', $result->summary[0]->value);
+        self::assertSame(['negative_closing_balance', 'negative_operating_generation'], array_map(static fn ($warning) => $warning->code, $result->warnings));
     }
 }

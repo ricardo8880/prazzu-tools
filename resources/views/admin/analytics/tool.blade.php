@@ -16,6 +16,7 @@
             ['Sessões com resultado',$metrics->session_results],
             ['Pessoas com resultado',$metrics->people_results],
             ['Resultado após início',number_format($metrics->result_after_start_rate,1,',','.').'%'],
+            ['Resolveu (feedback)',$metrics->resolution_feedback > 0 ? number_format($metrics->confirmed_resolution_rate,1,',','.').'%' : '—'],
             ['Tempo médio',number_format($metrics->average_calculation_seconds,1,',','.').'s'],
         ] as [$l,$v])
             <div class="col-6 col-md-4 col-xl"><div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-body-secondary">{{ $l }}</div><div class="h4 mt-2 mb-0">{{ $v }}</div></div></div></div>
@@ -28,11 +29,27 @@
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-transparent"><div class="fw-semibold">Resolução percebida</div><div class="small text-body-secondary">Mede somente respostas dadas após um resultado; não confunde “gerou resultado” com “resolveu a necessidade”.</div></div>
+        <div class="card-body">
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3"><div class="small text-body-secondary">Respostas</div><div class="h4 mb-0">{{ $metrics->resolution_feedback }}</div></div>
+                <div class="col-6 col-md-3"><div class="small text-body-secondary">Sim</div><div class="h4 mb-0">{{ $metrics->resolved_yes }}</div></div>
+                <div class="col-6 col-md-3"><div class="small text-body-secondary">Parcialmente</div><div class="h4 mb-0">{{ $metrics->resolved_partially }}</div></div>
+                <div class="col-6 col-md-3"><div class="small text-body-secondary">Não</div><div class="h4 mb-0">{{ $metrics->resolved_no }}</div></div>
+            </div>
+            <div class="small mb-3">Cobertura do feedback: <strong>{{ number_format($metrics->resolution_feedback_rate,1,',','.') }}%</strong> dos resultados · Taxa confirmada de resolução: <strong>{{ $metrics->resolution_feedback > 0 ? number_format($metrics->confirmed_resolution_rate,1,',','.').'%' : '—' }}</strong>.</div>
+            @if($resolution_reasons->isNotEmpty())
+                <div class="border rounded p-3"><div class="fw-semibold small mb-2">Por que faltou resolver completamente?</div><div class="d-flex flex-wrap gap-2">@foreach($resolution_reasons as $reason)<span class="badge text-bg-light border">{{ $reason->label }} · {{ $reason->total }}</span>@endforeach</div></div>
+            @endif
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
         <div class="card-header bg-transparent"><div class="fw-semibold">Retorno e retenção desta ferramenta</div><div class="small text-body-secondary">Retorno geral exige outro resultado em outro dia. D1/D7/D30 usam o primeiro resultado observado no período como início da coorte.</div></div>
         <div class="card-body">
             <div class="row g-3 mb-3">
-                <div class="col-6 col-md-3"><div class="small text-body-secondary">Problemas resolvidos</div><div class="h4 mb-0">{{ $retention->problems_solved }}</div></div>
-                <div class="col-6 col-md-3"><div class="small text-body-secondary">Pessoas que resolveram</div><div class="h4 mb-0">{{ $retention->solvers }}</div></div>
+                <div class="col-6 col-md-3"><div class="small text-body-secondary">Resultados entregues</div><div class="h4 mb-0">{{ $retention->problems_solved }}</div></div>
+                <div class="col-6 col-md-3"><div class="small text-body-secondary">Pessoas com resultado</div><div class="h4 mb-0">{{ $retention->solvers }}</div></div>
                 <div class="col-6 col-md-3"><div class="small text-body-secondary">Voltaram em outro dia</div><div class="h4 mb-0">{{ $retention->returning_solvers }}</div></div>
                 <div class="col-6 col-md-3"><div class="small text-body-secondary">Retorno geral</div><div class="h4 mb-0">{{ number_format($retention->return_rate,1,',','.') }}%</div></div>
             </div>

@@ -21,13 +21,16 @@ use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Contracts\ProvidesHistoryContext;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\History\Support\HistoryPeriodFormatter;
 use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use DateTimeImmutable;
 
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHistoryContext, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-pis-cofins';
 
@@ -58,7 +61,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             features: [
                 new ToolFeature('calculate', 'Apuração completa de PIS e Cofins em um regime', ToolFeatureTier::Essential),
                 new ToolFeature('aggregate_credits', 'Créditos do regime não cumulativo', ToolFeatureTier::Plus),
-                new ToolFeature('memory', 'Memória de cálculo e fontes normativas', ToolFeatureTier::Plus),
+                new ToolFeature('memory', 'Memória de cálculo e fontes normativas', ToolFeatureTier::Essential),
                 new ToolFeature('multiple_operations', 'Múltiplas operações na mesma competência', ToolFeatureTier::Plus),
                 new ToolFeature('credit_breakdown', 'Créditos detalhados por operação', ToolFeatureTier::Plus),
                 new ToolFeature('comparison', 'Comparação cumulativo × não cumulativo', ToolFeatureTier::Plus),
@@ -75,6 +78,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function historyPolicy(): ToolHistoryPolicy
     {
         return new ToolHistoryPolicy(true, 365, ['period', 'regime', 'compare_regimes', 'taxable_revenue', 'credit_base', 'pis_withheld', 'cofins_withheld', 'operations'], ['pis_payable', 'cofins_payable', 'total_payable', 'effective_rate', 'summary', 'details', 'warnings', 'calculation_memory'], []);
+    }
+
+    public function historyContext(array $input, DateTimeImmutable $referenceDate): ?string
+    {
+        return HistoryPeriodFormatter::yearMonth($input['period'] ?? null);
     }
 
     public function webRoutesPath(): string

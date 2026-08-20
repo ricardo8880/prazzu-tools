@@ -8,6 +8,7 @@ use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Identity\Notifications\WelcomeToPrazzuTools;
+use App\Core\Tools\Favorites\Services\UserToolFavorites;
 use App\Core\Tools\ToolRegistry;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -16,6 +17,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class RegisteredUserController extends Controller
 {
@@ -24,7 +26,12 @@ final class RegisteredUserController extends Controller
         return view('auth.register');
     }
 
-    public function store(RegisterRequest $request, PlatformAnalytics $analytics, ToolRegistry $tools): RedirectResponse
+    public function store(
+        RegisterRequest $request,
+        PlatformAnalytics $analytics,
+        ToolRegistry $tools,
+        UserToolFavorites $favorites,
+    ): RedirectResponse
     {
         $user = User::query()->create([
             'name' => $request->string('name')->toString(),
@@ -44,7 +51,7 @@ final class RegisteredUserController extends Controller
         $registrationProperties = [];
 
         if (
-            $registrationSource === 'result_continuity'
+            in_array($registrationSource, ['result_continuity', 'tool_favorite'], true)
             && $registrationTool !== ''
             && $tools->findManifest($registrationTool) !== null
         ) {
@@ -62,7 +69,19 @@ final class RegisteredUserController extends Controller
             subjectId: $user->getKey(),
         ), $request);
 
-        return redirect()->intended(route('account.show'))
-            ->with('status', 'Sua conta gratuita foi criada. Confirme seu e-mail para proteger os dados salvos.');
+        $favoriteAdded = false;
+        if ($registrationSource === 'tool_favorite' && $registrationTool !== '' && $tools->findManifest($registrationTool) !== null) {
+            try {
+                $favoriteAdded = $favorites->favorite($registrationTool, (int) $user->getAuthIdentifier());
+            } catch (NotFoundHttpException) {
+                // Uma atribuição inválida nunca deve impedir a criação válida da conta.
+            }
+        }
+
+        $status = $favoriteAdded
+            ? 'Sua conta gratuita foi criada e a ferramenta foi adicionada aos favoritos. Confirme seu e-mail para proteger os dados salvos.'
+            : 'Sua conta gratuita foi criada. Confirme seu e-mail para proteger os dados salvos.';
+
+        return redirect()->intended(route('account.show'))->with('status', $status);
     }
 }

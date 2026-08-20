@@ -25,7 +25,13 @@
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <div class="table-responsive"><table class="table table-sm mb-0"><tbody>@foreach(($result->calculationMemory?->steps ?? []) as $step)<tr><th>{{ $step->label }}<div class="small fw-normal text-body-secondary">{{ $step->formula }}</div></th><td class="text-end">{{ is_int($step->result) ? 'R$ '.number_format($step->result / 100, 2, ',', '.') : $step->result }}</td></tr>@endforeach</tbody></table></div>
             <div class="alert alert-warning mt-3 mb-0">O enquadramento depende de a atividade estar sujeita ao Fator R. Confira atividade, segregação de receitas e dados do PGDAS-D.</div>
-        <x-tools.export-buttons :pdf-route="route('tools.simulador-fator-r.export.pdf')" :excel-route="route('tools.simulador-fator-r.export.excel')" :input="$calculationInput ?? []" /></x-tools.result-panel>
+        <x-tools.export-buttons :pdf-route="route('tools.simulador-fator-r.export.pdf')" :excel-route="route('tools.simulador-fator-r.export.excel')" :input="$calculationInput ?? []" />
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
+</x-tools.result-panel>
     @endisset
 </x-tools.page>
 @endsection

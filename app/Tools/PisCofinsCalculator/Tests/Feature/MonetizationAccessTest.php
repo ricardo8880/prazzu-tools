@@ -20,11 +20,10 @@ use PHPUnit\Framework\TestCase;
 final class MonetizationAccessTest extends TestCase
 {
     #[CoversPlusFeature('calculadora-pis-cofins', 'history')]
-    #[CoversPlusFeature('calculadora-pis-cofins', 'memory')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();
-        foreach (['aggregate_credits', 'memory', 'multiple_operations', 'credit_breakdown', 'comparison', 'export', 'history'] as $feature) {
+        foreach (['aggregate_credits', 'multiple_operations', 'credit_breakdown', 'comparison', 'export', 'history'] as $feature) {
             $this->assertFeatureAccess($manifest, $feature);
         }
     }

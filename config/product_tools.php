@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 return [
-    'schema_version' => '3.18.0',
-    'release_readiness' => 'accounting_pains_lot_6_final_audited',
+    'schema_version' => '3.28.0',
+    'release_readiness' => 'beta_activation_lot_2_low_risk_hardened',
     'source' => 'README.md',
     'continuity_log' => 'docs/IMPLEMENTATION-LOTS.md',
     'inventory_document' => 'docs/PRODUCT-TOOLS-INVENTORY.md',

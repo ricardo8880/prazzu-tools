@@ -7,6 +7,7 @@ namespace App\Tools\FederalPaymentGuideGenerator\Domain\Services;
 use App\Core\Dates\ReferenceDate;
 use App\Core\Money\Percentage;
 use App\Core\Normative\NormativeRuleResolver;
+use App\Core\Normative\NormativeRuleSnapshot;
 use App\Tools\FederalPaymentGuideGenerator\Domain\Data\LatePaymentInput;
 use App\Tools\FederalPaymentGuideGenerator\Domain\Data\LatePaymentResult;
 use App\Tools\FederalPaymentGuideGenerator\Domain\Rules\LatePaymentRule;
@@ -51,7 +52,7 @@ final class LatePaymentCalculator
                 'A taxa Selic acumulada deve ser conferida na fonte oficial para o período informado.',
                 'O cálculo não substitui a emissão e validação final no SicalcWeb ou sistema oficial aplicável.',
             ],
-            normativeRule: $rule->normativeMetadata()->toArray(),
+            normativeRule: NormativeRuleSnapshot::fromRule($rule, ReferenceDate::fromDateTime($input->dueDate))->toArray(),
         );
     }
 

@@ -43,5 +43,11 @@
         href="{{ route('tools.calculadora-difal-icms.export', array_merge(['format' => 'xlsx'], $exportInput)) }}"
     >Baixar Excel</a>
 </div>
+
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
 </x-tools.result-panel></div>@endisset
 </x-tools.page>@endsection

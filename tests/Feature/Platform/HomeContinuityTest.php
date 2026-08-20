@@ -20,7 +20,7 @@ final class HomeContinuityTest extends TestCase
         $other = User::factory()->create();
         $secret = 'NAO-DEVE-APARECER-NA-HOME';
 
-        $salaryRun = $this->runFor($user, 'calculadora-salario-liquido', now(), ['secret' => $secret]);
+        $salaryRun = $this->runFor($user, 'calculadora-salario-liquido', now(), ['secret' => $secret, 'competence' => '2026-08']);
         $this->runFor($user, 'calculadora-ferias', now()->subMinute());
         $this->runFor($other, 'capital-de-giro', now()->addMinute());
 
@@ -32,6 +32,7 @@ final class HomeContinuityTest extends TestCase
             ->assertSee('Calculadora de Férias')
             ->assertSee('Último trabalho')
             ->assertSee('Resultado salvo em')
+            ->assertSee('Contexto: Agosto/2026')
             ->assertSee('Ver resultados salvos')
             ->assertSee($salaryRun->reference_date->format('d/m/Y'))
             ->assertSee(url()->query(route('tools.calculadora-salario-liquido.history.index'), ['source' => 'home_continuity']), false)

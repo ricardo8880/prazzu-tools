@@ -113,6 +113,7 @@ final class ToolController extends Controller
         $assets = [[
             'name' => trim((string) $data['asset_name']),
             'value' => (string) $data['asset_value'],
+            'residual_value' => (string) ($data['residual_value'] ?? '0'),
             'useful_life_years' => (int) $data['useful_life_years'],
             'method' => (string) $data['method'],
         ]];
@@ -127,6 +128,7 @@ final class ToolController extends Controller
             $assets[] = [
                 'name' => $name !== '' ? $name : 'Ativo adicional',
                 'value' => $value !== '' ? $value : '0',
+                'residual_value' => (string) (($asset['residual_value'] ?? '') ?: '0'),
                 'useful_life_years' => (int) ($asset['useful_life_years'] ?? 1),
                 'method' => (string) ($asset['method'] ?? 'linear'),
             ];
@@ -143,6 +145,7 @@ final class ToolController extends Controller
             $assets[] = [
                 'name' => $asset->name,
                 'value' => $this->decimalFromMinor((int) $asset->value_minor),
+                'residual_value' => '0',
                 'useful_life_years' => (int) $asset->useful_life_years,
                 'method' => (string) $asset->method,
             ];

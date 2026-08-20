@@ -13,8 +13,8 @@
             <div class="col-12 col-md-6"><x-tools.form.money name="sales" label="Faturamento do vendedor" :value="old('sales')" required /></div>
             <div class="col-12 col-md-6"><x-tools.form.money name="reversals" label="Estornos e devoluções" help="Valores que não compõem a base comissionável." :value="old('reversals')" /></div>
             <div class="col-12 col-md-6"><x-tools.form.input name="rate" label="Comissão-base" type="number" step="0.000001" min="0" max="100" suffix="%" :value="old('rate')" required /></div>
-            <div class="col-12 col-md-6"><x-tools.form.money name="goal" label="Meta de faturamento" help="Use zero para calcular sem meta." :value="old('goal')" required /></div>
-            <div class="col-12 col-md-6"><x-tools.form.input name="goal_bonus_rate" label="Bônus ao atingir a meta" type="number" step="0.000001" min="0" max="100" suffix="%" :value="old('goal_bonus_rate')" required /></div>
+            <div class="col-12 col-md-6"><x-tools.form.money name="goal" label="Meta de faturamento" help="Opcional. Deixe em branco para calcular somente a comissão-base." :value="old('goal')" /></div>
+            <div class="col-12 col-md-6"><x-tools.form.input name="goal_bonus_rate" label="Bônus ao atingir a meta" type="number" step="0.000001" min="0" max="100" suffix="%" :value="old('goal_bonus_rate')" help="Opcional; só é aplicado quando uma meta positiva é informada e atingida." /></div>
             <div class="col-12"><button class="btn btn-primary" type="submit">Calcular comissão</button></div>
         </form>
     </x-tools.form-panel>

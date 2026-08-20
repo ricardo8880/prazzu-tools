@@ -31,6 +31,8 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+      - name: Integridade do repositório
+        run: php scripts/check-repository-integrity.php
       - uses: actions/cache@v4
         with:
           path: vendor
@@ -45,6 +47,8 @@ jobs:
           touch database/database.sqlite
       - name: Matriz Prazzu Plus (Free x Plus)
         run: php artisan test tests/Architecture/PlusFeatureAccessContractTest.php tests/Architecture/PlusFeatureGovernanceContractTest.php
+      - name: Contrato E2E das 50 ferramentas
+        run: php scripts/e2e-tool-scenarios.php check
       - run: composer release:check
       - name: Validar pacote de distribuição
         shell: pwsh

@@ -14,7 +14,7 @@
 <div class="col-md-3"><x-tools.form.input name="custom_overtime_hours" label="Horas extras personalizadas" :value="old('custom_overtime_hours')" /></div>
 <div class="col-md-3"><x-tools.form.input name="custom_premium" label="Adicional personalizado (%)" type="number" min="50" max="500" step="0.01" :value="old('custom_premium')" /></div>
 </div></x-tools.form-panel>
-<x-tools.form-panel title="Noturno, DSR e reflexos" description="Recursos Plus ficam liberados durante o lançamento." badge="Prazzu Plus"><div class="row g-3">
+<x-tools.form-disclosure title="Noturno, DSR e reflexos" description="Abra para adicionar jornada noturna, DSR ou projeção de reflexos." badge="Prazzu Plus" :open="$errors->hasAny(['night_clock_hours', 'night_overtime_hours', 'night_overtime_premium', 'working_days', 'rest_days', 'include_dsr', 'include_reflexes'])"><div class="row g-3">
 <div class="col-md-3"><x-tools.form.input name="night_clock_hours" label="Horas-relógio noturnas" :value="old('night_clock_hours')" help="Período urbano noturno; a ferramenta converte pela hora reduzida de 52m30s." /></div>
 <div class="col-md-3"><x-tools.form.input name="night_overtime_hours" label="Horas extras noturnas" :value="old('night_overtime_hours')" /></div>
 <div class="col-md-3"><x-tools.form.input name="night_overtime_premium" label="Adicional da extra noturna (%)" type="number" min="50" max="500" step="0.01" :value="old('night_overtime_premium')" /></div>
@@ -22,7 +22,7 @@
 <div class="col-md-3"><x-tools.form.input name="rest_days" label="Repousos/feriados" type="number" min="0" max="15" :value="old('rest_days')" /></div>
 <div class="col-md-4 form-check mt-4 ms-2"><input class="form-check-input" type="checkbox" name="include_dsr" value="1" id="include_dsr" @checked(old('include_dsr'))><label class="form-check-label" for="include_dsr">Calcular DSR sobre as verbas variáveis</label></div>
 <div class="col-md-4 form-check mt-4 ms-2"><input class="form-check-input" type="checkbox" name="include_reflexes" value="1" id="include_reflexes" @checked(old('include_reflexes'))><label class="form-check-label" for="include_reflexes">Projetar reflexos em 13º, férias + 1/3 e FGTS</label></div>
-</div></x-tools.form-panel>
+</div></x-tools.form-disclosure>
 <div class="form-check"><input class="form-check-input" type="checkbox" name="confirm_assumptions" value="1" id="confirm_assumptions" required @checked(old('confirm_assumptions'))><label class="form-check-label" for="confirm_assumptions">Confirmo que o divisor, percentuais, calendário e enquadramento informados são aplicáveis ao caso.</label></div>
 <div><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-2"></i>Calcular</button></div></form>
 @isset($result)
@@ -30,7 +30,20 @@
 @php
 $money = static fn (int $v) => \App\Core\Money\Money::fromMinor($v)->formatPtBr();
 @endphp
-<div class="mt-5"><x-tools.result-panel title="Resultado" description="Estimativa baseada nos dados e parâmetros informados."><div class="row g-3 mb-4">@foreach($result->summary as $item)<div class="col-12 col-md-6 col-xl"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="clock-history" /></div>@endforeach</div>
+<div class="mt-5"><x-tools.result-panel title="Horas extras calculadas" description="Estimativa baseada nos dados e parâmetros informados." eyebrow="Cálculo concluído"><div class="row g-3 mb-4">@foreach($result->summary as $item)<div class="col-12 col-md-6 col-xl"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="clock-history" /></div>@endforeach</div>
+@php
+$reflexTotalMinor = $result->details['thirteenth_minor'] + $result->details['vacation_minor'] + $result->details['vacation_third_minor'] + $result->details['fgts_minor'];
+@endphp
+<x-tools.result-insight
+    :title="'As verbas variáveis do mês somam '.$money($result->details['total_minor'])"
+    :description="'Esse total reúne as horas extras e adicionais calculados e, quando solicitado, o DSR. Ele deve ser lido além do salário-base informado, não como salário líquido.'"
+    :items="[
+        'Valor da hora normal usado como base: '.$money($result->details['hourly_minor']).'.',
+        $result->details['dsr_minor'] > 0 ? 'DSR incluído no total mensal: '.$money($result->details['dsr_minor']).'.' : 'DSR não foi incluído neste cenário.',
+        $reflexTotalMinor > 0 ? 'Reflexos projetados separadamente (13º, férias, 1/3 e FGTS): '.$money($reflexTotalMinor).'. Eles não devem ser confundidos com o pagamento variável do mês.' : 'Nenhuma projeção de reflexos foi solicitada.',
+    ]"
+    icon="bi-clock-history"
+/>
 @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach
 <div class="table-responsive"><table class="table table-sm"><tbody>
 <tr><th>Hora extra 50%</th><td class="text-end">{{ $money($result->details['ot50_minor']) }}</td></tr><tr><th>Hora extra 100%</th><td class="text-end">{{ $money($result->details['ot100_minor']) }}</td></tr><tr><th>Hora extra personalizada</th><td class="text-end">{{ $money($result->details['custom_minor']) }}</td></tr><tr><th>Adicional noturno</th><td class="text-end">{{ $money($result->details['night_minor']) }}</td></tr><tr><th>Horas extras noturnas</th><td class="text-end">{{ $money($result->details['night_overtime_minor']) }}</td></tr><tr><th>DSR</th><td class="text-end">{{ $money($result->details['dsr_minor']) }}</td></tr><tr class="table-light"><th>Total variável</th><td class="text-end fw-bold">{{ $money($result->details['total_minor']) }}</td></tr>
@@ -62,5 +75,11 @@ $exportInput = [
     :excel-route="route('tools.calculadora-hora-extra.export', 'xlsx')"
     :input="$exportInput"
 />
+
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
 </x-tools.result-panel></div>@endisset
 </x-tools.page>@endsection

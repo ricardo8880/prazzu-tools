@@ -78,7 +78,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
-            status: ToolStatus::Active,
+            status: ToolStatus::Beta,
             position: 35,
             featured: false,
             supportsHistory: true,

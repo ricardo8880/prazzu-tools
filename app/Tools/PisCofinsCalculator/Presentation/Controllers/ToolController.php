@@ -31,7 +31,7 @@ final class ToolController extends Controller
 {
     public function index(Request $request, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
-        return view('tools-calculadora-pis-cofins::index', [...$page->execute(), 'plusEnabled' => $features->plusEnabled($module, $request), 'memoryAllowed' => $features->allows($module, 'memory', $request)]);
+        return view('tools-calculadora-pis-cofins::index', [...$page->execute(), 'plusEnabled' => $features->plusEnabled($module, $request)]);
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action, ToolRunRecorder $recorder, ToolPersistenceAuthorizer $persistence, ToolFeatureRequestAuthorizer $features, Tool $module, ShowToolPage $page): View
@@ -63,7 +63,7 @@ final class ToolController extends Controller
         }
         $request->flash();
 
-        return view('tools-calculadora-pis-cofins::index', [...$page->execute(), 'result' => $result, 'historySaved' => $run !== null, 'calculationInput' => $data, 'plusEnabled' => $features->plusEnabled($module, $request), 'memoryAllowed' => $features->allows($module, 'memory', $request)]);
+        return view('tools-calculadora-pis-cofins::index', [...$page->execute(), 'result' => $result, 'historySaved' => $run !== null, 'calculationInput' => $data, 'plusEnabled' => $features->plusEnabled($module, $request)]);
     }
 
     public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, ToolResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): Response

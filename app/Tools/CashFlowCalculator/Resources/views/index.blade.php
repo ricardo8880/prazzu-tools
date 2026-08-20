@@ -29,6 +29,9 @@
     <span data-analytics-result="main" hidden></span>
         <x-tools.result-panel title="Previsão de caixa">
             <div class="row g-3">@foreach($result->summary as $item)<div class="col-12 col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description" /></div>@endforeach</div>
+            @foreach($result->warnings as $warning)
+                <div class="alert {{ $warning->level->value === 'danger' ? 'alert-danger' : ($warning->level->value === 'warning' ? 'alert-warning' : 'alert-info') }} mt-3" role="status">@if($warning->title)<strong>{{ $warning->title }}.</strong> @endif{{ $warning->message }}</div>
+            @endforeach
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <div class="table-responsive"><table class="table table-sm mb-0"><tbody>@foreach(($result->calculationMemory?->steps ?? []) as $step)<tr><th>{{ $step->label }}<div class="small fw-normal text-body-secondary">{{ $step->formula }}</div></th><td class="text-end">{{ is_int($step->result) ? 'R$ '.number_format($step->result / 100, 2, ',', '.') : $step->result }}</td></tr>@endforeach</tbody></table></div>
         <x-tools.export-buttons :pdf-route="route('tools.fluxo-de-caixa.export.pdf')" :excel-route="route('tools.fluxo-de-caixa.export.excel')" :input="$calculationInput ?? []" /></x-tools.result-panel>

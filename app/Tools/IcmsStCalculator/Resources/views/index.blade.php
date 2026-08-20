@@ -32,7 +32,7 @@
         </x-tools.form-panel>
 
         @if($plusEnabled ?? true)
-        <x-tools.form-panel title="Recursos avançados" description="MVA ajustada, FCP, interestadual e múltiplos itens da mesma operação." badge="Prazzu Plus">
+        <x-tools.form-disclosure title="Recursos avançados" description="Abra para MVA ajustada, FCP, alíquota interestadual ou múltiplos itens." badge="Prazzu Plus" :open="$errors->hasAny(['interstate_rate', 'fcp_rate', 'adjust_mva', 'items.*'])">
             <div class="row g-3 mb-3">
                 <div class="col-md-4"><label class="form-label" for="interstate_rate">Alíquota interestadual (%)</label><input class="form-control" id="interstate_rate" name="interstate_rate" type="number" step="0.0001" min="0" max="99.9999" value="{{ old('interstate_rate') }}" placeholder="Ex.: 12"><div class="form-text">Usada somente quando a operação for interestadual.</div></div>
                 <div class="col-md-4"><label class="form-label" for="fcp_rate">FCP-ST (%)</label><input class="form-control" id="fcp_rate" name="fcp_rate" type="number" step="0.0001" min="0" max="10" value="{{ old('fcp_rate') }}" placeholder="Ex.: 2"></div>
@@ -43,7 +43,7 @@
                 @for($i=0;$i<4;$i++)<tr><td><input class="form-control" name="items[{{ $i }}][description]" value="{{ old("items.$i.description") }}" placeholder="Ex.: Item {{ $i+2 }}"></td><td><input class="form-control" name="items[{{ $i }}][merchandise_value]" value="{{ old("items.$i.merchandise_value") }}" inputmode="decimal"></td><td><input class="form-control" name="items[{{ $i }}][mva]" value="{{ old("items.$i.mva") }}" type="number" step="0.0001" min="0" max="500" placeholder="Usa MVA principal"></td></tr>@endfor
             </tbody></table></div>
             <div class="form-text">Os itens adicionais usam as mesmas alíquotas da operação. Frete, seguro, IPI e outras despesas do painel principal pertencem somente ao item principal.</div>
-        </x-tools.form-panel>
+        </x-tools.form-disclosure>
         @endif
 
         <div class="form-check"><input class="form-check-input" type="checkbox" name="confirm_scope" value="1" id="confirm_scope" required @checked(old('confirm_scope'))><label class="form-check-label" for="confirm_scope">Confirmo que verifiquei NCM/CEST, sujeição à ST, MVA, alíquotas, FCP, benefícios e composição da base aplicáveis à operação.</label></div>
@@ -53,8 +53,18 @@
     @isset($result)
         <span data-analytics-result="main" hidden></span>
         @php($money=static fn(int $minor)=>\App\Core\Money\Money::fromMinor($minor)->formatPtBr())
-        <div class="mt-5"><x-tools.result-panel title="Resultado da operação" description="Estimativa conforme os parâmetros fiscais confirmados no formulário.">
+        <div class="mt-5"><x-tools.result-panel title="ICMS-ST calculado" description="Estimativa conforme os parâmetros fiscais confirmados no formulário." eyebrow="Simulação concluída">
             <div class="row g-3 mb-4">@foreach($result->summary as $item)<div class="col-12 col-md-6 col-xl-3"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="receipt" /></div>@endforeach</div>
+            <x-tools.result-insight
+                :title="'ICMS-ST + FCP-ST estimados em '.$money($result->details['totals']['total_minor'])"
+                :description="'A leitura usa os parâmetros fiscais que você confirmou para uma operação '.($result->details['operation_type'] === 'interstate' ? 'interestadual' : 'interna').'. O total não confirma, por si só, que a mercadoria esteja sujeita à substituição tributária.'"
+                :items="[
+                    'Base total de ICMS-ST formada na simulação: '.$money($result->details['totals']['st_base_minor']).'.',
+                    'MVA utilizada no item principal: '.$result->details['used_mva'].'%.',
+                    count($result->details['items']) > 1 ? count($result->details['items']).' itens foram consolidados neste resultado.' : 'O resultado corresponde ao item principal informado.',
+                ]"
+                icon="bi-receipt"
+            />
             @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach
 
             <h3 class="h5 mt-4">Parâmetros utilizados</h3>
@@ -67,7 +77,13 @@
             @if(!empty($historySaved))<div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>@endif
             @php($exportInput=array_merge($calculationInput??[],['confirm_scope'=>1]))
             <div class="d-flex flex-wrap gap-2" data-result-export-actions data-testid="download-actions"><a class="btn btn-outline-danger" data-testid="download-pdf" href="{{ route('tools.calculadora-icms-st.export',array_merge(['format'=>'pdf'],$exportInput)) }}">Exportar relatório PDF</a><a class="btn btn-outline-success" data-testid="download-xlsx" href="{{ route('tools.calculadora-icms-st.export',array_merge(['format'=>'xlsx'],$exportInput)) }}">Baixar planilha</a></div>
-        </x-tools.result-panel></div>
+
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
+</x-tools.result-panel></div>
     @endisset
 </x-tools.page>
 @endsection

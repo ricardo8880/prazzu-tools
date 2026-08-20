@@ -135,6 +135,7 @@
         <x-tools.result-panel class="mt-4" title="Premissas e rastreabilidade">
             <p class="mb-2">Competência: <strong>{{ $result->details['input']['competence'] }}</strong>. Método de dedução do IRRF: <strong>{{ $pro['irrf_deduction_method'] === 'simplified' ? 'desconto simplificado' : 'deduções legais' }}</strong>.</p>
             <p class="text-body-secondary mb-0">A simulação não substitui escrituração, folha de pagamento, obrigações acessórias ou revisão profissional. As versões normativas utilizadas permanecem registradas no resultado técnico.</p>
+            <x-tools.normative-trust :rules="$result->details['normative_rules'] ?? []" />
         </x-tools.result-panel>
     @endisset
     @include('tools-calculadora-pro-labore-distribuicao-lucros::partials-scenarios')

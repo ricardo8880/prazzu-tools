@@ -6,12 +6,14 @@
 
 @section('content')
     @php
-        $registrationAttribution = request()->query('source') === 'result_continuity'
+        $registrationSource = request()->query('source');
+        $registrationAttribution = in_array($registrationSource, ['result_continuity', 'tool_favorite'], true)
             ? array_filter([
-                'source' => 'result_continuity',
+                'source' => $registrationSource,
                 'tool' => is_string(request()->query('tool')) ? request()->query('tool') : null,
             ])
             : [];
+        $isFavoriteIntent = $registrationSource === 'tool_favorite';
     @endphp
     <div class="prazzu-page">
         <div class="row justify-content-center">
@@ -19,9 +21,16 @@
                 <section class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-lg-5">
                         <span class="badge text-bg-primary mb-3">Grátis</span>
-                        <h1 class="h3 mb-2">Crie sua conta para salvar resultados</h1>
-                        <p class="text-body-secondary mb-4">
-                            O cadastro não libera ferramentas: elas já estão completas para todos. A conta mantém históricos e dados disponíveis após você sair ou atualizar a página.
+                        <h1 class="h3 mb-2">{{ $isFavoriteIntent ? 'Salve esta ferramenta para encontrar depois' : 'Crie sua conta para continuar seu trabalho' }}</h1>
+                        <p class="text-body-secondary mb-3">
+                            @if($isFavoriteIntent)
+                                A conta gratuita mantém seus favoritos disponíveis para você voltar quando precisar, inclusive em outro dispositivo.
+                            @else
+                                Use sua conta para recuperar resultados, favoritar ferramentas, repetir cálculos e continuar depois, inclusive em outro dispositivo.
+                            @endif
+                        </p>
+                        <p class="small text-body-secondary mb-4">
+                            O cadastro é opcional e não libera cálculos: as ferramentas continuam completas para todos.
                         </p>
 
                         <form method="POST" action="{{ route('register.store', $registrationAttribution) }}" novalidate>
@@ -55,7 +64,7 @@
                         </form>
 
                         <p class="text-center text-body-secondary mt-4 mb-0">
-                            Já possui uma conta? <a href="{{ route('login') }}">Entrar</a>.
+                            Já possui uma conta? <a href="{{ route('login', $registrationAttribution) }}">Entrar</a>.
                         </p>
                     </div>
                 </section>

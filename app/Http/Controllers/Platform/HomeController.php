@@ -10,6 +10,7 @@ use App\Core\Analytics\Contracts\PlatformAnalytics;
 use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Tools\Favorites\Services\UserToolFavorites;
+use App\Core\Tools\Discovery\Application\ProblemJourneyCatalog;
 use App\Core\Tools\History\Application\Queries\UserToolContinuityQuery;
 use App\Core\Tools\ToolCatalog;
 use App\Core\Verticals\Application\VerticalContext;
@@ -30,6 +31,7 @@ final class HomeController extends Controller
         UserToolContinuityQuery $continuity,
         UserToolFavorites $toolFavorites,
         ToolCatalog $toolCatalog,
+        ProblemJourneyCatalog $problemJourneys,
         VerticalContext $verticalContext,
     ): View|RedirectResponse {
         $queryContext = $request->query('context');
@@ -108,6 +110,10 @@ final class HomeController extends Controller
             'keywords' => $tool['keywords'],
             'url' => route($tool['route_name']),
         ])->values();
+
+        $payload['problemJourneys'] = $context instanceof AcquisitionContext
+            ? collect()
+            : $problemJourneys->forActiveVertical();
 
         $payload['favoriteToolSlugs'] = $request->user() === null
             ? collect()

@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Calcula NCG, CCL, capital necessário e necessidade adicional.
+Calcula NCG, CCL, capital necessário, necessidade adicional e folga de capital circulante.
 
 ## Funcionalidades
 
@@ -37,6 +37,7 @@ visuais compartilhados do Core técnico.
 
 ## Histórico de versões
 
+- `1.2.0`: passa a distinguir explicitamente déficit e folga de financiamento, com alerta contextual no resultado.
 - `1.1.0`: memória financeira estruturada, data-base comum, política de centavos e premissas de classificação e sazonalidade explícitas.
 - `1.0.0`: motor ou gerador funcional, validação, interface, memória,
   documentação e testes.

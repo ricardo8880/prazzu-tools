@@ -84,7 +84,9 @@
                                                 </div>
                                             </div>
 
-                                            @if($run['reference_date'])
+                                            @if($run['context_label'])
+                                                <div class="small text-body-secondary"><strong>Contexto:</strong> {{ $run['context_label'] }}</div>
+                                            @elseif($run['reference_date'])
                                                 <div class="small text-body-secondary">Referência: {{ $run['reference_date']->format('d/m/Y') }}</div>
                                             @endif
 

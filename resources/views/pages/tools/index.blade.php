@@ -65,8 +65,8 @@
                         'url' => $category['url'],
                     ])->values()->all(),
                     'favoriteSlugs' => $favoriteToolSlugs->values()->all(),
-                    'recentSlugs' => [],
-                    'featuredSlugs' => [],
+                    'recentSlugs' => $recentToolSlugs->values()->all(),
+                    'featuredSlugs' => $featuredToolSlugs->values()->all(),
                     'allToolsUrl' => $activeCategory ? route('tools.category', $activeCategory['slug']) : route('tools.index'),
                 ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR) !!}</script>
             </div>
@@ -83,6 +83,43 @@
                 </a>
             @endforeach
         </nav>
+
+        <x-tools.problem-journeys
+            :journeys="$problemJourneys"
+            placement="catalog"
+            title="Encontre pela rotina"
+            description="Se você ainda não sabe qual ferramenta procurar, escolha uma rotina e comece pelo primeiro passo sugerido."
+            class="mb-4"
+        />
+
+        @if ($personalizedTools->isNotEmpty())
+            <section class="mb-4" aria-labelledby="catalog-personalized-title">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 mb-3">
+                    <div>
+                        <span class="prazzu-eyebrow">Continuar de onde parou</span>
+                        <h2 class="h4 mb-1" id="catalog-personalized-title">Seus atalhos</h2>
+                        <p class="small text-body-secondary mb-0">Favoritas primeiro, seguidas pelas ferramentas usadas recentemente nesta vertical.</p>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    @foreach ($personalizedTools as $tool)
+                        @php($isFavoriteShortcut = $favoriteToolSlugs->contains($tool['slug']))
+                        <div class="col-12 col-sm-6 col-xl-4">
+                            <a class="card border-0 shadow-sm h-100 text-decoration-none text-body" href="{{ url()->query($tool['url'], ['source' => 'catalog_shortcut']) }}">
+                                <div class="card-body d-flex align-items-start gap-3">
+                                    <span class="prazzu-tool-icon prazzu-tool-icon-sm" aria-hidden="true"><i class="bi {{ $tool['icon'] }}"></i></span>
+                                    <div class="flex-grow-1">
+                                        <span class="prazzu-eyebrow d-block mb-1">{{ $isFavoriteShortcut ? 'Favorita' : 'Usada recentemente' }}</span>
+                                        <h3 class="h6 mb-1">{{ $tool['name'] }}</h3>
+                                        <p class="small text-body-secondary mb-0">{{ \Illuminate\Support\Str::limit($tool['description'], 95) }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            </section>
+        @endif
 
         <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
             <p class="mb-0 text-body-secondary"><strong class="text-body">{{ $tools->count() }}</strong> de {{ $totalTools }} ferramentas encontradas</p>

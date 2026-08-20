@@ -7,7 +7,7 @@ Calcula base comissionável, comissão-base, bônus por meta, comissão total e 
 ## Funcionalidades
 
 - cálculo da base comissionável líquida de estornos;
-- comissão-base, bônus por meta e comissão total;
+- comissão-base, bônus opcional por meta e comissão total;
 - memória estruturada das bases e percentuais.
 
 ## Experiência Essencial
@@ -45,4 +45,5 @@ Usa `Money`, `Percentage`, arredondamento monetário e `CalculationMemory` do Co
 
 ## Histórico de versões
 
+- `1.2.0`: meta e bônus tornam-se opcionais no cálculo individual; cálculo-base não exige preenchimento artificial com zero.
 - `1.1.0`: base líquida de estornos, meta consistente e memória estruturada.

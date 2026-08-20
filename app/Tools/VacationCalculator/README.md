@@ -10,13 +10,13 @@ Ferramenta trabalhista para estimar dias de direito, férias, terço constitucio
 - redução de dias pelas faixas de faltas injustificadas;
 - cálculo dos dias de descanso e do abono pecuniário;
 - terço constitucional discriminado;
-- descontos manuais;
+- descontos manuais, exibidos separadamente das incidências legais ainda não automatizadas;
 - memória detalhada de valores e prazos;
 - alertas de domínio, SEO e evento de analytics.
 
 ## Experiência Essencial
 
-O Lote 2 disponibiliza gratuitamente o formulário público, o cálculo completo do escopo atual, a memória dos valores, os períodos aquisitivo e concessivo e o prazo estimado para pagamento, sem exigir autenticação.
+A experiência pública calcula integralmente o **escopo bruto atual** (dias, remuneração de férias, terço, abono, médias e prazos) e aplica somente os descontos informados pelo usuário. Como INSS e IRRF ainda não são apurados automaticamente, o resultado não é rotulado como salário líquido legal.
 
 ## Prazzu Plus
 
@@ -30,7 +30,7 @@ Planejado para o Lote 3:
 
 ## Regras
 
-A ferramenta usa a versão normativa indicada pelo motor e as regras detalhadas em `docs/NORMATIVE_RULES.md`. Ela não apura automaticamente INSS e IRRF e não substitui a conferência do responsável trabalhista.
+A ferramenta usa a versão normativa indicada pelo motor e as regras detalhadas em `docs/NORMATIVE_RULES.md`. Ela não apura automaticamente INSS e IRRF e não substitui a conferência do responsável trabalhista. Enquanto essas incidências não forem implementadas e validadas, o manifesto permanece `beta`.
 
 ## Dependências
 

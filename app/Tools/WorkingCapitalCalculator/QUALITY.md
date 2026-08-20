@@ -1,67 +1,15 @@
-# Qualidade de Working Capital Calculator
+# Qualidade — Calculadora de Capital de Giro
 
-Este arquivo complementa o README da ferramenta. O README da raiz continua sendo a autoridade máxima.
+## Evidência revisada no Beta Activation — Lote 2
 
-## Perfil de risco gerado
+- [x] Fórmulas de NCG, CCL, necessidade adicional e folga estão explícitas no domínio e na memória de cálculo.
+- [x] O resultado diferencia déficit de financiamento de folga de capital circulante, sem esconder saldo negativo.
+- [x] Todos os valores monetários usam `Money`/centavos; o domínio não usa `float`.
+- [x] O `FormRequest` impede saldos negativos e exige todas as rubricas do cálculo Essencial.
+- [x] Premissas de mesma data-base, classificação operacional/financeira e sazonalidade estão visíveis.
+- [x] Golden cases concretos cobrem cenário típico, fronteira, entrada inválida, centavos e não aplicação.
+- [x] Testes unitários protegem o caso com déficit e o caso com folga.
+- [x] Exportação e histórico reutilizam a infraestrutura compartilhada do Core.
+- [x] O Essencial entrega integralmente NCG, CCL, déficit/folga e memória; cenários continuam produtividade Plus.
 
-- Natureza: `Calculation`
-- Dependência normativa: `none`
-- Dados pessoais: `None`
-- Integração externa: `None`
-- Persistência: `Temporary`
-- Processamento: `Synchronous`
-- Risco do resultado: `Financial`
-- Frequência de atualização: `Rare`
-- Exportações: pdf, csv
-
-O perfil executável está em `Quality/RiskProfile.php`. Revise-o antes de implementar o domínio.
-
-## Casos dourados
-
-Os casos de regressão de `Tests/Fixtures/GoldenCases.php` estão preenchidos. O módulo está publicado em beta e deve ser revalidado quando suas regras normativas mudarem.
-
-Documente para cada caso:
-
-- entrada completa;
-- resultado esperado;
-- fonte ou revisão responsável;
-- versão normativa, quando aplicável;
-- política de arredondamento, quando aplicável.
-
-## Segurança e privacidade
-
-- [ ] Form Requests validam todas as entradas.
-- [ ] Nenhum dado pessoal é enviado para analytics.
-- [ ] Logs não armazenam documentos, salários ou conteúdo sensível sem mascaramento.
-- [ ] Uploads, quando existirem, validam tamanho, MIME e extensão.
-- [ ] Integrações, quando existirem, possuem timeout, retry e tratamento de indisponibilidade.
-- [ ] Persistência e exclusão seguem as políticas do Core.
-- [ ] Rotas protegidas usam gates e middlewares centrais.
-
-## Integração entre ferramentas
-
-- Contratos publicados: Nenhum.
-- Contratos aceitos: Nenhum.
-
-- [ ] Todos os contratos declarados estão registrados no Core.
-- [ ] A ferramenta funciona normalmente sem integração.
-- [ ] O reaproveitamento é iniciado por ação explícita do usuário.
-- [ ] Dados importados permanecem revisáveis antes da execução.
-- [ ] Contratos ausentes, incompatíveis e não autorizados possuem testes.
-- [ ] Nenhuma classe interna de outro módulo em `app/Tools` é importada.
-
-## Interface
-
-- [ ] Bootstrap e componentes compartilhados foram usados antes de CSS específico.
-- [ ] A interface funciona em mobile, tablet e desktop.
-- [ ] Estados de foco, erro, carregamento e vazio estão cobertos.
-- [ ] O fluxo principal funciona por teclado.
-
-## Verificação antes da ativação
-
-- [ ] Perfil de risco revisado.
-- [ ] Casos dourados completos e aprovados.
-- [ ] Fontes normativas registradas quando aplicável.
-- [ ] Testes Unit, Feature e Browser exigidos pelo classificador implementados.
-- [ ] Regras financeiras não usam `float`.
-- [ ] `composer release:check` está verde.
+A ferramenta permanece `beta` nesta frente até o gate global de ativação dos lotes 10/11; este arquivo não declara `composer release:check` executado neste ambiente.

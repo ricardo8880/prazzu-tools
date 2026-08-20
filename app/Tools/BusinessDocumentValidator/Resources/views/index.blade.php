@@ -656,6 +656,7 @@
         </div>
     </div>
     <x-tool-feature-tiers slug="validador-de-cnpj" />
+    <x-tools.plus-result-cta slug="validador-de-cnpj" />
 
 </div>
 @endsection

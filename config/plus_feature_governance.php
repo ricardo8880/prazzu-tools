@@ -20,13 +20,13 @@ return [
 
     // Snapshot final de proteção contra regressão auditado no Prazzu Plus Lote 8.
     'catalog_tool_count' => 50,
-    'declared_plus_feature_count' => 144,
+    'declared_plus_feature_count' => 141,
     'legacy_debt_ceiling' => 0,
-    'strict_contract_floor' => 144,
+    'strict_contract_floor' => 141,
 
     // Snapshots criptográficos impedem trocar contratos silenciosamente sem
     // alterar as contagens consolidadas. As listas são ordenadas antes do hash.
-    'declared_contracts_checksum' => 'd3584e3826fa8b696c5256d8962162592e2b103ac5fbebcb4fdb23583c134f2d',
+    'declared_contracts_checksum' => 'b1135d3290053089b22f409fc0154d45d06aa5aa4463a5bd88718b957fafde18',
     'legacy_debt_checksum' => 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
 
     /*
@@ -36,7 +36,7 @@ return [
     |
     | Contrato estrito comprova estrutura, gate e teste de acesso. Certificação
     | funcional é uma camada adicional: exige teste comportamental marcado com
-    | CoversPlusFeature. Após a remediação, os 137 contratos estão certificados
+    | CoversPlusFeature. Após a remediação e a revisão Essencial × Plus, os 141 contratos estão certificados
     | e sua composição exata também fica protegida por checksum.
     |
     */
@@ -76,12 +76,9 @@ return [
         'calculadora-parcelamento-tributario:balance_evolution',
         'calculadora-parcelamento-tributario:report',
         'calculadora-pis-cofins:history',
-        'calculadora-pis-cofins:memory',
         'calculadora-pro-labore-distribuicao-lucros:history_exports',
         'calculadora-pro-labore-distribuicao-lucros:scenario_planning',
         'calculadora-retencoes-nota-fiscal:history',
-        'calculadora-retencoes-nota-fiscal:memory',
-        'calculadora-retencoes-nota-fiscal:report',
         'calculadora-salario-liquido:custom_discounts',
         'calculadora-salario-liquido:export',
         'calculadora-salario-liquido:history',
@@ -186,11 +183,11 @@ return [
         'calculadora-retencoes-nota-fiscal:export',
         'calculadora-retencoes-nota-fiscal:multiple_notes',
     ],
-    'functional_contract_floor' => 144,
+    'functional_contract_floor' => 141,
     'functional_debt_ceiling' => 0,
-    'functional_contracts_checksum' => 'd3584e3826fa8b696c5256d8962162592e2b103ac5fbebcb4fdb23583c134f2d',
+    'functional_contracts_checksum' => 'b1135d3290053089b22f409fc0154d45d06aa5aa4463a5bd88718b957fafde18',
 
-    // Snapshot exato dos contratos estruturais saneados até o Lote 7.
+    // Snapshot exato dos contratos estruturais saneados e vigentes após o Lote 7 de Essencial × Plus.
     // Nenhum deles pode desaparecer, voltar ao legado ou ser trocado silenciosamente.
     'strict_contracts' => [
         'simulador-ecad-direitos-autorais:period_projection',
@@ -228,12 +225,9 @@ return [
         'calculadora-parcelamento-tributario:balance_evolution',
         'calculadora-parcelamento-tributario:report',
         'calculadora-pis-cofins:history',
-        'calculadora-pis-cofins:memory',
         'calculadora-pro-labore-distribuicao-lucros:history_exports',
         'calculadora-pro-labore-distribuicao-lucros:scenario_planning',
         'calculadora-retencoes-nota-fiscal:history',
-        'calculadora-retencoes-nota-fiscal:memory',
-        'calculadora-retencoes-nota-fiscal:report',
         'calculadora-salario-liquido:custom_discounts',
         'calculadora-salario-liquido:export',
         'calculadora-salario-liquido:history',

@@ -39,7 +39,7 @@ final class Calculator implements ToolCalculator
 
         return new ToolCalculationResult(
             'comissao-vendedores',
-            '1.1.0',
+            '1.2.0',
             [
                 new ToolCalculationSummaryItem('total_commission', 'Comissão total', $total->formatPtBr()),
                 new ToolCalculationSummaryItem('commissionable_sales', 'Base comissionável', $commissionableSales->formatPtBr(), 'Faturamento bruto menos estornos informados.'),
@@ -52,7 +52,7 @@ final class Calculator implements ToolCalculator
                 'commission_basis' => 'Faturamento bruto menos estornos informados.',
             ],
             calculationMemory: new CalculationMemory(
-                schemaVersion: '1.0.0',
+                schemaVersion: '1.2.0',
                 steps: [
                     new CalculationMemoryStep(
                         key: 'commissionable_sales',

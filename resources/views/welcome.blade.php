@@ -173,6 +173,12 @@
             @endforeach
         </nav>
 
+        <x-tools.problem-journeys
+            :journeys="$problemJourneys"
+            placement="home"
+            class="mt-4"
+        />
+
         @if (! $acquisitionContext && $continueTools->isNotEmpty())
             <section class="prazzu-continuity-tools" aria-labelledby="continue-tools-title">
                 <div class="d-flex flex-column flex-sm-row align-items-sm-end justify-content-between gap-3 mb-3">
@@ -201,7 +207,9 @@
                                 <p class="prazzu-continuity-card__meta mb-1">
                                     Resultado salvo em {{ $tool['finished_at']->format('d/m/Y \à\s H:i') }}
                                 </p>
-                                @if($tool['reference_date'])
+                                @if($tool['context_label'])
+                                    <p class="prazzu-continuity-card__reference mb-0">Contexto: {{ $tool['context_label'] }}</p>
+                                @elseif($tool['reference_date'])
                                     <p class="prazzu-continuity-card__reference mb-0">Referência: {{ $tool['reference_date']->format('d/m/Y') }}</p>
                                 @endif
                                 <span class="prazzu-continuity-card__action mt-auto pt-3">

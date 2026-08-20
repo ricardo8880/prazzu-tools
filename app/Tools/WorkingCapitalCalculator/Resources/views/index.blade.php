@@ -38,6 +38,9 @@
                     <div class="col-12 col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description" /></div>
                 @endforeach
             </div>
+            @foreach($result->warnings as $warning)
+                <div class="alert {{ $warning->level->value === 'danger' ? 'alert-danger' : ($warning->level->value === 'warning' ? 'alert-warning' : 'alert-info') }} mt-3" role="status">@if($warning->title)<strong>{{ $warning->title }}.</strong> @endif{{ $warning->message }}</div>
+            @endforeach
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <div class="table-responsive">
                 <table class="table table-sm mb-0"><tbody>

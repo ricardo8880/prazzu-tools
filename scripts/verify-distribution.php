@@ -53,6 +53,14 @@ foreach ($iterator as $file) {
         $violations[] = $relative;
     }
 
+    $lowerName = strtolower($name);
+    $isLocalDatabase = preg_match('/\.(?:sqlite|sqlite3)(?:-(?:shm|wal))?$/', $lowerName) === 1;
+    $isDatabaseDump = preg_match('/\.(?:sql(?:\.gz)?|dump|bak)$/', $lowerName) === 1;
+
+    if ($isLocalDatabase || $isDatabaseDump) {
+        $violations[] = $relative;
+    }
+
     if (str_ends_with($name, '.log') && ! str_ends_with($relative, '.gitignore')) {
         $violations[] = $relative;
     }

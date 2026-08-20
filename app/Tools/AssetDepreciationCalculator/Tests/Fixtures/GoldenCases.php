@@ -14,16 +14,22 @@ final class GoldenCases
 
     public static function suite(): GoldenCaseSuite
     {
-        $reference = 'README e CalculatorTest do módulo AssetDepreciationCalculator 1.0.0.';
+        $reference = 'README e CalculatorTest do módulo AssetDepreciationCalculator 1.1.0.';
 
-        return new GoldenCaseSuite(toolSlug: 'calculadora-depreciacao-ativos', cases: [
-            new GoldenCase('typical', 'Ativo linear em cinco anos', GoldenCaseKind::Typical, ['value' => '12000', 'years' => 5], ['monthly' => 'R$ 200,00', 'annual' => 'R$ 2.400,00'], $reference, '1.0.0', 'Money/IntegerRounding sem float.'),
-            new GoldenCase('boundary', 'Vida útil mínima de um ano', GoldenCaseKind::Boundary, ['value' => '1000', 'years' => 1], ['book_value_end' => 'R$ 0,00'], $reference, '1.0.0'),
-            new GoldenCase('invalid-input', 'Valor zero é rejeitado', GoldenCaseKind::InvalidInput, ['value' => '0'], ['outcome' => 'validation-error'], 'ExecuteToolRequest exige valor maior que zero.', '1.0.0'),
-            new GoldenCase('rounding', 'Centavos são absorvidos sem saldo negativo', GoldenCaseKind::Rounding, ['value' => '1000.01', 'years' => 3], ['book_value_end' => 'R$ 0,00'], $reference, '1.0.0', 'A projeção absorve diferenças de centavos no último período.'),
-            new GoldenCase('non-applicable', 'Vida útil deve ser definida externamente', GoldenCaseKind::NonApplicable, ['scenario' => 'vida-util-nao-definida'], ['outcome' => 'parameter-required'], 'README não infere vida útil ou enquadramento.', '1.0.0'),
-            new GoldenCase('normative-transition', 'Política contábil não é inferida', GoldenCaseKind::NormativeTransition, ['scenario' => 'policy-change'], ['outcome' => 'user-supplied-parameters'], 'A ferramenta é paramétrica e não embute taxa normativa.', '1.0.0'),
-            new GoldenCase('regression', 'Soma dos dígitos fecha o saldo em zero', GoldenCaseKind::Regression, ['value' => '15000', 'years' => 5, 'method' => 'sum_of_years_digits'], ['first_year' => 'R$ 5.000,00', 'book_value_end' => 'R$ 0,00'], $reference, '1.0.0'),
+        return new GoldenCaseSuite('calculadora-depreciacao-ativos', [
+            new GoldenCase('typical-residual', 'Ativo linear com valor residual', GoldenCaseKind::Typical,
+                ['value_minor' => 1200000, 'residual_value_minor' => 200000, 'years' => 5, 'method' => 'linear'],
+                ['depreciable_base_minor' => 1000000, 'monthly_minor' => 16667, 'annual_minor' => 200000, 'book_value_year_one_minor' => 1000000, 'book_value_end_minor' => 200000], $reference, '1.1.0', 'Money/IntegerRounding sem float.'),
+            new GoldenCase('boundary-one-year', 'Vida útil mínima preserva o residual', GoldenCaseKind::Boundary,
+                ['value_minor' => 100000, 'residual_value_minor' => 10000, 'years' => 1], ['depreciation_minor' => 90000, 'book_value_end_minor' => 10000], $reference, '1.1.0'),
+            new GoldenCase('invalid-residual-equals-cost', 'Residual igual ao valor do bem é rejeitado', GoldenCaseKind::InvalidInput,
+                ['value_minor' => 100000, 'residual_value_minor' => 100000], ['outcome' => 'validation-or-domain-error'], 'ExecuteToolRequest e Calculator exigem residual menor que o valor do bem.', '1.1.0'),
+            new GoldenCase('rounding-linear', 'Centavos fecham exatamente no valor residual', GoldenCaseKind::Rounding,
+                ['value_minor' => 100001, 'residual_value_minor' => 10000, 'years' => 3, 'method' => 'linear'], ['book_value_end_minor' => 10000], $reference, '1.1.0', 'Diferença de centavos é absorvida no último ano.'),
+            new GoldenCase('non-applicable-missing-policy', 'Vida útil e residual precisam vir da política aplicável', GoldenCaseKind::NonApplicable,
+                ['scenario' => 'vida-util-ou-residual-nao-definidos'], ['outcome' => 'parameter-required'], 'README não infere vida útil, residual, taxa fiscal ou elegibilidade do ativo.', '1.1.0'),
+            new GoldenCase('normative-transition-parametric', 'Mudança de política não altera parâmetros silenciosamente', GoldenCaseKind::NormativeTransition,
+                ['scenario' => 'policy-change'], ['outcome' => 'user-supplied-parameters'], 'O módulo é paramétrico; mudanças contábeis/fiscais exigem revisão dos dados informados.', '1.1.0'),
         ]);
     }
 }

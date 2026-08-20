@@ -37,6 +37,8 @@ final class LatePaymentCalculatorTest extends TestCase
 
         self::assertSame('federal_payment_guide.late_payment_charges', $result->normativeRule['identifier']);
         self::assertSame('2026.1.0', $result->normativeRule['version']);
+        self::assertSame('2026-01-01', $result->normativeRule['reference_date']);
+        self::assertSame('2026-07-21', $result->normativeRule['verified_at']);
         self::assertNotEmpty($result->normativeRule['references']);
     }
 }

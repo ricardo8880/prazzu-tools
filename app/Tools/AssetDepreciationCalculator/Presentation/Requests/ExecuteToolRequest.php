@@ -21,11 +21,13 @@ final class ExecuteToolRequest extends FormRequest
         return [
             'asset_name' => ['required', 'string', 'max:120'],
             'asset_value' => ['required', 'brazilian_money', 'money_min:0.01'],
+            'residual_value' => ['nullable', 'brazilian_money', 'money_min:0'],
             'useful_life_years' => ['required', 'integer', 'min:1', 'max:100'],
             'method' => ['required', 'in:linear,declining_balance,sum_of_years_digits'],
             'assets' => ['nullable', 'array', 'max:20'],
             'assets.*.name' => ['nullable', 'string', 'max:120'],
             'assets.*.value' => ['nullable', 'brazilian_money', 'money_min:0'],
+            'assets.*.residual_value' => ['nullable', 'brazilian_money', 'money_min:0'],
             'assets.*.useful_life_years' => ['nullable', 'integer', 'min:1', 'max:100'],
             'assets.*.method' => ['nullable', 'in:linear,declining_balance,sum_of_years_digits'],
             'registered_asset_ids' => ['nullable', 'array', 'max:20'],
@@ -38,6 +40,16 @@ final class ExecuteToolRequest extends FormRequest
         $validator->after(function (Validator $validator): void {
             if ($validator->errors()->isNotEmpty()) {
                 return;
+            }
+
+            try {
+                $assetValue = Money::fromDecimal((string) $this->input('asset_value'))->minorAmount();
+                $residualValue = Money::fromDecimal((string) ($this->input('residual_value') ?: '0'))->minorAmount();
+                if ($residualValue >= $assetValue) {
+                    $validator->errors()->add('residual_value', 'O valor residual deve ser menor que o valor do bem.');
+                }
+            } catch (Throwable) {
+                // Regras de formato já reportam o erro correspondente.
             }
 
             foreach ((array) $this->input('assets', []) as $index => $asset) {
@@ -58,6 +70,15 @@ final class ExecuteToolRequest extends FormRequest
                 }
                 if ($minor <= 0) {
                     $validator->errors()->add("assets.$index.value", 'Informe um valor maior que zero para o ativo adicional.');
+                }
+
+                try {
+                    $residualMinor = Money::fromDecimal((string) (($asset['residual_value'] ?? '') ?: '0'))->minorAmount();
+                    if ($minor > 0 && $residualMinor >= $minor) {
+                        $validator->errors()->add("assets.$index.residual_value", 'O valor residual deve ser menor que o valor do ativo adicional.');
+                    }
+                } catch (Throwable) {
+                    // Regras de formato já reportam o erro correspondente.
                 }
             }
         });

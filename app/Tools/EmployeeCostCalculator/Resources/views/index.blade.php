@@ -29,20 +29,26 @@
     <x-tools.form-panel title="Simulação individual completa">
         <form method="POST" action="{{ route('tools.custo-funcionario-clt.calculate') }}" class="row g-3">
             @csrf
-            <div class="col-12 col-md-6">
-                <x-tools.form.input name="employee_name" label="Funcionário (opcional)" :value="old('employee_name')" maxlength="160" />
-            </div>
-            <div class="col-12 col-md-6">
-                <x-tools.form.input name="department" label="Departamento (opcional)" :value="old('department')" maxlength="120" />
-            </div>
-            @auth
-                <div class="col-12 col-md-6">
-                    <x-tools.form.select name="company_profile_id" label="Empresa salva (opcional)"
-                        :options="$companies->pluck('name', 'id')->all()" :value="old('company_profile_id')" />
-                </div>
-            @endauth
-            <div class="col-12 col-md-6">
-                <x-tools.form.input name="scenario_name" label="Nome do cenário (opcional)" :value="old('scenario_name')" maxlength="120" />
+            <div class="col-12">
+                <x-tools.form-disclosure title="Identificação do cenário" description="Opcional. Use apenas se quiser reconhecer este cálculo depois." :open="$errors->hasAny(['employee_name', 'department', 'company_profile_id', 'scenario_name'])">
+                    <div class="row g-3">
+                                    <div class="col-12 col-md-6">
+                                        <x-tools.form.input name="employee_name" label="Funcionário (opcional)" :value="old('employee_name')" maxlength="160" />
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <x-tools.form.input name="department" label="Departamento (opcional)" :value="old('department')" maxlength="120" />
+                                    </div>
+                                    @auth
+                                        <div class="col-12 col-md-6">
+                                            <x-tools.form.select name="company_profile_id" label="Empresa salva (opcional)"
+                                                :options="$companies->pluck('name', 'id')->all()" :value="old('company_profile_id')" />
+                                        </div>
+                                    @endauth
+                                    <div class="col-12 col-md-6">
+                                        <x-tools.form.input name="scenario_name" label="Nome do cenário (opcional)" :value="old('scenario_name')" maxlength="120" />
+                                    </div>
+                    </div>
+                </x-tools.form-disclosure>
             </div>
             @foreach(['salary' => ['Salário', null], 'variable_pay' => ['Média mensal variável', '0,00'], 'benefits' => ['Benefícios mensais', '0,00']] as $name => [$label, $default])
                 <div class="col-12 col-md-4">
@@ -73,7 +79,7 @@
     @isset($result)
     <span data-analytics-result="main" hidden></span>
         @php($resultArray = $result->toArray())
-        <x-tools.result-panel title="Custo do funcionário">
+        <x-tools.result-panel title="Custo do funcionário calculado" eyebrow="Cálculo concluído">
             <div class="row g-3">
                 @foreach($result->summary as $item)
                     <div class="col-12 col-md-6 col-xl-4">
@@ -81,6 +87,23 @@
                     </div>
                 @endforeach
             </div>
+            @php
+                $employeeAmounts = $result->details['amounts'];
+                $employeeInput = $result->details['input'];
+                $employeeAdditionalMinor = max(0, $employeeAmounts['monthly_cost_minor'] - $employeeAmounts['remuneration_minor']);
+            @endphp
+            <x-tools.result-insight
+                class="mt-4"
+                :title="'Manter este vínculo custa cerca de R$ '.number_format($employeeAmounts['monthly_cost_minor'] / 100, 2, ',', '.').' por mês'"
+                :description="'A remuneração mensal de R$ '.number_format($employeeAmounts['remuneration_minor'] / 100, 2, ',', '.').' cresce com benefícios, provisões e encargos até chegar ao custo provisionado do cenário.'"
+                :items="[
+                    'Custos além da remuneração somam R$ '.number_format($employeeAdditionalMinor / 100, 2, ',', '.').'.',
+                    'Provisões de 13º, férias e terço: R$ '.number_format($employeeAmounts['provisions_minor'] / 100, 2, ',', '.').'.',
+                    'FGTS e encargos patronais: R$ '.number_format($employeeAmounts['charges_minor'] / 100, 2, ',', '.').'.',
+                    $employeeInput['benefits'] > 0 ? 'Benefícios informados: R$ '.number_format($employeeInput['benefits'] / 100, 2, ',', '.').' por mês.' : 'Nenhum benefício adicional foi informado neste cenário.',
+                ]"
+                icon="bi-person-workspace"
+            />
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <div class="table-responsive">
                 <table class="table table-sm align-middle">
@@ -106,7 +129,13 @@
                     </form>
                 @endforeach
             </div>
-        </x-tools.result-panel>
+
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
+</x-tools.result-panel>
     @endisset
 
     <section class="mt-4" aria-labelledby="employee-cost-plus-title">

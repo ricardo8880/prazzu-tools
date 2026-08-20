@@ -29,6 +29,32 @@ final readonly class UserToolFavorites
             ->exists();
     }
 
+    public function favorite(string $toolSlug, int $userId): bool
+    {
+        $manifest = $this->requireVisibleTool($toolSlug);
+
+        return DB::transaction(function () use ($manifest, $userId): bool {
+            $favorite = UserToolFavorite::query()->firstOrCreate([
+                'user_id' => $userId,
+                'tool_slug' => $manifest->slug,
+            ]);
+
+            if (! $favorite->wasRecentlyCreated) {
+                return false;
+            }
+
+            $this->audit->record(
+                action: 'tool.favorited',
+                auditableType: UserToolFavorite::class,
+                auditableId: (string) $favorite->getKey(),
+                metadata: ['tool_slug' => $manifest->slug],
+                actorId: $userId,
+            );
+
+            return true;
+        });
+    }
+
     public function toggle(string $toolSlug, int $userId): bool
     {
         $manifest = $this->requireVisibleTool($toolSlug);

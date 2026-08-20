@@ -19,8 +19,8 @@ final class ExecuteToolRequest extends FormRequest
             'sales' => ['required', 'brazilian_money', 'money_min:0'],
             'reversals' => ['nullable', 'brazilian_money', 'money_min:0'],
             'rate' => ['required', 'numeric', 'min:0', 'max:100'],
-            'goal' => ['required', 'brazilian_money', 'money_min:0'],
-            'goal_bonus_rate' => ['required', 'numeric', 'min:0', 'max:100'],
+            'goal' => ['nullable', 'brazilian_money', 'money_min:0'],
+            'goal_bonus_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
     }
 }

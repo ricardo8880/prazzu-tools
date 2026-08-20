@@ -8,7 +8,7 @@ Ferramenta ativa para orientar a identificação da guia, o código de receita, 
 - cálculo determinístico de multa de mora, sem `float` no domínio;
 - cálculo de juros com percentual Selic informado e validado;
 - vencimentos básicos de GPS com ajuste de fins de semana;
-- memória de cálculo e alertas obrigatórios;
+- memória de cálculo, snapshot normativo por data de vencimento e fontes oficiais visíveis no resultado;
 - histórico autenticado, favoritos, recuperação e exclusão;
 - exportação do cálculo atual e do histórico em CSV, JSON e PDF.
 
@@ -31,7 +31,7 @@ O módulo depende somente dos contratos compartilhados do Core para dinheiro, pe
 Actions coordenam os casos de uso; Requests validam entrada; Services concentram domínio; Controllers apenas orquestram HTTP. Dinheiro e percentuais usam o Core. CSV usa `TabularExportService`; PDF e Excel usam os contratos oficiais do Core (`PdfExporter` e `SpreadsheetExporter`).
 
 ## Qualidade
-O módulo possui contrato arquitetural, contrato de integração, perfil de risco, golden cases completos e regressão executável. A regra de acréscimos legais implementa o contrato central `App\Core\Normative`, é resolvida pela data de vencimento e registra metadados completos no histórico.
+O módulo possui contrato arquitetural, contrato de integração, perfil de risco, golden cases completos e regressão executável. A regra de acréscimos legais implementa o contrato central `App\Core\Normative`, é resolvida pela data de vencimento, gera `NormativeRuleSnapshot` com a data de referência e expõe fonte, vigência, versão e última verificação na superfície compartilhada de confiança.
 
 ## Histórico de versões
 - 1.1.0 — governança normativa central, fontes oficiais, resolução por vigência e rastreabilidade histórica da regra aplicada.

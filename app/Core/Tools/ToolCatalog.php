@@ -200,20 +200,71 @@ final class ToolCatalog
             return $tools->values();
         }
 
-        $needle = Str::lower(Str::ascii($query));
+        $needle = $this->normalizeSearchText($query);
+        $terms = array_values(array_filter(explode(' ', $needle)));
 
-        return $tools->filter(function (array $tool) use ($needle): bool {
-            $haystack = Str::lower(Str::ascii(implode(' ', [
-                $tool['name'],
-                $tool['description'],
-                $tool['category'],
-                $tool['declared_category'],
-                $tool['category_name'],
-                implode(' ', $tool['keywords']),
-            ])));
+        return $tools
+            ->map(function (array $tool) use ($needle, $terms): array {
+                return [
+                    'tool' => $tool,
+                    'score' => $this->searchScore($tool, $needle, $terms),
+                ];
+            })
+            ->filter(static fn (array $entry): bool => $entry['score'] >= 0)
+            ->sortBy([
+                ['score', 'desc'],
+                ['tool.position', 'asc'],
+            ])
+            ->pluck('tool')
+            ->values();
+    }
 
-            return str_contains($haystack, $needle);
-        })->values();
+
+    /**
+     * @param array<string, mixed> $tool
+     * @param list<string> $terms
+     */
+    private function searchScore(array $tool, string $query, array $terms): int
+    {
+        $name = $this->normalizeSearchText((string) $tool['name']);
+        $description = $this->normalizeSearchText((string) $tool['description']);
+        $category = $this->normalizeSearchText(implode(' ', [
+            (string) $tool['category'],
+            (string) $tool['declared_category'],
+            (string) $tool['category_name'],
+        ]));
+        $keywords = $this->normalizeSearchText(implode(' ', $tool['keywords']));
+        $slug = $this->normalizeSearchText((string) $tool['slug']);
+        $haystack = implode(' ', [$name, $keywords, $category, $description, $slug]);
+
+        foreach ($terms as $term) {
+            if (! str_contains($haystack, $term)) {
+                return -1;
+            }
+        }
+
+        $score = 0;
+        $score += $name === $query ? 520 : 0;
+        $score += str_starts_with($name, $query) ? 300 : 0;
+        $score += str_contains($name, $query) ? 190 : 0;
+        $score += str_contains($keywords, $query) ? 145 : 0;
+        $score += str_contains($category, $query) ? 95 : 0;
+        $score += str_contains($description, $query) ? 55 : 0;
+        $score += str_contains($slug, $query) ? 45 : 0;
+
+        foreach ($terms as $term) {
+            $score += str_starts_with($name, $term) ? 75 : (str_contains($name, $term) ? 50 : 0);
+            $score += str_contains($keywords, $term) ? 32 : 0;
+            $score += str_contains($category, $term) ? 18 : 0;
+            $score += str_contains($description, $term) ? 8 : 0;
+        }
+
+        return $score;
+    }
+
+    private function normalizeSearchText(string $value): string
+    {
+        return trim((string) preg_replace('/\s+/', ' ', Str::lower(Str::ascii($value))));
     }
 
     /** @return Collection<int, array<string, mixed>> */

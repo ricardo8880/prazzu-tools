@@ -118,7 +118,7 @@
 
             @if ($errors->any())
                 <div class="col-12">
-                    <div class="alert alert-danger mb-0" role="alert">
+                    <div class="alert alert-danger mb-0" role="alert" data-testid="validation-summary" tabindex="-1">
                         <strong>Revise os campos informados.</strong>
                     </div>
                 </div>
@@ -522,6 +522,7 @@
         </section>
     @endif
     <x-tool-feature-tiers slug="calculadora-de-honorarios-contabeis" />
+    <x-tools.plus-result-cta slug="calculadora-de-honorarios-contabeis" />
 
 </div>
 @if ($taxSnapshotIntegration)

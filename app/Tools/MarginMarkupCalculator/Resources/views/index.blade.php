@@ -98,7 +98,7 @@
 
             @if ($errors->any())
                 <div class="col-12">
-                    <div class="alert alert-danger mb-0" role="alert">
+                    <div class="alert alert-danger mb-0" role="alert" data-testid="validation-summary" tabindex="-1">
                         <div class="fw-semibold mb-1">Revise os dados informados:</div>
                         <ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
                     </div>
@@ -196,6 +196,7 @@
     @include('tools-calculadora-margem-markup::partials.product-import')
     @include('tools-calculadora-margem-markup::partials.batch-calculator')
     <x-tool-feature-tiers slug="calculadora-margem-markup" />
+    <x-tools.plus-result-cta slug="calculadora-margem-markup" />
 
 </div>
 @if ($taxSnapshotIntegration)

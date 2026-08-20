@@ -1206,3 +1206,297 @@ O ciclo específico das dores contábeis foi encerrado após reconstrução obri
 A auditoria final confirmou as 13 dores agrupadas do ciclo: Nota Fiscal, CFOP, Certificado Digital, Simples Nacional, Lucro Presumido, Lucro Real, Fator R, Reforma Tributária, PIS/Cofins, SEFAZ, ICMS, ECAD e DIFAL. O lote corrigiu lacunas documentais das páginas fiscais do ciclo, adicionou um verificador estático reproduzível em `scripts/check-accounting-pains.php` e regenerou o cache de rotas herdado do ZIP original para que as ferramentas 44–50 não fiquem ocultas no fluxo de aplicação dos patches. A distribuição oficial completa continua sem caches gerados.
 
 O `release_readiness` passa a `accounting_pains_lot_6_final_audited`; a contagem, os slugs e a ordem de lançamento permanecem inalterados. Qualquer evolução posterior dessas ferramentas deve iniciar do estado acumulado deste ciclo, reler os documentos obrigatórios da raiz e tratar alterações normativas em lote explícito.
+
+## Satisfação e Retorno — Lote 1 — Confiança percebida
+
+- Estado reconstruído a partir do ZIP original antes de qualquer alteração, com releitura do `README.md`, `CORE_CANDIDATES.md`, histórico de lotes e inventário executável.
+- Metadados normativos já existentes no Core passam a ser apresentados de forma compartilhada como referência, vigência, última verificação registrada, versão, fontes oficiais, estimativa e premissas/limites.
+- A superfície `x-tools.normative-trust` foi conectada às 16 ferramentas que já expõem regras normativas estruturadas no resultado; nenhuma data ou fonte é inventada para módulos sem esse contrato.
+- A lista técnica isolada da Calculadora de Salário Líquido foi substituída pela mesma apresentação compartilhada, reduzindo duplicação concreta.
+- Nenhuma fórmula, regra de domínio, slug, rota, vertical, inventário, `release_order`, autenticação ou classificação Essencial/Plus foi alterada.
+- Antes do Lote 2 desta frente, reconstruir obrigatoriamente **ZIP original → Satisfação e Retorno Lote 1**, reler os documentos obrigatórios e comparar o estado acumulado antes de alterar qualquer arquivo.
+- Relatório detalhado: `docs/PRODUCT-SATISFACTION-LOT-1-TRUST.md`.
+
+## Satisfação e Retorno — Lote 2 — Menos carga visual nos formulários
+
+### Resultado do Lote 2
+
+- O estado foi reconstruído obrigatoriamente a partir do ZIP original com reaplicação do Lote 1 antes de qualquer alteração.
+- Foi criado `x-tools.form-disclosure`, baseado em `details/summary` nativo e reutilizável, sem JavaScript obrigatório e sem conhecimento de domínio.
+- Campos opcionais e blocos avançados foram retirados do caminho visual principal em sete ferramentas de alta densidade, preservando integralmente nomes de campos, requests, fórmulas, resultados e acesso Essencial/Plus.
+- Disclosures reabrem quando existem erros de validação nos campos agrupados, evitando esconder a correção necessária após submissão.
+- Nenhum campo que possa tornar-se obrigatório por mudança de contexto do próprio formulário foi ocultado apenas para reduzir a tela.
+- Nenhum slug, rota, vertical, inventário, `release_order`, regra normativa ou contrato público foi alterado.
+
+### Continuidade para o próximo lote desta frente
+
+Antes do Lote 3, reconstruir o estado na ordem: **ZIP original → Lote 1 → Lote 2**, reler `README.md`, `CORE_CANDIDATES.md`, este arquivo, os relatórios dos lotes anteriores e `config/product_tools.php`. O Lote 3 permanece dedicado à utilidade e interpretação do resultado, sem reabrir confiança normativa ou progressive disclosure salvo correção de regressão comprovada.
+
+
+## Satisfação e Retorno — Lote 3 — Resultado compreensível
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lote 1 → Lote 2** antes das alterações.
+- Criado `x-tools.result-insight` como componente exclusivamente visual para a camada de “Leitura rápida”; ele não contém fórmulas, regras normativas, condicionais de ferramenta ou decisão de acesso.
+- As mesmas sete ferramentas de alta densidade trabalhadas no Lote 2 passaram a explicar, logo após as métricas, o significado dos números do cenário calculado.
+- Os textos de interpretação permanecem nos próprios módulos e usam apenas dados já existentes no `ToolCalculationResult`; não foi criado interpretador universal no Core.
+- Títulos genéricos foram convertidos em estados de sucesso específicos da tarefa, preservando avisos, memória, fontes, exportações e resultados existentes.
+- Nenhuma fórmula, request, payload, regra normativa, slug, rota, vertical, inventário, `release_order` ou classificação Essencial/Plus foi alterada.
+- Relatório detalhado: `docs/PRODUCT-SATISFACTION-LOT-3-RESULT-INTERPRETATION.md`.
+
+Antes do Lote 4 desta frente, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos Lotes 1–3 e `config/product_tools.php` antes de qualquer alteração.
+
+## Satisfação e Retorno — Lote 4 — Resolução percebida
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lote 1 → Lote 2 → Lote 3** antes das alterações.
+- Criado feedback transversal pós-resultado com `Sim`, `Parcialmente` e `Não`; motivo principal é exigido somente para resolução parcial/negativa e comentário é opcional.
+- A pergunta não aparece antes de um resultado real estar presente na página e não exige autenticação.
+- Persistência própria evita misturar satisfação com a fila existente de problemas e sugestões.
+- Analytics recebeu `tool.resolution.submitted` e passou a medir cobertura do feedback, taxa confirmada de resolução e motivos de resolução incompleta.
+- Métricas antigas baseadas em resultado continuam compatíveis, mas a UI administrativa deixou de chamá-las de “problemas resolvidos”; agora são “resultados entregues”.
+- Nenhuma fórmula, request de ferramenta, slug, rota de ferramenta, vertical, inventário, `release_order`, regra normativa ou classificação Essencial/Plus foi alterada.
+- Relatório detalhado: `docs/PRODUCT-SATISFACTION-LOT-4-RESOLUTION-FEEDBACK.md`.
+
+Antes do Lote 5 desta frente, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos Lotes 1–4 e `config/product_tools.php` antes de qualquer alteração.
+
+## Satisfação do Produto — Lote 5 — Descoberta por problema e jornadas
+
+- A base foi reconstruída em ordem: ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4.
+- A infraestrutura editorial preexistente em `config/tools/journeys.php` foi preservada como fonte dos próximos passos; nenhuma segunda lista de sequências foi criada.
+- `config/tools/discovery_journeys.php` declara somente metadados editoriais e a ferramenta de entrada de cada rotina.
+- `ProblemJourneyCatalog` resolve a jornada na vertical ativa e deriva seus passos pelo `ToolCatalog::nextSteps()`.
+- Home e catálogo reutilizam `<x-tools.problem-journeys>`; a Home contextual de aquisição não recebe a nova superfície e o catálogo a oculta durante busca/filtro.
+- As oito ferramentas recentes da Home continuam exclusivamente derivadas de `release_order`.
+- Contabilidade publica quatro rotinas iniciais: Funcionários e folha, Simples Nacional, Sócios e retiradas e Financeiro da empresa.
+- RH permanece sem jornada artificial enquanto possuir apenas uma ferramenta oficial.
+- O Analytics registra `discovery.problem-journey.opened` somente quando a jornada existe e a ferramenta aberta é exatamente sua entrada declarada.
+- Nenhuma fórmula, regra normativa, slug, rota pública, `release_order`, vertical ou classificação Essencial/Plus foi alterada.
+
+### Continuidade para o próximo lote de satisfação
+
+Antes do Lote 6, reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5. Reler README, `CORE_CANDIDATES.md`, inventário executável e relatórios de todos os lotes de satisfação antes de alterar qualquer arquivo.
+
+
+## Satisfação e Retorno — Lote 6 — Continuidade contextual
+
+O estado acumulado confirmou que Home autenticada, Meu Prazzu, histórico, favoritos e ações de retomada já existiam. O lote não recriou essas capacidades.
+
+Foi adicionada uma apresentação contextual opcional para registros salvos através de `ProvidesHistoryContext` e `ToolHistoryContextResolver`. O domínio da ferramenta continua responsável pelo significado do contexto; o Core apenas resolve e apresenta o rótulo. A primeira cobertura inclui Salário Líquido, Hora Extra, ICMS-ST, PIS/Cofins, IRPJ/CSLL no Lucro Presumido e Simples Nacional.
+
+Home, Meu Prazzu e histórico compartilhado agora podem exibir contexto como `Agosto/2026` ou `3º trimestre/2026`, preservando a referência anterior quando a ferramenta não fornece contexto. Nenhum payload integral é exibido e nenhum dado sensível foi promovido para a superfície de continuidade.
+
+Relatório detalhado: `docs/PRODUCT-SATISFACTION-LOT-6-CONTINUITY-CONTEXT.md`.
+
+## Satisfação e Retorno — Lote 7 — Conta, favoritos e retorno
+
+- Estado reconstruído antes das alterações em **ZIP original → Lote 6**, preservando os Lotes 1–5 já acumulados na base analisada.
+- A infraestrutura existente de conta, Meu Prazzu, favoritos autenticados, histórico, continuidade e newsletter foi reutilizada; nenhuma segunda implementação foi criada.
+- A ação **Favoritar** passa a aparecer também para visitantes sem limitar o uso da ferramenta.
+- A intenção de favoritar direciona para cadastro gratuito com comunicação específica de continuidade e preserva o caminho para login de conta existente.
+- Cadastro/login originados por `source=tool_favorite` persistem o favorito de forma idempotente; um favorito existente nunca é removido por esse fluxo.
+- `UserToolFavorites::favorite()` concentra a operação idempotente, enquanto `toggle()` continua responsável pela ação explícita de favoritar/desfavoritar de usuários autenticados.
+- `account.created` reutiliza a atribuição segura existente com `source=tool_favorite` e `tool_slug`; nenhum dado pessoal adicional ou payload de cálculo foi incluído.
+- As telas de autenticação reforçam que conta serve para continuidade, favoritos, recuperação e acesso em outro dispositivo, enquanto as ferramentas continuam completas sem login.
+- Newsletter foi revisada e mantida como já existente, sem duplicação ou nova coleta.
+- Nenhuma fórmula, request de ferramenta, slug, rota canônica, vertical, inventário, `release_order`, regra normativa ou classificação Essencial/Plus foi alterada.
+- Relatório detalhado: `docs/PRODUCT-SATISFACTION-LOT-7-ACCOUNT-FAVORITES-RETURN.md`.
+
+Antes do Lote 8 desta frente, reconstruir obrigatoriamente **ZIP original → Lote 6 → Lote 7**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, todos os relatórios de satisfação e `config/product_tools.php` antes de qualquer alteração. O Lote 8 deve permanecer uma consolidação final, não uma expansão artificial de escopo.
+
+## Satisfação e Retorno — Lote 8 — Consolidação final, QA e polimento
+
+- Estado reconstruído obrigatoriamente em ZIP original → Lote 6 → Lote 7, preservando os Lotes 1–5 já presentes no ZIP original analisado.
+- O lote não adiciona uma nova funcionalidade de produto; consolida as garantias dos sete lotes anteriores.
+- A revisão transversal confirmou a composição de confiança normativa, progressive disclosure, interpretação, resolução percebida, jornadas, continuidade contextual e conta/favoritos sem alterar fórmulas, requests, slugs, verticais, `release_order`, inventário ou Essencial/Plus.
+- A acessibilidade recebeu dois ajustes cirúrgicos: foco visível nos `summary` de confiança normativa e transferência de foco para o estado de sucesso do feedback de resolução.
+- O pipeline oficial de distribuição foi endurecido para remover/rejeitar bancos SQLite locais, incluindo o E2E, e dumps `.sql`, `.sql.gz`, `.dump` e `.bak` em qualquer profundidade.
+- `DistributionVerifierTest` passa a proteger essa política contra regressões.
+- `ProductSatisfactionFinalConsolidationTest` cria um gate transversal para os oito relatórios, superfícies compartilhadas, limites do README, inventário oficial e integração do empacotador no CI.
+- Nenhum novo evento de Analytics foi criado; a auditoria considerou suficiente a telemetria dos lotes anteriores e evitou coleta sem pergunta de produto clara.
+- O gate completo `composer release:check` continua obrigatório para declaração de release; no ambiente de análise ele permanece bloqueado pelas extensões PHP ausentes documentadas em `docs/INSTALLATION.md`.
+- Esta frente de oito lotes está encerrada. A evolução seguinte deve ser orientada por dados, não pela criação automática de um Lote 9.
+- Relatório detalhado: `docs/PRODUCT-SATISFACTION-LOT-8-FINAL-CONSOLIDATION.md`.
+
+## Maturidade das ferramentas — Lote 1
+
+- O estado real dos 50 manifestos foi auditado: 10 `active`, 40 `beta` e 0 `draft` no ZIP de origem.
+- Foi definido um critério objetivo de promoção baseado nos artefatos de qualidade já oficiais do projeto; nenhuma fonte, revisão ou golden case foi inventado para elevar status.
+- `DifalIcmsCalculator`, `DigitalCertificateAnalyzer`, `EcadRoyaltySimulator`, `IcmsStCalculator`, `InvoiceWithholdingCalculator`, `NetSalaryCalculator` e `OvertimeCalculator` foram promovidos para `active` porque já possuíam `RiskProfile`, golden cases, gate de qualidade e `QUALITY.md` sem pendências.
+- O estado passa a 17 `active`, 33 `beta` e 0 `draft`, preservando as 50 ferramentas, slugs, rotas, verticais e `release_order`.
+- `OfficialToolMaturityTest` protege ausência de Draft oficial, as promoções deste lote e a evidência mínima exigida de ferramentas ativas sob o framework atual.
+- Quatro ferramentas ativas anteriores ao framework atual permanecem explicitamente registradas como legado de evidência, sem criação de artefatos fictícios.
+- O relatório completo está em `docs/TOOL-MATURITY-LOT-1.md`.
+
+### Continuidade para o próximo lote desta frente
+
+Antes de iniciar o próximo lote, reconstruir o estado na ordem **ZIP original → Lote 1**, reler os documentos obrigatórios da raiz, este log, o relatório do lote e `config/product_tools.php`. As 33 Betas remanescentes só podem ser promovidas após eliminação real de seus bloqueios de qualidade.
+
+## Saneamento de qualidade — Lote 2 — Auditoria fiscal e trabalhista
+
+### Resultado
+
+- Estado reconstruído a partir do ZIP original com reaplicação do Lote 1.
+- Corrigido o tratamento do ano-teste de 2026 no `TaxReformSimulator`: CBS/IBS deixam de ser somados automaticamente sobre a carga federal legada e passam a refletir a compensação prevista na transição, mantendo os valores de teste transparentes.
+- `TaxReformSimulator` ganhou documentação normativa específica e regressões para 2026 e 2029.
+- `VacationCalculator` deixou de rotular como líquido legal um resultado que ainda não apura INSS/IRRF; o rótulo agora explicita que se trata do total após descontos informados.
+- `TaxRegimeComparator`, `ProLaboreProfitDistributionCalculator` e `VacationCalculator` foram corrigidos de `active` para `beta` porque seus `QUALITY.md` ainda possuem pendências abertas.
+- `ReceiptIssuer` também foi corrigido para `beta` como reparo de continuidade do gate de maturidade criado no Lote 1.
+- Catálogo preservado em 50 ferramentas, 49 de Contabilidade e 1 de RH, sem alteração de slugs, IDs, rotas ou `release_order`.
+- Estado de maturidade: 13 `active`, 37 `beta`, 0 `draft`.
+- `release_readiness` avançou para `fiscal_labor_audit_lot_2_hardened`.
+
+### Continuidade para o Lote 3
+
+- Reconstruir obrigatoriamente: ZIP original → Lote 1 → Lote 2.
+- Preservar a correção de 2026 do `TaxReformSimulator` e os quatro status Beta enquanto os respectivos checklists permanecerem abertos.
+- O próximo lote deve partir do estado efetivo, sem promover ferramenta apenas para melhorar contagem de maturidade.
+
+## Testes e confiabilidade — Lote 3
+
+### Resultado
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lote 1 → Lote 2** antes das alterações.
+- As quatro ferramentas `active` legadas que ainda estavam excepcionadas do framework atual (`AccountingFeesCalculator`, `BusinessDocumentValidator`, `LaborTerminationCalculator` e `MarginMarkupCalculator`) receberam `RiskProfile`, golden cases, `ToolQualityContractTest` e `QUALITY.md` baseados em comportamento/testes já existentes.
+- `OfficialToolMaturityTest` deixou de possuir exceção para ferramentas ativas legadas; toda ferramenta oficial `active` passa a exigir os mesmos artefatos de confiabilidade.
+- Golden cases cobrem cenário típico, fronteiras, inválidos e, conforme o risco, arredondamento, não aplicação, transição normativa e regressão.
+- Nenhuma fórmula, slug, rota, vertical, ID, `release_order`, escopo Essencial/Plus ou quantidade oficial foi alterada.
+- Estado de maturidade preservado em 13 `active`, 37 `beta` e 0 `draft`.
+- `release_readiness` avançou para `tool_reliability_lot_3_hardened`.
+- Relatório detalhado: `docs/TOOL-RELIABILITY-LOT-3.md`.
+
+### Continuidade para o Lote 4
+
+Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos três lotes e `config/product_tools.php`.
+
+## Sistema de confiança normativa — Lote 4
+
+### Resultado
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lote 1 → Lote 2 → Lote 3** antes das alterações.
+- A infraestrutura normativa já existente foi preservada; nenhuma segunda registry, resolver ou superfície de confiança foi criada.
+- `FederalPaymentGuideGenerator` passou a persistir/expor `NormativeRuleSnapshot` com a data de vencimento como referência e a renderizar `x-tools.normative-trust` no resultado.
+- `TaxReformSimulator` passou a implementar `NormativeRule`/`EffectiveDated`, com identificador `tax_reform.consumption_transition`, versão `2026.08.3`, vigência 2026–2033, fontes oficiais e verificação registrada em 19/08/2026.
+- Cada simulação da Reforma usa `01/01/{ano}` como data de referência da etapa anual e expõe fonte, vigência, versão, verificação, premissas e caráter estimativo no componente compartilhado.
+- `NormativeTrustExperienceTest` ganhou gate automático: qualquer módulo que criar `NormativeRuleSnapshot::fromRule` precisa expor a superfície compartilhada de confiança.
+- Nenhuma fórmula, slug, rota, vertical, ID, `release_order`, status de maturidade ou classificação Essencial/Plus foi alterada.
+- Estado de maturidade preservado em 13 `active`, 37 `beta` e 0 `draft`.
+- `release_readiness` avançou para `normative_trust_lot_4_hardened`.
+- Relatório detalhado: `docs/NORMATIVE-TRUST-LOT-4.md`.
+
+### Continuidade para o Lote 5
+
+Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos quatro lotes e `config/product_tools.php`.
+
+## UX das ferramentas — Lote 5
+
+### Resultado
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4** antes das alterações.
+- A infraestrutura UX existente foi preservada; não foram recriados wrappers, progressive disclosure, resultado, continuidade, próximos passos ou confiança normativa.
+- `x-tools.form.input` e `x-tools.form.select` agora expõem erro por `aria-invalid` e relacionam mensagem/ajuda por `aria-describedby`.
+- `x-tools.validation-summary` e seis resumos legados receberam contrato focável comum (`data-testid` + `tabindex=-1`) e recebem foco após retorno do backend com erros.
+- Formulários POST de ferramentas passam a anunciar processamento, usar `aria-busy` e bloquear reenvio acidental enquanto a primeira solicitação está pendente; exportações mantêm seu fluxo específico.
+- Sete ferramentas com tabelas sem proteção para telas estreitas receberam `table-responsive`, sem alteração de conteúdo ou cálculo.
+- `ToolUxHardeningLot5Test` protege acessibilidade de validação, feedback de processamento, prevenção de duplo envio e responsividade das tabelas oficiais.
+- Nenhuma fórmula, slug, rota, vertical, ID, `release_order`, status de maturidade ou classificação Essencial/Plus foi alterada.
+- `release_readiness` avançou para `tool_ux_lot_5_hardened`.
+- Relatório detalhado: `docs/TOOL-UX-HARDENING-LOT-5.md`.
+
+### Continuidade para o Lote 6
+
+Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos cinco lotes e `config/product_tools.php`.
+
+## Catálogo e descoberta — Lote 6
+
+### Resultado
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5** antes das alterações.
+- A infraestrutura existente de busca inteligente, jornadas, favoritos, continuidade e seleção editorial foi preservada; nenhuma segunda registry foi criada.
+- O catálogo completo passou a alimentar `recentSlugs` e `featuredSlugs`, que antes eram sempre vazios, reutilizando `UserToolContinuityQuery` e `ToolCatalog::featured()`.
+- Usuários autenticados recebem até seis atalhos no catálogo geral, com favoritas primeiro e ferramentas recentes da vertical ativa em seguida.
+- `ToolCatalog::search()` agora aceita termos em qualquer ordem e ranqueia resultados por relevância, alinhando a busca completa à semântica já usada pela busca inteligente do frontend.
+- Atalhos personalizados não aparecem quando existe busca ou categoria ativa, preservando a intenção explícita do filtro.
+- Nenhuma fórmula, slug, rota, vertical, ID, `release_order`, status de maturidade ou classificação Essencial/Plus foi alterada.
+- Estado de maturidade preservado em 13 `active`, 37 `beta` e 0 `draft`.
+- `release_readiness` avançou para `catalog_discovery_lot_6_hardened`.
+- Relatório detalhado: `docs/CATALOG-DISCOVERY-LOT-6.md`.
+
+### Continuidade para o Lote 7
+
+Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5 → Lote 6**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos seis lotes e `config/product_tools.php`.
+
+## Essencial × Plus e retenção — Lote 7
+
+### Resultado
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lotes 1–6** antes das alterações.
+- `calculadora-pis-cofins:memory`, `calculadora-retencoes-nota-fiscal:memory` e `calculadora-retencoes-nota-fiscal:report` foram reclassificadas como Essencial porque a implementação atual corresponde à transparência necessária para conferir o resultado básico.
+- As respectivas views não condicionam mais memória, fontes, premissas e conferência por tributo ao acesso Plus.
+- A governança Plus foi atualizada explicitamente de 144 para 141 contratos declarados, estritos e funcionais, mantendo dívida zero.
+- As sete páginas legadas que não usam `x-tools.page` passaram a receber o CTA compartilhado de continuidade somente após resultado significativo.
+- `x-tools.plus-result-cta` consegue resolver a rota de histórico a partir do catálogo quando o chamador não fornece URL específica.
+- `EssentialPlusRetentionLot7Test` protege a fronteira Essencial × Plus e a cobertura do CTA nas páginas legadas.
+- `check-accounting-pains.php` deixou de congelar a quantidade histórica de contratos Plus e valida strict/functional contra a contagem governada vigente.
+- Nenhuma fórmula, slug, rota, vertical, ID, `release_order` ou status de maturidade foi alterado.
+- Estado de maturidade preservado em 13 `active`, 37 `beta` e 0 `draft`.
+- `release_readiness` avançou para `essential_plus_retention_lot_7_hardened`.
+- Relatório detalhado: `docs/ESSENTIAL-PLUS-RETENTION-LOT-7.md`.
+
+### Continuidade para o Lote 8
+
+Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4 → Lote 5 → Lote 6 → Lote 7**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios anteriores e `config/product_tools.php`.
+
+## Hardening final — Lote 8
+
+### Resultado
+
+- Estado reconstruído obrigatoriamente em **ZIP original → Lotes 1–7** antes das alterações.
+- A auditoria removeu comandos E2E declarados sem implementação real: sete scripts PHP ausentes e oito scripts npm inexistentes deixaram de fazer parte da superfície oficial.
+- Os comandos E2E foram consolidados sobre os artefatos existentes de ambiente, browser, cenários, ações e downloads.
+- Criado `scripts/check-repository-integrity.php` para validar referências Composer/npm, aliases, arquivos operacionais e invariantes mínimas do inventário antes da release.
+- `composer quality`, `.github/workflows/quality.yml` e o staging de `package-distribution.ps1` passam a executar o gate de integridade; o CI também valida os 100 cenários E2E das 50 ferramentas.
+- Nenhuma fórmula, slug, rota pública, vertical, ID, `release_order`, status de maturidade ou classificação Essencial/Plus foi alterada.
+- Estado preservado em 50 ferramentas, 13 `active`, 37 `beta`, 0 `draft` e Plus 141/141 com dívida zero.
+- `release_readiness` avançou para `final_hardening_lot_8_audited`.
+- Relatório detalhado: `docs/FINAL-HARDENING-LOT-8.md`.
+
+### Continuidade após o Lote 8
+
+Qualquer novo lote deve reconstruir obrigatoriamente **ZIP original → Lotes 1–8**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios acumulados e `config/product_tools.php`. O próximo trabalho não deve reabrir estes oito lotes sem regressão concreta ou requisito novo.
+
+
+## Ativação real das ferramentas Beta — Lote 1
+
+### Resultado
+
+- A nova frente parte do projeto atual já consolidado após os oito lotes de hardening anteriores.
+- As 37 ferramentas `beta` foram auditadas por evidência de ativação, sem promoção administrativa de status.
+- Criado `ToolActivationReadinessInspector` para detectar artefatos mínimos ausentes, checklists abertos, incompatibilidade de contratos e golden cases sintéticos do scaffold.
+- Criado `scripts/check-beta-activation-readiness.php` e o alias `composer beta:readiness`.
+- O diagnóstico encontrou 0 Betas estruturalmente prontas, 24 com checklist aberto, 15 com artefatos mínimos ausentes e 15 com golden cases sintéticos; os grupos se sobrepõem.
+- Nenhuma fórmula, slug, rota, ID, vertical, `release_order`, status ou classificação Essencial/Plus foi alterada.
+- Estado preservado em 50 ferramentas, 13 `active`, 37 `beta`, 0 `draft` e Plus 141/141 com dívida zero.
+- `release_readiness` avançou para `beta_activation_lot_1_audited`.
+- Relatório detalhado: `docs/BETA-ACTIVATION-LOT-1-AUDIT.md`.
+
+### Continuidade para o Lote 2 desta frente
+
+Antes do próximo lote, reconstruir obrigatoriamente **projeto atual enviado pelo usuário → Beta Activation Lote 1**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, `docs/BETA-ACTIVATION-LOT-1-AUDIT.md`, `docs/TOOL_QUALITY.md` e `config/product_tools.php`. O Lote 2 deve começar pelas calculadoras de menor risco e substituir evidência sintética por cenários reais antes de qualquer promoção.
+
+## Ativação real das ferramentas Beta — Lote 2
+
+### Resultado
+
+- Estado reconstruído obrigatoriamente em **projeto atual enviado pelo usuário → Beta Activation Lote 1** antes das alterações.
+- Foram tratadas as seis calculadoras de menor risco previstas no diagnóstico: Capital de Giro, Fluxo de Caixa, Ponto de Equilíbrio, Comissão, Reajuste Salarial e Depreciação de Ativos.
+- O lote melhorou utilidade real dos resultados: déficit/folga de capital, alertas de caixa negativo, folga do arredondamento do ponto de equilíbrio, meta opcional em comissão, percentual efetivo de reajuste e valor residual explícito em depreciação.
+- Golden cases sintéticos do scaffold foram substituídos por casos numéricos concretos nas ferramentas afetadas; Depreciação recebeu o conjunto mínimo de qualidade que estava ausente.
+- As seis ferramentas agora aparecem como `READY` no diagnóstico estrutural, mas permanecem `beta`; a promoção definitiva continua reservada aos gates finais e à auditoria independente.
+- A dívida das 37 Betas evoluiu de 0 para 6 estruturalmente prontas, de 24 para 19 checklists abertos, de 15 para 14 ferramentas com artefatos ausentes e de 15 para 10 com golden cases sintéticos.
+- Nenhum slug, rota pública, ID, vertical, `release_order`, classificação Essencial/Plus ou status de maturidade foi alterado.
+- `release_readiness` avançou para `beta_activation_lot_2_low_risk_hardened`.
+- Relatório detalhado: `docs/BETA-ACTIVATION-LOT-2-LOW-RISK-CALCULATORS.md`.
+
+### Continuidade para o Lote 3 desta frente
+
+Antes do próximo lote, reconstruir obrigatoriamente **projeto atual enviado pelo usuário → Beta Activation Lote 1 → Beta Activation Lote 2**, reler `README.md`, `CORE_CANDIDATES.md`, este documento, os relatórios dos Lotes 1 e 2 desta frente, `docs/TOOL_QUALITY.md` e `config/product_tools.php`. O Lote 3 deve tratar as ferramentas trabalhistas/DP previstas no diagnóstico, sem promoção administrativa de status.
+

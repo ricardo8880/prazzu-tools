@@ -21,7 +21,7 @@
                 @if(($historySaved ?? session('history_saved', false)))<div class="alert alert-success">Cálculo salvo no seu histórico.</div>@endif
 
                 @if ($errors->any())
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger" role="alert" data-testid="validation-summary" tabindex="-1">
                         <strong>Revise os dados informados.</strong>
                         <ul class="mb-0 mt-2">
                             @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
@@ -120,6 +120,7 @@
                                 </dl>
                             </div>
                         </div>
+                        <x-tools.normative-trust :rules="[$result['normative_rule'] ?? []]" :assumptions="$result['warnings'] ?? []" :is-estimate="true" />
                         <div class="alert alert-danger">
                             <strong>Conferência obrigatória</strong>
                             <ul class="mb-0 mt-2">@foreach ($result['warnings'] as $warning)<li>{{ $warning }}</li>@endforeach</ul>
@@ -150,6 +151,7 @@
     </div>
 
     <x-tool-feature-tiers slug="gerador-darf-gps" />
+    <x-tools.plus-result-cta slug="gerador-darf-gps" />
 
     @push('scripts')
         <script nonce="{{ $cspNonce ?? '' }}">

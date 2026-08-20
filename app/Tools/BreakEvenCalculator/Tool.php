@@ -68,7 +68,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             icon: 'bi-bullseye',
             routeName: 'tools.ponto-de-equilibrio.index',
             vertical: 'contabilidade',
-            version: '1.1.0',
+            version: '1.2.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             position: 190,
@@ -93,7 +93,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['fixed_costs', 'sale_price', 'variable_cost'], resultFields: ['break_even_revenue', 'break_even_units', 'unit_contribution', 'contribution_margin'], sensitiveFields: []);
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['fixed_costs', 'sale_price', 'variable_cost'], resultFields: ['break_even_revenue', 'break_even_units', 'unit_contribution', 'contribution_margin', 'coverage_surplus'], sensitiveFields: []);
     }
 
     public function webRoutesPath(): string

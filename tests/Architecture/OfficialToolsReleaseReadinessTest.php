@@ -19,8 +19,8 @@ final class OfficialToolsReleaseReadinessTest extends TestCase
 
     public function test_all_current_tools_are_in_the_governed_inventory(): void
     {
-        self::assertSame('3.18.0', $this->inventory['schema_version']);
-        self::assertSame('accounting_pains_lot_6_final_audited', $this->inventory['release_readiness']);
+        self::assertSame('3.19.0', $this->inventory['schema_version']);
+        self::assertSame('tool_maturity_lot_1_audited', $this->inventory['release_readiness']);
         self::assertCount(50, $this->inventory['official']);
         self::assertSame(['implemented'], array_values(array_unique(array_column($this->inventory['official'], 'state'))));
         self::assertCount(50, array_unique(array_column($this->inventory['official'], 'module')));

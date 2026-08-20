@@ -6,6 +6,19 @@
 @php
     $headingId = $slug.'-result-continuity-cta-title';
     $isAuthenticated = auth()->check();
+
+    if ($historyUrl === null && $isAuthenticated) {
+        $catalogTool = app(\App\Core\Tools\ToolCatalog::class)->find($slug);
+        $toolRouteName = is_array($catalogTool) ? ($catalogTool['route_name'] ?? null) : null;
+
+        if (($catalogTool['supports_history'] ?? false) && is_string($toolRouteName) && str_ends_with($toolRouteName, '.index')) {
+            $historyRouteName = substr($toolRouteName, 0, -strlen('.index')).'.history.index';
+            if (\Illuminate\Support\Facades\Route::has($historyRouteName)) {
+                $historyUrl = route($historyRouteName);
+            }
+        }
+    }
+
     $hasHistory = $isAuthenticated && is_string($historyUrl) && $historyUrl !== '';
 @endphp
 

@@ -48,24 +48,31 @@
     </nav>
 
     <x-tools.intro :icon="$icon" :tone="$tone" :title="$title" :description="$description" :badge="$badge">
-        @if(isset($actions) || auth()->check())
-            <x-slot:actions>
-                <div class="d-flex flex-wrap gap-2">
-                    @isset($actions)
-                        {{ $actions }}
-                    @endisset
-                    @auth
-                        <form method="POST" action="{{ route('account.tools.favorite', ['tool' => $slug]) }}">
-                            @csrf
-                            <button class="btn btn-sm {{ $toolIsFavorite ? 'btn-warning' : 'btn-outline-secondary' }}" type="submit" aria-pressed="{{ $toolIsFavorite ? 'true' : 'false' }}">
-                                <i class="bi {{ $toolIsFavorite ? 'bi-star-fill' : 'bi-star' }} me-1" aria-hidden="true"></i>
-                                {{ $toolIsFavorite ? 'Desfavoritar' : 'Favoritar' }}
-                            </button>
-                        </form>
-                    @endauth
-                </div>
-            </x-slot:actions>
-        @endif
+        <x-slot:actions>
+            <div class="d-flex flex-wrap gap-2">
+                @isset($actions)
+                    {{ $actions }}
+                @endisset
+                @auth
+                    <form method="POST" action="{{ route('account.tools.favorite', ['tool' => $slug]) }}">
+                        @csrf
+                        <button class="btn btn-sm {{ $toolIsFavorite ? 'btn-warning' : 'btn-outline-secondary' }}" type="submit" aria-pressed="{{ $toolIsFavorite ? 'true' : 'false' }}">
+                            <i class="bi {{ $toolIsFavorite ? 'bi-star-fill' : 'bi-star' }} me-1" aria-hidden="true"></i>
+                            {{ $toolIsFavorite ? 'Desfavoritar' : 'Favoritar' }}
+                        </button>
+                    </form>
+                @else
+                    <a
+                        class="btn btn-sm btn-outline-secondary"
+                        href="{{ route('register', ['source' => 'tool_favorite', 'tool' => $slug]) }}"
+                        aria-label="Favoritar {{ $title }} com uma conta gratuita"
+                    >
+                        <i class="bi bi-star me-1" aria-hidden="true"></i>
+                        Favoritar
+                    </a>
+                @endauth
+            </div>
+        </x-slot:actions>
     </x-tools.intro>
 
     @if(session('tool_favorite_status'))
@@ -77,6 +84,8 @@
     @endif
 
     {{ $slot }}
+
+    <x-feedback.tool-resolution :slug="$slug" />
 
     <x-tool-feature-tiers :slug="$slug" />
 

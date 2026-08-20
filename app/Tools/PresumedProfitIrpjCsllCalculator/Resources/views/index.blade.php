@@ -54,19 +54,19 @@
         </x-tools.form-panel>
 
         @if($plusEnabled ?? true)
-        <x-tools.form-panel title="Ajustes do ano e créditos" description="Use os acumulados para que a faixa normal de presunção considere os trimestres anteriores." badge="Prazzu Plus">
+        <x-tools.form-disclosure title="Ajustes do ano e créditos" description="Abra se houver acumulados anteriores ou créditos/retenções compensáveis." badge="Prazzu Plus" :open="$errors->hasAny(['prior_irpj_presumption_revenue', 'prior_csll_presumption_revenue', 'irpj_credits', 'csll_credits'])">
             <div class="row g-3">
                 <div class="col-md-6"><x-tools.form.money name="prior_irpj_presumption_revenue" label="Receita anterior no ano — limite IRPJ" :value="old('prior_irpj_presumption_revenue')" required help="Receita bruta dos trimestres anteriores de 2026 sujeita a coeficientes de presunção. Não inclua receitas financeiras/ganhos adicionados integralmente." /></div>
                 <div class="col-md-6"><x-tools.form.money name="prior_csll_presumption_revenue" label="Receita anterior desde o 2º tri — limite CSLL" :value="old('prior_csll_presumption_revenue')" required help="Para Q3/Q4, informe somente a receita sujeita à presunção desde o 2º trimestre. Em Q1/Q2, normalmente é zero." /></div>
                 <div class="col-md-6"><x-tools.form.money name="irpj_credits" label="Créditos/retenções de IRPJ compensáveis" :value="old('irpj_credits')" required help="Informe somente valores cuja compensação no período tenha sido confirmada." /></div>
                 <div class="col-md-6"><x-tools.form.money name="csll_credits" label="Créditos/retenções de CSLL compensáveis" :value="old('csll_credits')" required help="Informe somente valores cuja compensação no período tenha sido confirmada." /></div>
             </div>
-        </x-tools.form-panel>
+        </x-tools.form-disclosure>
         @endif
 
 
         @if($plusEnabled ?? true)
-        <x-tools.form-panel title="Comparação de cenários" description="Plus — compare até três alternativas no mesmo período usando diferentes composições de receita.">
+        <x-tools.form-disclosure title="Comparação de cenários" description="Abra para comparar até três alternativas no mesmo período." badge="Prazzu Plus" :open="$errors->hasAny(['scenarios.*'])">
             @foreach([0,1] as $scenarioIndex)
                 <div class="border rounded p-3 mb-3"><div class="row g-3">
                     <div class="col-12"><label class="form-label">Nome do cenário {{ $scenarioIndex + 2 }}</label><input class="form-control" name="scenarios[{{ $scenarioIndex }}][name]" value="{{ old('scenarios.'.$scenarioIndex.'.name', 'Cenário '.($scenarioIndex + 2)) }}"></div>
@@ -77,7 +77,7 @@
                     <div class="col-12"><x-tools.form.money :name="'scenarios['.$scenarioIndex.'][other_taxable_additions]'" label="Adições integrais" :value="old('scenarios.'.$scenarioIndex.'.other_taxable_additions')" /></div>
                 </div></div>
             @endforeach
-        </x-tools.form-panel>
+        </x-tools.form-disclosure>
         @endif
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="confirm_scope" value="1" id="confirm_scope" required @checked(old('confirm_scope'))>
@@ -91,12 +91,30 @@
         <span data-analytics-result="main" hidden></span>
         @php($money = static fn (int $minor) => \App\Core\Money\Money::fromMinor($minor)->formatPtBr())
         <div class="mt-5">
-            <x-tools.result-panel :title="$result->details['periodicity'] === 'monthly' ? 'Resultado mensal' : 'Resultado trimestral'" description="Estimativa conforme os dados e enquadramentos confirmados no formulário.">
+            <x-tools.result-panel :title="$result- eyebrow="Apuração concluída">details['periodicity'] === 'monthly' ? 'IRPJ e CSLL apurados no mês' : 'IRPJ e CSLL apurados no trimestre'" description="Estimativa conforme os dados e enquadramentos confirmados no formulário.">
                 <div class="row g-3 mb-4">
                     @foreach($result->summary as $item)
                         <div class="col-12 col-md-6 col-xl"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="calculator" /></div>
                     @endforeach
                 </div>
+
+                @php
+                    $incomeTaxShareHundredths = $result->details['total_revenue_minor'] > 0
+                        ? intdiv(($result->details['total_due_minor'] * 10_000) + intdiv($result->details['total_revenue_minor'], 2), $result->details['total_revenue_minor'])
+                        : 0;
+                    $incomeTaxShare = number_format($incomeTaxShareHundredths / 100, 2, ',', '.');
+                @endphp
+                <x-tools.result-insight
+                    :title="'IRPJ + CSLL estimados em '.$money($result->details['total_due_minor'])"
+                    :description="'Neste cenário, o total de IRPJ e CSLL equivale a '.$incomeTaxShare.'% da receita bruta sujeita à presunção informada. Esse percentual não representa a carga tributária total da empresa.'"
+                    :items="[
+                        'IRPJ a pagar: '.$money($result->details['irpj_due_minor']).'.',
+                        'CSLL a pagar: '.$money($result->details['csll_due_minor']).'.',
+                        $result->details['irpj_additional_minor'] > 0 ? 'Houve adicional de IRPJ de 10% no valor de '.$money($result->details['irpj_additional_minor']).'.' : 'Não houve adicional de IRPJ de 10% neste cenário.',
+                        ($result->details['irpj_credits_minor'] + $result->details['csll_credits_minor']) > 0 ? 'Créditos informados reduziram a apuração em até '.$money($result->details['irpj_credits_minor'] + $result->details['csll_credits_minor']).', respeitado o limite de saldo zero.' : 'Nenhum crédito foi informado para reduzir IRPJ ou CSLL.',
+                    ]"
+                    icon="bi-calculator"
+                />
 
                 @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach
 
@@ -158,7 +176,13 @@
                     <a class="btn btn-outline-danger" data-testid="download-pdf" href="{{ route('tools.calculadora-irpj-csll-lucro-presumido.export', array_merge(['format' => 'pdf'], $exportInput)) }}">Exportar PDF</a>
                     <a class="btn btn-outline-success" data-testid="download-xlsx" href="{{ route('tools.calculadora-irpj-csll-lucro-presumido.export', array_merge(['format' => 'xlsx'], $exportInput)) }}">Baixar Excel</a>
                 </div>
-            </x-tools.result-panel>
+
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
+</x-tools.result-panel>
         </div>
     @endisset
 </x-tools.page>

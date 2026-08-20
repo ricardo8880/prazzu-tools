@@ -17,7 +17,7 @@ final class ToolManifestTest extends TestCase
 
         self::assertSame('comparador-tributario', $manifest->slug);
         self::assertSame('tools.comparador-tributario.index', $manifest->routeName);
-        self::assertSame(ToolStatus::Active, $manifest->status);
+        self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));
     }

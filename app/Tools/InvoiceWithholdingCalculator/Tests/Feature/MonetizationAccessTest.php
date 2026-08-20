@@ -20,12 +20,10 @@ use PHPUnit\Framework\TestCase;
 final class MonetizationAccessTest extends TestCase
 {
     #[CoversPlusFeature('calculadora-retencoes-nota-fiscal', 'history')]
-    #[CoversPlusFeature('calculadora-retencoes-nota-fiscal', 'memory')]
-    #[CoversPlusFeature('calculadora-retencoes-nota-fiscal', 'report')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();
-        foreach (['memory', 'custom_rules', 'multiple_notes', 'report', 'export', 'history'] as $feature) {
+        foreach (['custom_rules', 'multiple_notes', 'export', 'history'] as $feature) {
             $this->assertFeatureAccess($manifest, $feature);
         }
     }

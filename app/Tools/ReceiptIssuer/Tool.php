@@ -82,7 +82,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
             vertical: 'contabilidade',
             version: '0.6.0',
             access: ToolAccess::Free,
-            status: ToolStatus::Active,
+            status: ToolStatus::Beta,
             supportsHistory: true,
             storesSensitiveData: true,
             keywords: ['recibo', 'recibo de pagamento', 'recibo online', 'comprovante de pagamento', 'gerar recibo'],

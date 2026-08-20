@@ -1,5 +1,5 @@
 @if ($errors->any())
-    <div {{ $attributes->class(['alert alert-danger'])->merge(['data-testid' => 'validation-summary']) }} role="alert" aria-live="polite">
+    <div {{ $attributes->class(['alert alert-danger'])->merge(['data-testid' => 'validation-summary']) }} role="alert" aria-live="polite" tabindex="-1">
         <div class="d-flex gap-2">
             <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
             <div>

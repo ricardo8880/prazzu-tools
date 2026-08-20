@@ -14,77 +14,20 @@ final class GoldenCases
 
     public static function suite(): GoldenCaseSuite
     {
-        return new GoldenCaseSuite(
-            toolSlug: 'ponto-de-equilibrio',
-            cases: [
-                new GoldenCase(
-                    identifier: 'typical',
-                    title: 'Fluxo principal validado',
-                    kind: GoldenCaseKind::Typical,
-                    input: ['scenario' => 'valid-typical-input'],
-                    expected: ['outcome' => 'calculation-or-document-completed'],
-                    reference: 'CalculatorTest do módulo e memória de cálculo da versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-                new GoldenCase(
-                    identifier: 'boundary',
-                    title: 'Limite do domínio validado',
-                    kind: GoldenCaseKind::Boundary,
-                    input: ['scenario' => 'valid-boundary-input'],
-                    expected: ['outcome' => 'boundary-handled-without-loss'],
-                    reference: 'Regras de validação e CalculatorTest do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-                new GoldenCase(
-                    identifier: 'invalid-input',
-                    title: 'Entrada inválida rejeitada',
-                    kind: GoldenCaseKind::InvalidInput,
-                    input: ['scenario' => 'invalid-domain-input'],
-                    expected: ['outcome' => 'validation-error'],
-                    reference: 'FormRequest e invariantes do domínio do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                ),
-                new GoldenCase(
-                    identifier: 'rounding',
-                    title: 'Arredondamento monetário estável',
-                    kind: GoldenCaseKind::Rounding,
-                    input: ['scenario' => 'fractional-monetary-input'],
-                    expected: ['outcome' => 'integer-cent-result'],
-                    reference: 'Política Money do Core e CalculatorTest do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-                new GoldenCase(
-                    identifier: 'non-applicable',
-                    title: 'Cenário não aplicável identificado',
-                    kind: GoldenCaseKind::NonApplicable,
-                    input: ['scenario' => 'non-applicable-input'],
-                    expected: ['outcome' => 'explicit-non-applicable-result'],
-                    reference: 'Invariantes e avisos do domínio do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                ),
-                new GoldenCase(
-                    identifier: 'normative-transition',
-                    title: 'Versão normativa identificada',
-                    kind: GoldenCaseKind::NormativeTransition,
-                    input: ['scenario' => 'rule-version-transition'],
-                    expected: ['outcome' => 'versioned-rule-result'],
-                    reference: 'Memória de cálculo e metadados normativos do módulo na versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                ),
-                new GoldenCase(
-                    identifier: 'regression',
-                    title: 'Resultado principal protegido contra regressão',
-                    kind: GoldenCaseKind::Regression,
-                    input: ['scenario' => 'known-regression-input'],
-                    expected: ['outcome' => 'stable-versioned-result'],
-                    reference: 'CalculatorTest do módulo aprovado para a versão 1.0.0.',
-                    normativeRuleVersion: '1.0.0',
-                    roundingPolicy: 'Valores monetários em centavos, sem float.',
-                ),
-            ],
-        );
+        $reference = 'Fórmula de margem de contribuição e regressões do CalculatorTest, revisadas para o schema 1.2.0.';
+
+        return new GoldenCaseSuite('ponto-de-equilibrio', [
+            new GoldenCase('typical', 'Custos fixos de 10 mil com contribuição de 40 reais', GoldenCaseKind::Typical,
+                ['fixed_costs_minor' => 1000000, 'sale_price_minor' => 10000, 'variable_cost_minor' => 6000],
+                ['break_even_units' => 250, 'break_even_revenue_minor' => 2500000, 'contribution_margin' => '40,00 %', 'coverage_surplus_minor' => 0], $reference, '1.2.0', 'Quantidade arredondada para cima; valores em centavos.'),
+            new GoldenCase('boundary-zero-fixed', 'Sem custos fixos o ponto de equilíbrio é zero', GoldenCaseKind::Boundary,
+                ['fixed_costs_minor' => 0, 'sale_price_minor' => 10000, 'variable_cost_minor' => 6000], ['break_even_units' => 0, 'break_even_revenue_minor' => 0], $reference, '1.2.0'),
+            new GoldenCase('invalid-zero-contribution', 'Preço igual ao custo variável é rejeitado', GoldenCaseKind::InvalidInput,
+                ['fixed_costs_minor' => 100000, 'sale_price_minor' => 5000, 'variable_cost_minor' => 5000], ['outcome' => 'domain-error'], 'Calculator rejeita margem de contribuição não positiva.', '1.2.0'),
+            new GoldenCase('rounding-whole-unit', 'Quantidade fracionária é elevada à próxima unidade', GoldenCaseKind::Rounding,
+                ['fixed_costs_minor' => 10000, 'sale_price_minor' => 1000, 'variable_cost_minor' => 700], ['break_even_units' => 34, 'coverage_surplus_minor' => 200], $reference, '1.2.0', 'teto(10000 / 300) = 34 unidades.'),
+            new GoldenCase('non-applicable-variable-cost-omitted', 'Tributo variável omitido invalida a interpretação gerencial', GoldenCaseKind::NonApplicable,
+                ['scenario' => 'custo-variavel-incompleto'], ['outcome' => 'user-must-complete-variable-cost'], 'README exige incluir tributos, comissões e perdas variáveis quando aplicáveis.', '1.2.0'),
+        ]);
     }
 }

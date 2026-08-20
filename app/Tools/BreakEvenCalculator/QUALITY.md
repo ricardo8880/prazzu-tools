@@ -1,67 +1,15 @@
-# Qualidade de Break Even Calculator
+# Qualidade — Calculadora de Ponto de Equilíbrio
 
-Este arquivo complementa o README da ferramenta. O README da raiz continua sendo a autoridade máxima.
+## Evidência revisada no Beta Activation — Lote 2
 
-## Perfil de risco gerado
+- [x] O domínio rejeita preço não positivo e margem de contribuição não positiva.
+- [x] A quantidade mínima usa teto inteiro e o faturamento é calculado sobre a primeira unidade inteira que cobre os custos.
+- [x] O resultado mostra a folga de contribuição criada pelo arredondamento para unidade inteira.
+- [x] Custos fixos iguais a zero produzem ponto de equilíbrio zero com explicação explícita.
+- [x] Proteção de overflow impede multiplicação monetária fora do intervalo suportado.
+- [x] Golden cases concretos cobrem cenário típico, fronteira, domínio inválido, arredondamento e custo variável incompleto.
+- [x] Testes unitários protegem arredondamento, margem inválida e caso sem custos fixos.
+- [x] README exige incluir tributos, comissões e perdas no custo variável quando aplicáveis.
+- [x] O Essencial entrega quantidade, faturamento, margem, contribuição, folga e memória; cenários alternativos são Plus.
 
-- Natureza: `Calculation`
-- Dependência normativa: `none`
-- Dados pessoais: `None`
-- Integração externa: `None`
-- Persistência: `Temporary`
-- Processamento: `Synchronous`
-- Risco do resultado: `Financial`
-- Frequência de atualização: `Rare`
-- Exportações: pdf, csv
-
-O perfil executável está em `Quality/RiskProfile.php`. Revise-o antes de implementar o domínio.
-
-## Casos dourados
-
-Os casos de regressão de `Tests/Fixtures/GoldenCases.php` estão preenchidos. O módulo está publicado em beta e deve ser revalidado quando suas regras normativas mudarem.
-
-Documente para cada caso:
-
-- entrada completa;
-- resultado esperado;
-- fonte ou revisão responsável;
-- versão normativa, quando aplicável;
-- política de arredondamento, quando aplicável.
-
-## Segurança e privacidade
-
-- [ ] Form Requests validam todas as entradas.
-- [ ] Nenhum dado pessoal é enviado para analytics.
-- [ ] Logs não armazenam documentos, salários ou conteúdo sensível sem mascaramento.
-- [ ] Uploads, quando existirem, validam tamanho, MIME e extensão.
-- [ ] Integrações, quando existirem, possuem timeout, retry e tratamento de indisponibilidade.
-- [ ] Persistência e exclusão seguem as políticas do Core.
-- [ ] Rotas protegidas usam gates e middlewares centrais.
-
-## Integração entre ferramentas
-
-- Contratos publicados: Nenhum.
-- Contratos aceitos: Nenhum.
-
-- [ ] Todos os contratos declarados estão registrados no Core.
-- [ ] A ferramenta funciona normalmente sem integração.
-- [ ] O reaproveitamento é iniciado por ação explícita do usuário.
-- [ ] Dados importados permanecem revisáveis antes da execução.
-- [ ] Contratos ausentes, incompatíveis e não autorizados possuem testes.
-- [ ] Nenhuma classe interna de outro módulo em `app/Tools` é importada.
-
-## Interface
-
-- [ ] Bootstrap e componentes compartilhados foram usados antes de CSS específico.
-- [ ] A interface funciona em mobile, tablet e desktop.
-- [ ] Estados de foco, erro, carregamento e vazio estão cobertos.
-- [ ] O fluxo principal funciona por teclado.
-
-## Verificação antes da ativação
-
-- [ ] Perfil de risco revisado.
-- [ ] Casos dourados completos e aprovados.
-- [ ] Fontes normativas registradas quando aplicável.
-- [ ] Testes Unit, Feature e Browser exigidos pelo classificador implementados.
-- [ ] Regras financeiras não usam `float`.
-- [ ] `composer release:check` está verde.
+A ferramenta permanece `beta` até a auditoria global de ativação dos lotes 10/11.

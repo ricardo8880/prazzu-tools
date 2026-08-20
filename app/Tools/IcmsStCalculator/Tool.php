@@ -21,13 +21,16 @@ use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Contracts\ProvidesHistoryContext;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\History\Support\HistoryPeriodFormatter;
 use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use DateTimeImmutable;
 
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHistoryContext, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-icms-st';
 
@@ -39,7 +42,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: self::SLUG, name: 'Calculadora de ICMS-ST', description: 'Estime ICMS-ST por MVA, com MVA ajustada, FCP, operações interestaduais, múltiplos itens e memória de cálculo.', category: ToolCategory::Fiscal, icon: 'bi-box-seam', routeName: 'tools.calculadora-icms-st.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Beta, position: 13, featured: true, supportsHistory: true, storesSensitiveData: false,
+            slug: self::SLUG, name: 'Calculadora de ICMS-ST', description: 'Estime ICMS-ST por MVA, com MVA ajustada, FCP, operações interestaduais, múltiplos itens e memória de cálculo.', category: ToolCategory::Fiscal, icon: 'bi-box-seam', routeName: 'tools.calculadora-icms-st.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Active, position: 13, featured: true, supportsHistory: true, storesSensitiveData: false,
             keywords: ['ICMS-ST', 'substituição tributária', 'MVA', 'MVA ajustada', 'FCP', 'CEST', 'ICMS interestadual'],
             capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export],
             features: [
@@ -59,6 +62,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function historyPolicy(): ToolHistoryPolicy
     {
         return new ToolHistoryPolicy(true, 365, ['competence', 'operation_type', 'origin_uf', 'destination_uf', 'merchandise_value', 'freight', 'insurance', 'other_charges', 'ipi', 'discount', 'original_mva', 'internal_rate', 'interstate_rate', 'adjust_mva', 'fcp_rate', 'own_icms_override', 'items'], ['st_base', 'icms_st', 'fcp_st', 'total', 'summary', 'details', 'warnings', 'calculation_memory'], []);
+    }
+
+    public function historyContext(array $input, DateTimeImmutable $referenceDate): ?string
+    {
+        return HistoryPeriodFormatter::yearMonth($input['competence'] ?? null);
     }
 
     public function webRoutesPath(): string

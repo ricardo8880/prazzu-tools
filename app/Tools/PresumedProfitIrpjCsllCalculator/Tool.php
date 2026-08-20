@@ -21,13 +21,16 @@ use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Contracts\ProvidesHistoryContext;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\History\Support\HistoryPeriodFormatter;
 use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use DateTimeImmutable;
 
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHistoryContext, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-irpj-csll-lucro-presumido';
 
@@ -83,6 +86,13 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             ['irpj_base', 'irpj_due', 'csll_base', 'csll_due', 'total_due', 'summary', 'details', 'warnings', 'calculation_memory'],
             [],
         );
+    }
+
+    public function historyContext(array $input, DateTimeImmutable $referenceDate): ?string
+    {
+        return ($input['periodicity'] ?? null) === 'monthly'
+            ? HistoryPeriodFormatter::monthNumber($input['month'] ?? null, (int) $referenceDate->format('Y'))
+            : HistoryPeriodFormatter::quarter($input['quarter'] ?? null, (int) $referenceDate->format('Y'));
     }
 
     public function webRoutesPath(): string

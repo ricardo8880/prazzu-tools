@@ -17,7 +17,7 @@ final class ToolManifestTest extends TestCase
 
         self::assertSame('emissor-de-recibos', $manifest->slug);
         self::assertSame('tools.emissor-de-recibos.index', $manifest->routeName);
-        self::assertSame(ToolStatus::Active, $manifest->status);
+        self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));
     }

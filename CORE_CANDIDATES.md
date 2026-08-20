@@ -51,6 +51,8 @@ A existência de apenas uma ferramenta usuária não justifica, por si só, uma 
 | Governança de acesso e prontidão Prazzu Plus | O acesso permanece centralizado em `App\Core\Access`; o gate arquitetural de prontidão reside em `App\Core\Quality\Services\PlusFeatureReadinessInspector`. Dívida legada é registrada em configuração e removida conforme cada feature é corrigida. |
 | Validação de valores monetários em formulários | Extraída para `App\Core\Validation\BrazilianMoneyValidator`; as regras Laravel `brazilian_money` e `money_min` reutilizam `Money` e não usam ponto flutuante. |
 | Validação de percentuais em formulários | Extraída para `App\Core\Validation\BrazilianPercentageValidator`; as regras Laravel `brazilian_percentage`, `percentage_min` e `percentage_max` reutilizam `Percentage`, aceitam ponto ou vírgula e rejeitam `float` e notação científica. |
+| Progressive disclosure de campos opcionais | Padronizado no componente compartilhado `resources/views/components/tools/form-disclosure.blade.php` após repetição concreta em múltiplas ferramentas. É somente apresentação e não conhece regras de domínio, Plus ou obrigatoriedade de campos. |
+| Contexto curto de histórico e continuidade | Extraído para `ProvidesHistoryContext` + `ToolHistoryContextResolver` após uso concreto em seis ferramentas. Cada domínio fornece somente um rótulo seguro e significativo; `HistoryPeriodFormatter` compartilha apenas formatação temporal genérica. Reutilizar sem condicionais por slug e sem expor payloads sensíveis. |
 
 ## Procedimento obrigatório para assistentes de IA
 
@@ -256,3 +258,47 @@ O `EcadRoyaltySimulator` reutiliza apenas capacidades transversais já existente
 ## Cobertura das dores contábeis — Lote 6 — encerramento
 
 A auditoria final do ciclo não encontrou nova duplicação transversal que justifique promoção. Leitura PKCS#12 continua específica do `DigitalCertificateAnalyzer`, e a linha do tempo da Reforma do Consumo continua específica do `TaxReformSimulator`. `CfopCatalog` e `ActualProfitIncomeTaxRule` permanecem as duas promoções fiscais deste ciclo já sustentadas por reutilização concreta.
+
+## Satisfação e Retorno — Lote 3 — interpretação permanece no domínio
+
+A repetição concreta deste lote justificou somente a superfície visual `x-tools.result-insight`, usada por sete ferramentas para apresentar título, descrição e pontos de leitura rápida com a mesma hierarquia de interface. O componente não interpreta resultados por conta própria.
+
+Não criar `ResultInterpreter`, regras de diagnóstico ou geração automática de aconselhamento no Core. Salário, jornada, ICMS-ST, PIS/Cofins, IRPJ/CSLL, pró-labore e custo de funcionário possuem significados e limites de domínio distintos. Reavaliar apenas se surgir uma necessidade transversal realmente equivalente que possa ser compartilhada sem condicionais de domínio.
+
+## Satisfação e Retorno — Lote 4 — feedback de resolução
+
+O feedback pós-resultado foi implementado diretamente no Core transversal de Feedback porque a necessidade é da plataforma inteira e não contém regra de ferramenta. A persistência permanece separada de `ToolFeedback`: “resolveu a necessidade?” mede valor percebido, enquanto problema/sugestão alimenta uma fila de análise qualitativa. Não criar adaptadores específicos por ferramenta; reavaliar somente se surgir necessidade real de associar a resposta a um identificador de execução persistido sem expor payloads sensíveis.
+
+## Satisfação do Produto — Lote 5 — descoberta por problema
+
+A Home e o catálogo passaram a compartilhar a mesma necessidade concreta de apresentar jornadas orientadas ao problema. A apresentação foi centralizada em `ProblemJourneyCatalog` + `<x-tools.problem-journeys>`, mas **as sequências de ferramentas não foram duplicadas**: cada entrada editorial declara somente sua ferramenta inicial em `config/tools/discovery_journeys.php`, e os próximos passos são derivados do `config/tools/journeys.php` já consolidado.
+
+**Sem novo candidato ao Core:** a necessidade transversal já foi resolvida dentro de `App\Core\Tools\Discovery`, sem mover regras de domínio ou criar uma segunda registry. Novas verticais só devem publicar uma jornada quando existirem pelo menos duas etapas reais e coerentes dentro da própria vertical.
+
+## Satisfação e Retorno — Lote 8 — consolidação final
+
+A auditoria dos oito lotes não revelou nova capacidade de domínio que justifique promoção ao Core. As superfícies de confiança, disclosure, interpretação, resolução, descoberta, continuidade e favoritos já estão corretamente separadas entre infraestrutura transversal e responsabilidade das ferramentas.
+
+O endurecimento de distribuição permanece em `scripts/package-distribution.ps1` e `scripts/verify-distribution.php`, pois é responsabilidade operacional do projeto, não uma capacidade de ferramenta. Bancos locais E2E e dumps de banco passam a ser resíduos explicitamente proibidos no pacote oficial.
+
+Nenhuma nova abstração deve ser criada após este fechamento sem repetição concreta ou demanda observada nos dados do produto.
+
+## Maturidade das ferramentas — Lote 1
+
+A auditoria de status confirmou uma necessidade transversal de governança, mas ela foi atendida por teste arquitetural sobre os contratos de qualidade já existentes (`RiskProfile`, golden cases e `ToolQualityContractTest`). Não surgiu nova regra de domínio nem duplicação que justifique extração adicional para o Core.
+
+O gate de maturidade não tenta gerar evidência automaticamente: fontes, revisões especializadas e casos de referência continuam pertencendo a cada ferramenta. Reavaliar uma abstração adicional somente se houver uma segunda necessidade concreta além da validação arquitetural atual.
+
+## Sistema de confiança normativa — Lote 4
+
+A auditoria confirmou que a capacidade transversal necessária já existia em `App\Core\Normative` e no componente `x-tools.normative-trust`. O lote apenas conectou duas lacunas reais: `TaxReformSimulator` passou a produzir `NormativeRuleSnapshot` e `FederalPaymentGuideGenerator` passou a expor o snapshot que já tinha base normativa estruturada.
+
+**Sem novo candidato ao Core:** não foi criada registry, resolver ou componente paralelo. O gate arquitetural foi ampliado para detectar automaticamente módulos que criam `NormativeRuleSnapshot::fromRule` e exigir a superfície compartilhada de confiança. Reavaliar somente se surgir uma segunda forma legítima de evidência normativa que não possa ser representada pelos contratos atuais.
+
+## Frente de saneamento — Lote 6 — catálogo e descoberta
+
+A auditoria confirmou reutilização suficiente das capacidades já compartilhadas `UserToolFavorites`, `UserToolContinuityQuery`, `ToolCatalog::featured()` e `config/tools/journeys.php`. Nenhum novo candidato ao Core foi criado: o problema era integração incompleta dessas fontes no catálogo, não duplicação de domínio. A heurística de busca permanece em `ToolCatalog`; reavaliar indexador/serviço dedicado apenas se surgir necessidade concreta de busca fora do catálogo de ferramentas ou volume que torne a implementação atual insuficiente.
+
+## Hardening final — Lote 8
+
+A auditoria de pipeline não identificou nova capacidade de domínio nem reutilização entre ferramentas que justifique promoção ao Core. O novo `scripts/check-repository-integrity.php` pertence à infraestrutura de desenvolvimento/distribuição e apenas valida coerência das superfícies já declaradas. Nenhum candidato técnico foi promovido ou criado neste lote.

@@ -183,6 +183,12 @@
                 </div></div>
             @endif
 
+            <x-tools.normative-trust
+                :rules="$result['normative_rules'] ?? []"
+                :assumptions="$result['assumptions'] ?? []"
+                :is-estimate="$result['is_estimate'] ?? false"
+            />
+
             @if ($result['unavailable'])
                 <div class="card border-0 shadow-sm mt-4"><div class="card-body"><h3 class="h5">Regimes não comparáveis neste cenário</h3><div class="vstack gap-2">@foreach($result['unavailable'] as $item)<div class="alert alert-secondary mb-0"><div class="fw-semibold">{{ $item['regime'] }}</div>@foreach($item['warnings'] as $warning)<div>{{ $warning }}</div>@endforeach</div>@endforeach</div></div></div>
             @endif

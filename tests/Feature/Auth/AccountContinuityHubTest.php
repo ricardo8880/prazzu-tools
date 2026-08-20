@@ -60,6 +60,23 @@ final class AccountContinuityHubTest extends TestCase
             ->assertSee(url()->query(route('tools.calculadora-salario-liquido.history.repeat', [$run->id]), ['source' => 'account_continuity']), false);
     }
 
+    public function test_account_hub_shows_contextual_period_when_tool_provides_it(): void
+    {
+        $user = User::factory()->create();
+        $this->runFor(
+            $user,
+            'calculadora-salario-liquido',
+            now(),
+            ['competence' => '2026-08', 'base_salary' => '5000'],
+        );
+
+        $this->actingAs($user)
+            ->get(route('account.show'))
+            ->assertOk()
+            ->assertSee('Contexto:')
+            ->assertSee('Agosto/2026');
+    }
+
     public function test_account_hub_explains_favorites_when_history_exists_but_none_are_marked(): void
     {
         $user = User::factory()->create();

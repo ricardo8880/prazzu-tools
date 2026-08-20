@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Calcula novo salário, diferenças e impacto anual.
+Calcula novo salário, diferença mensal, reajuste efetivo, retroativo e impacto anual da remuneração.
 
 ## Funcionalidades
 
@@ -24,7 +24,7 @@ correção do resultado Essencial.
 
 ## Regras
 
-Entradas principais: Salário, percentual, aumento fixo e meses retroativos. O resultado é orientativo e casos normativos,
+Entradas principais: salário, percentual, aumento fixo e meses retroativos. O reajuste efetivo considera conjuntamente a parcela percentual e o aumento fixo. O resultado é orientativo e casos normativos,
 contratuais ou cadastrais fora das premissas exibidas exigem revisão
 profissional.
 
@@ -40,6 +40,7 @@ visuais compartilhados do Core técnico.
 
 ## Histórico de versões
 
+- `1.1.0`: adiciona reajuste efetivo e fixa a memória do impacto anual em 12 salários + 13º + 1/3 de férias; encargos patronais continuam fora do escopo.
 - `1.0.0`: motor ou gerador funcional, validação, interface, memória,
   documentação e testes.
 
@@ -58,3 +59,7 @@ O módulo foi revisado no Lote 5 para expor memória de cálculo estruturada, pr
 
 Exportação em planilha (`spreadsheet_export`) é Plus; cálculo individual e PDF permanecem Essenciais.
 A autorização usa exclusivamente o gate central `tool.feature` no modo monetizado.
+
+## Base normativa limitada do impacto anual
+
+O fator anual exibido considera apenas a diferença sobre 12 salários, um 13º salário e o adicional constitucional de 1/3 de férias. A existência do 13º decorre da Lei 4.090/1962 e o adicional mínimo de férias está no art. 7º, XVII, da Constituição Federal. O cálculo não inclui FGTS, INSS patronal, reflexos específicos, pisos ou cláusulas coletivas.

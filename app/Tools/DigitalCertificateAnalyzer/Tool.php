@@ -47,7 +47,7 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasWebRout
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
-            status: ToolStatus::Beta,
+            status: ToolStatus::Active,
             position: 15,
             featured: true,
             supportsHistory: false,

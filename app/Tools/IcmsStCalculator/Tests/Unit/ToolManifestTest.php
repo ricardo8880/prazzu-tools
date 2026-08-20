@@ -16,7 +16,7 @@ final class ToolManifestTest extends TestCase
         $m = (new Tool)->manifest();
         self::assertSame('calculadora-icms-st', $m->slug);
         self::assertSame('tools.calculadora-icms-st.index', $m->routeName);
-        self::assertSame(ToolStatus::Beta, $m->status);
+        self::assertSame(ToolStatus::Active, $m->status);
         self::assertNotEmpty($m->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($m->featuresFor(ToolFeatureTier::Plus));
     }

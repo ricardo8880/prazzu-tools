@@ -9,6 +9,7 @@ enum AnalyticsEventName: string
     case PageViewed = 'page.viewed';
 
     case HomeSearchSubmitted = 'home.search.submitted';
+    case DiscoveryProblemJourneyOpened = 'discovery.problem-journey.opened';
 
     case AcquisitionContextEntered = 'acquisition.context.entered';
     case AcquisitionContextExited = 'acquisition.context.exited';
@@ -47,6 +48,7 @@ enum AnalyticsEventName: string
     case ToolHistoryViewed = 'tool.history.viewed';
     case ToolPlusUsed = 'tool.plus.used';
     case ToolResultExported = 'tool.result.exported';
+    case ToolResolutionSubmitted = 'tool.resolution.submitted';
 
     case AccountCreated = 'account.created';
     case NewsletterSubscribed = 'newsletter.subscribed';

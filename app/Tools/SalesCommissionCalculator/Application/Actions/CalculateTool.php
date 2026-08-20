@@ -19,8 +19,8 @@ final readonly class CalculateTool
         return $this->calculator->calculate(new CalculationInput(
             Money::fromDecimal($data['sales']),
             Percentage::fromString($data['rate']),
-            Money::fromDecimal($data['goal']),
-            Percentage::fromString($data['goal_bonus_rate']),
+            Money::fromDecimal($data['goal'] ?? '0'),
+            Percentage::fromString((string) ($data['goal_bonus_rate'] ?? '0')),
             Money::fromDecimal($data['reversals'] ?? '0,00'),
         ));
     }

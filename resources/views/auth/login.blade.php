@@ -5,22 +5,35 @@
 @section('meta_robots', 'noindex,follow')
 
 @section('content')
+    @php
+        $loginSource = request()->query('source');
+        $loginAttribution = in_array($loginSource, ['result_continuity', 'tool_favorite'], true)
+            ? array_filter([
+                'source' => $loginSource,
+                'tool' => is_string(request()->query('tool')) ? request()->query('tool') : null,
+            ])
+            : [];
+        $isFavoriteIntent = $loginSource === 'tool_favorite';
+    @endphp
     <div class="prazzu-page">
         <div class="row justify-content-center">
             <div class="col-12 col-md-9 col-lg-7 col-xl-5">
                 <section class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-lg-5">
                         <span class="badge text-bg-primary mb-3">Conta gratuita</span>
-                        <h1 class="h3 mb-2">Entre para recuperar seus resultados</h1>
+                        <h1 class="h3 mb-2">{{ $isFavoriteIntent ? 'Entre para salvar esta ferramenta' : 'Entre para continuar seu trabalho' }}</h1>
                         <p class="text-body-secondary mb-4">
-                            As ferramentas continuam completas e sem limite mesmo sem login. Sua conta serve para salvar e acessar seus dados depois.
+                            {{ $isFavoriteIntent
+                                ? 'Ao entrar, esta ferramenta será adicionada aos seus favoritos para você encontrar depois.'
+                                : 'Recupere resultados, favoritos e históricos e continue de onde parou, inclusive em outro dispositivo.' }}
+                            <strong>As ferramentas continuam completas mesmo sem login.</strong>
                         </p>
 
                         @if (session('auth_notice'))
                             <div class="alert alert-info" role="status">{{ session('auth_notice') }}</div>
                         @endif
 
-                        <form method="POST" action="{{ route('login.store') }}" novalidate>
+                        <form method="POST" action="{{ route('login.store', $loginAttribution) }}" novalidate>
                             @csrf
 
                             <div class="mb-3">
@@ -48,7 +61,7 @@
 
                         <p class="text-center text-body-secondary mt-4 mb-0">
                             Ainda não possui conta?
-                            <a href="{{ route('register') }}">Crie gratuitamente para salvar seus resultados</a>.
+                            <a href="{{ route('register', $loginAttribution) }}">Crie gratuitamente para salvar e continuar depois</a>.
                         </p>
                     </div>
                 </section>

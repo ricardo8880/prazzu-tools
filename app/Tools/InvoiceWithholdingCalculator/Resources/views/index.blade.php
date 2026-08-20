@@ -77,8 +77,7 @@
             <div class="row g-3 mb-4">@foreach($result->summary as $item)<div class="col-12 col-md-6 col-xl-3"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="receipt" /></div>@endforeach</div>
             @foreach($result->warnings as $warning)<div class="alert alert-warning">{{ $warning->message }}</div>@endforeach
 
-            @if($plusAccess['report'] ?? true)
-            <div data-plus-feature="report">
+            <div data-essential-transparency="report">
             <h3 class="h5 mt-4">Conferência por tributo</h3>
             <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Tributo</th><th>Status</th><th class="text-end">Base</th><th class="text-end">Alíquota</th><th class="text-end">Retido</th></tr></thead><tbody>
                 @foreach($result->details['taxes'] as $tax)<tr><td class="fw-semibold">{{ $tax['label'] }}</td><td>{!! $tax['enabled'] ? '<span class="badge text-bg-success">Aplicado</span>' : '<span class="badge text-bg-secondary">Não aplicado</span>' !!}</td><td class="text-end">{{ $money($tax['base_minor']) }} <small class="text-body-secondary">({{ $tax['base_percent'] }}%)</small></td><td class="text-end">{{ $tax['rate'] }}%</td><td class="text-end fw-semibold">{{ $money($tax['withheld_minor']) }}</td></tr>@endforeach
@@ -88,24 +87,23 @@
             <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Descrição</th><th>NF</th><th class="text-end">Bruto</th><th class="text-end">Retenções</th><th class="text-end">Líquido</th></tr></thead><tbody>@foreach($result->details['notes'] as $note)<tr><td>{{ $note['description'] }}</td><td>{{ $note['invoice_number'] ?: '—' }}</td><td class="text-end">{{ $money($note['gross_minor']) }}</td><td class="text-end">{{ $money($note['withheld_minor']) }}</td><td class="text-end fw-semibold">{{ $money($note['net_minor']) }}</td></tr>@endforeach</tbody></table></div>
 
             </div>
-            @else
-                <div class="alert alert-secondary mt-4">O total essencial permanece disponível. A conferência detalhada por tributo e nota faz parte do Prazzu Plus.</div>
-            @endif
 
-            @if($plusAccess['memory'] ?? true)
-            <div data-plus-feature="memory">
+            <div data-essential-transparency="memory">
             <h3 class="h5 mt-4">Memória de cálculo</h3>
             <div class="accordion mb-4" id="retencoes-memory">@foreach($result->calculationMemory->steps as $step)<div class="accordion-item"><h4 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#retencoes-memory-{{ $loop->index }}">{{ $step->label }}</button></h4><div id="retencoes-memory-{{ $loop->index }}" class="accordion-collapse collapse"><div class="accordion-body"><strong>Fórmula:</strong> {{ $step->formula }}@if($step->roundingPolicy)<div class="small text-body-secondary mt-2">{{ $step->roundingPolicy }}</div>@endif</div></div></div>@endforeach</div>
 
             </div>
-            @else
-                <div class="alert alert-secondary">A memória detalhada de fórmulas é um recurso Prazzu Plus.</div>
-            @endif
 
             @if(!empty($historySaved))<div class="alert alert-success">Cálculo salvo no histórico da sua conta.</div>@endif
             @php($exportInput=array_merge($calculationInput??[],['confirm_scope'=>1]))
             <div class="d-flex flex-wrap gap-2" data-result-export-actions data-testid="download-actions"><a class="btn btn-outline-danger" data-testid="download-pdf" href="{{ route('tools.calculadora-retencoes-nota-fiscal.export',array_merge(['format'=>'pdf'],$exportInput)) }}">Exportar relatório PDF</a><a class="btn btn-outline-success" data-testid="download-xlsx" href="{{ route('tools.calculadora-retencoes-nota-fiscal.export',array_merge(['format'=>'xlsx'],$exportInput)) }}">Baixar planilha</a></div>
-        </x-tools.result-panel></div>
+
+            <x-tools.normative-trust
+                :rules="$result->calculationMemory?->normativeRules ?? []"
+                :assumptions="$result->calculationMemory?->assumptions ?? []"
+                :is-estimate="$result->calculationMemory?->isEstimate ?? false"
+            />
+</x-tools.result-panel></div>
     @endisset
 </x-tools.page>
 @endsection

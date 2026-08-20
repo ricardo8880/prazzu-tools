@@ -232,6 +232,56 @@ async function downloadFormResponse(form, submitter) {
     }
 }
 
+function ensureToolSubmitStatus(form) {
+    let status = form.querySelector('[data-tool-submit-status]');
+    if (status instanceof HTMLElement) return status;
+
+    status = document.createElement('span');
+    status.className = 'visually-hidden';
+    status.dataset.toolSubmitStatus = 'true';
+    status.setAttribute('role', 'status');
+    status.setAttribute('aria-live', 'polite');
+    status.setAttribute('aria-atomic', 'true');
+    form.append(status);
+
+    return status;
+}
+
+function markToolFormSubmitting(form, submitter) {
+    const status = ensureToolSubmitStatus(form);
+
+    if (form.dataset.toolSubmitting === 'true') {
+        status.textContent = 'Esta solicitação já está sendo processada.';
+        return false;
+    }
+
+    form.dataset.toolSubmitting = 'true';
+    form.setAttribute('aria-busy', 'true');
+    status.textContent = 'Processando sua solicitação. Aguarde o resultado.';
+
+    if (submitter instanceof HTMLButtonElement) {
+        submitter.setAttribute('aria-disabled', 'true');
+        submitter.dataset.toolOriginalLabel = submitter.innerHTML;
+        submitter.textContent = 'Processando...';
+    } else if (submitter instanceof HTMLInputElement) {
+        submitter.setAttribute('aria-disabled', 'true');
+        submitter.dataset.toolOriginalLabel = submitter.value;
+        submitter.value = 'Processando...';
+    }
+
+    return true;
+}
+
+function focusValidationSummary() {
+    const summary = document.querySelector('[data-testid="validation-summary"]');
+    if (!(summary instanceof HTMLElement)) return;
+
+    summary.focus({ preventScroll: true });
+    summary.scrollIntoView({ block: 'center' });
+}
+
+focusValidationSummary();
+
 // Intercepta exportações para que erros não substituam a tela da ferramenta.
 document.addEventListener('submit', (event) => {
     const form = event.target;
@@ -246,6 +296,11 @@ document.addEventListener('submit', (event) => {
 
     const toolPage = form.closest('[data-tool]');
     if (toolPage && (form.getAttribute('method') || 'get').toLowerCase() === 'post') {
+        if (! markToolFormSubmitting(form, submitter)) {
+            event.preventDefault();
+            return;
+        }
+
         try { sessionStorage.setItem(TOOL_GENERATION_KEY, toolPage.dataset.tool || 'tool'); } catch {}
     }
 });

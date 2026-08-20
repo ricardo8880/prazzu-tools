@@ -21,13 +21,16 @@ use App\Core\Tools\Enums\ToolCategory;
 use App\Core\Tools\Enums\ToolFeatureTier;
 use App\Core\Tools\Enums\ToolStatus;
 use App\Core\Tools\History\Contracts\HasHistoryPolicy;
+use App\Core\Tools\History\Contracts\ProvidesHistoryContext;
 use App\Core\Tools\History\Data\ToolHistoryPolicy;
+use App\Core\Tools\History\Support\HistoryPeriodFormatter;
 use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
 use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
+use DateTimeImmutable;
 
-final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHistoryContext, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
     public const SLUG = 'calculadora-hora-extra';
 
@@ -38,12 +41,17 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function manifest(): ToolManifest
     {
-        return new ToolManifest(slug: self::SLUG, name: 'Calculadora de Hora Extra, Adicional Noturno e DSR', description: 'Calcule hora extra, adicional noturno, DSR e projeções de reflexos com memória transparente.', category: ToolCategory::Labor, icon: 'bi-clock-history', vertical: 'contabilidade', routeName: 'tools.calculadora-hora-extra.index', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Beta, position: 6, featured: true, supportsHistory: true, keywords: ['hora extra', 'adicional noturno', 'DSR', 'hora extra 50', 'hora extra 100', 'valor da hora'], capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export], features: [new ToolFeature('calculate', 'Hora extra e valor da hora normal', ToolFeatureTier::Essential), new ToolFeature('memory', 'Memória de cálculo e fontes', ToolFeatureTier::Essential), new ToolFeature('night', 'Adicional noturno e hora reduzida', ToolFeatureTier::Plus), new ToolFeature('dsr', 'DSR parametrizado por calendário', ToolFeatureTier::Plus), new ToolFeature('reflexes', 'Projeção de 13º, férias + 1/3 e FGTS', ToolFeatureTier::Plus), new ToolFeature('export', 'CSV e impressão/PDF', ToolFeatureTier::Plus)], persistence: new ToolPersistencePolicy(true, 1, 365, 1), export: new ToolExportPolicy(true, ['csv', 'json', 'pdf']), sharing: ToolSharingPolicy::disabled(), sensitiveData: ToolSensitiveDataPolicy::none());
+        return new ToolManifest(slug: self::SLUG, name: 'Calculadora de Hora Extra, Adicional Noturno e DSR', description: 'Calcule hora extra, adicional noturno, DSR e projeções de reflexos com memória transparente.', category: ToolCategory::Labor, icon: 'bi-clock-history', vertical: 'contabilidade', routeName: 'tools.calculadora-hora-extra.index', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Active, position: 6, featured: true, supportsHistory: true, keywords: ['hora extra', 'adicional noturno', 'DSR', 'hora extra 50', 'hora extra 100', 'valor da hora'], capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export], features: [new ToolFeature('calculate', 'Hora extra e valor da hora normal', ToolFeatureTier::Essential), new ToolFeature('memory', 'Memória de cálculo e fontes', ToolFeatureTier::Essential), new ToolFeature('night', 'Adicional noturno e hora reduzida', ToolFeatureTier::Plus), new ToolFeature('dsr', 'DSR parametrizado por calendário', ToolFeatureTier::Plus), new ToolFeature('reflexes', 'Projeção de 13º, férias + 1/3 e FGTS', ToolFeatureTier::Plus), new ToolFeature('export', 'CSV e impressão/PDF', ToolFeatureTier::Plus)], persistence: new ToolPersistencePolicy(true, 1, 365, 1), export: new ToolExportPolicy(true, ['csv', 'json', 'pdf']), sharing: ToolSharingPolicy::disabled(), sensitiveData: ToolSensitiveDataPolicy::none());
     }
 
     public function historyPolicy(): ToolHistoryPolicy
     {
         return new ToolHistoryPolicy(true, 365, ['competence', 'base_salary', 'monthly_hours', 'overtime_50_hours', 'overtime_100_hours', 'custom_overtime_hours', 'custom_premium', 'night_clock_hours', 'night_overtime_hours', 'night_overtime_premium', 'working_days', 'rest_days', 'include_dsr', 'include_reflexes'], ['hourly', 'overtime', 'night', 'dsr', 'total', 'summary', 'details', 'warnings', 'calculation_memory'], []);
+    }
+
+    public function historyContext(array $input, DateTimeImmutable $referenceDate): ?string
+    {
+        return HistoryPeriodFormatter::yearMonth($input['competence'] ?? null);
     }
 
     public function webRoutesPath(): string

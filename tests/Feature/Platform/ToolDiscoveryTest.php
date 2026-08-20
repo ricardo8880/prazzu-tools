@@ -97,4 +97,23 @@ final class ToolDiscoveryTest extends TestCase
         $this->assertStringContainsString('Disallow:', $robots);
         $this->assertStringContainsString('/sitemap-tools.xml', $robots);
     }
+
+    public function test_home_and_full_catalog_offer_problem_oriented_journeys_without_changing_search_results(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('O que você quer resolver?')
+            ->assertSee('Funcionários e folha')
+            ->assertSee('Simples Nacional')
+            ->assertSee('Sócios e retiradas')
+            ->assertSee('Financeiro da empresa');
+
+        $this->get(route('tools.index'))
+            ->assertOk()
+            ->assertSee('Encontre pela rotina');
+
+        $this->get(route('tools.index', ['q' => 'salário']))
+            ->assertOk()
+            ->assertDontSee('Encontre pela rotina');
+    }
 }

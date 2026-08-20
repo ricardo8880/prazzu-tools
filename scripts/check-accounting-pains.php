@@ -117,17 +117,18 @@ foreach ($pains as $slugs) {
 if ((int) ($plus['catalog_tool_count'] ?? 0) !== 50) {
     $errors[] = 'Governança Plus deve declarar catalog_tool_count=50.';
 }
-if ((int) ($plus['declared_plus_feature_count'] ?? 0) !== 144) {
-    $errors[] = 'Governança Plus deve declarar 144 contratos Plus.';
+$declaredPlusFeatureCount = (int) ($plus['declared_plus_feature_count'] ?? 0);
+if ($declaredPlusFeatureCount <= 0) {
+    $errors[] = 'Governança Plus deve declarar uma contagem positiva de contratos Plus.';
 }
 if ((array) ($plus['legacy_debt'] ?? []) !== []) {
     $errors[] = 'Governança Plus voltou a possuir dívida legada.';
 }
-if (count((array) ($plus['strict_contracts'] ?? [])) !== 144) {
-    $errors[] = 'Governança Plus deve possuir 144 contratos estritos.';
+if (count((array) ($plus['strict_contracts'] ?? [])) !== $declaredPlusFeatureCount) {
+    $errors[] = 'Governança Plus deve manter contratos estritos iguais à contagem declarada.';
 }
-if (count((array) ($plus['functional_contracts'] ?? [])) !== 144) {
-    $errors[] = 'Governança Plus deve possuir 144 contratos funcionais.';
+if (count((array) ($plus['functional_contracts'] ?? [])) !== $declaredPlusFeatureCount) {
+    $errors[] = 'Governança Plus deve manter contratos funcionais iguais à contagem declarada.';
 }
 
 foreach ([

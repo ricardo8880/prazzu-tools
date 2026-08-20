@@ -63,6 +63,36 @@ final class ToolAnalyticsTest extends TestCase
             ->count());
     }
 
+
+    public function test_problem_journey_entry_records_only_a_valid_curated_start(): void
+    {
+        $this->get(route('tools.simulador-admissao.index', [
+            'source' => 'problem_journey',
+            'journey' => 'funcionarios-folha',
+            'placement' => 'home',
+            'position' => 1,
+        ]))->assertOk();
+
+        $event = PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::DiscoveryProblemJourneyOpened->value)
+            ->firstOrFail();
+
+        self::assertSame('simulador-admissao', $event->subject_slug);
+        self::assertSame('funcionarios-folha', $event->metadata['journey']);
+        self::assertSame('home', $event->metadata['placement']);
+        self::assertArrayNotHasKey('input_payload', $event->metadata);
+        self::assertArrayNotHasKey('result_payload', $event->metadata);
+
+        $this->get(route('tools.custo-funcionario-clt.index', [
+            'source' => 'problem_journey',
+            'journey' => 'funcionarios-folha',
+        ]))->assertOk();
+
+        self::assertSame(1, PlatformAnalyticsEvent::query()
+            ->where('event_name', AnalyticsEventName::DiscoveryProblemJourneyOpened->value)
+            ->count());
+    }
+
     public function test_browser_can_publish_a_normalized_tool_event(): void
     {
         $this->postJson(route('analytics.tools.track'), [

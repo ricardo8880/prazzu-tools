@@ -14,12 +14,18 @@
                     <input class="form-control @error('asset_name') is-invalid @enderror" id="asset_name" name="asset_name" value="{{ old('asset_name') }}" maxlength="120" placeholder="Ex.: Notebook da empresa" required>
                     @error('asset_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
-                <div class="col-12 col-md-6 col-lg-4">
+                <div class="col-12 col-md-6 col-lg-3">
                     <label class="form-label" for="asset_value">Valor do bem</label>
                     <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('asset_value') is-invalid @enderror" id="asset_value" name="asset_value" value="{{ old('asset_value') }}" inputmode="decimal" placeholder="0,00" required></div>
                     @error('asset_value')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
-                <div class="col-12 col-md-6 col-lg-3">
+                <div class="col-12 col-md-6 col-lg-2">
+                    <label class="form-label" for="residual_value">Valor residual</label>
+                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control @error('residual_value') is-invalid @enderror" id="residual_value" name="residual_value" value="{{ old('residual_value', '0,00') }}" inputmode="decimal" placeholder="0,00"></div>
+                    @error('residual_value')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    <div class="form-text">Estimativa do valor do bem ao fim da vida útil. Use zero quando não houver valor residual.</div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-2">
                     <label class="form-label" for="useful_life_years">Vida útil</label>
                     <div class="input-group"><input class="form-control @error('useful_life_years') is-invalid @enderror" id="useful_life_years" name="useful_life_years" type="number" min="1" max="100" value="{{ old('useful_life_years') }}" required><span class="input-group-text">anos</span></div>
                     @error('useful_life_years')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
@@ -43,12 +49,13 @@
 
             <div class="table-responsive">
                 <table class="table table-sm align-middle">
-                    <thead><tr><th>Bem adicional</th><th>Valor</th><th>Vida útil</th><th>Método</th></tr></thead>
+                    <thead><tr><th>Bem adicional</th><th>Valor</th><th>Residual</th><th>Vida útil</th><th>Método</th></tr></thead>
                     <tbody>
                         @for($i = 0; $i < 5; $i++)
                             <tr>
                                 <td><input class="form-control" name="assets[{{ $i }}][name]" value="{{ old("assets.$i.name") }}" placeholder="Ex.: Veículo {{ $i + 1 }}"></td>
                                 <td><input class="form-control" name="assets[{{ $i }}][value]" value="{{ old("assets.$i.value") }}" inputmode="decimal"></td>
+                                <td><input class="form-control" name="assets[{{ $i }}][residual_value]" value="{{ old("assets.$i.residual_value", "0,00") }}" inputmode="decimal" aria-label="Valor residual do ativo adicional"></td>
                                 <td><div class="input-group"><input class="form-control" name="assets[{{ $i }}][useful_life_years]" type="number" min="1" max="100" value="{{ old("assets.$i.useful_life_years") }}"><span class="input-group-text">anos</span></div></td>
                                 <td><select class="form-select" name="assets[{{ $i }}][method]">@foreach($methods as $value => $label)<option value="{{ $value }}" @selected(old("assets.$i.method", 'linear') === $value)>{{ $label }}</option>@endforeach</select></td>
                             </tr>
@@ -126,7 +133,7 @@
 
                 <h3 class="h5 mt-4">Projeção do bem principal</h3>
                 @php($main = $result->details['assets'][0])
-                <div class="d-flex flex-wrap gap-2 mb-3"><span class="badge text-bg-secondary">{{ $main['method_label'] }}</span><span class="badge text-bg-light border text-body">Vida útil: {{ $main['useful_life_years'] }} anos</span></div>
+                <div class="d-flex flex-wrap gap-2 mb-3"><span class="badge text-bg-secondary">{{ $main['method_label'] }}</span><span class="badge text-bg-light border text-body">Vida útil: {{ $main['useful_life_years'] }} anos</span><span class="badge text-bg-light border text-body">Residual: {{ $money($main['residual_value_minor']) }}</span></div>
                 <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Ano</th><th class="text-end">Valor inicial</th><th class="text-end">Depreciação</th><th class="text-end">Depreciação acumulada</th><th class="text-end">Valor contábil</th></tr></thead><tbody>
                     @foreach($main['schedule'] as $row)<tr><td>{{ $row['year'] }}</td><td class="text-end">{{ $money($row['opening_book_value_minor']) }}</td><td class="text-end">{{ $money($row['depreciation_minor']) }}</td><td class="text-end">{{ $money($row['accumulated_depreciation_minor']) }}</td><td class="text-end fw-semibold">{{ $money($row['book_value_minor']) }}</td></tr>@endforeach
                 </tbody></table></div>

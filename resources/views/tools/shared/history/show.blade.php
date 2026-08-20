@@ -21,7 +21,7 @@
     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
         <div>
             <span class="badge text-bg-primary mb-2">Prazzu Plus</span>
-            <h1 class="h2 mb-1">Cálculo salvo</h1>
+            <h1 class="h2 mb-1">{{ $contextLabel ? $tool->name.' — '.$contextLabel : 'Cálculo salvo' }}</h1>
             <p class="text-body-secondary mb-0">Referência {{ $entry->referenceDate->format('d/m/Y') }} · regra {{ $entry->ruleVersion }}</p>
         </div>
         <div class="d-flex flex-wrap gap-2">

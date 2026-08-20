@@ -30,7 +30,7 @@
                 @endif
 
                 @if ($errors->any())
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger" role="alert" data-testid="validation-summary" tabindex="-1">
                         <strong>Revise os dados informados.</strong>
                         <ul class="mb-0 mt-2">
                             @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
@@ -247,6 +247,7 @@
                     <p>O Prazzu valida os dados principais, transforma o valor em reais por extenso e monta o texto completo do recibo. O uso continua disponível sem login; usuários autenticados podem salvar e reutilizar recibos pelo histórico.</p>
                 </section>
                 <x-tool-feature-tiers slug="emissor-de-recibos" />
+    <x-tools.plus-result-cta slug="emissor-de-recibos" />
 
             </div>
         </div>

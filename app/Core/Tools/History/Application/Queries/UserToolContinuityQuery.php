@@ -7,7 +7,9 @@ namespace App\Core\Tools\History\Application\Queries;
 use App\Core\Tools\Data\ToolManifest;
 use App\Core\Tools\History\Enums\ToolRunStatus;
 use App\Core\Tools\History\Models\ToolRun;
+use App\Core\Tools\History\Services\ToolHistoryContextResolver;
 use App\Core\Tools\ToolRegistry;
+use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
@@ -17,6 +19,7 @@ final readonly class UserToolContinuityQuery
     public function __construct(
         private ToolRegistry $registry,
         private Router $router,
+        private ToolHistoryContextResolver $contextResolver,
     ) {}
 
     /**
@@ -38,7 +41,7 @@ final readonly class UserToolContinuityQuery
         $usedToolCount = $this->ownedSucceededRuns($userId)->distinct()->count('tool_slug');
 
         $recentRuns = $this->ownedSucceededRuns($userId)
-            ->select(['id', 'tool_slug', 'reference_date', 'finished_at', 'created_at'])
+            ->select(['id', 'tool_slug', 'reference_date', 'finished_at', 'created_at', 'input_payload'])
             ->withExists([
                 'favorites as is_favorite' => static fn ($query) => $query->where('user_id', $userId),
             ])
@@ -55,7 +58,7 @@ final readonly class UserToolContinuityQuery
             ->values();
 
         $favoriteRuns = $this->ownedSucceededRuns($userId)
-            ->select(['id', 'tool_slug', 'reference_date', 'finished_at', 'created_at'])
+            ->select(['id', 'tool_slug', 'reference_date', 'finished_at', 'created_at', 'input_payload'])
             ->whereHas('favorites', static fn ($query) => $query->where('user_id', $userId))
             ->latest('finished_at')
             ->latest('created_at')
@@ -95,7 +98,7 @@ final readonly class UserToolContinuityQuery
         }
 
         return $this->ownedSucceededRuns($userId)
-            ->select(['id', 'tool_slug', 'reference_date', 'finished_at', 'created_at'])
+            ->select(['id', 'tool_slug', 'reference_date', 'finished_at', 'created_at', 'input_payload'])
             ->latest('finished_at')
             ->latest('created_at')
             ->limit(max(24, $limit * 8))
@@ -162,6 +165,11 @@ final readonly class UserToolContinuityQuery
             'has_result_detail' => $showUrl !== null,
             'repeat_url' => $repeatUrl,
             'reference_date' => $run->reference_date,
+            'context_label' => $this->contextResolver->resolve(
+                $manifest->slug,
+                is_array($run->input_payload) ? $run->input_payload : [],
+                DateTimeImmutable::createFromInterface($run->reference_date),
+            ),
             'finished_at' => $run->finished_at ?? $run->created_at,
             'favorite' => $favorite || (bool) $run->getAttribute('is_favorite'),
         ];

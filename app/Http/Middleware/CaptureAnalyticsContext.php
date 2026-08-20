@@ -8,6 +8,7 @@ use App\Core\Analytics\Domain\Enums\AnalyticsEventName;
 use App\Core\Analytics\Domain\Events\AnalyticsEvent;
 use App\Core\Analytics\Domain\Services\ToolAnalyticsEventClassifier;
 use App\Core\Analytics\Infrastructure\Http\AnalyticsCollectionPolicy;
+use App\Core\Tools\Discovery\Application\ProblemJourneyCatalog;
 use App\Core\Tools\ToolCatalog;
 use Closure;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ final readonly class CaptureAnalyticsContext
         private AnalyticsContextResolver $contextResolver,
         private PlatformAnalytics $analytics,
         private ToolCatalog $tools,
+        private ProblemJourneyCatalog $problemJourneys,
         private ToolAnalyticsEventClassifier $toolEvents,
         private AnalyticsCollectionPolicy $collectionPolicy,
     ) {}
@@ -146,6 +148,39 @@ final readonly class CaptureAnalyticsContext
                     'route' => $routeName,
                     'method' => $request->method(),
                 ],
+                subjectType: 'tool',
+                subjectSlug: $toolSlug,
+            ), $request);
+
+            return;
+        }
+
+        if ($source === 'problem_journey') {
+            $journeyKey = trim((string) $request->query('journey', ''));
+            $journey = $this->problemJourneys->findForActiveVertical($journeyKey);
+
+            if ($journey === null || $journey['start_slug'] !== $toolSlug) {
+                return;
+            }
+
+            $placement = trim((string) $request->query('placement', ''));
+            if (! in_array($placement, ['home', 'catalog'], true)) {
+                $placement = 'unknown';
+            }
+
+            $position = filter_var($request->query('position'), FILTER_VALIDATE_INT, [
+                'options' => ['min_range' => 1, 'max_range' => 12],
+            ]);
+
+            $this->analytics->track(new AnalyticsEvent(
+                name: AnalyticsEventName::DiscoveryProblemJourneyOpened->value,
+                channel: 'discovery',
+                properties: array_filter([
+                    'journey' => $journeyKey,
+                    'placement' => $placement,
+                    'position' => $position === false ? null : $position,
+                    'route' => $routeName,
+                ], static fn (mixed $value): bool => $value !== null && $value !== ''),
                 subjectType: 'tool',
                 subjectSlug: $toolSlug,
             ), $request);
