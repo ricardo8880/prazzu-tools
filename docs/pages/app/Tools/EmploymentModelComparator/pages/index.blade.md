@@ -9,8 +9,8 @@ definitiva.
 
 ## Funcionamento
 
-- `GET /ferramentas/comparador-clt-pj-autonomo` abre o formulário público.
-- `POST /ferramentas/comparador-clt-pj-autonomo` valida e compara os modelos.
+- `GET /ferramentas/employee-vs-contractor-calculator` abre o formulário público.
+- `POST /ferramentas/employee-vs-contractor-calculator` valida e compara os modelos.
 - CLT recebe salário, benefícios e percentuais estimados de descontos do
   trabalhador e encargos da empresa.
 - PJ recebe nota mensal, percentual de tributos e despesas próprias.
@@ -21,8 +21,8 @@ definitiva.
 ## Implementação principal
 
 - **View:** `app/Tools/EmploymentModelComparator/Resources/views/index.blade.php`
-- **Rotas:** `tools.comparador-clt-pj-autonomo.index` e
-  `tools.comparador-clt-pj-autonomo.calculate`
+- **Rotas:** `tools.employee-vs-contractor-calculator.index` e
+  `tools.employee-vs-contractor-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

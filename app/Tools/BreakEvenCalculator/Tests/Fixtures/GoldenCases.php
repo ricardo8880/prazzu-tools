@@ -16,7 +16,7 @@ final class GoldenCases
     {
         $reference = 'Fórmula de margem de contribuição e regressões do CalculatorTest, revisadas para o schema 1.2.0.';
 
-        return new GoldenCaseSuite('ponto-de-equilibrio', [
+        return new GoldenCaseSuite('break-even-calculator', [
             new GoldenCase('typical', 'Custos fixos de 10 mil com contribuição de 40 reais', GoldenCaseKind::Typical,
                 ['fixed_costs_minor' => 1000000, 'sale_price_minor' => 10000, 'variable_cost_minor' => 6000],
                 ['break_even_units' => 250, 'break_even_revenue_minor' => 2500000, 'contribution_margin' => '40,00 %', 'coverage_surplus_minor' => 0], $reference, '1.2.0', 'Quantidade arredondada para cima; valores em centavos.'),

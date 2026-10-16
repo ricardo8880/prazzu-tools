@@ -28,11 +28,11 @@ final class AccountingFeesCalculator
         OperationalComplexity $complexity,
     ): AccountingFeesResult {
         if ($monthlyRevenue->minorAmount() < 0 || min($employees, $partners, $monthlyInvoices, $monthlyBankTransactions) < 0) {
-            throw new InvalidValue('Os valores informados não podem ser negativos.');
+            throw new InvalidValue('Values cannot be negative.');
         }
 
         if ($partners < 1) {
-            throw new InvalidValue('Informe pelo menos um sócio ou titular.');
+            throw new InvalidValue('Enter at least one owner or partner.');
         }
 
         $base = Money::fromMinor($taxRegime->baseFeeInCents());
@@ -55,12 +55,12 @@ final class AccountingFeesCalculator
         $upperReference = $this->applyBasisPoints($minimum, 13_000);
         $score = $this->complexityScore($employees, $monthlyInvoices, $monthlyBankTransactions, $taxRegime, $segment, $complexity);
         $breakdown = $this->buildBreakdown([
-            ['label' => 'Base do regime tributário', 'value' => $base],
-            ['label' => 'Porte por faturamento', 'value' => $revenueAddition],
-            ['label' => 'Processamento de funcionários', 'value' => $staffAddition],
-            ['label' => 'Sócios adicionais', 'value' => $partnersAddition],
-            ['label' => 'Volume de notas fiscais', 'value' => $invoiceAddition],
-            ['label' => 'Movimentações financeiras', 'value' => $bankAddition],
+            ['label' => 'Entity / filing profile base', 'value' => $base],
+            ['label' => 'Revenue volume', 'value' => $revenueAddition],
+            ['label' => 'Payroll processing', 'value' => $staffAddition],
+            ['label' => 'Additional owners / partners', 'value' => $partnersAddition],
+            ['label' => 'Monthly invoice volume', 'value' => $invoiceAddition],
+            ['label' => 'Monthly bank transactions', 'value' => $bankAddition],
         ], $subtotal);
 
         return new AccountingFeesResult(
@@ -72,8 +72,8 @@ final class AccountingFeesCalculator
             breakdown: $breakdown,
             appliedFactors: [
                 ['label' => $segment->label(), 'percentage' => $segment->multiplierBasisPoints() - 10_000],
-                ['label' => 'Complexidade '.$complexity->label(), 'percentage' => $complexity->multiplierBasisPoints() - 10_000],
-                ['label' => 'Margem operacional recomendada', 'percentage' => 1_500],
+                ['label' => 'Complexity: '.$complexity->label(), 'percentage' => $complexity->multiplierBasisPoints() - 10_000],
+                ['label' => 'Recommended operating margin', 'percentage' => 1_500],
             ],
             recommendations: $this->recommendations(
                 employees: $employees,
@@ -121,48 +121,48 @@ final class AccountingFeesCalculator
         if ($employees >= 5) {
             $recommendations[] = [
                 'icon' => 'bi-people',
-                'title' => 'Destaque o escopo trabalhista',
-                'description' => 'A quantidade de funcionários aumenta a responsabilidade mensal. Detalhe admissões, folha, férias, desligamentos e obrigações acessórias na proposta.',
+                'title' => 'Account for payroll workload',
+                'description' => 'More employees increase recurring payroll and compliance work. Define what payroll processing and support are included.',
             ];
         }
 
         if ($invoices > 100 || $transactions > 200) {
             $recommendations[] = [
                 'icon' => 'bi-receipt',
-                'title' => 'Defina franquias de volume',
-                'description' => 'Inclua no contrato os volumes mensais contemplados e uma regra objetiva para cobranças adicionais quando houver excesso.',
+                'title' => 'Define volume limits',
+                'description' => 'State the monthly transaction and invoice volumes included, plus how overages are priced.',
             ];
         }
 
-        if ($regime === TaxRegime::LucroReal || $complexity === OperationalComplexity::VeryHigh) {
+        if (in_array($regime, [TaxRegime::CCorporation, TaxRegime::Nonprofit], true) || $complexity === OperationalComplexity::VeryHigh) {
             $recommendations[] = [
                 'icon' => 'bi-shield-check',
-                'title' => 'Proteja a responsabilidade técnica',
-                'description' => 'Considere revisão periódica do preço e cláusulas específicas para controles, conciliações, auditorias e demandas extraordinárias.',
+                'title' => 'Price higher-complexity work explicitly',
+                'description' => 'Consider periodic fee reviews and separate pricing for controls, reconciliations, audit support, and unusual requests.',
             ];
         }
 
         if (in_array($segment, [BusinessSegment::Industry, BusinessSegment::Construction, BusinessSegment::Healthcare], true)) {
             $recommendations[] = [
                 'icon' => 'bi-building-gear',
-                'title' => 'Valorize a especialização setorial',
-                'description' => 'O segmento exige conhecimento específico. Apresente esse domínio como diferencial e evite competir apenas por preço.',
+                'title' => 'Price industry specialization',
+                'description' => 'Industry-specific knowledge can increase workload and risk. Reflect that specialization in scope and pricing.',
             ];
         }
 
         if ($score >= 51) {
             $recommendations[] = [
                 'icon' => 'bi-arrow-repeat',
-                'title' => 'Preveja revisão recorrente',
-                'description' => 'Para operações de complexidade alta, estabeleça revisão de escopo e honorários em intervalos menores que o reajuste anual.',
+                'title' => 'Review scope regularly',
+                'description' => 'For complex clients, review scope and fees more often than once per year.',
             ];
         }
 
         if ($recommendations === []) {
             $recommendations[] = [
                 'icon' => 'bi-check2-circle',
-                'title' => 'Mantenha o escopo objetivo',
-                'description' => 'A operação é relativamente simples. Uma proposta clara, com serviços incluídos e limites definidos, ajuda a preservar a margem.',
+                'title' => 'Keep the scope explicit',
+                'description' => 'A clear engagement scope with included services and limits helps preserve margin.',
             ];
         }
 
@@ -207,10 +207,10 @@ final class AccountingFeesCalculator
         OperationalComplexity $complexity,
     ): int {
         $score = match ($regime) {
-            TaxRegime::Mei => 5,
-            TaxRegime::SimplesNacional => 15,
-            TaxRegime::LucroPresumido => 25,
-            TaxRegime::LucroReal => 40,
+            TaxRegime::SoleProprietor => 5,
+            TaxRegime::Partnership => 15,
+            TaxRegime::SCorporation => 25,
+            TaxRegime::CCorporation, TaxRegime::Nonprofit => 35,
         };
         $score += min(20, $employees * 2);
         $score += min(15, intdiv($invoices, 50) * 3);
@@ -224,10 +224,10 @@ final class AccountingFeesCalculator
     private function scoreLabel(int $score): string
     {
         return match (true) {
-            $score <= 25 => 'Baixa',
-            $score <= 50 => 'Média',
-            $score <= 75 => 'Alta',
-            default => 'Muito alta',
+            $score <= 25 => 'Low',
+            $score <= 50 => 'Medium',
+            $score <= 75 => 'High',
+            default => 'Very high',
         };
     }
 }

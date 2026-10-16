@@ -28,7 +28,7 @@ use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'gerador-de-contratos';
+    public const SLUG = 'contract-generator';
 
     public function analyticsJourney(): ToolAnalyticsJourney
     {
@@ -41,7 +41,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
         }
 
         return new ToolAnalyticsJourney(
-            toolSlug: 'gerador-de-contratos',
+            toolSlug: 'contract-generator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'draft',
@@ -76,18 +76,18 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Gerador de Contratos',
-            description: 'Gere contratos completos a partir de perguntas guiadas, revise o texto e prepare a exportação em PDF ou Word.',
+            name: 'Contract Generator',
+            description: 'Create a general U.S.-style contract draft with parties, governing state, payment terms, and optional clauses.',
             category: ToolCategory::Generators,
             icon: 'bi-file-earmark-text',
-            routeName: 'tools.gerador-de-contratos.index',
+            routeName: 'tools.contract-generator.index',
             vertical: 'contabilidade',
             version: '0.6.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             supportsHistory: true,
             storesSensitiveData: true,
-            keywords: ['contrato', 'gerador de contrato', 'contrato online', 'modelo de contrato', 'documento contratual'],
+            keywords: ['contract generator', 'service agreement', 'independent contractor agreement', 'agreement template'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -95,16 +95,16 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
                 ToolCapability::SensitiveData,
             ],
             features: [
-                new ToolFeature('guided_generation', 'Geração completa a partir de perguntas', ToolFeatureTier::Essential),
-                new ToolFeature('contract_editor', 'Edição do texto antes da exportação', ToolFeatureTier::Essential),
-                new ToolFeature('pdf_export', 'Exportação do contrato em PDF', ToolFeatureTier::Essential),
-                new ToolFeature('word_export', 'Exportação do contrato em Word', ToolFeatureTier::Essential),
+                new ToolFeature('guided_generation', 'Guided contract draft generation', ToolFeatureTier::Essential),
+                new ToolFeature('contract_editor', 'Edit draft before export', ToolFeatureTier::Essential),
+                new ToolFeature('pdf_export', 'Contract PDF export', ToolFeatureTier::Essential),
+                new ToolFeature('word_export', 'Contract Word export', ToolFeatureTier::Essential),
                 new ToolFeature('contract_library', 'Biblioteca ampliada de contratos', ToolFeatureTier::Plus),
-                new ToolFeature('smart_clauses', 'Cláusulas inteligentes', ToolFeatureTier::Plus),
-                new ToolFeature('favorites', 'Contratos favoritos', ToolFeatureTier::Plus),
-                new ToolFeature('company_autofill', 'Preenchimento automático da empresa', ToolFeatureTier::Plus),
-                new ToolFeature('history', 'Histórico de contratos', ToolFeatureTier::Plus),
-                new ToolFeature('version_comparison', 'Comparação entre versões', ToolFeatureTier::Plus),
+                new ToolFeature('smart_clauses', 'Optional clause library', ToolFeatureTier::Plus),
+                new ToolFeature('favorites', 'Favorite contracts', ToolFeatureTier::Plus),
+                new ToolFeature('company_autofill', 'Business profile autofill', ToolFeatureTier::Plus),
+                new ToolFeature('history', 'Contract history', ToolFeatureTier::Plus),
+                new ToolFeature('version_comparison', 'Version comparison', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'docx', 'json']),
@@ -182,6 +182,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
 
     public function viewsNamespace(): string
     {
-        return 'tools-gerador-de-contratos';
+        return 'tools-contract-generator';
     }
 }

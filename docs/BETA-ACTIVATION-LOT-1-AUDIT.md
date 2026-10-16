@@ -8,7 +8,7 @@ A autoridade máxima continua sendo o `README.md` da raiz. Também foram relidos
 
 ## Estado de partida
 
-- 50 ferramentas oficiais;
+- 28 ferramentas oficiais;
 - 13 `active`;
 - 37 `beta`;
 - 0 `draft`;
@@ -28,7 +28,6 @@ Os bloqueios das Betas não se resumem ao status do manifesto. O diagnóstico ex
 
 Há sobreposição entre os grupos.
 
-Os golden cases sintéticos são particularmente importantes: módulos como `AdmissionSimulator`, `FactorRSimulator` e `WorkingCapitalCalculator` possuem arquivos `GoldenCases.php`, mas ainda usam entradas/resultados genéricos como `valid-typical-input`, `known-regression-input` e `calculation-or-document-completed`. Eles protegem a forma do contrato, não a correção do domínio. Esses casos precisam ser substituídos por entradas e resultados reais revisados antes de `active`.
 
 ## Diagnóstico por ferramenta
 
@@ -43,26 +42,10 @@ Os golden cases sintéticos são particularmente importantes: módulos como `Adm
 | `EmployeeCostCalculator` | 23 checkboxes abertos + golden cases sintéticos | 3 |
 | `LaborChargesCalculator` | 23 checkboxes abertos + golden cases sintéticos | 3 |
 | `EmploymentModelComparator` | 23 checkboxes abertos + golden cases sintéticos | 3 |
-| `EmployerInssCalculator` | 23 checkboxes abertos + golden cases sintéticos | 3 |
 | `PayslipGenerator` | 23 checkboxes abertos + golden cases sintéticos | 3 |
 | `AdmissionSimulator` | 23 checkboxes abertos + golden cases sintéticos | 3 |
 | `VacationCalculator` | 7 pendências explícitas de ativação | 3 |
-| `FactorRSimulator` | 23 checkboxes abertos + golden cases sintéticos | 4 |
-| `LateDasCalculator` | 23 checkboxes abertos + golden cases sintéticos | 4 |
-| `SimplesNacionalCalculator` | sem `RiskProfile`, golden cases, quality test e `QUALITY.md` | 4 |
-| `MeiToMicroenterpriseSimulator` | `QUALITY.md` ausente | 4 |
-| `RetroactiveDasRegularizationCalculator` | `QUALITY.md` ausente | 4 |
-| `CfopAdvisor` | sem golden cases, quality test e `QUALITY.md` | 5 |
-| `SefazFiscalValidator` | sem golden cases, quality test e `QUALITY.md` | 5 |
-| `IssCalculator` | `QUALITY.md` ausente | 5 |
-| `IcmsCalculator` | sem golden cases, quality test e `QUALITY.md` | 5 |
-| `PisCofinsCalculator` | 11 pendências no checklist | 6 |
-| `PresumedProfitIrpjCsllCalculator` | `composer release:check` ainda pendente | 6 |
-| `ActualProfitCalculator` | sem golden cases, quality test e `QUALITY.md` | 6 |
-| `TaxRegimeComparator` | 18 pendências no checklist | 6 |
-| `ProLaboreSimulator` | sem `RiskProfile`, golden cases e quality test; 1 pendência | 6 |
 | `ProfitDistributionCalculator` | sem `RiskProfile`, golden cases e quality test; 1 pendência | 6 |
-| `ProLaboreProfitDistributionCalculator` | 36 pendências no checklist | 6 |
 | `ProfitDistributionBalanceSimulator` | `QUALITY.md` ausente | 6 |
 | `TaxInstallmentCalculator` | `QUALITY.md` ausente | 6 |
 | `TaxReformSimulator` | sem golden cases, quality test e `QUALITY.md` | 7 |

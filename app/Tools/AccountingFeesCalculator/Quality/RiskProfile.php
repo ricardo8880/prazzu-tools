@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'calculadora-de-honorarios-contabeis',
+            toolSlug: 'accounting-fee-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::None,
             personalDataExposure: PersonalDataExposure::Common,

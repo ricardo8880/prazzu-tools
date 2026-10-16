@@ -6,42 +6,42 @@ namespace App\Tools\ContractGenerator\Domain\Enums;
 
 enum ContractTemplate: string
 {
-    case ServiceStandard = 'servicos-padrao';
-    case SaleStandard = 'venda-padrao';
-    case ServiceConfidentiality = 'servicos-confidencialidade';
-    case ServiceDataProtection = 'servicos-protecao-dados';
-    case ServiceIntellectualProperty = 'servicos-propriedade-intelectual';
-    case SaleWarranty = 'venda-garantia-entrega';
+    case ServiceStandard = 'service-standard';
+    case SaleStandard = 'sale-standard';
+    case ServiceConfidentiality = 'service-confidentiality';
+    case ServicePrivacy = 'service-privacy';
+    case ServiceIntellectualProperty = 'service-intellectual-property';
+    case SaleWarranty = 'sale-warranty-delivery';
 
     public function label(): string
     {
         return match ($this) {
-            self::ServiceStandard => 'Prestação de serviços — padrão',
-            self::SaleStandard => 'Compra e venda de bem móvel — padrão',
-            self::ServiceConfidentiality => 'Serviços com confidencialidade',
-            self::ServiceDataProtection => 'Serviços com proteção de dados',
-            self::ServiceIntellectualProperty => 'Serviços com propriedade intelectual',
-            self::SaleWarranty => 'Compra e venda com garantia e entrega',
+            self::ServiceStandard => 'Service agreement — standard',
+            self::SaleStandard => 'Goods sale — standard',
+            self::ServiceConfidentiality => 'Service agreement with confidentiality',
+            self::ServicePrivacy => 'Service agreement with privacy clause',
+            self::ServiceIntellectualProperty => 'Service agreement with IP clause',
+            self::SaleWarranty => 'Goods sale with warranty and delivery',
         };
     }
 
     public function description(): string
     {
         return match ($this) {
-            self::ServiceStandard => 'Modelo essencial para contratação e execução de serviços.',
-            self::SaleStandard => 'Modelo essencial para venda e entrega de bem móvel.',
-            self::ServiceConfidentiality => 'Modelo profissional com cláusula de confidencialidade pré-selecionada.',
-            self::ServiceDataProtection => 'Modelo profissional com cláusula de proteção de dados pré-selecionada.',
-            self::ServiceIntellectualProperty => 'Modelo profissional com cláusula de propriedade intelectual pré-selecionada.',
-            self::SaleWarranty => 'Modelo profissional com cláusula reforçada de garantia e entrega pré-selecionada.',
+            self::ServiceStandard => 'General starting template for a U.S. service relationship.',
+            self::SaleStandard => 'General starting template for the sale and delivery of goods.',
+            self::ServiceConfidentiality => 'Service template with a confidentiality clause preselected.',
+            self::ServicePrivacy => 'Service template with a privacy/data-handling clause preselected.',
+            self::ServiceIntellectualProperty => 'Service template with an intellectual-property clause preselected.',
+            self::SaleWarranty => 'Goods-sale template with a warranty and delivery clause preselected.',
         };
     }
 
     public function contractType(): ContractType
     {
         return match ($this) {
-            self::SaleStandard, self::SaleWarranty => ContractType::MovableAssetSale,
-            default => ContractType::ServiceProvision,
+            self::SaleStandard, self::SaleWarranty => ContractType::GoodsSaleAgreement,
+            default => ContractType::ServiceAgreement,
         };
     }
 
@@ -55,7 +55,7 @@ enum ContractTemplate: string
     {
         return match ($this) {
             self::ServiceConfidentiality => [SmartClause::Confidentiality],
-            self::ServiceDataProtection => [SmartClause::DataProtection],
+            self::ServicePrivacy => [SmartClause::DataProtection],
             self::ServiceIntellectualProperty => [SmartClause::IntellectualProperty],
             self::SaleWarranty => [SmartClause::WarrantyAndDelivery],
             default => [],
@@ -64,6 +64,6 @@ enum ContractTemplate: string
 
     public static function essentialFor(ContractType $type): self
     {
-        return $type === ContractType::MovableAssetSale ? self::SaleStandard : self::ServiceStandard;
+        return $type === ContractType::GoodsSaleAgreement ? self::SaleStandard : self::ServiceStandard;
     }
 }

@@ -16,12 +16,12 @@ final class ToolController extends Controller
 {
     public function index(ShowToolPage $page): View
     {
-        return view('tools-calculadora-turnover::index', $page->execute());
+        return view('tools-employee-turnover-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action, ShowToolPage $page): View
     {
-        return view('tools-calculadora-turnover::index', [
+        return view('tools-employee-turnover-calculator::index', [
             ...$page->execute(),
             'result' => $action->execute($request->validated()),
         ]);
@@ -31,7 +31,7 @@ final class ToolController extends Controller
     {
         $data = $request->validate(['segments' => ['required', 'string', 'max:2000']]);
 
-        return view('tools-calculadora-turnover::index', [
+        return view('tools-employee-turnover-calculator::index', [
             ...$page->execute(),
             'segmentAnalysis' => $action->execute($data['segments']),
             'segmentInput' => $data['segments'],

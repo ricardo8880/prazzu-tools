@@ -40,7 +40,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'encargos-trabalhistas',
+            toolSlug: 'employer-payroll-tax-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -63,12 +63,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'encargos-trabalhistas',
-            name: 'Calculadora de Encargos Trabalhistas',
-            description: 'Calcule FGTS, encargos patronais e provisões de 13º e férias.',
+            slug: 'employer-payroll-tax-calculator',
+            name: 'Employer Payroll Tax Calculator',
+            description: 'Estimate 2026 federal employer payroll taxes plus user-entered SUTA and other employer payroll costs.',
             category: ToolCategory::Labor,
             icon: 'bi-briefcase',
-            routeName: 'tools.encargos-trabalhistas.index',
+            routeName: 'tools.employer-payroll-tax-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -76,15 +76,15 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 140,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['encargos trabalhistas', 'fgts', 'inss patronal', 'rat', 'terceiros', 'férias', 'décimo terceiro', 'folha'],
+            keywords: ['employer payroll tax', 'FICA employer', 'FUTA', 'SUTA', 'payroll taxes'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
+                new ToolFeature('spreadsheet_export', 'Advanced Excel export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'xlsx']),
@@ -95,7 +95,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['salary', 'benefits', 'regime', 'rat', 'third_parties'], resultFields: ['total_cost', 'provisions', 'fgts', 'patronal'], sensitiveFields: []);
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['salary', 'benefits', 'regime', 'rat', 'third_parties'], resultFields: ['monthly_payroll_taxes', 'annual_payroll_taxes', 'social_security', 'medicare', 'futa', 'suta', 'other_employer_costs'], sensitiveFields: []);
     }
 
     public function webRoutesPath(): string
@@ -110,6 +110,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-encargos-trabalhistas';
+        return 'tools-employer-payroll-tax-calculator';
     }
 }

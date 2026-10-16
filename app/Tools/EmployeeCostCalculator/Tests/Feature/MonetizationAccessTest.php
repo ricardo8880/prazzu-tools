@@ -19,8 +19,8 @@ use PHPUnit\Framework\TestCase;
 
 final class MonetizationAccessTest extends TestCase
 {
-    #[CoversPlusFeature('custo-funcionario-clt', 'branded_report')]
-    #[CoversPlusFeature('custo-funcionario-clt', 'projections')]
+    #[CoversPlusFeature('employee-cost-calculator', 'branded_report')]
+    #[CoversPlusFeature('employee-cost-calculator', 'projections')]
     public function test_lot_six_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

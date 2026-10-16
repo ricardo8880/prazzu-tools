@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tools\ReceiptIssuer\Tests\Unit;
 
 use App\Core\Exceptions\InvalidValue;
-use App\Core\Money\BrazilianMoneyInWords;
+use App\Core\Money\AmericanMoneyInWords;
 use App\Core\Money\Money;
 use App\Tools\ReceiptIssuer\Domain\Data\ReceiptParty;
 use App\Tools\ReceiptIssuer\Domain\Services\ReceiptIssuer;
@@ -32,7 +32,7 @@ final class ReceiptDomainValidationTest extends TestCase
 
     public function test_it_rejects_a_non_positive_amount(): void
     {
-        $issuer = new ReceiptIssuer(new BrazilianMoneyInWords);
+        $issuer = new ReceiptIssuer(new AmericanMoneyInWords);
 
         $this->expectException(InvalidArgumentException::class);
         $issuer->issue(

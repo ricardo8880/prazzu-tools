@@ -11,9 +11,9 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('calculadora-ferias');
+        $module = app(ToolRegistry::class)->findModule('pto-calculator');
 
         self::assertNotNull($module);
-        self::assertSame('calculadora-ferias', $module->manifest()->slug);
+        self::assertSame('pto-calculator', $module->manifest()->slug);
     }
 }

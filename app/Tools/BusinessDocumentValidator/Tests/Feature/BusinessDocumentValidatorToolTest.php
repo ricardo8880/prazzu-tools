@@ -23,7 +23,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.validador-de-cnpj.index'))
+        $this->get(route('tools.us-tax-id-validator.index'))
             ->assertOk()
             ->assertSee('Validador Inteligente de CNPJ, CPF e IE')
             ->assertSee('Validação individual')
@@ -32,7 +32,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
     public function test_it_validates_a_cpf(): void
     {
-        $this->post(route('tools.validador-de-cnpj.validate'), [
+        $this->post(route('tools.us-tax-id-validator.validate'), [
             'document_type' => 'automatic',
             'document_number' => '529.982.247-25',
         ])->assertOk()->assertSee('529.982.247-25')->assertSee('CPF');
@@ -40,7 +40,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
     public function test_it_validates_a_cnpj(): void
     {
-        $this->post(route('tools.validador-de-cnpj.validate'), [
+        $this->post(route('tools.us-tax-id-validator.validate'), [
             'document_type' => 'cnpj',
             'document_number' => '04.252.011/0001-10',
         ])->assertOk()->assertSee('04.252.011/0001-10')->assertSee('CNPJ');
@@ -48,7 +48,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
     public function test_it_reports_an_invalid_document(): void
     {
-        $this->post(route('tools.validador-de-cnpj.validate'), [
+        $this->post(route('tools.us-tax-id-validator.validate'), [
             'document_type' => 'automatic',
             'document_number' => '111.111.111-11',
         ])->assertOk()->assertSee('Inválido');
@@ -56,7 +56,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
     public function test_it_rejects_unsupported_characters(): void
     {
-        $this->post(route('tools.validador-de-cnpj.validate'), [
+        $this->post(route('tools.us-tax-id-validator.validate'), [
             'document_type' => 'automatic',
             'document_number' => 'abc52998224725',
         ])->assertSessionHasErrors('document_number');
@@ -92,21 +92,21 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             }
         });
 
-        $this->post(route('tools.validador-de-cnpj.lookup-company'), [
+        $this->post(route('tools.us-tax-id-validator.lookup-company'), [
             'cnpj' => '04.252.011/0001-10',
         ])->assertOk()->assertSee('EMPRESA EXEMPLO LTDA');
     }
 
     public function test_it_does_not_consult_invalid_cnpj(): void
     {
-        $this->post(route('tools.validador-de-cnpj.lookup-company'), [
+        $this->post(route('tools.us-tax-id-validator.lookup-company'), [
             'cnpj' => '11.111.111/1111-11',
         ])->assertOk()->assertSee('matematicamente inválido');
     }
 
     public function test_state_registration_validation_route_is_available(): void
     {
-        $response = $this->post(route('tools.validador-de-cnpj.validate-state-registration'), [
+        $response = $this->post(route('tools.us-tax-id-validator.validate-state-registration'), [
             'state' => 'SP',
             'state_registration' => '110042490114',
         ]);
@@ -144,7 +144,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             }
         });
 
-        $this->post(route('tools.validador-de-cnpj.analyze-consistency'), [
+        $this->post(route('tools.us-tax-id-validator.analyze-consistency'), [
             'analysis_cnpj' => '04.252.011/0001-10',
             'legal_name' => 'EMPRESA DIFERENTE LTDA',
             'analysis_state' => 'RJ',
@@ -152,7 +152,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
         ])->assertOk()->assertSee('EMPRESA DIFERENTE LTDA')->assertSee('Inconsistências');
     }
 
-    #[CoversPlusFeature('validador-de-cnpj', 'batch_processing')]
+    #[CoversPlusFeature('us-tax-id-validator', 'batch_processing')]
     public function test_it_previews_a_csv_batch_import(): void
     {
         Storage::fake('local');
@@ -161,7 +161,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             "CNPJ;Razão Social;UF\n04.252.011/0001-10;Empresa Exemplo;SP\n",
         );
 
-        $this->post(route('tools.validador-de-cnpj.batch.preview'), [
+        $this->post(route('tools.us-tax-id-validator.batch.preview'), [
             'batch_file' => $file,
         ])->assertOk()
             ->assertSee('empresas.csv')
@@ -169,12 +169,12 @@ final class BusinessDocumentValidatorToolTest extends TestCase
             ->assertSee('name="import_token"', false);
     }
 
-    #[CoversPlusFeature('validador-de-cnpj', 'history')]
+    #[CoversPlusFeature('us-tax-id-validator', 'history')]
     public function test_authenticated_user_can_open_validation_history(): void
     {
         $user = User::factory()->create();
         ToolRun::query()->create([
-            'user_id' => $user->id, 'tool_slug' => 'validador-de-cnpj', 'tool_version' => '1.0.0',
+            'user_id' => $user->id, 'tool_slug' => 'us-tax-id-validator', 'tool_version' => '1.0.0',
             'schema_version' => 1, 'rule_version' => 'batch-validation-v1', 'reference_date' => now()->toDateString(),
             'status' => ToolRunStatus::Succeeded, 'input_payload' => ['file_name' => 'clientes.csv'],
             'result_payload' => ['summary' => ['total' => 3, 'invalid' => 1, 'with_inconsistencies' => 1]],
@@ -182,7 +182,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('tools.validador-de-cnpj.history.index'))
+            ->get(route('tools.us-tax-id-validator.history.index'))
             ->assertOk()
             ->assertSee('Histórico de validações')
             ->assertSee('clientes.csv');
@@ -190,7 +190,7 @@ final class BusinessDocumentValidatorToolTest extends TestCase
 
     public function test_consistency_analysis_requires_state_when_ie_is_informed(): void
     {
-        $this->post(route('tools.validador-de-cnpj.analyze-consistency'), [
+        $this->post(route('tools.us-tax-id-validator.analyze-consistency'), [
             'analysis_cnpj' => '04.252.011/0001-10',
             'analysis_state_registration' => '110042490114',
         ])->assertSessionHasErrors('analysis_state');

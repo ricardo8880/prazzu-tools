@@ -121,7 +121,7 @@ final class ContractGeneratorController
             $profiles,
             $history,
             $selectedType,
-            contractText: ['title' => 'Contrato editado', 'content' => (string) $validated['contract_text']],
+            contractText: ['title' => 'Edited contract', 'content' => (string) $validated['contract_text']],
             edited: true,
         );
     }
@@ -146,13 +146,13 @@ final class ContractGeneratorController
             'saved_version' => true,
         ]);
 
-        return redirect()->route('tools.gerador-de-contratos.history.index')
-            ->with('history_message', 'Nova versão salva no histórico.');
+        return redirect()->route('tools.contract-generator.history.index')
+            ->with('history_message', 'New version saved to history.');
     }
 
     public function history(Request $request, ManageContractHistory $history): View
     {
-        return view('tools-gerador-de-contratos::history.index', [
+        return view('tools-contract-generator::history.index', [
             'runs' => $history->paginate((int) $request->user()->getAuthIdentifier(), max(1, $request->integer('page', 1))),
         ]);
     }
@@ -161,14 +161,14 @@ final class ContractGeneratorController
     {
         $favorite = $history->toggleFavorite($run, (int) $request->user()->getAuthIdentifier());
 
-        return back()->with('history_message', $favorite ? 'Contrato adicionado aos favoritos.' : 'Contrato removido dos favoritos.');
+        return back()->with('history_message', $favorite ? 'Agreement added to favorites.' : 'Agreement removed from favorites.');
     }
 
     public function destroyHistory(Request $request, string $run, ManageContractHistory $history): RedirectResponse
     {
         $history->delete($run, (int) $request->user()->getAuthIdentifier());
 
-        return back()->with('history_message', 'Versão removida do histórico.');
+        return back()->with('history_message', 'Version removed from history.');
     }
 
     public function compareVersions(Request $request, ManageContractHistory $history): View
@@ -178,7 +178,7 @@ final class ContractGeneratorController
             'right' => ['required', 'uuid', 'different:left'],
         ]);
 
-        return view('tools-gerador-de-contratos::history.compare', $history->compare(
+        return view('tools-contract-generator::history.compare', $history->compare(
             (string) $validated['left'],
             (string) $validated['right'],
             (int) $request->user()->getAuthIdentifier(),
@@ -198,11 +198,11 @@ final class ContractGeneratorController
 
         try {
             return $exporter->download(new PdfDocument(
-                filename: 'contrato-'.now()->format('Y-m-d'),
+                filename: 'agreement-'.now()->format('Y-m-d'),
                 view: 'exports.printable-document',
                 data: [
                     'title' => $type->documentTitle(),
-                    'contentView' => 'tools-gerador-de-contratos::pdf.contract',
+                    'contentView' => 'tools-contract-generator::pdf.contract',
                     'contentData' => ['content' => (string) $validated['contract_text']],
                     'generatedAt' => now()->format('d/m/Y H:i'),
                 ],
@@ -223,10 +223,10 @@ final class ContractGeneratorController
         $validated = $request->validated();
         $type = ContractType::from((string) $validated['contract_type']);
 
-        return $exporter->download($documents->spreadsheet('contrato-'.now()->format('Y-m-d'), [
-            'titulo' => $type->documentTitle(),
-            'conteudo' => (string) $validated['contract_text'],
-        ], ['tipo' => $type->value]));
+        return $exporter->download($documents->spreadsheet('agreement-'.now()->format('Y-m-d'), [
+            'title' => $type->documentTitle(),
+            'content' => (string) $validated['contract_text'],
+        ], ['type' => $type->value]));
     }
 
     public function exportDocx(PreviewContractTextRequest $request, ContractDocxExporter $exporter): Response
@@ -266,7 +266,7 @@ final class ContractGeneratorController
                 $profile = $profiles->findCompanyOwned($companyId, (int) $user->getAuthIdentifier());
                 $companyAutofill = [
                     'name' => $profile->legal_name ?: $profile->name,
-                    'document_type' => filled($profile->document) ? 'cnpj' : null,
+                    'document_type' => filled($profile->document) ? 'ein' : null,
                     'document' => $profile->document,
                 ];
             }
@@ -276,7 +276,7 @@ final class ContractGeneratorController
             ? $history->recent((int) $user->getAuthIdentifier())
             : [];
 
-        return view('tools-gerador-de-contratos::index', [
+        return view('tools-contract-generator::index', [
             'selectedType' => $selectedType,
             'selectedTemplate' => $selectedTemplate ?? ($selectedType ? ContractTemplate::essentialFor($selectedType) : null),
             'contractTypes' => ContractType::cases(),

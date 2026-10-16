@@ -19,15 +19,15 @@ final class ExecuteToolRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'debt_amount' => ['required', 'brazilian_money', 'money_min:0.01'],
-            'installments' => ['required', 'integer', 'min:1', 'max:240'],
-            'monthly_charge' => ['required', 'brazilian_percentage', 'percentage_min:0', 'percentage_max:100'],
-            'entry_amount' => ['nullable', 'brazilian_money', 'money_min:0'],
+            'debt_amount' => ['required', 'us_money', 'money_min:0.01'],
+            'installments' => ['required', 'integer', 'min:1', 'max:72'],
+            'monthly_charge' => ['required', 'percentage_value', 'percentage_min:0', 'percentage_max:100'],
+            'entry_amount' => ['nullable', 'us_money', 'money_min:0'],
             'scenarios' => ['nullable', 'array', 'max:5'],
             'scenarios.*.name' => ['nullable', 'string', 'max:80'],
-            'scenarios.*.entry_amount' => ['nullable', 'brazilian_money', 'money_min:0'],
-            'scenarios.*.installments' => ['nullable', 'integer', 'min:1', 'max:240'],
-            'scenarios.*.monthly_charge' => ['nullable', 'brazilian_percentage', 'percentage_min:0', 'percentage_max:100'],
+            'scenarios.*.entry_amount' => ['nullable', 'us_money', 'money_min:0'],
+            'scenarios.*.installments' => ['nullable', 'integer', 'min:1', 'max:72'],
+            'scenarios.*.monthly_charge' => ['nullable', 'percentage_value', 'percentage_min:0', 'percentage_max:100'],
         ];
     }
 
@@ -41,7 +41,7 @@ final class ExecuteToolRequest extends FormRequest
                 $debt = Money::fromDecimal((string) $this->input('debt_amount'));
                 $entry = Money::fromDecimal((string) ($this->input('entry_amount', '0') ?: '0'));
                 if ($entry->minorAmount() >= $debt->minorAmount()) {
-                    $validator->errors()->add('entry_amount', 'A entrada deve ser menor que a dívida.');
+                    $validator->errors()->add('entry_amount', 'The upfront payment must be less than the tax balance.');
                 }
                 foreach ((array) $this->input('scenarios', []) as $index => $scenario) {
                     $hasValues = trim((string) ($scenario['name'] ?? '')) !== ''
@@ -53,7 +53,7 @@ final class ExecuteToolRequest extends FormRequest
                     }
                     $scenarioEntry = Money::fromDecimal((string) (($scenario['entry_amount'] ?? '0') ?: '0'));
                     if ($scenarioEntry->minorAmount() >= $debt->minorAmount()) {
-                        $validator->errors()->add("scenarios.$index.entry_amount", 'A entrada do cenário deve ser menor que a dívida.');
+                        $validator->errors()->add("scenarios.$index.entry_amount", 'The scenario upfront payment must be less than the tax balance.');
                     }
                 }
             } catch (Throwable) {
@@ -65,9 +65,9 @@ final class ExecuteToolRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'debt_amount.required' => 'Informe o valor da dívida.',
-            'installments.required' => 'Informe a quantidade de parcelas.',
-            'monthly_charge.required' => 'Informe a taxa mensal de encargos, mesmo que seja zero.',
+            'debt_amount.required' => 'Enter the tax balance.',
+            'installments.required' => 'Enter the number of monthly payments.',
+            'monthly_charge.required' => 'Enter an estimated monthly combined interest/penalty rate, even if zero.',
         ];
     }
 }

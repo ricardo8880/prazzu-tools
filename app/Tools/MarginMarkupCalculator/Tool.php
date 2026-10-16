@@ -32,7 +32,7 @@ use App\Tools\MarginMarkupCalculator\Api\Actions\CalculateApiAction;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'calculadora-margem-markup';
+    public const SLUG = 'margin-markup-calculator';
 
     public function apiActions(): array
     {
@@ -50,7 +50,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'calculadora-margem-markup',
+            toolSlug: 'margin-markup-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -74,12 +74,12 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'calculadora-margem-markup',
-            name: 'Calculadora de Margem e Markup',
-            description: 'Calcule preço de venda, lucro, margem e markup a partir dos custos do produto ou serviço.',
+            slug: 'margin-markup-calculator',
+            name: 'Margin & Markup Calculator',
+            description: 'Calculate selling price, gross margin, markup, costs, fees, and scenario comparisons.',
             category: ToolCategory::Calculators,
             icon: 'bi-percent',
-            routeName: 'tools.calculadora-margem-markup.index',
+            routeName: 'tools.margin-markup-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -88,7 +88,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             featured: true,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['margem', 'markup', 'preço de venda', 'lucro', 'custos'],
+            keywords: ['margin calculator', 'markup calculator', 'pricing calculator', 'gross margin'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -101,7 +101,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                 new ToolFeature('export', 'Exportação do cálculo', ToolFeatureTier::Plus),
                 new ToolFeature('batch_processing', 'Cálculo e importação em lote', ToolFeatureTier::Plus),
                 new ToolFeature('scenarios', 'Simulação de cenários', ToolFeatureTier::Plus),
-                new ToolFeature('history', 'Histórico de cálculos', ToolFeatureTier::Plus),
+                new ToolFeature('history', 'Calculation history', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 90, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
@@ -122,7 +122,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-margem-markup';
+        return 'tools-margin-markup-calculator';
     }
 
     public function historyPolicy(): ToolHistoryPolicy

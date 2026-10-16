@@ -16,7 +16,7 @@ final class GoldenCases
     {
         $reference = 'Fórmulas descritas no README e regressões do CalculatorTest, revisadas para o schema 1.2.0.';
 
-        return new GoldenCaseSuite('capital-de-giro', [
+        return new GoldenCaseSuite('working-capital-calculator', [
             new GoldenCase('typical-deficit', 'NCG parcialmente descoberta pelo CCL', GoldenCaseKind::Typical,
                 ['cash_minor' => 1000000, 'receivables_minor' => 5000000, 'inventory_minor' => 3000000, 'other_current_assets_minor' => 500000, 'suppliers_minor' => 2500000, 'other_operating_liabilities_minor' => 500000, 'loans_minor' => 1000000, 'other_current_liabilities_minor' => 500000],
                 ['required_capital_minor' => 5500000, 'net_working_capital_minor' => 5000000, 'funding_gap_minor' => 500000, 'funding_surplus_minor' => 0], $reference, '1.2.0', 'Centavos inteiros; sem float.'),

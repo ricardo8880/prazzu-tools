@@ -6,12 +6,10 @@ O projeto foi reconstruído do ZIP original e recebeu, em ordem, as três corre�
 
 ## Contratos certificados
 
-- `calculadora-das-retroativo-regularizacao-simples`: `multiple_competencies` e `report`.
-- `calculadora-depreciacao-ativos`: `multiple_assets`, `methods` e `export`.
-- `calculadora-ferias`: `history`, `vacation_planning` e `professional_export`.
-- `calculadora-iss`: `retention`, `multiple_services`, `municipality_scenarios` e `export`.
-- `calculadora-parcelamento-tributario`: `scenario_comparison` e `export`.
-- `calculadora-retencoes-nota-fiscal`: `custom_rules`, `multiple_notes` e `export`.
+- `asset-depreciation-calculator`: `multiple_assets`, `methods` e `export`.
+- `pto-calculator`: `history`, `vacation_planning` e `professional_export`.
+- `irs-payment-plan-calculator`: `scenario_comparison` e `export`.
+- `backup-withholding-calculator`: `custom_rules`, `multiple_notes` e `export`.
 
 ## Evidências funcionais
 

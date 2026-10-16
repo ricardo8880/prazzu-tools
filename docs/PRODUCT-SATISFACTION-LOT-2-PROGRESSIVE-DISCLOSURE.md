@@ -43,15 +43,12 @@ Os três dados de entrada principais continuam imediatamente visíveis. Provento
 
 O cálculo principal de hora extra permanece visível. Jornada noturna, DSR e reflexos ficam em disclosure Plus separado.
 
-### Calculadora de ICMS-ST
 
 Os parâmetros do item principal continuam visíveis. MVA ajustada, FCP, alíquota interestadual complementar e itens adicionais ficam agrupados em **Recursos avançados**.
 
-### Calculadora PIS e COFINS
 
 A apuração principal permanece exposta. Comparação de regimes e operações adicionais passam a ocupar espaço somente quando o usuário decide utilizá-las.
 
-### Calculadora de IRPJ e CSLL — Lucro Presumido
 
 Receita e apuração principal permanecem visíveis. Ajustes acumulados/créditos e comparação de cenários foram separados em dois disclosures Plus independentes.
 

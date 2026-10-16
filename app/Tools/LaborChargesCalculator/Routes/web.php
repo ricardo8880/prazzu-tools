@@ -5,12 +5,12 @@ declare(strict_types=1);
 use App\Tools\LaborChargesCalculator\Presentation\Controllers\ToolController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/ferramentas/encargos-trabalhistas', [ToolController::class, 'index'])
-    ->name('tools.encargos-trabalhistas.index');
-Route::post('/ferramentas/encargos-trabalhistas', [ToolController::class, 'calculate'])
-    ->name('tools.encargos-trabalhistas.calculate');
-Route::post('/ferramentas/encargos-trabalhistas/exportar/pdf', [ToolController::class, 'exportPdf'])
-    ->name('tools.encargos-trabalhistas.export.pdf');
-Route::post('/ferramentas/encargos-trabalhistas/exportar/excel', [ToolController::class, 'exportExcel'])
-    ->middleware('tool.feature:encargos-trabalhistas,spreadsheet_export')
-    ->name('tools.encargos-trabalhistas.export.excel');
+Route::get('/tools/employer-payroll-tax-calculator', [ToolController::class, 'index'])
+    ->name('tools.employer-payroll-tax-calculator.index');
+Route::post('/tools/employer-payroll-tax-calculator', [ToolController::class, 'calculate'])
+    ->name('tools.employer-payroll-tax-calculator.calculate');
+Route::post('/tools/employer-payroll-tax-calculator/export/pdf', [ToolController::class, 'exportPdf'])
+    ->name('tools.employer-payroll-tax-calculator.export.pdf');
+Route::post('/tools/employer-payroll-tax-calculator/export/excel', [ToolController::class, 'exportExcel'])
+    ->middleware('tool.feature:employer-payroll-tax-calculator,spreadsheet_export')
+    ->name('tools.employer-payroll-tax-calculator.export.excel');

@@ -1,105 +1,23 @@
 @extends('layouts.app')
-
-@section('title', 'Calculadora de Distribuição de Lucros | Prazzu Tools')
-@section('meta_description', 'Calcule o lucro disponível e a parcela de cada sócio conforme os valores e premissas informados.')
-@section('canonical_url', route('tools.distribuicao-de-lucros.index'))
-
+@section('title', $tool->name.' | Prazzu Tools')
+@section('meta_description', $tool->description)
+@section('canonical_url', route('tools.owner-distribution-calculator.index'))
 @section('content')
-    <x-tools.page title="Calculadora de Distribuição de Lucros" description="Calcule o lucro disponível, a distribuição por participação societária e o saldo remanescente." icon="bi-pie-chart" slug="distribuicao-de-lucros">
-
-        <form data-testid="tool-form-panel" method="post" action="{{ route('tools.distribuicao-de-lucros.calculate') }}" class="row g-3">
-            @csrf
-            <div class="col-md-4">
-                <label class="form-label" for="partner_label">Sócio</label>
-                <input class="form-control" id="partner_label" name="partner_label" value="{{ old('partner_label') }}" placeholder="Ex.: Sócio administrador">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="ownership_percentage">Participação (%)</label>
-                <input class="form-control" id="ownership_percentage" name="ownership_percentage" value="{{ old('ownership_percentage') }}" required placeholder="Ex.: 100">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="accounting_profit">Lucro contábil</label>
-                <input class="form-control" id="accounting_profit" name="accounting_profit" value="{{ old('accounting_profit') }}" required placeholder="Ex.: 60.000,00" data-e2e-value="50000,00">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="accumulated_losses">Prejuízos acumulados</label>
-                <input class="form-control" id="accumulated_losses" name="accumulated_losses" value="{{ old('accumulated_losses') }}">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="reserves_and_unavailable_amounts">Reservas/indisponíveis</label>
-                <input class="form-control" id="reserves_and_unavailable_amounts" name="reserves_and_unavailable_amounts" value="{{ old('reserves_and_unavailable_amounts') }}">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="adjustments">Ajustes</label>
-                <input class="form-control" id="adjustments" name="adjustments" value="{{ old('adjustments') }}">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="prior_distributions">Distribuições anteriores</label>
-                <input class="form-control" id="prior_distributions" name="prior_distributions" value="{{ old('prior_distributions') }}">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="intended_distribution">Distribuição pretendida</label>
-                <input class="form-control" id="intended_distribution" name="intended_distribution" value="{{ old('intended_distribution') }}" required placeholder="Ex.: 45.000,00" data-e2e-value="10000,00">
-            </div>
-            @if($plusEnabled ?? true)
-            <div class="col-12">
-                <div class="card border-primary-subtle" data-plus-feature="partners"><div class="card-body">
-                    <h2 class="h6">Múltiplos sócios <span class="badge text-bg-primary">Prazzu Plus</span></h2>
-                    <p class="small text-body-secondary">Adicione sócios e informe as participações. A soma do sócio principal com os adicionais deve ser exatamente 100%.</p>
-                    @for($i = 0; $i < 4; $i++)
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-8"><input class="form-control" name="partners[{{ $i }}][label]" value="{{ old('partners.'.$i.'.label') }}" placeholder="Sócio adicional {{ $i + 2 }}"></div>
-                            <div class="col-md-4"><div class="input-group"><input class="form-control" name="partners[{{ $i }}][ownership_percentage]" value="{{ old('partners.'.$i.'.ownership_percentage') }}" placeholder="0"><span class="input-group-text">%</span></div></div>
-                        </div>
-                    @endfor
-                </div></div>
-            </div>
-            @endif
-            <div class="col-12 form-check ms-2">
-                <input class="form-check-input" type="checkbox" name="confirm_assumptions" value="1" id="confirm-profit" required>
-                <label class="form-check-label" for="confirm-profit">Confirmo que revisei escrituração, saldos e participação.</label>
-            </div>
-            <div class="col-12"><button class="btn btn-primary" type="submit">Calcular</button></div>
-        </form>
-
-        @if ($errors->any())
-            <div class="alert alert-danger mt-3">{{ $errors->first() }}</div>
-        @endif
-
-        @isset($result)
-    <span data-analytics-result="main" hidden></span>
-            <section class="card mt-4 prazzu-tool-result-surface" aria-labelledby="profit-distribution-result-title" data-testid="tool-result" data-tool-result-panel>
-                <div class="card-body">
-                    <h2 class="h4" id="profit-distribution-result-title">Resultado</h2>
-                    @foreach ($result->summary as $item)
-                        <p><strong>{{ $item->label }}:</strong> {{ $item->value }}</p>
-                    @endforeach
-                    @if(count($result->details['partners'] ?? []) > 1)
-                        <h3 class="h6 mt-3">Distribuição por sócio <span class="badge text-bg-primary">Plus</span></h3>
-                        <div class="table-responsive"><table class="table table-sm"><thead><tr><th>Sócio</th><th class="text-end">Participação</th><th class="text-end">Distribuição</th></tr></thead><tbody>
-                        @foreach($result->details['partners'] as $partner)<tr><td>{{ $partner['label'] }}</td><td class="text-end">{{ $partner['ownership_percentage'] }}%</td><td class="text-end">{{ \App\Core\Money\Money::fromMinor($partner['distributed_amount_minor'])->formatPtBr() }}</td></tr>@endforeach
-                        </tbody></table></div>
-                    @endif
-                </div>
-            </section>
-            <div class="d-flex gap-2 mt-3 flex-wrap">
-                @foreach (['pdf' => 'Baixar PDF', 'excel' => 'Baixar Excel (.xlsx)'] as $format => $label)
-                    <form method="post" action="{{ route('tools.distribuicao-de-lucros.export.'.$format) }}">
-                        @csrf
-                        @foreach ($result->details['input'] as $name => $value)
-                            @if(is_array($value))
-                                @foreach($value as $index => $row)
-                                    @foreach($row as $field => $nestedValue)<input type="hidden" name="{{ $name }}[{{ $index }}][{{ $field }}]" value="{{ $nestedValue }}">@endforeach
-                                @endforeach
-                            @else
-                                <input type="hidden" name="{{ $name }}" value="{{ is_bool($value) ? ($value ? 1 : 0) : $value }}">
-                            @endif
-                        @endforeach
-                        <input type="hidden" name="confirm_assumptions" value="1">
-                        <button class="btn {{ $format === 'pdf' ? 'btn-outline-primary' : 'btn-outline-success' }}">{{ $label }}</button>
-                    </form>
-                @endforeach
-            </div>
-        @endisset
-    </x-tools.page>
+<x-tools.page :title="$tool->name" :description="$tool->description" :icon="$tool->icon" :slug="$tool->slug">
+<form method="post" action="{{ route('tools.owner-distribution-calculator.calculate') }}" class="row g-3">@csrf
+<div class="col-md-4"><x-tools.form.input name="partner_label" label="Owner" :value="old('partner_label')" placeholder="e.g. Owner 1" /></div>
+<div class="col-md-4"><x-tools.form.input name="ownership_percentage" label="Ownership" type="number" min="0.000001" max="100" step="0.000001" suffix="%" :value="old('ownership_percentage')" required /></div>
+<div class="col-md-4"><x-tools.form.money name="accounting_profit" label="Book profit / retained amount available" :value="old('accounting_profit')" required /></div>
+<div class="col-md-4"><x-tools.form.money name="accumulated_losses" label="Accumulated losses" :value="old('accumulated_losses','0.00')" /></div>
+<div class="col-md-4"><x-tools.form.money name="reserves_and_unavailable_amounts" label="Restricted / unavailable reserves" :value="old('reserves_and_unavailable_amounts','0.00')" /></div>
+<div class="col-md-4"><x-tools.form.money name="adjustments" label="Accounting adjustments" :value="old('adjustments','0.00')" /></div>
+<div class="col-md-4"><x-tools.form.money name="prior_distributions" label="Prior distributions" :value="old('prior_distributions','0.00')" /></div>
+<div class="col-md-4"><x-tools.form.money name="intended_distribution" label="Planned distribution" :value="old('intended_distribution')" required /></div>
+@if($plusEnabled ?? true)<div class="col-12"><div class="card border-primary-subtle"><div class="card-body"><h2 class="h6">Additional owners <span class="badge text-bg-primary">Plus</span></h2><p class="small text-body-secondary">Ownership percentages must total 100%.</p>@for($i=0;$i<4;$i++)<div class="row g-2 mb-2"><div class="col-md-8"><input class="form-control" name="partners[{{ $i }}][label]" value="{{ old('partners.'.$i.'.label') }}" placeholder="Owner {{ $i+2 }}"></div><div class="col-md-4"><div class="input-group"><input class="form-control" name="partners[{{ $i }}][ownership_percentage]" value="{{ old('partners.'.$i.'.ownership_percentage') }}"><span class="input-group-text">%</span></div></div></div>@endfor</div></div></div>@endif
+<div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="confirm_assumptions" value="1" id="confirm-profit" required><label class="form-check-label" for="confirm-profit">I reviewed the ownership, accounting balances, and distribution assumptions.</label></div>
+<div class="col-12"><button class="btn btn-primary">Calculate distribution</button></div>
+</form>
+@if($errors->any())<div class="alert alert-danger mt-3">{{ $errors->first() }}</div>@endif
+@isset($result)<span data-analytics-result="main" hidden></span><x-tools.result-panel title="Distribution estimate"><div class="row g-3">@foreach($result->summary as $item)<div class="col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" /></div>@endforeach</div>@foreach($result->warnings as $warning)<div class="alert alert-light border mt-3">{{ $warning->message }}</div>@endforeach@if(count($result->details['partners']??[])>1)<div class="table-responsive mt-4"><table class="table table-sm"><thead><tr><th>Owner</th><th class="text-end">Ownership</th><th class="text-end">Distribution</th></tr></thead><tbody>@foreach($result->details['partners'] as $partner)<tr><td>{{ $partner['label'] }}</td><td class="text-end">{{ $partner['ownership_percentage'] }}%</td><td class="text-end">{{ \App\Core\Money\Money::fromMinor($partner['distributed_amount_minor'])->formatEnUs() }}</td></tr>@endforeach</tbody></table></div>@endif</x-tools.result-panel>@endisset
+</x-tools.page>
 @endsection

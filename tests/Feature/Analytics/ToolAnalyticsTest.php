@@ -14,16 +14,16 @@ final class ToolAnalyticsTest extends TestCase
 
     public function test_tool_open_is_captured_by_the_central_middleware(): void
     {
-        $this->get(route('tools.calculadora-margem-markup.index'))->assertOk();
+        $this->get(route('tools.margin-markup-calculator.index'))->assertOk();
         $this->assertDatabaseHas('platform_analytics_events', [
             'event_name' => AnalyticsEventName::ToolOpened->value, 'channel' => 'tool',
-            'subject_slug' => 'calculadora-margem-markup',
+            'subject_slug' => 'margin-markup-calculator',
         ]);
     }
 
     public function test_continuity_entry_is_measured_without_capturing_calculation_payloads(): void
     {
-        $this->get(route('tools.calculadora-margem-markup.index', [
+        $this->get(route('tools.margin-markup-calculator.index', [
             'source' => 'home_recent_session',
         ]))->assertOk();
 
@@ -31,7 +31,7 @@ final class ToolAnalyticsTest extends TestCase
             ->where('event_name', AnalyticsEventName::RetentionContinuityUsed->value)
             ->firstOrFail();
 
-        self::assertSame('calculadora-margem-markup', $event->subject_slug);
+        self::assertSame('margin-markup-calculator', $event->subject_slug);
         self::assertSame('home_recent_session', $event->metadata['placement']);
         self::assertArrayNotHasKey('input_payload', $event->metadata);
         self::assertArrayNotHasKey('result_payload', $event->metadata);
@@ -39,9 +39,9 @@ final class ToolAnalyticsTest extends TestCase
 
     public function test_related_tool_entry_records_only_valid_catalog_attribution(): void
     {
-        $this->get(route('tools.calculadora-ferias.index', [
+        $this->get(route('tools.pto-calculator.index', [
             'source' => 'related_tools',
-            'from_tool' => 'calculadora-salario-liquido',
+            'from_tool' => 'take-home-pay-calculator',
             'position' => 2,
         ]))->assertOk();
 
@@ -49,11 +49,11 @@ final class ToolAnalyticsTest extends TestCase
             ->where('event_name', AnalyticsEventName::RetentionRelatedToolOpened->value)
             ->firstOrFail();
 
-        self::assertSame('calculadora-ferias', $event->subject_slug);
-        self::assertSame('calculadora-salario-liquido', $event->metadata['from_tool']);
+        self::assertSame('pto-calculator', $event->subject_slug);
+        self::assertSame('take-home-pay-calculator', $event->metadata['from_tool']);
         self::assertSame(2, $event->metadata['position']);
 
-        $this->get(route('tools.calculadora-ferias.index', [
+        $this->get(route('tools.pto-calculator.index', [
             'source' => 'related_tools',
             'from_tool' => 'slug-inexistente',
         ]))->assertOk();
@@ -66,7 +66,7 @@ final class ToolAnalyticsTest extends TestCase
 
     public function test_problem_journey_entry_records_only_a_valid_curated_start(): void
     {
-        $this->get(route('tools.simulador-admissao.index', [
+        $this->get(route('tools.new-hire-cost-calculator.index', [
             'source' => 'problem_journey',
             'journey' => 'funcionarios-folha',
             'placement' => 'home',
@@ -77,13 +77,13 @@ final class ToolAnalyticsTest extends TestCase
             ->where('event_name', AnalyticsEventName::DiscoveryProblemJourneyOpened->value)
             ->firstOrFail();
 
-        self::assertSame('simulador-admissao', $event->subject_slug);
+        self::assertSame('new-hire-cost-calculator', $event->subject_slug);
         self::assertSame('funcionarios-folha', $event->metadata['journey']);
         self::assertSame('home', $event->metadata['placement']);
         self::assertArrayNotHasKey('input_payload', $event->metadata);
         self::assertArrayNotHasKey('result_payload', $event->metadata);
 
-        $this->get(route('tools.custo-funcionario-clt.index', [
+        $this->get(route('tools.employee-cost-calculator.index', [
             'source' => 'problem_journey',
             'journey' => 'funcionarios-folha',
         ]))->assertOk();
@@ -96,17 +96,17 @@ final class ToolAnalyticsTest extends TestCase
     public function test_browser_can_publish_a_normalized_tool_event(): void
     {
         $this->postJson(route('analytics.tools.track'), [
-            'tool' => 'calculadora-margem-markup', 'event' => AnalyticsEventName::ToolCalculationStarted->value,
+            'tool' => 'margin-markup-calculator', 'event' => AnalyticsEventName::ToolCalculationStarted->value,
         ])->assertNoContent();
         $this->assertDatabaseHas('platform_analytics_events', [
-            'event_name' => AnalyticsEventName::ToolCalculationStarted->value, 'subject_slug' => 'calculadora-margem-markup',
+            'event_name' => AnalyticsEventName::ToolCalculationStarted->value, 'subject_slug' => 'margin-markup-calculator',
         ]);
     }
 
     public function test_browser_can_publish_a_journey_event_without_persisting_sensitive_values(): void
     {
         $this->postJson(route('analytics.tools.track'), [
-            'tool' => 'calculadora-margem-markup',
+            'tool' => 'margin-markup-calculator',
             'event' => AnalyticsEventName::ToolFieldCompleted->value,
             'schema_version' => 1,
             'metadata' => [
@@ -133,7 +133,7 @@ final class ToolAnalyticsTest extends TestCase
     public function test_browser_rejects_unknown_tool_journey_events(): void
     {
         $this->postJson(route('analytics.tools.track'), [
-            'tool' => 'calculadora-margem-markup',
+            'tool' => 'margin-markup-calculator',
             'event' => 'tool.payload.captured',
         ])->assertUnprocessable();
     }
@@ -141,7 +141,7 @@ final class ToolAnalyticsTest extends TestCase
     public function test_repeated_tool_events_in_the_same_session_are_deduplicated(): void
     {
         $payload = [
-            'tool' => 'calculadora-margem-markup',
+            'tool' => 'margin-markup-calculator',
             'event' => AnalyticsEventName::ToolCalculationStarted->value,
         ];
 
@@ -150,14 +150,14 @@ final class ToolAnalyticsTest extends TestCase
 
         self::assertSame(1, PlatformAnalyticsEvent::query()
             ->where('event_name', AnalyticsEventName::ToolCalculationStarted->value)
-            ->where('subject_slug', 'calculadora-margem-markup')
+            ->where('subject_slug', 'margin-markup-calculator')
             ->count());
     }
 
     public function test_prefetch_requests_do_not_create_page_views_or_tool_opens(): void
     {
         $this->withHeader('Purpose', 'prefetch')
-            ->get(route('tools.calculadora-margem-markup.index'))
+            ->get(route('tools.margin-markup-calculator.index'))
             ->assertOk();
 
         self::assertSame(0, PlatformAnalyticsEvent::query()->count());
@@ -168,7 +168,7 @@ final class ToolAnalyticsTest extends TestCase
         $this->signInAsInternalAdministrator();
         PlatformAnalyticsEvent::query()->create([
             'event_id' => fake()->uuid(), 'event_name' => AnalyticsEventName::ToolOpened->value, 'schema_version' => 1,
-            'channel' => 'tool', 'subject_type' => 'tool', 'subject_slug' => 'calculadora-margem-markup',
+            'channel' => 'tool', 'subject_type' => 'tool', 'subject_slug' => 'margin-markup-calculator',
             'metadata' => [], 'occurred_at' => now(),
         ]);
         $this->get(route('admin.analytics.tools'))->assertOk()->assertSee('Analytics das Ferramentas');
@@ -177,7 +177,7 @@ final class ToolAnalyticsTest extends TestCase
     public function test_product_dashboard_uses_declared_journey_events_and_period_comparison(): void
     {
         $this->signInAsInternalAdministrator();
-        $slug = 'calculadora-margem-markup';
+        $slug = 'margin-markup-calculator';
         $journey = fake()->uuid();
 
         foreach ([

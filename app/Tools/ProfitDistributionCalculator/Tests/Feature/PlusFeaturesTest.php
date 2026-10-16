@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('distribuicao-de-lucros', 'partners')]
+    #[CoversPlusFeature('owner-distribution-calculator', 'partners')]
     public function test_lot_five_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

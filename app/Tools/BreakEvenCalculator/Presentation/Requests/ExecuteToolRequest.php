@@ -18,9 +18,9 @@ final class ExecuteToolRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fixed_costs' => ['required', 'brazilian_money', 'money_min:0'],
-            'sale_price' => ['required', 'brazilian_money', 'money_min:0.01'],
-            'variable_cost' => ['required', 'brazilian_money', 'money_min:0'],
+            'fixed_costs' => ['required', 'us_money', 'money_min:0'],
+            'sale_price' => ['required', 'us_money', 'money_min:0.01'],
+            'variable_cost' => ['required', 'us_money', 'money_min:0'],
         ];
     }
 
@@ -33,7 +33,7 @@ final class ExecuteToolRequest extends FormRequest
             $variable = Money::fromDecimal((string) $this->input('variable_cost'))->minorAmount();
             $price = Money::fromDecimal((string) $this->input('sale_price'))->minorAmount();
             if ($variable >= $price) {
-                $validator->errors()->add('variable_cost', 'O custo variável deve ser menor que o preço de venda.');
+                $validator->errors()->add('variable_cost', 'Variable cost must be lower than selling price.');
             }
         }];
     }

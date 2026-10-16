@@ -10,7 +10,7 @@ use App\Core\Tools\History\Contracts\ToolRunHistory;
 use App\Core\Tools\History\Data\RuleVersion;
 use App\Core\Tools\History\Data\ToolRunHistoryQuery;
 use App\Models\User;
-use App\Tools\SimplesNacionalCalculator\Tool;
+use App\Tools\WorkingCapitalCalculator\Tool;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -29,7 +29,7 @@ final class ToolRunHistoryTest extends TestCase
 
         $older = $history->recordSucceeded(
             $tool,
-            new RuleVersion(Tool::HISTORY_RULE_VERSION),
+            new RuleVersion('1.2.0'),
             ReferenceDate::fromString('2026-06-01'),
             ['reference_month' => '2026-06'],
             ['estimated_das' => 'R$ 500,00'],
@@ -38,7 +38,7 @@ final class ToolRunHistoryTest extends TestCase
 
         $newer = $history->recordSucceeded(
             $tool,
-            new RuleVersion(Tool::HISTORY_RULE_VERSION),
+            new RuleVersion('1.2.0'),
             ReferenceDate::fromString('2026-07-01'),
             ['reference_month' => '2026-07'],
             ['estimated_das' => 'R$ 600,00'],
@@ -47,7 +47,7 @@ final class ToolRunHistoryTest extends TestCase
 
         $history->recordSucceeded(
             $tool,
-            new RuleVersion(Tool::HISTORY_RULE_VERSION),
+            new RuleVersion('1.2.0'),
             ReferenceDate::fromString('2026-07-01'),
             ['reference_month' => '2026-07'],
             ['estimated_das' => 'R$ 700,00'],
@@ -90,7 +90,7 @@ final class ToolRunHistoryTest extends TestCase
 
         $entry = $history->recordSucceeded(
             new Tool,
-            new RuleVersion(Tool::HISTORY_RULE_VERSION),
+            new RuleVersion('1.2.0'),
             ReferenceDate::fromString('2026-07-01'),
             ['reference_month' => '2026-07'],
             ['estimated_das' => 'R$ 600,00'],
@@ -114,7 +114,7 @@ final class ToolRunHistoryTest extends TestCase
 
         $entry = $history->recordSucceeded(
             new Tool,
-            new RuleVersion(Tool::HISTORY_RULE_VERSION),
+            new RuleVersion('1.2.0'),
             ReferenceDate::fromString('2026-07-01'),
             ['reference_month' => '2026-07'],
             ['estimated_das' => 'R$ 600,00'],

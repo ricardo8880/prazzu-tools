@@ -7,8 +7,8 @@ com eventual parcela fixa e meses retroativos.
 
 ## Funcionamento
 
-- `GET /ferramentas/reajuste-salarial` exibe o formulário público.
-- `POST /ferramentas/reajuste-salarial` valida e executa o cálculo.
+- `GET /ferramentas/salary-increase-calculator` exibe o formulário público.
+- `POST /ferramentas/salary-increase-calculator` valida e executa o cálculo.
 - Entradas: salário atual, percentual, aumento fixo e quantidade de meses
   retroativos.
 - O resultado mostra novo salário, diferença mensal, retroativo e impacto anual.
@@ -18,8 +18,8 @@ com eventual parcela fixa e meses retroativos.
 ## Implementação principal
 
 - **View:** `app/Tools/SalaryAdjustmentCalculator/Resources/views/index.blade.php`
-- **Rotas:** `tools.reajuste-salarial.index` e
-  `tools.reajuste-salarial.calculate`
+- **Rotas:** `tools.salary-increase-calculator.index` e
+  `tools.salary-increase-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

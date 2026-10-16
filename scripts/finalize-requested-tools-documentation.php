@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 $tools = [
     'EmployeeCostCalculator' => ['Calculadora de Custo de Funcionário CLT', 'Calcula remuneração, benefícios, encargos, provisões e custo mensal e anual.', 'Salário, média variável, benefícios, regime, RAT ajustado e terceiros.', 'Cadastro em lote, comparações de contratação, histórico e relatórios.'],
-    'FactorRSimulator' => ['Simulador de Fator R', 'Calcula FS12 ÷ RBT12, anexo aplicável e diferença de folha até 28%.', 'FS12 e RBT12, incluindo as regras especiais para acumulados zerados.', 'Cenários mensais e anuais, projeções, histórico e alertas.'],
-    'LateDasCalculator' => ['Calculadora de DAS em Atraso', 'Atualiza o DAS com multa diária, juros informados e memória.', 'Principal, vencimento, pagamento e Selic acumulada oficial.', 'Cálculo em lote, relatórios, histórico e exportações.'],
     'LaborChargesCalculator' => ['Calculadora de Encargos Trabalhistas', 'Calcula FGTS, CPP, RAT, terceiros, férias, terço e 13º.', 'Salário, benefícios, regime e percentuais próprios da empresa.', 'Folha em lote, comparação de regimes, histórico e relatórios.'],
     'EmploymentModelComparator' => ['Simulador CLT × PJ × Autônomo', 'Compara líquido e custo empresarial nos três modelos.', 'Valores, descontos, tributos e encargos explicitamente informados.', 'Múltiplos cenários, gráficos, histórico e exportações.'],
-    'EmployerInssCalculator' => ['Calculadora de INSS Patronal', 'Calcula CPP, RAT ajustado e terceiros por enquadramento.', 'Folha, regime, RAT/FAP consolidado e terceiros.', 'Folhas completas, comparações anuais, histórico e relatórios.'],
     'WorkingCapitalCalculator' => ['Calculadora de Capital de Giro', 'Calcula NCG, CCL, capital necessário e necessidade adicional.', 'Saldos circulantes pertencentes à mesma data-base.', 'Períodos, projeções, cenários, gráficos e histórico.'],
     'CashFlowCalculator' => ['Calculadora de Fluxo de Caixa', 'Calcula entradas, saídas, geração operacional e saldo previsto.', 'Saldo inicial e movimentações de um único período.', 'Múltiplos meses, dashboards, cenários, histórico e exportações.'],
     'BreakEvenCalculator' => ['Calculadora de Ponto de Equilíbrio', 'Calcula quantidade e faturamento mínimos para cobrir custos.', 'Custos fixos, preço e custo variável unitário.', 'Análise por produto, cenários, gráficos e exportações.'],

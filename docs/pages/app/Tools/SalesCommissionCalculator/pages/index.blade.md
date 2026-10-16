@@ -7,8 +7,8 @@ percentual-base, meta e bônus por atingimento.
 
 ## Funcionamento
 
-- `GET /ferramentas/comissao-vendedores` abre o formulário público.
-- `POST /ferramentas/comissao-vendedores` valida e calcula o caso.
+- `GET /ferramentas/sales-commission-calculator` abre o formulário público.
+- `POST /ferramentas/sales-commission-calculator` valida e calcula o caso.
 - A comissão-base é o faturamento multiplicado pelo percentual informado.
 - Quando existe meta positiva e ela é alcançada, o bônus é aplicado sobre o
   faturamento.
@@ -17,8 +17,8 @@ percentual-base, meta e bônus por atingimento.
 ## Implementação principal
 
 - **View:** `app/Tools/SalesCommissionCalculator/Resources/views/index.blade.php`
-- **Rotas:** `tools.comissao-vendedores.index` e
-  `tools.comissao-vendedores.calculate`
+- **Rotas:** `tools.sales-commission-calculator.index` e
+  `tools.sales-commission-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

@@ -10,7 +10,7 @@ final class ToolPageTest extends TestCase
 {
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.encargos-trabalhistas.index'))
+        $this->get(route('tools.employer-payroll-tax-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Encargos Trabalhistas');
     }

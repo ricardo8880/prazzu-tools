@@ -3,11 +3,8 @@
 ## Ferramentas migradas
 
 1. EmployeeCostCalculator
-2. FactorRSimulator
-3. LateDasCalculator
 4. LaborChargesCalculator
 5. EmploymentModelComparator
-6. EmployerInssCalculator
 7. WorkingCapitalCalculator
 8. CashFlowCalculator
 

@@ -42,7 +42,7 @@ final class GenerateReceiptBatch
                 $result = $this->calculate->execute($this->build->execute($validator->validated()))->toArray();
                 $receipt = $result['details']['receipt'] ?? null;
                 if (! is_array($receipt)) {
-                    throw new \RuntimeException('O recibo não pôde ser montado.');
+                    throw new \RuntimeException('The receipt could not be generated.');
                 }
                 $receipts[] = $receipt;
             } catch (Throwable $exception) {

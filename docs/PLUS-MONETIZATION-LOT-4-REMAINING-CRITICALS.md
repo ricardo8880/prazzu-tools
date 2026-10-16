@@ -10,7 +10,6 @@ As 11 ferramentas críticas restantes deixaram de usar `advanced_productivity`/`
 
 Dez módulos passaram a declarar um benefício concreto já materializado pela infraestrutura compartilhada de exportação:
 
-- Simulador de Fator R — `spreadsheet_export`;
 - DAS em Atraso — `spreadsheet_export`;
 - Encargos Trabalhistas — `spreadsheet_export`;
 - CLT × PJ × Autônomo — `spreadsheet_export`;

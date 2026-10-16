@@ -12,7 +12,7 @@ Antes das mudanças foram relidos `README.md`, `CORE_CANDIDATES.md`, `docs/IMPLE
 
 ## Mudanças
 
-- O README volta a refletir a fonte de verdade executável: **50 ferramentas oficiais**, sendo 49 em `contabilidade` e 1 em `rh`.
+- O README volta a refletir a fonte de verdade executável: **28 ferramentas oficiais**, sendo 27 em `contabilidade` e 1 em `rh`.
 - Referências históricas a 32/33 ferramentas continuam documentadas como cronologia, mas deixam de ser apresentadas como estado vigente.
 - `.gitignore` passou a proteger `backup/` e resíduos temporários `~$*`, `.DS_Store` e `Thumbs.db`.
 - `.gitattributes` passou a excluir `backup/` também de `git archive`.

@@ -16,7 +16,7 @@ final class GoldenCases
     {
         $reference = 'README e CalculatorTest do módulo AssetDepreciationCalculator 1.1.0.';
 
-        return new GoldenCaseSuite('calculadora-depreciacao-ativos', [
+        return new GoldenCaseSuite('asset-depreciation-calculator', [
             new GoldenCase('typical-residual', 'Ativo linear com valor residual', GoldenCaseKind::Typical,
                 ['value_minor' => 1200000, 'residual_value_minor' => 200000, 'years' => 5, 'method' => 'linear'],
                 ['depreciable_base_minor' => 1000000, 'monthly_minor' => 16667, 'annual_minor' => 200000, 'book_value_year_one_minor' => 1000000, 'book_value_end_minor' => 200000], $reference, '1.1.0', 'Money/IntegerRounding sem float.'),

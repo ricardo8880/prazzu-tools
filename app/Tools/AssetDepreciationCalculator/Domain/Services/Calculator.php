@@ -76,15 +76,15 @@ final class Calculator implements ToolCalculator
         $mainBookValue = Money::fromMinor($main['first_year_book_value_minor']);
 
         return new ToolCalculationResult(
-            toolSlug: 'calculadora-depreciacao-ativos',
+            toolSlug: 'asset-depreciation-calculator',
             schemaVersion: '1.1.0',
             summary: [
-                new ToolCalculationSummaryItem('asset_value', 'Valor do bem', $mainCost->formatPtBr()),
-                new ToolCalculationSummaryItem('residual_value', 'Valor residual', Money::fromMinor($main['residual_value_minor'])->formatPtBr()),
-                new ToolCalculationSummaryItem('depreciable_base', 'Base depreciável', Money::fromMinor($main['depreciable_base_minor'])->formatPtBr()),
-                new ToolCalculationSummaryItem('monthly_depreciation', $main['method'] === 'linear' ? 'Depreciação mensal' : 'Média mensal no 1º ano', $mainMonthly->formatPtBr()),
-                new ToolCalculationSummaryItem('annual_depreciation', $main['method'] === 'linear' ? 'Depreciação anual' : 'Depreciação no 1º ano', $mainAnnual->formatPtBr()),
-                new ToolCalculationSummaryItem('book_value_after_year_one', 'Valor contábil após 1 ano', $mainBookValue->formatPtBr()),
+                new ToolCalculationSummaryItem('asset_value', 'Asset cost', $mainCost->formatEnUs()),
+                new ToolCalculationSummaryItem('residual_value', 'Salvage value', Money::fromMinor($main['residual_value_minor'])->formatEnUs()),
+                new ToolCalculationSummaryItem('depreciable_base', 'Depreciable basis', Money::fromMinor($main['depreciable_base_minor'])->formatEnUs()),
+                new ToolCalculationSummaryItem('monthly_depreciation', $main['method'] === 'linear' ? 'Depreciação mensal' : 'Média mensal no 1º year', $mainMonthly->formatEnUs()),
+                new ToolCalculationSummaryItem('annual_depreciation', $main['method'] === 'linear' ? 'Depreciação anual' : 'Depreciação no 1º year', $mainAnnual->formatEnUs()),
+                new ToolCalculationSummaryItem('book_value_after_year_one', 'Amount contábil após 1 year', $mainBookValue->formatEnUs()),
             ],
             details: [
                 'assets' => $assets,
@@ -103,15 +103,15 @@ final class Calculator implements ToolCalculator
             calculationMemory: new CalculationMemory('1.1.0', [
                 new CalculationMemoryStep(
                     'depreciable_base',
-                    'Base depreciável',
+                    'Depreciable basis',
                     'valor do ativo − valor residual',
                     ['asset_value_minor' => $main['cost_minor'], 'residual_value_minor' => $main['residual_value_minor']],
                     $main['depreciable_base_minor'],
-                    'Valores monetários são calculados em centavos, sem ponto flutuante.',
+                    'Amounts monetários são calculados em centavos, sem ponto flutuante.',
                 ),
                 new CalculationMemoryStep(
                     'first_year_depreciation',
-                    'Depreciação do primeiro ano',
+                    'Depreciação do primeiro year',
                     $this->formula($main['method']),
                     ['useful_life_years' => $main['useful_life_years'], 'method' => $main['method']],
                     $main['first_year_depreciation_minor'],
@@ -119,7 +119,7 @@ final class Calculator implements ToolCalculator
                 ),
                 new CalculationMemoryStep(
                     'first_year_book_value',
-                    'Valor contábil ao fim do primeiro ano',
+                    'Amount contábil ao fim do primeiro year',
                     'valor contábil inicial − depreciação acumulada',
                     ['opening_book_value_minor' => $main['cost_minor'], 'depreciation_minor' => $main['first_year_depreciation_minor'], 'residual_value_minor' => $main['residual_value_minor']],
                     $main['first_year_book_value_minor'],
@@ -150,7 +150,7 @@ final class Calculator implements ToolCalculator
                 'sum_of_years_digits' => $year === $years
                     ? $remaining
                     : min($remaining, IntegerRounding::divide($depreciableBase * ($years - $year + 1), $sumDigits)),
-                default => throw new InvalidArgumentException('Método de depreciação inválido.'),
+                default => throw new InvalidArgumentException('Method de depreciação inválido.'),
             };
 
             $depreciation = max(0, min($remaining, $depreciation));
@@ -217,9 +217,9 @@ final class Calculator implements ToolCalculator
     private function methodLabel(string $method): string
     {
         return match ($method) {
-            'linear' => 'Linear',
+            'linear' => 'Straight-line',
             'declining_balance' => 'Saldos decrescentes (duplo)',
-            'sum_of_years_digits' => 'Soma dos dígitos dos anos',
+            'sum_of_years_digits' => 'Soma dos dígitos dos years',
             default => 'Desconhecido',
         };
     }
@@ -227,9 +227,9 @@ final class Calculator implements ToolCalculator
     private function formula(string $method): string
     {
         return match ($method) {
-            'linear' => 'base depreciável ÷ vida útil em anos',
-            'declining_balance' => 'valor contábil inicial do ano × (2 ÷ vida útil), limitado ao saldo remanescente',
-            'sum_of_years_digits' => 'base depreciável × anos restantes ÷ soma dos dígitos da vida útil',
+            'linear' => 'base depreciável ÷ vida útil em years',
+            'declining_balance' => 'valor contábil inicial do year × (2 ÷ vida útil), limitado ao saldo remanescente',
+            'sum_of_years_digits' => 'base depreciável × years restantes ÷ soma dos dígitos da vida útil',
             default => '',
         };
     }

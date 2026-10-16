@@ -12,10 +12,10 @@ final class ToolCatalogRelatedTest extends TestCase
     public function test_related_tools_come_from_registry_and_never_include_the_current_tool(): void
     {
         $catalog = $this->app->make(ToolCatalog::class);
-        $related = $catalog->related('simulador-fator-r');
+        $related = $catalog->related('working-capital-calculator');
 
         self::assertNotEmpty($related);
-        self::assertNotContains('simulador-fator-r', $related->pluck('slug')->all());
+        self::assertNotContains('working-capital-calculator', $related->pluck('slug')->all());
         self::assertLessThanOrEqual(4, $related->count());
 
         foreach ($related as $tool) {
@@ -32,15 +32,15 @@ final class ToolCatalogRelatedTest extends TestCase
     public function test_curated_journey_is_used_before_the_heuristic_fallback(): void
     {
         $related = $this->app->make(ToolCatalog::class)
-            ->related('calculadora-salario-liquido')
+            ->related('take-home-pay-calculator')
             ->pluck('slug')
             ->all();
 
         self::assertSame([
-            'custo-funcionario-clt',
-            'calculadora-hora-extra',
-            'calculadora-ferias',
-            'calculadora-de-rescisao',
+            'employee-cost-calculator',
+            'overtime-pay-calculator',
+            'pto-calculator',
+            'final-pay-severance-calculator',
         ], $related);
     }
 
@@ -48,13 +48,13 @@ final class ToolCatalogRelatedTest extends TestCase
     public function test_next_steps_use_only_the_editorial_journey_and_mark_the_primary_action(): void
     {
         $steps = $this->app->make(ToolCatalog::class)
-            ->nextSteps('calculadora-salario-liquido');
+            ->nextSteps('take-home-pay-calculator');
 
         self::assertSame([
-            'custo-funcionario-clt',
-            'calculadora-hora-extra',
-            'calculadora-ferias',
-            'calculadora-de-rescisao',
+            'employee-cost-calculator',
+            'overtime-pay-calculator',
+            'pto-calculator',
+            'final-pay-severance-calculator',
         ], $steps->pluck('slug')->all());
         self::assertTrue((bool) $steps->first()['is_primary_next_step']);
         self::assertSame([1, 2, 3, 4], $steps->pluck('journey_position')->all());
@@ -64,7 +64,7 @@ final class ToolCatalogRelatedTest extends TestCase
     public function test_next_steps_do_not_invent_cross_vertical_fallbacks(): void
     {
         self::assertTrue(
-            $this->app->make(ToolCatalog::class)->nextSteps('calculadora-turnover')->isEmpty(),
+            $this->app->make(ToolCatalog::class)->nextSteps('employee-turnover-calculator')->isEmpty(),
         );
     }
 

@@ -12,7 +12,7 @@ use App\Core\Tools\History\Data\ToolRunPage;
 
 final readonly class ManageAccountingFeesHistory
 {
-    public const TOOL_SLUG = 'calculadora-de-honorarios-contabeis';
+    public const TOOL_SLUG = 'accounting-fee-calculator';
 
     public const TYPE_CALCULATION = 'accounting_fee';
 

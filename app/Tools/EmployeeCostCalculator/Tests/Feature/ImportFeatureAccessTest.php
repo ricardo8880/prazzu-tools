@@ -29,44 +29,44 @@ final class ImportFeatureAccessTest extends TestCase
         $user = User::factory()->create(['subscription_plan' => SubscriptionPlan::Free]);
 
         $this->actingAs($user)
-            ->post(route('tools.custo-funcionario-clt.import.preview'), [
+            ->post(route('tools.employee-cost-calculator.import.preview'), [
                 'import_file' => $this->uploadedFile($format),
             ])
-            ->assertRedirect(route('tools.custo-funcionario-clt.index'))
+            ->assertRedirect(route('tools.employee-cost-calculator.index'))
             ->assertHeader('X-Prazzu-Access-Reason', 'feature.plus_required');
 
-        $this->post(route('tools.custo-funcionario-clt.import.process'), $this->processPayload(
+        $this->post(route('tools.employee-cost-calculator.import.process'), $this->processPayload(
             $this->storeDataset($user, $format),
         ))
-            ->assertRedirect(route('tools.custo-funcionario-clt.index'))
+            ->assertRedirect(route('tools.employee-cost-calculator.index'))
             ->assertHeader('X-Prazzu-Access-Reason', 'feature.plus_required');
     }
 
     #[DataProvider('isolatedFeatureFlags')]
-    #[CoversPlusFeature('custo-funcionario-clt', 'csv_import')]
-    #[CoversPlusFeature('custo-funcionario-clt', 'xlsx_import')]
+    #[CoversPlusFeature('employee-cost-calculator', 'csv_import')]
+    #[CoversPlusFeature('employee-cost-calculator', 'xlsx_import')]
     public function test_disabled_format_is_blocked_while_plus_can_use_the_other_active_format(
         string $disabledFormat,
         string $activeFormat,
     ): void {
         config()->set('access.commercial_mode', CommercialAccessMode::Monetized->value);
         config()->set(
-            "features.tools.custo-funcionario-clt.features.{$disabledFormat}_import.enabled",
+            "features.tools.employee-cost-calculator.features.{$disabledFormat}_import.enabled",
             false,
         );
         $user = User::factory()->create(['subscription_plan' => SubscriptionPlan::Plus]);
 
         $this->actingAs($user)
-            ->post(route('tools.custo-funcionario-clt.import.preview'), [
+            ->post(route('tools.employee-cost-calculator.import.preview'), [
                 'import_file' => $this->uploadedFile($disabledFormat),
             ])
             ->assertServiceUnavailable();
 
-        $this->post(route('tools.custo-funcionario-clt.import.process'), $this->processPayload(
+        $this->post(route('tools.employee-cost-calculator.import.process'), $this->processPayload(
             $this->storeDataset($user, $disabledFormat),
         ))->assertServiceUnavailable();
 
-        $preview = $this->post(route('tools.custo-funcionario-clt.import.preview'), [
+        $preview = $this->post(route('tools.employee-cost-calculator.import.preview'), [
             'import_file' => $this->uploadedFile($activeFormat),
         ])->assertOk();
 
@@ -74,7 +74,7 @@ final class ImportFeatureAccessTest extends TestCase
         self::assertNotEmpty($matches[1] ?? null);
 
         $this->post(
-            route('tools.custo-funcionario-clt.import.process'),
+            route('tools.employee-cost-calculator.import.process'),
             $this->processPayload((string) $matches[1]),
         )
             ->assertOk()

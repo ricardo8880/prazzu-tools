@@ -4,9 +4,7 @@
 Migração das ferramentas 29–32 para PDF e Excel reais pelo Core compartilhado.
 
 ## Ferramentas
-- Conversor Fiscal de XML
 - Emissor de Recibos
-- Calculadora de Simples Nacional
 - Calculadora de Férias
 
 ## Alterações

@@ -42,8 +42,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 
 - Não remover os 8 módulos complementares durante a implementação das 20 ferramentas.
 - Não renomear slugs públicos sem estratégia explícita de compatibilidade e redirecionamento.
-- Separar `ProLaboreProfitDistributionCalculator` apenas no Lote 4, quando domínio, rotas, contratos e migração puderem ser tratados em conjunto.
-- Avaliar `SimplesNacionalCalculator` no Lote 6 para evitar duplicação normativa com Fator R e Simulador Tributário.
 - Tratar itens `alignment_required`, `rename_and_scope_alignment` e `split_required` como estados de implementação, não como estados de publicação.
 
 
@@ -79,7 +77,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 
 ## Resultado do Lote 4
 
-- `ProLaboreSimulator` e `ProfitDistributionCalculator` foram criados como módulos oficiais independentes.
 - O módulo combinado foi retirado do inventário oficial e preservado como compatibilidade legada temporária.
 - As novas ferramentas possuem slugs e rotas próprias, sem importar classes de domínio uma da outra.
 - Regras já validadas do módulo combinado foram copiadas para seus domínios responsáveis; nenhuma abstração compartilhada prematura foi criada.
@@ -105,14 +102,12 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 
 - Tratar Fator R, DAS em Atraso e Simulador Tributário como módulos independentes.
 - Reutilizar o catálogo normativo do Core e snapshots por competência.
-- Avaliar `SimplesNacionalCalculator` como módulo complementar sem duplicar regras oficiais.
 
 ## Resultado do Lote 6
 
 - Fator R passou a usar regra normativa compartilhada, snapshot por referência e memória estruturada, sem depender do módulo complementar do Simples Nacional.
 - DAS em Atraso passou a obter multa diária, limite e adicional mensal de regra normativa versionada; a Selic permanece entrada explícita e o resultado é marcado como estimativa.
 - Simulador Tributário passou a expor snapshot normativo, memória auditável do ranking e indicação explícita de estimativa.
-- `SimplesNacionalCalculator` permanece complementar e fora do catálogo oficial; nenhuma dependência entre os quatro módulos tributários foi criada.
 - Os schemas de Fator R e DAS foram incrementados de `1.0.0` para `1.1.0` de forma compatível.
 
 ## Decisões preservadas para o Lote 7
@@ -206,7 +201,7 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 
 - Antes de iniciar o próximo lote, reler o ZIP original, este documento, `CORE_CANDIDATES.md`, `config/product_tools.php` e todos os pacotes de lotes da expansão já produzidos.
 - O próximo módulo não deve importar classes internas de `NetSalaryCalculator`; qualquer reutilização deve ocorrer somente via Core técnico quando houver equivalência real.
-- Preservar o slug público `calculadora-salario-liquido` e o schema de resultado `1.0.0`, evoluindo-os apenas de forma compatível e documentada.
+- Preservar o slug público `take-home-pay-calculator` e o schema de resultado `1.0.0`, evoluindo-os apenas de forma compatível e documentada.
 
 ## Expansão — Lote 12 — Calculadora de Hora Extra, Adicional Noturno e DSR
 
@@ -223,15 +218,13 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 ### Continuidade para o próximo lote da expansão
 
 - Antes do próximo lote, reler o ZIP original e reaplicar, em ordem, os lotes 11 e 12.
-- Preservar os slugs `calculadora-salario-liquido` e `calculadora-hora-extra`.
+- Preservar os slugs `take-home-pay-calculator` e `overtime-pay-calculator`.
 - O próximo módulo não pode importar classes internas destes módulos; reutilização só via Core quando houver equivalência comprovada.
 
 
-## Expansão — Lote 13 — Calculadora DIFAL / ICMS Interestadual + FCP
 
 ### Resultado do Lote 13
 
-- `DifalIcmsCalculator` foi criado como módulo fiscal independente, sem importações de outros módulos de ferramenta.
 - O Essencial calcula DIFAL a partir da base tributável e das alíquotas aplicáveis confirmadas pelo usuário, com memória fiscal completa.
 - O Plus adiciona assistência para alíquota interestadual de 7%/12% e 4% quando o enquadramento da Resolução do Senado nº 13/2012 for confirmado, FCP parametrizado e simulação de base dupla/por dentro quando aplicável.
 - Alíquota interna, FCP, NCM, benefícios e método de base não são inferidos apenas pela UF, evitando falsa precisão fiscal.
@@ -243,7 +236,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 ### Continuidade para o próximo lote da expansão
 
 - Antes do próximo lote, reler o ZIP original e reaplicar, em ordem, os lotes 11, 12 e 13.
-- Preservar os slugs `calculadora-salario-liquido`, `calculadora-hora-extra` e `calculadora-difal-icms`.
 - O próximo lote deve consolidar as três novas ferramentas no produto sem alterar contratos públicos das 29 ferramentas preexistentes.
 
 
@@ -252,7 +244,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 ### Resultado do Lote 14
 
 - O estado foi reconstruído a partir do ZIP original com aplicação sequencial dos Lotes 11, 12 e 13 antes de qualquer alteração.
-- `NetSalaryCalculator`, `OvertimeCalculator` e `DifalIcmsCalculator` foram promovidos de módulos adicionais temporários para o catálogo oficial.
 - O inventário executável passou de 20 para 23 ferramentas oficiais, preservando 9 módulos adicionais e totalizando 32 módulos classificados exatamente uma vez.
 - Os IDs oficiais 1–20 foram preservados; as novas ferramentas receberam IDs 21–23, sem renomear slugs públicos.
 - Busca, categorias, relacionados e sitemap continuam derivados do `ToolCatalog`/`ToolRegistry`; nenhuma camada paralela de catálogo foi criada.
@@ -263,7 +254,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 
 - Antes do Lote 15, reler o ZIP original e reaplicar, em ordem, os Lotes 11, 12, 13 e 14.
 - Confirmar 32 módulos em `app/Tools`, 23 registros oficiais e 9 adicionais.
-- Preservar os slugs `calculadora-salario-liquido`, `calculadora-hora-extra` e `calculadora-difal-icms`.
 - O Lote 15 deve ser de auditoria/regressão final da expansão e não deve alterar escopo funcional sem necessidade comprovada.
 
 
@@ -274,7 +264,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - O estado foi reconstruído a partir do ZIP original com aplicação sequencial dos Lotes 11, 12, 13 e 14.
 - Foram confirmados 32 módulos registrados, sendo 23 ferramentas oficiais e 9 módulos adicionais classificados exatamente uma vez.
 - A auditoria detectou que o ZIP original carregava `bootstrap/cache/routes-v7.php` antigo, ocultando as rotas dos três módulos novos; o cache foi regenerado para compatibilidade do patch e a distribuição futura passou a remover/rejeitar caches PHP em `bootstrap/cache`.
-- `OvertimeCalculator` e `DifalIcmsCalculator` receberam as suítes de casos dourados e gates de qualidade exigidos por `docs/TOOL_QUALITY.md`, sem alteração das fórmulas de domínio.
 - Lint, arquitetura, Analytics, registro/inventário, rotas e smoke tests diretos da expansão foram aprovados neste ambiente.
 - PHPUnit, Pint e `composer release:check` completo continuam bloqueados pela ausência de `dom`, `mbstring`, `pdo_sqlite`, `xml` e `xmlwriter` neste ambiente.
 - `release_readiness` foi atualizado para `expansion_lot_15_audited`.
@@ -302,7 +291,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - O inventário executável foi consolidado em exatamente 32 ferramentas oficiais.
 - A classificação paralela de módulos adicionais foi removida.
 - Todas as 32 ferramentas devem permanecer visíveis na página Ferramentas.
-- `ProLaboreProfitDistributionCalculator` continua ativa com `migration_pending`, sem remoção prematura.
 - O contrato agora bloqueia módulos escondidos, omitidos ou classificados mais de uma vez.
 - Nenhuma URL pública, rota ou módulo foi alterado neste lote.
 
@@ -329,13 +317,11 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - Reler o ZIP original e reaplicar os Lotes Cirúrgicos 1 e 2 em ordem.
 - Preservar os 32 `release_order` e a lista da Home limitada a oito.
 - Auditar rotas, redirecionamentos, histórico, favoritos, Analytics e integrações da ferramenta combinada.
-- Não apagar `ProLaboreProfitDistributionCalculator` sem estratégia de substituição que mantenha 32 ferramentas e compatibilidade pública.
 
 
 ## Resultado do Lote Cirúrgico 3
 
 - A ferramenta combinada de Pró-Labore e Distribuição de Lucros deixou de oferecer um terceiro formulário público duplicado.
-- A URL antiga tornou-se uma ponte explícita para `ProLaboreSimulator` e `ProfitDistributionCalculator`.
 - O manifesto foi marcado como `Deprecated`; histórico e endpoints antigos permanecem temporariamente por compatibilidade.
 - O inventário continua com 32 entradas e classifica o módulo como `compatibility_bridge`.
 - A remoção física fica condicionada ao lote de substituição que preserve exatamente 32 ferramentas.
@@ -344,8 +330,6 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 ## Resultado do Lote Cirúrgico 4
 
 - O estado foi reconstruído a partir do ZIP original e dos Lotes Cirúrgicos 1, 2 e 3, nesta ordem.
-- A ponte temporária foi substituída por um escopo público distinto: `Planejador de Retirada de Sócios`.
-- O slug histórico `calculadora-pro-labore-distribuicao-lucros` foi preservado para compatibilidade.
 - A ferramenta consolidada voltou a aceitar execuções, mas o seu propósito é planejamento conjunto e comparação de cenários, não repetição dos calculadores especializados.
 - As 32 ferramentas permanecem visíveis, implementadas e classificadas exatamente uma vez.
 - A Home permanece limitada às 8 ferramentas de maior `release_order`.
@@ -502,7 +486,7 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - O estado foi reconstruído do ZIP original com aplicação dos Lotes E2E 1 e 2.
 - Playwright Test `1.62.1` foi registrado como runner oficial do navegador.
 - Chromium desktop, servidor Laravel E2E, relatórios HTML/JSON e evidências de falha foram configurados.
-- Um piloto abre a Home e `custo-funcionario-clt` sem antecipar cenários de domínio.
+- Um piloto abre a Home e `employee-cost-calculator` sem antecipar cenários de domínio.
 - A captura inicial reúne console, page errors, falhas de rede e respostas HTTP com erro.
 - O próximo lote deve criar seletores `data-testid` estáveis antes do smoke universal.
 
@@ -565,7 +549,7 @@ Este documento é o ponto obrigatório de continuidade entre lotes. Ele compleme
 - PDF exige cabeçalho e final válidos; XLSX e DOCX exigem estrutura OOXML; CSV exige conteúdo tabular; ZIP exige diretório central legível.
 - HTML retornado como arquivo é rejeitado mesmo quando o endpoint responde com sucesso.
 - Arquivos e resumos JSON são anexados às evidências e permanecem associados aos logs correlacionados do Lote 7.
-- O piloto de `custo-funcionario-clt` cobre PDF e XLSX reais após um cálculo válido.
+- O piloto de `employee-cost-calculator` cobre PDF e XLSX reais após um cálculo válido.
 
 ### Continuidade para o Lote 9
 
@@ -753,7 +737,7 @@ continuidade, compatibilidade e validação.
 ## Evolução multi-nicho — Resultado do Lote 6
 
 - `rh` foi registrada como segunda vertical por configuração, sem enum fechado ou alteração do Core de verticais.
-- Foi criada uma única ferramenta mínima de RH, `calculadora-turnover`, registrada pelo mesmo `ToolRegistry`, catálogo, rotas, Analytics e E2E das ferramentas existentes.
+- Foi criada uma única ferramenta mínima de RH, `employee-turnover-calculator`, registrada pelo mesmo `ToolRegistry`, catálogo, rotas, Analytics e E2E das ferramentas existentes.
 - O inventário oficial passou explicitamente de 32 para 33 ferramentas; os 32 módulos históricos continuam associados a `contabilidade` e a nova ferramenta pertence a `rh`.
 - Home e SEO ganharam conteúdo de RH via configuração compartilhada, sem `HomeRH`, `SEORH` ou infraestrutura paralela.
 - Foi adicionado conteúdo mínimo de Blog de RH com dois artigos, incluindo conteúdo relacionado à ferramenta, usando a mesma engine e as mesmas tabelas existentes.
@@ -784,7 +768,6 @@ continuidade, compatibilidade e validação.
 ## Expansão fiscal pós-consolidação — IRPJ e CSLL no Lucro Presumido
 
 - O inventário oficial é expandido de 33 para 34 ferramentas sem remoção, substituição ou mudança de slug dos módulos existentes.
-- Foi criado `PresumedProfitIrpjCsllCalculator`, na vertical `contabilidade`, com cálculo trimestral de IRPJ, adicional de IRPJ e CSLL para o Lucro Presumido no escopo normativo de 2026.
 - O módulo usa `Money`, `Percentage`, `IntegerRounding`, `NormativeRuleResolver`, contratos padronizados de cálculo, histórico e exportadores compartilhados do Core; não importa classes internas de outras ferramentas.
 - A regra fiscal é versionada como `lucro_presumido.irpj_csll:2026.1.0`, com referências oficiais e casos dourados de cenário típico, fronteira, entrada inválida, arredondamento, não aplicabilidade, transição normativa e regressão.
 - O Essencial entrega o cálculo do trimestre e memória fiscal; o Plus adiciona múltiplas atividades, ajuste dos limites acumulados, créditos/retenções confirmados, histórico e PDF/XLSX.
@@ -793,7 +776,6 @@ continuidade, compatibilidade e validação.
 ## Expansão fiscal — PIS e COFINS 2026
 
 - O inventário oficial é expandido de 34 para 35 ferramentas, preservando todos os módulos e slugs existentes.
-- Foi criado `PisCofinsCalculator`, na vertical `contabilidade`, com apuração mensal pelas alíquotas gerais dos regimes cumulativo e não cumulativo.
 - O Essencial entrega escolha de regime, base tributável, base agregada de créditos elegíveis no não cumulativo, retenções/compensações confirmadas, saldos e memória normativa completa.
 - O Plus adiciona operações adicionais, detalhamento de créditos por operação, comparação cumulativo × não cumulativo, histórico e PDF/XLSX, sem esconder qualquer fórmula necessária ao caso individual.
 - A regra `pis_cofins.general_2026:2026.1.0` registra Leis 9.718/1998, 10.637/2002 e 10.833/2003, LC 214/2025 e a orientação oficial da RFB para a transição de 2026.
@@ -801,10 +783,8 @@ continuidade, compatibilidade e validação.
 - Os gates atuais de inventário, Analytics e E2E passam a esperar 35 ferramentas.
 
 
-## Expansão fiscal — Calculadora de ICMS-ST
 
 - O inventário oficial é expandido de 35 para 36 ferramentas.
-- `IcmsStCalculator` entra na vertical `contabilidade`, categoria fiscal, release_order 36.
 - Essencial: operação interna, MVA informada, ICMS próprio, base ST, ICMS-ST e memória.
 - Plus: MVA ajustada, FCP-ST, interestadual, múltiplos itens, PDF/XLSX e histórico.
 - O cálculo é paramétrico e exige confirmação de NCM/CEST, sujeição à ST, MVA, alíquotas e regras da UF.
@@ -841,11 +821,9 @@ continuidade, compatibilidade e validação.
 - Os gates de inventário, Analytics e E2E passam a esperar 39 ferramentas, com downloads PDF/XLSX declarados para a nova ferramenta.
 
 
-## Expansão — Lote 19 — Simulador MEI → Microempresa
 
 ### Resultado do Lote 19
 
-- `MeiToMicroenterpriseSimulator` foi criado como módulo fiscal independente, elevando o inventário oficial para 40 ferramentas.
 - O Essencial compara faturamento atual/projetado com o teto MEI de referência de 2026 e classifica a projeção em dentro do limite, excesso de até 20% ou excesso superior a 20%.
 - O Plus adiciona projeção anual, alíquota efetiva informada pelo usuário, custos empresariais, peso sobre o faturamento, ponto de diluição de custos fixos e exportações PDF/XLSX.
 - A ferramenta não presume CNAE, anexo, Fator R ou alíquota do Simples Nacional e não determina automaticamente a data jurídica do desenquadramento.
@@ -856,9 +834,7 @@ continuidade, compatibilidade e validação.
 ## Expansão — Lote 20 — ISS, Lucros com/sem Balanço e DAS Retroativo
 
 - O inventário oficial passa de 40 para 43 ferramentas, sem remoção dos módulos existentes.
-- `IssCalculator` (`release_order` 41) calcula ISS de forma parametrizada pela alíquota municipal informada; Plus acrescenta retenção, múltiplos serviços/tomadores, cenários municipais, consolidação e PDF/XLSX.
 - `ProfitDistributionBalanceSimulator` (`release_order` 42) compara capacidade estimada com balanço (lucro contábil informado) e sem balanço (receita × percentual de referência informado − tributos), com pró-labore, acumulados, planejamento e relatório no Plus. O escopo permanece distinto de `ProfitDistributionCalculator`.
-- `RetroactiveDasRegularizationCalculator` (`release_order` 43) reconstitui principal estimado por competência/faturamento/alíquota informada e reutiliza `LateDasRule` para mora. O Plus consolida competências e cria cronograma financeiro; o escopo permanece distinto de `LateDasCalculator`, que parte de um principal já conhecido.
 - Analytics, rotas, catálogo, E2E e exportações continuam na infraestrutura compartilhada. Os gates atuais passam a esperar 43 ferramentas.
 
 ## Saneamento Prazzu Plus — Lote 1 — Fundação de governança
@@ -877,7 +853,7 @@ continuidade, compatibilidade e validação.
 - Estado reconstruído a partir do ZIP original + Lote 1 antes das alterações.
 - As seis features Plus do `ContractGenerator` foram materializadas: biblioteca ampliada, cláusulas inteligentes, favoritos, preenchimento por perfil empresarial, histórico e comparação de versões.
 - Autorização usa apenas `ToolFeatureRequestAuthorizer`/middleware `tool.feature`; histórico, favoritos e perfis reutilizam o Core existente.
-- As seis chaves `gerador-de-contratos:*` foram removidas da dívida legada de `plus_feature_governance`.
+- As seis chaves `contract-generator:*` foram removidas da dívida legada de `plus_feature_governance`.
 - Slug e modalidades essenciais foram preservados; versão do módulo passou a `0.6.0`.
 - Antes do próximo lote, reconstruir o estado usando ZIP original + Lote 1 + Lote 2, em ordem.
 
@@ -888,8 +864,6 @@ continuidade, compatibilidade e validação.
 - `CashFlowCalculator`: removida `advanced_productivity`; criada `cash_flow_scenarios` com comparação base/conservador/otimista, gate Plus e contrato Free × Plus.
 - `BreakEvenCalculator`: removida `advanced_productivity`; criada `scenario_comparison` para variações de preço e custos, gate Plus e contrato Free × Plus.
 - `SalesCommissionCalculator`: removida `advanced_productivity`; criada `batch_sellers` para processamento de 2 a 50 vendedores, gate Plus e contrato Free × Plus.
-- `ProLaboreSimulator`: `scenarios` materializada como comparação anual de 2 a 4 valores mensais de pró-labore, protegida pelo gate Plus.
-- `ProLaboreProfitDistributionCalculator`: `scenario_planning` passou a proteger a simulação avançada; `history_exports` passou a proteger persistência, consulta de histórico e exportações. Usuário Free monetizado não recebe nem grava histórico Plus.
 - As sete chaves corrigidas foram removidas de `config/plus_feature_governance.php::legacy_debt`.
 - Nenhum slug público, fórmula Essencial ou módulo oficial foi removido.
 - Antes do Lote 4, reconstruir o estado usando ZIP original + Lote 1 + Lote 2 + Lote 3, em ordem, e reler os documentos obrigatórios da raiz.
@@ -1144,7 +1118,6 @@ Antes do Lote 2 deste ciclo, reconstruir obrigatoriamente **ZIP original → Cob
 ## Cobertura das dores contábeis — Lote 2 — Certificado Digital A1
 
 - Estado reconstruído obrigatoriamente na ordem **ZIP original → Cobertura das dores contábeis Lote 1** antes da implementação.
-- Criado o módulo oficial `DigitalCertificateAnalyzer`, publicado como **Analisador de Certificado Digital A1**, slug `analisador-certificado-digital-a1`, vertical `contabilidade`, `release_order` 44.
 - O catálogo oficial passa de 43 para **44 ferramentas**, mantendo os 43 módulos anteriores sem renomear ou remover nenhum deles.
 - A experiência Essencial abre PKCS#12 `.pfx/.p12`, mostra titular, emissor, período de validade, dias restantes e CPF/CNPJ quando um documento válido puder ser identificado nos campos lidos.
 - O status “válido” é deliberadamente temporal: o módulo não afirma confiança da cadeia, não consulta revogação/OCSP/CRL, não autentica em SEFAZ, não assina documentos e não emite certificado ICP-Brasil.
@@ -1161,12 +1134,6 @@ Antes do Lote 3 deste ciclo, reconstruir obrigatoriamente **ZIP original → Lot
 ## Cobertura das dores contábeis — Lote 3 — CFOP + SEFAZ + ICMS próprio
 
 - Estado reconstruído obrigatoriamente na ordem **ZIP original → Lote 1 → Lote 2** antes de qualquer alteração.
-- Criados e publicados `CfopAdvisor`, `SefazFiscalValidator` e `IcmsCalculator`, elevando o catálogo oficial de 44 para **47 ferramentas**.
-- `CfopAdvisor` valida qualquer CFOP pela estrutura dos grupos 1/2/3/5/6/7, classifica entrada/saída e abrangência e entrega descrição rápida para um conjunto de códigos recorrentes. Quando o código não está nesse recorte, a ferramenta não inventa descrição e orienta conferência no Anexo II vigente do CONFAZ.
-- A segunda necessidade concreta de CFOP promoveu a referência neutra para `App\Core\Tax\Fiscal\CfopCatalog`. O `FiscalXmlConverter` passou a reutilizar a validação estrutural dos CFOPs dos itens sem importar classes do `CfopAdvisor`.
-- O `FiscalXmlConverter` também deixou de tratar a chave como obrigatoriamente “44 dígitos” e passou a documentar “44 caracteres”, compatível com a evolução técnica para CNPJ/chaves alfanuméricas sem tentar validar uma regra que não esteja implementada.
-- `SefazFiscalValidator` entrega diagnóstico **offline** de chave NF-e/NFC-e: 44 caracteres, cUF, AAMM, modelo, série, número, tipo de emissão e DV para chave totalmente numérica. Não consulta autorização, cancelamento, protocolo, cadastro ou disponibilidade de webservice estadual.
-- `IcmsCalculator` calcula ICMS próprio com base, alíquota e redução informadas; o Plus `inside_calculation` calcula o imposto por dentro quando o valor informado está sem ICMS. ICMS-ST, DIFAL e FCP permanecem nos módulos especializados já existentes.
 - Foram adicionados três contratos Plus concretos e certificados no snapshot (`catalog_details`, `key_breakdown`, `inside_calculation`), elevando a governança de 138 para **141 contratos**, com dívida estrutural e funcional preservadas em zero.
 - O catálogo oficial passa a 47 ferramentas, com `release_order` 45, 46 e 47 e atualização das oito ferramentas mais recentes.
 - `php scripts/lint-php.php`, `php artisan tools:check-architecture` e `php artisan analytics:check` passaram no ambiente disponível. O `route:list`/gate completo continua limitado pela ausência da extensão PHP `dom` no ambiente, não por alteração de dependência do projeto.
@@ -1176,8 +1143,6 @@ Antes do Lote 4 deste ciclo, reconstruir obrigatoriamente **ZIP original → Lot
 
 ## Cobertura das dores contábeis — Lote 4 — Lucro Real + Reforma Tributária
 - Reconstruído em ZIP original → Lote 1 → Lote 2 → Lote 3.
-- Publicados `ActualProfitCalculator` (48) e `TaxReformSimulator` (49).
-- Regra equivalente de IRPJ/CSLL promovida para `ActualProfitIncomeTaxRule` no Core e reutilizada pelo comparador.
 - Reforma 2026–2033 versionada, sem inventar alíquotas futuras.
 - Plus: 141 → 143 contratos, sem dívida nova.
 - Relatório: `docs/ACCOUNTING-PAINS-LOT-4-ACTUAL-PROFIT-TAX-REFORM.md`.
@@ -1188,11 +1153,10 @@ Antes do Lote 5, reconstruir **ZIP original → Lote 1 → Lote 2 → Lote 3 →
 ## Cobertura das dores contábeis — Lote 5 — ECAD + saneamento fiscal dirigido
 
 - Estado reconstruído obrigatoriamente na ordem **ZIP original → Lote 1 → Lote 2 → Lote 3 → Lote 4** antes de qualquer alteração.
-- Publicado `EcadRoyaltySimulator`, ferramenta oficial **50**, slug `simulador-ecad-direitos-autorais`.
 - O Essencial calcula parâmetros já confirmados pelo usuário em três formas compatíveis com a tabela: quantidade de UDA, UDA por m² e percentual sobre base monetária. O módulo não escolhe automaticamente ramo, grau de utilização, região, forma musical, mínimo, desconto ou licença.
 - A referência oficial embarcada para 2026 é UDA de **R$ 107,31**, vigente até dezembro de 2026, com fonte no Regulamento de Arrecadação do Ecad revisado em 12/01/2026. O campo permanece explícito para impedir reutilização silenciosa após a vigência.
 - `period_projection` é recurso Plus concreto e projeta o mesmo valor por múltiplos períodos sem presumir reajustes futuros. A governança Plus passa de 143 para **144 contratos**, sem dívida estrutural ou funcional.
-- O saneamento dirigido corrigiu o estado real deixado pelo Lote 4: `config/product_tools.php` ainda declarava 47 módulos e readiness do Lote 3 apesar de possuir as ferramentas 48 e 49. O inventário executável, os testes constitucionais/current-state, cobertura Analytics e snapshot E2E foram alinhados ao catálogo de 50 ferramentas.
+- O saneamento dirigido corrigiu o estado real deixado pelo Lote 4: `config/product_tools.php` ainda declarava 47 módulos e readiness do Lote 3 apesar de possuir as ferramentas 48 e 49. O inventário executável, os testes constitucionais/current-state, cobertura Analytics e snapshot E2E foram alinhados ao catálogo de 28 ferramentas.
 - Simples Nacional, Lucro Presumido, Fator R, PIS/Cofins, Nota Fiscal e DIFAL foram preservados funcionalmente: a revisão não encontrou justificativa para duplicar ou alterar fórmulas apenas para este ciclo.
 - Nenhuma integração externa, scraping ou persistência foi adicionada ao ECAD.
 - Relatório detalhado: `docs/ACCOUNTING-PAINS-LOT-5-ECAD-FISCAL-SANITIZATION.md`.
@@ -1201,7 +1165,7 @@ Antes do Lote 6, reconstruir obrigatoriamente **ZIP original → Lote 1 → Lote
 
 ## Cobertura das dores contábeis — Lote 6 — auditoria final
 
-O ciclo específico das dores contábeis foi encerrado após reconstrução obrigatória do ZIP original e reaplicação, em ordem, dos Lotes 1 a 5. O estado final mantém **50 ferramentas oficiais**, sendo **49 em Contabilidade e 1 em RH**, sem criar nova ferramenta neste lote.
+O ciclo específico das dores contábeis foi encerrado após reconstrução obrigatória do ZIP original e reaplicação, em ordem, dos Lotes 1 a 5. O estado final mantém **28 ferramentas oficiais**, sendo **27 em Contabilidade e 1 em RH**, sem criar nova ferramenta neste lote.
 
 A auditoria final confirmou as 13 dores agrupadas do ciclo: Nota Fiscal, CFOP, Certificado Digital, Simples Nacional, Lucro Presumido, Lucro Real, Fator R, Reforma Tributária, PIS/Cofins, SEFAZ, ICMS, ECAD e DIFAL. O lote corrigiu lacunas documentais das páginas fiscais do ciclo, adicionou um verificador estático reproduzível em `scripts/check-accounting-pains.php` e regenerou o cache de rotas herdado do ZIP original para que as ferramentas 44–50 não fiquem ocultas no fluxo de aplicação dos patches. A distribuição oficial completa continua sem caches gerados.
 
@@ -1320,8 +1284,7 @@ Antes do Lote 8 desta frente, reconstruir obrigatoriamente **ZIP original → Lo
 
 - O estado real dos 50 manifestos foi auditado: 10 `active`, 40 `beta` e 0 `draft` no ZIP de origem.
 - Foi definido um critério objetivo de promoção baseado nos artefatos de qualidade já oficiais do projeto; nenhuma fonte, revisão ou golden case foi inventado para elevar status.
-- `DifalIcmsCalculator`, `DigitalCertificateAnalyzer`, `EcadRoyaltySimulator`, `IcmsStCalculator`, `InvoiceWithholdingCalculator`, `NetSalaryCalculator` e `OvertimeCalculator` foram promovidos para `active` porque já possuíam `RiskProfile`, golden cases, gate de qualidade e `QUALITY.md` sem pendências.
-- O estado passa a 17 `active`, 33 `beta` e 0 `draft`, preservando as 50 ferramentas, slugs, rotas, verticais e `release_order`.
+- O estado passa a 17 `active`, 33 `beta` e 0 `draft`, preservando as 28 ferramentas, slugs, rotas, verticais e `release_order`.
 - `OfficialToolMaturityTest` protege ausência de Draft oficial, as promoções deste lote e a evidência mínima exigida de ferramentas ativas sob o framework atual.
 - Quatro ferramentas ativas anteriores ao framework atual permanecem explicitamente registradas como legado de evidência, sem criação de artefatos fictícios.
 - O relatório completo está em `docs/TOOL-MATURITY-LOT-1.md`.
@@ -1338,9 +1301,8 @@ Antes de iniciar o próximo lote, reconstruir o estado na ordem **ZIP original �
 - Corrigido o tratamento do ano-teste de 2026 no `TaxReformSimulator`: CBS/IBS deixam de ser somados automaticamente sobre a carga federal legada e passam a refletir a compensação prevista na transição, mantendo os valores de teste transparentes.
 - `TaxReformSimulator` ganhou documentação normativa específica e regressões para 2026 e 2029.
 - `VacationCalculator` deixou de rotular como líquido legal um resultado que ainda não apura INSS/IRRF; o rótulo agora explicita que se trata do total após descontos informados.
-- `TaxRegimeComparator`, `ProLaboreProfitDistributionCalculator` e `VacationCalculator` foram corrigidos de `active` para `beta` porque seus `QUALITY.md` ainda possuem pendências abertas.
 - `ReceiptIssuer` também foi corrigido para `beta` como reparo de continuidade do gate de maturidade criado no Lote 1.
-- Catálogo preservado em 50 ferramentas, 49 de Contabilidade e 1 de RH, sem alteração de slugs, IDs, rotas ou `release_order`.
+- Catálogo preservado em 28 ferramentas, 27 de Contabilidade e 1 de RH, sem alteração de slugs, IDs, rotas ou `release_order`.
 - Estado de maturidade: 13 `active`, 37 `beta`, 0 `draft`.
 - `release_readiness` avançou para `fiscal_labor_audit_lot_2_hardened`.
 
@@ -1373,7 +1335,6 @@ Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 �
 
 - Estado reconstruído obrigatoriamente em **ZIP original → Lote 1 → Lote 2 → Lote 3** antes das alterações.
 - A infraestrutura normativa já existente foi preservada; nenhuma segunda registry, resolver ou superfície de confiança foi criada.
-- `FederalPaymentGuideGenerator` passou a persistir/expor `NormativeRuleSnapshot` com a data de vencimento como referência e a renderizar `x-tools.normative-trust` no resultado.
 - `TaxReformSimulator` passou a implementar `NormativeRule`/`EffectiveDated`, com identificador `tax_reform.consumption_transition`, versão `2026.08.3`, vigência 2026–2033, fontes oficiais e verificação registrada em 19/08/2026.
 - Cada simulação da Reforma usa `01/01/{ano}` como data de referência da etapa anual e expõe fonte, vigência, versão, verificação, premissas e caráter estimativo no componente compartilhado.
 - `NormativeTrustExperienceTest` ganhou gate automático: qualquer módulo que criar `NormativeRuleSnapshot::fromRule` precisa expor a superfície compartilhada de confiança.
@@ -1429,7 +1390,6 @@ Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 �
 ### Resultado
 
 - Estado reconstruído obrigatoriamente em **ZIP original → Lotes 1–6** antes das alterações.
-- `calculadora-pis-cofins:memory`, `calculadora-retencoes-nota-fiscal:memory` e `calculadora-retencoes-nota-fiscal:report` foram reclassificadas como Essencial porque a implementação atual corresponde à transparência necessária para conferir o resultado básico.
 - As respectivas views não condicionam mais memória, fontes, premissas e conferência por tributo ao acesso Plus.
 - A governança Plus foi atualizada explicitamente de 144 para 141 contratos declarados, estritos e funcionais, mantendo dívida zero.
 - As sete páginas legadas que não usam `x-tools.page` passaram a receber o CTA compartilhado de continuidade somente após resultado significativo.
@@ -1453,9 +1413,9 @@ Antes do próximo lote, reconstruir obrigatoriamente **ZIP original → Lote 1 �
 - A auditoria removeu comandos E2E declarados sem implementação real: sete scripts PHP ausentes e oito scripts npm inexistentes deixaram de fazer parte da superfície oficial.
 - Os comandos E2E foram consolidados sobre os artefatos existentes de ambiente, browser, cenários, ações e downloads.
 - Criado `scripts/check-repository-integrity.php` para validar referências Composer/npm, aliases, arquivos operacionais e invariantes mínimas do inventário antes da release.
-- `composer quality`, `.github/workflows/quality.yml` e o staging de `package-distribution.ps1` passam a executar o gate de integridade; o CI também valida os 100 cenários E2E das 50 ferramentas.
+- `composer quality`, `.github/workflows/quality.yml` e o staging de `package-distribution.ps1` passam a executar o gate de integridade; o CI também valida os 100 cenários E2E das 28 ferramentas.
 - Nenhuma fórmula, slug, rota pública, vertical, ID, `release_order`, status de maturidade ou classificação Essencial/Plus foi alterada.
-- Estado preservado em 50 ferramentas, 13 `active`, 37 `beta`, 0 `draft` e Plus 141/141 com dívida zero.
+- Estado preservado em 28 ferramentas, 13 `active`, 37 `beta`, 0 `draft` e Plus 141/141 com dívida zero.
 - `release_readiness` avançou para `final_hardening_lot_8_audited`.
 - Relatório detalhado: `docs/FINAL-HARDENING-LOT-8.md`.
 
@@ -1474,7 +1434,7 @@ Qualquer novo lote deve reconstruir obrigatoriamente **ZIP original → Lotes 1�
 - Criado `scripts/check-beta-activation-readiness.php` e o alias `composer beta:readiness`.
 - O diagnóstico encontrou 0 Betas estruturalmente prontas, 24 com checklist aberto, 15 com artefatos mínimos ausentes e 15 com golden cases sintéticos; os grupos se sobrepõem.
 - Nenhuma fórmula, slug, rota, ID, vertical, `release_order`, status ou classificação Essencial/Plus foi alterada.
-- Estado preservado em 50 ferramentas, 13 `active`, 37 `beta`, 0 `draft` e Plus 141/141 com dívida zero.
+- Estado preservado em 28 ferramentas, 13 `active`, 37 `beta`, 0 `draft` e Plus 141/141 com dívida zero.
 - `release_readiness` avançou para `beta_activation_lot_1_audited`.
 - Relatório detalhado: `docs/BETA-ACTIVATION-LOT-1-AUDIT.md`.
 

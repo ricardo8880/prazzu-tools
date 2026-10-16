@@ -16,9 +16,9 @@ final class AccountingFeesProductBoundaryTest extends TestCase
 
     public function test_module_does_not_expose_crm_or_calculation_sharing(): void
     {
-        self::assertFalse(Route::has('tools.calculadora-de-honorarios-contabeis.crm.index'));
-        self::assertFalse(Route::has('tools.calculadora-de-honorarios-contabeis.history.share'));
-        self::assertFalse(Route::has('tools.calculadora-de-honorarios-contabeis.shared'));
+        self::assertFalse(Route::has('tools.accounting-fee-calculator.crm.index'));
+        self::assertFalse(Route::has('tools.accounting-fee-calculator.history.share'));
+        self::assertFalse(Route::has('tools.accounting-fee-calculator.shared'));
 
         self::assertFalse(Schema::hasTable('accounting_fee_clients'));
         self::assertFalse(Schema::hasColumn('accounting_fee_calculations', 'share_token'));

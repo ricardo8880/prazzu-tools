@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('declaracao-trabalho-renda', 'spreadsheet_export')]
+    #[CoversPlusFeature('employment-income-letter-generator', 'spreadsheet_export')]
     public function test_spreadsheet_export_blocks_free_and_allows_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

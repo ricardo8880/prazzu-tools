@@ -27,12 +27,12 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'distribuicao-de-lucros';
+    public const SLUG = 'owner-distribution-calculator';
 
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'distribuicao-de-lucros',
+            toolSlug: 'owner-distribution-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -60,11 +60,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Calculadora de Distribuição de Lucros',
-            description: 'Calcule o lucro disponível, a distribuição por participação societária e o saldo remanescente.',
+            name: 'Owner Distribution Calculator',
+            description: 'Allocate a planned business-owner distribution by ownership percentage or defined amounts.',
             category: ToolCategory::Fiscal,
             icon: 'bi-pie-chart',
-            routeName: 'tools.distribuicao-de-lucros.index',
+            routeName: 'tools.owner-distribution-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -72,16 +72,16 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
             position: 31,
             featured: true,
             supportsHistory: true,
-            keywords: ['distribuição de lucros', 'lucros e dividendos', 'participação societária'],
+            keywords: ['owner distribution', 'partner distribution', 'shareholder distribution', 'ownership percentage'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Distribuição proporcional completa', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Memória do lucro disponível', ToolFeatureTier::Essential),
-                new ToolFeature('partners', 'Múltiplos sócios, exercícios e cenários', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Complete proportional distribution', ToolFeatureTier::Essential),
+                new ToolFeature('memory', 'Available-profit calculation details', ToolFeatureTier::Essential),
+                new ToolFeature('partners', 'Multiple owners and scenarios', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),
@@ -113,6 +113,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
 
     public function viewsNamespace(): string
     {
-        return 'tools-distribuicao-de-lucros';
+        return 'tools-owner-distribution-calculator';
     }
 }

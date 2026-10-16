@@ -12,7 +12,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 final readonly class ListMarginMarkupHistory
 {
-    private const TOOL_SLUG = 'calculadora-margem-markup';
+    private const TOOL_SLUG = 'margin-markup-calculator';
 
     public function __construct(private ToolRunHistory $history) {}
 

@@ -27,7 +27,7 @@ final class ToolController extends Controller
 {
     public function index(Request $request, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module, RegisteredAssetRepository $assets): View
     {
-        return view('tools-calculadora-depreciacao-ativos::index', [
+        return view('tools-asset-depreciation-calculator::index', [
             ...$page->execute(),
             'plusEnabled' => $features->plusEnabled($module, $request),
             'portfolioProjectionAllowed' => $features->allows($module, 'portfolio_projection', $request),
@@ -55,7 +55,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
         $request->flash();
 
-        return view('tools-calculadora-depreciacao-ativos::index', [
+        return view('tools-asset-depreciation-calculator::index', [
             ...$page->execute(),
             'result' => $result,
             'calculationInput' => $data,
@@ -104,7 +104,7 @@ final class ToolController extends Controller
         $filename = 'depreciacao-ativos-'.now()->format('Y-m-d');
 
         return $format === 'pdf'
-            ? $pdf->download($documents->pdf('Calculadora de Depreciação de Ativos', $filename, $result, $input->toArray()))
+            ? $pdf->download($documents->pdf('Asset Depreciation Calculator', $filename, $result, $input->toArray()))
             : $spreadsheet->download($documents->spreadsheet($filename, $result, $input->toArray()));
     }
 

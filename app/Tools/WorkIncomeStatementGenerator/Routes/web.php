@@ -5,9 +5,9 @@ declare(strict_types=1);
 use App\Tools\WorkIncomeStatementGenerator\Presentation\Controllers\ToolController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/ferramentas/declaracao-trabalho-renda', [ToolController::class, 'index'])
-    ->name('tools.declaracao-trabalho-renda.index');
-Route::post('/ferramentas/declaracao-trabalho-renda', [ToolController::class, 'calculate'])
-    ->name('tools.declaracao-trabalho-renda.calculate');
-Route::post('/ferramentas/declaracao-trabalho-renda/baixar-pdf', [ToolController::class, 'downloadPdf'])->name('tools.declaracao-trabalho-renda.export.pdf');
-Route::post('/ferramentas/declaracao-trabalho-renda/baixar-excel', [ToolController::class, 'downloadExcel'])->middleware('tool.feature:declaracao-trabalho-renda,spreadsheet_export')->name('tools.declaracao-trabalho-renda.export.excel');
+Route::get('/tools/employment-income-letter-generator', [ToolController::class, 'index'])
+    ->name('tools.employment-income-letter-generator.index');
+Route::post('/tools/employment-income-letter-generator', [ToolController::class, 'calculate'])
+    ->name('tools.employment-income-letter-generator.calculate');
+Route::post('/tools/employment-income-letter-generator/export/pdf', [ToolController::class, 'downloadPdf'])->name('tools.employment-income-letter-generator.export.pdf');
+Route::post('/tools/employment-income-letter-generator/export/excel', [ToolController::class, 'downloadExcel'])->middleware('tool.feature:employment-income-letter-generator,spreadsheet_export')->name('tools.employment-income-letter-generator.export.excel');

@@ -20,12 +20,12 @@ final class ToolController extends Controller
 
     public function index(ShowToolPage $page): View
     {
-        return view('tools-comparador-clt-pj-autonomo::index', $page->execute());
+        return view('tools-employee-vs-contractor-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
-        return view('tools-comparador-clt-pj-autonomo::index', [
+        return view('tools-employee-vs-contractor-calculator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($request->validated()),
             'calculationInput' => $request->validated(),
@@ -42,8 +42,8 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->pdf(
-            title: 'Comparação CLT × PJ × Autônomo',
-            filename: 'comparacao-clt-pj-autonomo-'.now()->format('Y-m-d'),
+            title: 'W-2 vs 1099 vs Self-Employed Comparison',
+            filename: 'employment-model-comparison-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));
@@ -59,7 +59,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->spreadsheet(
-            filename: 'comparacao-clt-pj-autonomo-'.now()->format('Y-m-d'),
+            filename: 'employment-model-comparison-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));

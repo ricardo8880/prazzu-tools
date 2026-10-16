@@ -24,7 +24,7 @@ final class AnalyticsSchemaResilienceTest extends TestCase
         self::assertFalse(Schema::hasTable('analytics_sessions'));
         self::assertFalse(Schema::hasTable('platform_analytics_events'));
 
-        $this->get(route('tools.validador-de-cnpj.index'))
+        $this->get(route('tools.us-tax-id-validator.index'))
             ->assertOk()
             ->assertSee('Validador Inteligente de CNPJ, CPF e IE');
     }
@@ -32,7 +32,7 @@ final class AnalyticsSchemaResilienceTest extends TestCase
     public function test_context_and_event_persistence_are_safe_no_ops_without_the_schema(): void
     {
         config()->set('analytics.enabled', true);
-        $request = Request::create('/ferramentas/validador-de-cnpj');
+        $request = Request::create('/ferramentas/us-tax-id-validator');
 
         $context = $this->app->make(AnalyticsContextResolver::class)->resolve($request);
 

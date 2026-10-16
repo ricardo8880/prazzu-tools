@@ -18,9 +18,6 @@ A leitura rápida foi aplicada a:
 
 1. Calculadora de Salário Líquido;
 2. Calculadora de Hora Extra, Adicional Noturno e DSR;
-3. Calculadora de ICMS-ST;
-4. Calculadora PIS e COFINS;
-5. Calculadora de IRPJ e CSLL — Lucro Presumido;
 6. Simulador de Pró-Labore;
 7. Calculadora de Custo de Funcionário.
 
@@ -43,7 +40,7 @@ Os títulos genéricos de resultado das sete jornadas foram substituídos por me
 
 ## Limites deliberados
 
-O lote não foi aplicado automaticamente às 50 ferramentas. Muitas ferramentas são validadores, geradores, conversores ou possuem resultados cujo significado exige linguagem específica. A expansão deve ocorrer somente após revisar cada domínio e confirmar que a leitura acrescenta compreensão sem criar aconselhamento indevido.
+O lote não foi aplicado automaticamente às 28 ferramentas. Muitas ferramentas são validadores, geradores, conversores ou possuem resultados cujo significado exige linguagem específica. A expansão deve ocorrer somente após revisar cada domínio e confirmar que a leitura acrescenta compreensão sem criar aconselhamento indevido.
 
 Também não foi criado um `ResultInterpreter` no Core. A necessidade comum comprovada é apenas a apresentação visual; a interpretação continua sendo responsabilidade do domínio consumidor.
 

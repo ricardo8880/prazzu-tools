@@ -41,7 +41,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'declaracao-trabalho-renda',
+            toolSlug: 'employment-income-letter-generator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -62,12 +62,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'declaracao-trabalho-renda',
-            name: 'Gerador de Declaração de Trabalho/Renda',
-            description: 'Gere declaração personalizada de trabalho e renda pronta para assinatura.',
+            slug: 'employment-income-letter-generator',
+            name: 'Employment Income Letter Generator',
+            description: 'Generate an informational employment and income verification letter from user-entered data.',
             category: ToolCategory::Documents,
             icon: 'bi-file-earmark-check',
-            routeName: 'tools.declaracao-trabalho-renda.index',
+            routeName: 'tools.employment-income-letter-generator.index',
             vertical: 'contabilidade',
             version: '1.1.0',
             access: ToolAccess::Free,
@@ -75,7 +75,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 250,
             supportsHistory: true,
             storesSensitiveData: true,
-            keywords: ['declaração de trabalho', 'declaração de renda', 'comprovante de vínculo', 'comprovante de renda'],
+            keywords: ['employment income letter', 'income verification', 'employment verification', 'proof of income'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -83,8 +83,8 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                 ToolCapability::SensitiveData,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
+                new ToolFeature('spreadsheet_export', 'Advanced Excel export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['json', 'pdf', 'xlsx']),
@@ -110,6 +110,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-declaracao-trabalho-renda';
+        return 'tools-employment-income-letter-generator';
     }
 }

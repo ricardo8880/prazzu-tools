@@ -1,163 +1,24 @@
 <?php
 
 declare(strict_types=1);
-
 namespace App\Tools\BusinessDocumentValidator;
-
 use App\Core\ToolIntegration\Data\ToolIntegrationManifest;
 use App\Core\Tools\Analytics\Contracts\HasAnalyticsJourney;
-use App\Core\Tools\Analytics\Data\ToolAnalyticsField;
-use App\Core\Tools\Analytics\Data\ToolAnalyticsForm;
-use App\Core\Tools\Analytics\Data\ToolAnalyticsJourney;
+use App\Core\Tools\Analytics\Data\{ToolAnalyticsField,ToolAnalyticsForm,ToolAnalyticsJourney};
 use App\Core\Tools\Api\Contracts\HasApiActions;
-use App\Core\Tools\Contracts\HasServiceProviders;
-use App\Core\Tools\Contracts\HasToolIntegrations;
-use App\Core\Tools\Contracts\HasViews;
-use App\Core\Tools\Contracts\HasWebRoutes;
-use App\Core\Tools\Contracts\ToolModule;
-use App\Core\Tools\Data\ToolFeature;
-use App\Core\Tools\Data\ToolManifest;
-use App\Core\Tools\Enums\ToolAccess;
-use App\Core\Tools\Enums\ToolCapability;
-use App\Core\Tools\Enums\ToolCategory;
-use App\Core\Tools\Enums\ToolFeatureTier;
-use App\Core\Tools\Enums\ToolStatus;
-use App\Core\Tools\History\Contracts\HasHistoryPolicy;
-use App\Core\Tools\History\Data\ToolHistoryPolicy;
-use App\Core\Tools\Infrastructure\Data\ToolExportPolicy;
-use App\Core\Tools\Infrastructure\Data\ToolPersistencePolicy;
-use App\Core\Tools\Infrastructure\Data\ToolSensitiveDataPolicy;
-use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
-use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
+use App\Core\Tools\Contracts\{HasToolIntegrations,HasViews,HasWebRoutes,ToolModule};
+use App\Core\Tools\Data\{ToolFeature,ToolManifest};
+use App\Core\Tools\Enums\{ToolAccess,ToolCategory,ToolFeatureTier,ToolStatus};
+use App\Core\Tools\Infrastructure\Data\{ToolExportPolicy,ToolPersistencePolicy,ToolSensitiveDataPolicy,ToolSharingPolicy};
 use App\Tools\BusinessDocumentValidator\Api\Actions\ValidateApiAction;
-use App\Tools\BusinessDocumentValidator\Infrastructure\Providers\BusinessDocumentValidatorServiceProvider;
-
-final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasServiceProviders, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
+final class Tool implements HasAnalyticsJourney,HasApiActions,HasToolIntegrations,HasViews,HasWebRoutes,ToolModule
 {
-    public function apiActions(): array
-    {
-        return [ValidateApiAction::class];
-    }
-
-    public function integrations(): ToolIntegrationManifest
-    {
-        return new ToolIntegrationManifest(
-            publishes: [],
-            accepts: [],
-        );
-    }
-
-    public function analyticsJourney(): ToolAnalyticsJourney
-    {
-        return new ToolAnalyticsJourney(
-            toolSlug: 'validador-de-cnpj',
-            forms: [
-                new ToolAnalyticsForm(
-                    key: 'main',
-                    steps: ['input'],
-                    fields: [
-                        new ToolAnalyticsField('document_type', 'input', selector: '[name="document_type"]'),
-                        new ToolAnalyticsField('document_number', 'input', selector: '[name="document_number"]'),
-                        new ToolAnalyticsField('state', 'input', selector: '[name="state"]'),
-                        new ToolAnalyticsField('state_registration', 'input', selector: '[name="state_registration"]'),
-                        new ToolAnalyticsField('cnpj', 'input', selector: '[name="cnpj"]'),
-                        new ToolAnalyticsField('analysis_cnpj', 'input', selector: '[name="analysis_cnpj"]'),
-                        new ToolAnalyticsField('legal_name', 'input', selector: '[name="legal_name"]'),
-                        new ToolAnalyticsField('trade_name', 'input', selector: '[name="trade_name"]'),
-                        new ToolAnalyticsField('analysis_state', 'input', selector: '[name="analysis_state"]'),
-                        new ToolAnalyticsField('city', 'input', selector: '[name="city"]'),
-                        new ToolAnalyticsField('analysis_state_registration', 'input', selector: '[name="analysis_state_registration"]'),
-                        new ToolAnalyticsField('batch_file', 'input', selector: '[name="batch_file"]'),
-                        new ToolAnalyticsField('import_token', 'input', selector: '[name="import_token"]'),
-                        new ToolAnalyticsField('consult_registry', 'input', selector: '[name="consult_registry"]'),
-                    ],
-                    actions: ['calculate', 'export', 'share'],
-                    selector: 'form[action*="validate"]',
-                    resultSelector: '[data-analytics-result="main"]',
-                ),
-            ],
-        );
-    }
-
-    public function manifest(): ToolManifest
-    {
-        return new ToolManifest(
-            slug: 'validador-de-cnpj',
-            name: 'Validador Inteligente de CNPJ, CPF e IE',
-            description: 'Valide documentos empresariais e pessoais com uma experiência preparada para consultas e análises de inconsistências.',
-            category: ToolCategory::Validators,
-            icon: 'bi-shield-check',
-            routeName: 'tools.validador-de-cnpj.index',
-            vertical: 'contabilidade',
-            version: '1.0.0',
-            access: ToolAccess::Free,
-            status: ToolStatus::Active,
-            position: 30,
-            featured: true,
-            supportsHistory: true,
-            storesSensitiveData: true,
-            keywords: [
-                'cnpj',
-                'cpf',
-                'inscrição estadual',
-                'ie',
-                'empresa',
-                'validação',
-                'consulta cadastral',
-            ],
-            capabilities: [
-                ToolCapability::History,
-                ToolCapability::VersionedPersistence,
-                ToolCapability::Export,
-                ToolCapability::SensitiveData,
-            ],
-            features: [
-                new ToolFeature('validate_document', 'Validação individual de CPF e CNPJ', ToolFeatureTier::Essential),
-                new ToolFeature('validate_state_registration', 'Validação individual de Inscrição Estadual', ToolFeatureTier::Essential),
-                new ToolFeature('lookup_company', 'Consulta cadastral individual de CNPJ', ToolFeatureTier::Essential),
-                new ToolFeature('analyze_consistency', 'Análise individual de inconsistências', ToolFeatureTier::Essential),
-                new ToolFeature('batch_processing', 'Validação e consulta em lote', ToolFeatureTier::Plus),
-                new ToolFeature('batch_export', 'Exportação e relatório do lote', ToolFeatureTier::Plus),
-                new ToolFeature('history', 'Histórico de validações', ToolFeatureTier::Plus),
-            ],
-            persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 90, minimumReadableSchemaVersion: 1),
-            export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
-            sharing: ToolSharingPolicy::disabled(),
-            sensitiveData: new ToolSensitiveDataPolicy(SensitiveDataMode::Encrypted, ['history_payload']),
-        );
-    }
-
-    public function historyPolicy(): ToolHistoryPolicy
-    {
-        return new ToolHistoryPolicy(
-            enabled: true,
-            retentionDays: 90,
-            inputFields: ['file_name', 'format', 'total_rows', 'consult_registry'],
-            resultFields: [
-                'summary.total', 'summary.valid', 'summary.invalid', 'summary.duplicates',
-                'summary.with_inconsistencies', 'summary.registry_consulted', 'summary.registry_unavailable',
-            ],
-            sensitiveFields: ['file_name'],
-        );
-    }
-
-    public function serviceProviders(): array
-    {
-        return [BusinessDocumentValidatorServiceProvider::class];
-    }
-
-    public function webRoutesPath(): string
-    {
-        return __DIR__.'/Routes/web.php';
-    }
-
-    public function viewsPath(): string
-    {
-        return __DIR__.'/Resources/views';
-    }
-
-    public function viewsNamespace(): string
-    {
-        return 'tools-validador-de-cnpj';
-    }
+    public const SLUG='us-tax-id-validator';
+    public function apiActions():array{return [ValidateApiAction::class];}
+    public function integrations():ToolIntegrationManifest{return new ToolIntegrationManifest(publishes:[],accepts:[]);}
+    public function analyticsJourney():ToolAnalyticsJourney{return new ToolAnalyticsJourney(toolSlug:self::SLUG,forms:[new ToolAnalyticsForm(key:'main',steps:['input'],fields:[new ToolAnalyticsField('document_number','input',selector:'[name="document_number"]')],actions:['calculate'],selector:'form[action*="validate"]',resultSelector:'[data-analytics-result="main"]')]);}
+    public function manifest():ToolManifest{return new ToolManifest(slug:self::SLUG,name: 'EIN Format Validator',description: 'Check whether a U.S. Employer Identification Number matches the basic nine-digit EIN format.',category:ToolCategory::Validators,icon:'bi-shield-check',routeName:'tools.us-tax-id-validator.index',vertical:'contabilidade',version:'2.0.0',access:ToolAccess::Free,status:ToolStatus::Active,position:30,featured:true,supportsHistory:false,storesSensitiveData:false,keywords: ['EIN', 'employer identification number', 'tax ID', 'business tax ID', 'EIN format'],features:[new ToolFeature('validate_document','EIN format validation',ToolFeatureTier::Essential)],persistence:ToolPersistencePolicy::disabled(),export:ToolExportPolicy::disabled(),sharing:ToolSharingPolicy::disabled(),sensitiveData:ToolSensitiveDataPolicy::none());}
+    public function webRoutesPath():string{return __DIR__.'/Routes/web.php';}
+    public function viewsPath():string{return __DIR__.'/Resources/views';}
+    public function viewsNamespace():string{return 'tools-us-tax-id-validator';}
 }

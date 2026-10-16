@@ -141,7 +141,7 @@ XML;
         $ascii = $ascii === false ? $title : $ascii;
         $slug = strtolower(trim((string) preg_replace('/[^A-Za-z0-9]+/', '-', $ascii), '-'));
 
-        return $slug !== '' ? $slug : 'contrato';
+        return $slug !== '' ? $slug : 'agreement';
     }
 
     private function xml(string $value): string

@@ -4,27 +4,27 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Validation;
 
-use App\Core\Validation\BrazilianMoneyValidator;
+use App\Core\Validation\USMoneyValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-final class BrazilianMoneyValidatorTest extends TestCase
+final class USMoneyValidatorTest extends TestCase
 {
     #[DataProvider('validAmounts')]
-    public function test_it_accepts_supported_brazilian_money_inputs(string|int $value): void
+    public function test_it_accepts_supported_us_money_inputs(string|int $value): void
     {
-        self::assertTrue((new BrazilianMoneyValidator)->isValid($value));
+        self::assertTrue((new USMoneyValidator)->isValid($value));
     }
 
     #[DataProvider('invalidAmounts')]
     public function test_it_rejects_invalid_or_ambiguous_inputs(mixed $value): void
     {
-        self::assertFalse((new BrazilianMoneyValidator)->isValid($value));
+        self::assertFalse((new USMoneyValidator)->isValid($value));
     }
 
     public function test_it_compares_minimum_using_minor_units(): void
     {
-        $validator = new BrazilianMoneyValidator;
+        $validator = new USMoneyValidator;
 
         self::assertTrue($validator->hasMinimum('0,01', ['0.01']));
         self::assertTrue($validator->hasMinimum('1.234,56', ['1234.56']));

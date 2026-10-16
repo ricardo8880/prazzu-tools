@@ -9,11 +9,7 @@ use Illuminate\Validation\Validator;
 
 final class ExecuteToolRequest extends FormRequest
 {
-    private const MONEY = '/^-?\d+(?:[.,]\d{1,2})?$/';
-
-    private const NON_NEGATIVE = '/^\d+(?:[.,]\d{1,2})?$/';
-
-    public function authorize(): bool
+        public function authorize(): bool
     {
         return true;
     }
@@ -26,12 +22,12 @@ final class ExecuteToolRequest extends FormRequest
             'partners' => ['nullable', 'array', 'max:19'],
             'partners.*.label' => ['nullable', 'string', 'max:80'],
             'partners.*.ownership_percentage' => ['nullable', 'decimal:0,6', 'min:0.000001', 'max:100'],
-            'accounting_profit' => ['required', 'regex:'.self::NON_NEGATIVE],
-            'accumulated_losses' => ['nullable', 'regex:'.self::NON_NEGATIVE],
-            'reserves_and_unavailable_amounts' => ['nullable', 'regex:'.self::NON_NEGATIVE],
-            'adjustments' => ['nullable', 'regex:'.self::MONEY],
-            'prior_distributions' => ['nullable', 'regex:'.self::NON_NEGATIVE],
-            'intended_distribution' => ['required', 'regex:'.self::NON_NEGATIVE],
+            'accounting_profit' => ['required', 'us_money', 'money_min:0'],
+            'accumulated_losses' => ['nullable', 'us_money', 'money_min:0'],
+            'reserves_and_unavailable_amounts' => ['nullable', 'us_money', 'money_min:0'],
+            'adjustments' => ['nullable', 'us_money'],
+            'prior_distributions' => ['nullable', 'us_money', 'money_min:0'],
+            'intended_distribution' => ['required', 'us_money', 'money_min:0'],
             'confirm_assumptions' => ['accepted'],
         ];
     }
@@ -58,7 +54,7 @@ final class ExecuteToolRequest extends FormRequest
             }
 
             if ($scaled !== 100_000_000) {
-                $validator->errors()->add('partners', 'A soma das participações dos sócios deve ser exatamente 100%.');
+                $validator->errors()->add('partners', 'Ownership percentages must total exactly 100%.');
             }
         });
     }

@@ -15,8 +15,8 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('emissor-de-recibos', $manifest->slug);
-        self::assertSame('tools.emissor-de-recibos.index', $manifest->routeName);
+        self::assertSame('receipt-generator', $manifest->slug);
+        self::assertSame('tools.receipt-generator.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));

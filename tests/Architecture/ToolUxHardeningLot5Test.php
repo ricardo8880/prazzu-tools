@@ -33,7 +33,6 @@ final class ToolUxHardeningLot5Test extends TestCase
     public function test_legacy_validation_summaries_follow_the_shared_focus_contract(): void
     {
         $modules = [
-            'FederalPaymentGuideGenerator',
             'MarginMarkupCalculator',
             'ReceiptIssuer',
             'AccountingFeesCalculator',

@@ -18,7 +18,7 @@ A revisão confirmou que o ciclo permanece composto por capacidades independente
 6. continuidade contextual reutiliza histórico e registros já existentes, sem criar CRM, cliente, tarefa ou projeto;
 7. conta e favoritos permanecem mecanismos de persistência e continuidade, nunca de desbloqueio do cálculo.
 
-O inventário oficial continua com **50 ferramentas**, slugs e `release_order` preservados. Nenhuma fórmula, regra normativa, request, migration de cálculo, tier Essencial/Plus ou vertical foi alterado neste lote.
+O inventário oficial continua com **28 ferramentas**, slugs e `release_order` preservados. Nenhuma fórmula, regra normativa, request, migration de cálculo, tier Essencial/Plus ou vertical foi alterado neste lote.
 
 ## Acessibilidade e estados de interação
 
@@ -51,7 +51,7 @@ Foi adicionado `DistributionVerifierTest` para impedir regressão dessa polític
 - os oito relatórios precisam existir;
 - as superfícies compartilhadas dos lotes continuam presentes;
 - favoritos e resolução continuam integrados à página compartilhada das ferramentas;
-- o inventário permanece com 50 ferramentas e slugs únicos;
+- o inventário permanece com 28 ferramentas e slugs únicos;
 - o README continua declarando que acesso às ferramentas não depende de conta;
 - o pipeline de CI continua incluindo o empacotador oficial e seu verificador.
 

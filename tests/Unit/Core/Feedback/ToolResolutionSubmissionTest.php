@@ -15,12 +15,12 @@ final class ToolResolutionSubmissionTest extends TestCase
     public function test_partial_resolution_requires_a_reason_and_normalizes_comment(): void
     {
         $submission = new ToolResolutionSubmission(
-            toolSlug: 'gerador-de-contratos',
+            toolSlug: 'contract-generator',
             resolution: ToolResolution::Partially,
             reason: ToolResolutionReason::MissingOption,
             comment: '  Preciso de mais uma opção.  ',
-            path: '/ferramentas/gerador-de-contratos',
-            url: 'https://tools.prazzu.com.br/ferramentas/gerador-de-contratos',
+            path: '/ferramentas/contract-generator',
+            url: 'https://tools.prazzu.com.br/ferramentas/contract-generator',
         );
 
         self::assertSame('Preciso de mais uma opção.', $submission->normalizedComment());
@@ -32,12 +32,12 @@ final class ToolResolutionSubmissionTest extends TestCase
         $this->expectExceptionMessage('O motivo é obrigatório');
 
         new ToolResolutionSubmission(
-            toolSlug: 'gerador-de-contratos',
+            toolSlug: 'contract-generator',
             resolution: ToolResolution::Partially,
             reason: null,
             comment: null,
-            path: '/ferramentas/gerador-de-contratos',
-            url: 'https://tools.prazzu.com.br/ferramentas/gerador-de-contratos',
+            path: '/ferramentas/contract-generator',
+            url: 'https://tools.prazzu.com.br/ferramentas/contract-generator',
         );
     }
 
@@ -47,12 +47,12 @@ final class ToolResolutionSubmissionTest extends TestCase
         $this->expectExceptionMessage('Uma resposta positiva não deve registrar motivo');
 
         new ToolResolutionSubmission(
-            toolSlug: 'gerador-de-contratos',
+            toolSlug: 'contract-generator',
             resolution: ToolResolution::Yes,
             reason: ToolResolutionReason::Other,
             comment: null,
-            path: '/ferramentas/gerador-de-contratos',
-            url: 'https://tools.prazzu.com.br/ferramentas/gerador-de-contratos',
+            path: '/ferramentas/contract-generator',
+            url: 'https://tools.prazzu.com.br/ferramentas/contract-generator',
         );
     }
 }

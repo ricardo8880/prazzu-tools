@@ -58,21 +58,12 @@ A primeira regra fica aberta por padrão. As demais e as premissas permanecem re
 
 A superfície compartilhada foi conectada às ferramentas que, no estado original, já entregavam regra normativa estruturada no resultado:
 
-- Calculadora DIFAL / ICMS Interestadual + FCP;
 - Calculadora de Custo de Funcionário;
-- Calculadora de INSS Patronal;
-- Simulador de Fator R;
-- Calculadora de ICMS-ST;
 - Calculadora de Retenções na Nota Fiscal;
 - Calculadora de Encargos Trabalhistas;
-- Calculadora de DAS em Atraso;
 - Calculadora de Salário Líquido;
 - Calculadora de Hora Extra, Adicional Noturno e DSR;
-- Calculadora PIS e COFINS;
-- Calculadora de IRPJ e CSLL — Lucro Presumido;
-- Planejador de Retirada de Sócios;
 - Simulador de Pró-Labore;
-- Calculadora de DAS Retroativo + Regularização do Simples;
 - Comparador Tributário.
 
 Ferramentas sem fonte normativa estruturada não recebem data, vigência ou fonte inventada. O lote preserva a regra de transparência do projeto: ausência de evidência não é preenchida com copy genérica.

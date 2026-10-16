@@ -11,8 +11,8 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('calculadora-parcelamento-tributario');
+        $module = app(ToolRegistry::class)->findModule('irs-payment-plan-calculator');
         self::assertNotNull($module);
-        self::assertSame('calculadora-parcelamento-tributario', $module->manifest()->slug);
+        self::assertSame('irs-payment-plan-calculator', $module->manifest()->slug);
     }
 }

@@ -1,4 +1,23 @@
 @extends('layouts.app')
-@section('title','Simulador da Reforma Tributária do Consumo — Prazzu Tools')
-@section('meta_description','Simule a transição da tributação do consumo entre 2026 e 2033 com referências de CBS, IBS e tributos legados informadas para o cenário.')
-@section('content')<x-tools.page title="Simulador da Reforma Tributária do Consumo" description="Compare sua carga efetiva atual com a transição para CBS e IBS." icon="arrow-left-right" slug="simulador-reforma-tributaria-consumo"><x-tools.validation-summary /><form method="post" action="{{ route('tools.simulador-reforma-tributaria-consumo.calculate') }}" class="d-grid gap-4" data-testid="tool-form-panel">@csrf<x-tools.form-panel title="Cenário"><div class="row g-3"><div class="col-md-4"><label class="form-label" for="revenue">Receita</label><input class="form-control" id="revenue" name="revenue" value="{{ old('revenue','100.000,00') }}" required></div><div class="col-md-4"><label class="form-label" for="year">Ano</label><select class="form-select" id="year" name="year">@for($y=2026;$y<=2033;$y++)<option value="{{ $y }}">{{ $y }}</option>@endfor</select></div>@foreach([['legacy_federal_rate','PIS/Cofins efetivos','9,25'],['legacy_subnational_rate','ICMS/ISS efetivo','18'],['cbs_reference_rate','Referência CBS','9'],['ibs_reference_rate','Referência IBS','18'],['credit_base_percent','Base de créditos','40']] as [$name,$label,$default])<div class="col-md-4"><label class="form-label" for="{{ $name }}">{{ $label }}</label><input class="form-control" id="{{ $name }}" name="{{ $name }}" value="{{ old($name,$default) }}" required></div>@endforeach<div class="col-12"><input type="hidden" name="show_diagnostics" value="0"><input type="checkbox" name="show_diagnostics" value="1" id="show_diagnostics"><label for="show_diagnostics"> Diagnóstico detalhado da transição (Plus)</label></div></div></x-tools.form-panel><button class="btn btn-primary" type="submit">Simular transição</button></form>@isset($result)<div class="mt-5" data-testid="tool-result"><x-tools.result-panel title="Impacto estimado"><div class="row g-3">@foreach($result->summary as $item)<div class="col-md-3"><x-tools.result-metric :label="$item->label" :value="$item->value" icon="calculator" /></div>@endforeach</div><div class="alert alert-info mt-3">{{ $result->details['transition_note'] }}</div>@if($showDiagnostics ?? false)<div class="alert alert-secondary">CBS {{ $result->details['cbs_rate'] }}% · IBS {{ $result->details['ibs_rate'] }}%</div>@endif<x-tools.normative-trust :rules="$result->calculationMemory?->normativeRules ?? []" :assumptions="$result->calculationMemory?->assumptions ?? []" :is-estimate="$result->calculationMemory?->isEstimate ?? true" /></x-tools.result-panel></div>@endisset</x-tools.page>@endsection
+@section('title', $tool->name.' | Prazzu Tools')
+@section('meta_description', $tool->description)
+@section('canonical_url', route($tool->routeName))
+@section('content')
+<x-tools.page :title="$tool->name" :description="$tool->description" :icon="$tool->icon" :slug="$tool->slug">
+    <div class="alert alert-info">U.S. sales tax is primarily state and local. Enter the rates that apply to the transaction location.</div>
+    <x-tools.form-panel title="Transaction">
+        <form method="POST" action="{{ route('tools.sales-tax-calculator.calculate') }}" class="row g-3">@csrf
+            <div class="col-md-3"><x-tools.form.money name="price" label="Unit price" :value="old('price')" required /></div>
+            <div class="col-md-2"><x-tools.form.input name="quantity" label="Quantity" type="number" min="1" step="1" :value="old('quantity',1)" required /></div>
+            <div class="col-md-2"><x-tools.form.input name="state_rate" label="State rate" type="number" step="0.0001" suffix="%" :value="old('state_rate','0')" required /></div>
+            <div class="col-md-2"><x-tools.form.input name="local_rate" label="Local rate" type="number" step="0.0001" suffix="%" :value="old('local_rate','0')" /></div>
+            <div class="col-md-3"><x-tools.form.input name="district_rate" label="District / special rate" type="number" step="0.0001" suffix="%" :value="old('district_rate','0')" /></div>
+            <div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="tax_included" value="1" id="tax_included" @checked(old('tax_included'))><label class="form-check-label" for="tax_included">Entered price already includes sales tax</label></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit">Calculate sales tax</button></div>
+        </form>
+    </x-tools.form-panel>
+    @isset($result)
+        <div data-testid="tool-result"><x-tools.result-panel title="Sales tax estimate"><div class="row g-3">@foreach($result->summary as $item)<div class="col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description" /></div>@endforeach</div><x-tools.normative-trust :rules="$result->calculationMemory?->normativeRules ?? []" :assumptions="$result->calculationMemory?->assumptions ?? []" :is-estimate="$result->calculationMemory?->isEstimate ?? true" /></x-tools.result-panel></div>
+    @endisset
+</x-tools.page>
+@endsection

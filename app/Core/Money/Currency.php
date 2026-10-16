@@ -6,20 +6,15 @@ namespace App\Core\Money;
 
 enum Currency: string
 {
-    case BRL = 'BRL';
+    case USD = 'USD';
 
     public function fractionDigits(): int
     {
-        return match ($this) {
-            self::BRL => 2,
-        };
-
+        return 2;
     }
 
     public function symbol(): string
     {
-        return match ($this) {
-            self::BRL => 'R$',
-        };
+        return '$';
     }
 }

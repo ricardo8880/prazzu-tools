@@ -36,7 +36,7 @@ final class EloquentAcquisitionContextRepositoryTest extends TestCase
 
         AcquisitionContextToolRecord::query()->create([
             'acquisition_context_id' => $record->getKey(),
-            'tool_slug' => 'calculadora-ferias',
+            'tool_slug' => 'pto-calculator',
             'placement' => AcquisitionContextToolPlacement::Featured,
             'position' => 2,
         ]);
@@ -48,7 +48,7 @@ final class EloquentAcquisitionContextRepositoryTest extends TestCase
         ]);
         AcquisitionContextToolRecord::query()->create([
             'acquisition_context_id' => $record->getKey(),
-            'tool_slug' => 'gerador-darf-gps',
+            'tool_slug' => 'working-capital-calculator',
             'placement' => AcquisitionContextToolPlacement::Recommended,
             'position' => 1,
         ]);
@@ -72,10 +72,10 @@ final class EloquentAcquisitionContextRepositoryTest extends TestCase
         self::assertSame('rescisão', $context->hero->titleHighlight);
         self::assertSame('calculadora-rescisao', $context->callToAction->toolSlug);
         self::assertSame(
-            ['calculadora-rescisao', 'calculadora-ferias'],
+            ['calculadora-rescisao', 'pto-calculator'],
             $context->featuredToolSlugs,
         );
-        self::assertSame(['gerador-darf-gps'], $context->recommendedToolSlugs);
+        self::assertSame(['working-capital-calculator'], $context->recommendedToolSlugs);
         self::assertSame(
             ['como-calcular-rescisao', 'direitos-na-demissao'],
             $context->articleSlugs,

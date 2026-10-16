@@ -8,19 +8,19 @@
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.calculadora-de-rescisao.index') }}">Calculadora de Rescisão</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('tools.final-pay-severance-calculator.index') }}">Calculadora de Rescisão</a></li>
             <li class="breadcrumb-item active" aria-current="page">Histórico</li>
         </ol>
     </nav>
 
-    <x-tools.intro icon="clock-history" tone="pink" title="Histórico de cálculos" description="Consulte, repita ou exclua os cálculos salvos na sua conta.">
-        <x-slot:actions><a class="btn btn-primary" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a></x-slot:actions>
+    <x-tools.intro icon="clock-history" tone="pink" title="Calculation history" description="Consulte, repita ou exclua os cálculos salvos na sua conta.">
+        <x-slot:actions><a class="btn btn-primary" href="{{ route('tools.final-pay-severance-calculator.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a></x-slot:actions>
     </x-tools.intro>
 
     <nav class="mb-4" aria-label="Navegação da Calculadora de Rescisão Trabalhista">
         <div class="nav nav-pills flex-column flex-sm-row gap-2">
-            <a class="nav-link" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-calculator me-1"></i>Calculadora</a>
-            <a class="nav-link active" href="{{ route('tools.calculadora-de-rescisao.history.index') }}" aria-current="page"><i class="bi bi-clock-history me-1"></i>Histórico</a>
+            <a class="nav-link" href="{{ route('tools.final-pay-severance-calculator.index') }}"><i class="bi bi-calculator me-1"></i>Calculadora</a>
+            <a class="nav-link active" href="{{ route('tools.final-pay-severance-calculator.history.index') }}" aria-current="page"><i class="bi bi-clock-history me-1"></i>Histórico</a>
         </div>
     </nav>
 
@@ -42,9 +42,9 @@
                         <td>{{ $run->ruleVersion }}</td>
                         <td class="text-end">
                             <div class="d-inline-flex flex-wrap justify-content-end gap-1">
-                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.show', $run->id) }}" aria-label="Ver detalhes"><i class="bi bi-eye"></i></a>
-                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.repeat', $run->id) }}">@csrf<button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Repetir cálculo"><i class="bi bi-arrow-repeat"></i></button></form>
-                                <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir cálculo"><i class="bi bi-trash"></i></button></form>
+                                <a class="btn btn-sm btn-outline-secondary" href="{{ route('tools.final-pay-severance-calculator.history.show', $run->id) }}" aria-label="Ver detalhes"><i class="bi bi-eye"></i></a>
+                                <form method="post" action="{{ route('tools.final-pay-severance-calculator.history.repeat', $run->id) }}">@csrf<button class="btn btn-sm btn-outline-primary" type="submit" aria-label="Repetir cálculo"><i class="bi bi-arrow-repeat"></i></button></form>
+                                <form method="post" action="{{ route('tools.final-pay-severance-calculator.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir cálculo"><i class="bi bi-trash"></i></button></form>
                             </div>
                         </td>
                     </tr>
@@ -54,7 +54,7 @@
                             <i class="bi bi-clock-history display-5 text-body-tertiary"></i>
                             <h2 class="h5 mt-3">Nenhum cálculo salvo</h2>
                             <p class="text-body-secondary mb-3">Faça uma rescisão para iniciar o histórico.</p>
-                            <a class="btn btn-primary" href="{{ route('tools.calculadora-de-rescisao.index') }}">Calcular rescisão</a>
+                            <a class="btn btn-primary" href="{{ route('tools.final-pay-severance-calculator.index') }}">Calcular rescisão</a>
                         </td>
                     </tr>
                 @endforelse

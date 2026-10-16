@@ -15,31 +15,27 @@ final readonly class Money
         private Currency $currency,
     ) {}
 
-    public static function fromMinor(int $minorAmount, Currency $currency = Currency::BRL): self
+    public static function fromMinor(int $minorAmount, Currency $currency = Currency::USD): self
     {
         return new self($minorAmount, $currency);
     }
 
-    public static function fromDecimal(string $amount, Currency $currency = Currency::BRL): self
+    public static function fromDecimal(string $amount, Currency $currency = Currency::USD): self
     {
-        $normalized = trim(str_replace(['R$', ' '], '', $amount));
-
-        if (str_contains($normalized, ',')) {
-            $normalized = str_replace('.', '', $normalized);
-            $normalized = str_replace(',', '.', $normalized);
-        }
+        $normalized = trim(str_ireplace(['USD', '$', ' '], '', $amount));
+        $normalized = str_replace(',', '', $normalized);
         $digits = $currency->fractionDigits();
         $pattern = '/^([+-]?)(\d+)(?:\.(\d{1,'.$digits.'}))?$/';
 
         if (! preg_match($pattern, $normalized, $matches)) {
-            throw new InvalidValue("Valor monetário inválido para {$currency->value}.");
+            throw new InvalidValue("Invalid monetary amount for {$currency->value}.");
         }
 
         $factor = 10 ** $digits;
         $whole = (int) $matches[2];
 
         if ($whole > intdiv(PHP_INT_MAX, $factor)) {
-            throw new InvalidValue('Valor monetário fora do intervalo suportado.');
+            throw new InvalidValue('Monetary amount is outside the supported range.');
         }
 
         $fraction = str_pad($matches[3] ?? '', $digits, '0');
@@ -48,7 +44,7 @@ final readonly class Money
         return new self(($matches[1] ?? '') === '-' ? -$minor : $minor, $currency);
     }
 
-    public static function zero(Currency $currency = Currency::BRL): self
+    public static function zero(Currency $currency = Currency::USD): self
     {
         return new self(0, $currency);
     }
@@ -69,7 +65,7 @@ final readonly class Money
 
         if (($other->minorAmount > 0 && $this->minorAmount > PHP_INT_MAX - $other->minorAmount)
             || ($other->minorAmount < 0 && $this->minorAmount < PHP_INT_MIN - $other->minorAmount)) {
-            throw new InvalidValue('Resultado monetário fora do intervalo suportado.');
+            throw new InvalidValue('Monetary result is outside the supported range.');
         }
 
         return new self($this->minorAmount + $other->minorAmount, $this->currency);
@@ -83,7 +79,7 @@ final readonly class Money
     public function negate(): self
     {
         if ($this->minorAmount === PHP_INT_MIN) {
-            throw new InvalidValue('Valor monetário fora do intervalo suportado.');
+            throw new InvalidValue('Monetary amount is outside the supported range.');
         }
 
         return new self(-$this->minorAmount, $this->currency);
@@ -114,29 +110,35 @@ final readonly class Money
         return $this->currency === $other->currency && $this->minorAmount === $other->minorAmount;
     }
 
-    public function formatPtBr(): string
+    public function formatEnUs(): string
     {
         $digits = $this->currency->fractionDigits();
         $factor = 10 ** $digits;
         $absolute = abs($this->minorAmount);
         $whole = intdiv($absolute, $factor);
         $fraction = str_pad((string) ($absolute % $factor), $digits, '0', STR_PAD_LEFT);
-        $formattedWhole = number_format($whole, 0, ',', '.');
+        $formattedWhole = number_format($whole, 0, '.', ',');
 
-        return ($this->minorAmount < 0 ? '-' : '').$this->currency->symbol().' '.$formattedWhole.','.$fraction;
+        return ($this->minorAmount < 0 ? '-' : '').$this->currency->symbol().$formattedWhole.'.'.$fraction;
+    }
+
+    /** @deprecated Use formatEnUs(). Kept temporarily for backward-compatible persisted exporters. */
+    public function formatPtBr(): string
+    {
+        return $this->formatEnUs();
     }
 
     private function assertSameCurrency(self $other): void
     {
         if ($this->currency !== $other->currency) {
-            throw new CurrencyMismatch('Operações monetárias exigem a mesma moeda.');
+            throw new CurrencyMismatch('Monetary operations require the same currency.');
         }
     }
 
     private function checkedMultiply(int $left, int $right): int
     {
         if ($left !== 0 && $right !== 0 && abs($left) > intdiv(PHP_INT_MAX, abs($right))) {
-            throw new InvalidValue('Resultado monetário fora do intervalo suportado.');
+            throw new InvalidValue('Monetary result is outside the supported range.');
         }
 
         return $left * $right;

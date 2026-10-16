@@ -18,23 +18,23 @@ final class ToolResolutionFeedbackHttpTest extends TestCase
     {
         $response = $this->postJson(route('feedback.tool.store'), [
             'feedback_kind' => 'resolution',
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'resolution' => ToolResolution::Yes->value,
-            'path' => '/ferramentas/gerador-de-contratos',
-            'url' => 'http://localhost/ferramentas/gerador-de-contratos',
+            'path' => '/ferramentas/contract-generator',
+            'url' => 'http://localhost/ferramentas/contract-generator',
         ]);
 
         $response->assertCreated();
 
         $this->assertDatabaseHas('tool_resolution_feedback', [
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'resolution' => ToolResolution::Yes->value,
             'reason' => null,
         ]);
 
         $this->assertDatabaseHas('platform_analytics_events', [
             'event_name' => AnalyticsEventName::ToolResolutionSubmitted->value,
-            'subject_slug' => 'gerador-de-contratos',
+            'subject_slug' => 'contract-generator',
         ]);
     }
 
@@ -42,10 +42,10 @@ final class ToolResolutionFeedbackHttpTest extends TestCase
     {
         $this->postJson(route('feedback.tool.store'), [
             'feedback_kind' => 'resolution',
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'resolution' => ToolResolution::Partially->value,
-            'path' => '/ferramentas/gerador-de-contratos',
-            'url' => 'http://localhost/ferramentas/gerador-de-contratos',
+            'path' => '/ferramentas/contract-generator',
+            'url' => 'http://localhost/ferramentas/contract-generator',
         ])->assertUnprocessable()->assertJsonValidationErrors('reason');
     }
 
@@ -53,16 +53,16 @@ final class ToolResolutionFeedbackHttpTest extends TestCase
     {
         $this->postJson(route('feedback.tool.store'), [
             'feedback_kind' => 'resolution',
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'resolution' => ToolResolution::No->value,
             'reason' => ToolResolutionReason::CaseNotCovered->value,
             'comment' => 'Meu cenário possui uma condição que não encontrei.',
-            'path' => '/ferramentas/gerador-de-contratos',
-            'url' => 'http://localhost/ferramentas/gerador-de-contratos',
+            'path' => '/ferramentas/contract-generator',
+            'url' => 'http://localhost/ferramentas/contract-generator',
         ])->assertCreated();
 
         $this->assertDatabaseHas('tool_resolution_feedback', [
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'resolution' => ToolResolution::No->value,
             'reason' => ToolResolutionReason::CaseNotCovered->value,
             'comment' => 'Meu cenário possui uma condição que não encontrei.',

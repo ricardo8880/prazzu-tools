@@ -11,19 +11,19 @@ final class ToolPageTest extends TestCase
 {
     public function test_page_loads(): void
     {
-        $this->get('/tools/contabil/ferramentas/simulador-distribuicao-lucros-balanco')->assertOk()->assertSee('Balanço');
+        $this->get('/tools/contabil/ferramentas/owner-distribution-planner')->assertOk()->assertSee('Balanço');
     }
 
     public function test_calculation_returns_result(): void
     {
-        $this->post('/tools/contabil/ferramentas/simulador-distribuicao-lucros-balanco', $this->input())
+        $this->post('/tools/contabil/ferramentas/owner-distribution-planner', $this->input())
             ->assertOk()->assertSee('Comparação estimada');
     }
 
-    #[CoversPlusFeature('simulador-distribuicao-lucros-balanco', 'report')]
+    #[CoversPlusFeature('owner-distribution-planner', 'report')]
     public function test_report_can_be_downloaded_as_spreadsheet(): void
     {
-        $this->get(route('tools.simulador-distribuicao-lucros-balanco.export', ['format' => 'xlsx', ...$this->input()]))
+        $this->get(route('tools.owner-distribution-planner.export', ['format' => 'xlsx', ...$this->input()]))
             ->assertOk()->assertHeader('content-disposition');
     }
 

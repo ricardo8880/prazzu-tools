@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Gerador de Contratos — Prazzu Tools')
+@section('title', 'Contract Generator — Prazzu Tools')
 @section('meta_description', 'Prepare contratos completos com perguntas guiadas, revise o texto e exporte em PDF ou Word.')
 
 @section('content')
     <div class="container py-5">
         <x-tools.page
-            title="Gerador de Contratos"
-            description="Responda às perguntas, gere o contrato completo e edite livremente o texto antes da exportação."
+            title="Contract Generator"
+            description="Answer the questions, generate a draft, and review the text before export."
             icon="file-earmark-text"
-            slug="gerador-de-contratos"
+            slug="contract-generator"
             badge="Beta"
             tone="green"
         >
-            <div class="alert alert-warning mb-4" role="note" aria-label="Aviso sobre o modelo contratual">
-                <strong>Modelo geral:</strong> revise integralmente o conteúdo antes de utilizar. Situações específicas, relações de consumo, trabalho, imóveis, garantias ou outras regras especiais podem exigir cláusulas e análise próprias.
+            <div class="alert alert-warning mb-4" role="note" aria-label="Contract template notice">
+                <strong>General template:</strong> revise integralmente o conteúdo antes de utilizar. Situações específicas, relações de consumo, trabalho, imóveis, garantias ou outras regras especiais podem exigir cláusulas e análise próprias.
             </div>
 
 
@@ -22,16 +22,16 @@
                 <div class="alert alert-success mb-4">{{ session('history_message') }}</div>
             @endif
 
-            <div class="d-flex flex-wrap gap-2 align-items-center mb-3" aria-label="Etapas do gerador">
-                <span class="badge text-bg-primary">1. Modalidade</span>
-                <span class="badge text-bg-secondary">2. Perguntas</span>
-                <span class="badge text-bg-secondary">3. Revisão</span>
-                <span class="badge text-bg-secondary">4. Exportação</span>
+            <div class="d-flex flex-wrap gap-2 align-items-center mb-3" aria-label="Generator steps">
+                <span class="badge text-bg-primary">1. Template</span>
+                <span class="badge text-bg-secondary">2. Questions</span>
+                <span class="badge text-bg-secondary">3. Review</span>
+                <span class="badge text-bg-secondary">4. Export</span>
             </div>
 
             <x-tools.form-panel
                 data-testid="contract-type-panel"
-                title="1. Escolha o modelo de contrato"
+                title="1. Choose a contract template"
                 description="Os modelos essenciais continuam gratuitos. A biblioteca ampliada adiciona variações profissionais no Prazzu Plus."
                 class="mb-4"
             >
@@ -53,7 +53,7 @@
                                 </div>
                             @else
                                 <a
-                                    href="{{ route('tools.gerador-de-contratos.index', ['modelo' => $template->value]) }}"
+                                    href="{{ route('tools.contract-generator.index', ['modelo' => $template->value]) }}"
                                     @if($template->value === 'servicos-padrao') data-testid="contract-type-service" @elseif($template->value === 'venda-padrao') data-testid="contract-type-sale" @endif
                                     class="card h-100 text-decoration-none {{ $selectedTemplate === $template ? 'border-primary' : '' }}"
                                     @if($selectedTemplate === $template) aria-current="true" @endif
@@ -66,7 +66,7 @@
                                             </div>
                                             <div class="d-flex flex-column gap-1 align-items-end">
                                                 @if($template->isPlus())<span class="badge text-bg-primary">Plus</span>@endif
-                                                @if($selectedTemplate === $template)<span class="badge text-bg-success">Selecionado</span>@endif
+                                                @if($selectedTemplate === $template)<span class="badge text-bg-success">Selected</span>@endif
                                             </div>
                                         </div>
                                     </div>
@@ -78,14 +78,14 @@
             </x-tools.form-panel>
 
             @if ($selectedType !== null && $contractText === null)
-                <form method="POST" action="{{ route('tools.gerador-de-contratos.build') }}" aria-label="Questionário para gerar contrato" data-analytics-form="draft">
+                <form method="POST" action="{{ route('tools.contract-generator.build') }}" aria-label="Contract questionnaire" data-analytics-form="draft">
                     @csrf
                     <input type="hidden" name="contract_type" value="{{ $selectedType->value }}">
                     <input type="hidden" name="template_key" value="{{ $selectedTemplate?->value }}">
 
                     <x-tools.form-panel
                         data-testid="contract-parties-panel"
-                        title="2. Identifique as partes"
+                        title="2. Identify the parties"
                         description="Informe os dados que identificam quem participa do contrato."
                         class="mb-4"
                     >
@@ -93,15 +93,15 @@
                             @if ($featureAccess['company_autofill'] && $companyProfiles->isNotEmpty())
                                 <div class="col-12">
                                     <div class="border rounded p-3 bg-body-tertiary">
-                                        <label class="form-label" for="company-autofill">Preenchimento automático da empresa <span class="badge text-bg-primary">Plus</span></label>
+                                        <label class="form-label" for="company-autofill">Business profile autofill <span class="badge text-bg-primary">Plus</span></label>
                                         <div id="company-autofill" class="d-flex flex-wrap gap-2">
                                             @foreach($companyProfiles as $profile)
-                                                <a class="btn btn-sm {{ request('empresa') == $profile->id ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tools.gerador-de-contratos.index', ['modelo' => $selectedTemplate?->value, 'empresa' => $profile->id]) }}">
+                                                <a class="btn btn-sm {{ request('empresa') == $profile->id ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tools.contract-generator.index', ['modelo' => $selectedTemplate?->value, 'empresa' => $profile->id]) }}">
                                                     {{ $profile->legal_name ?: $profile->name }}
                                                 </a>
                                             @endforeach
                                         </div>
-                                        <div class="form-text">Preenche razão social e CNPJ a partir do perfil compartilhado. Endereço e demais dados continuam sob conferência do usuário.</div>
+                                        <div class="form-text">Fills business name and business ID from the shared profile. Review address and other details before use.</div>
                                     </div>
                                 </div>
                             @endif
@@ -151,7 +151,7 @@
                                 <div class="col-8 col-lg-4">
                                     <x-tools.form.input
                                         :name="$party['prefix'].'_city'"
-                                        label="Cidade"
+                                        label="City"
                                         maxlength="120"
                                         required
                                     />
@@ -223,7 +223,7 @@
                             @endif
 
                             <div class="col-12 col-md-4">
-                                <x-tools.form.money name="amount" label="Valor do contrato" placeholder="1.000,00" required />
+                                <x-tools.form.money name="amount" label="Amount do contrato" placeholder="1.000,00" required />
                             </div>
                             <div class="col-12 col-md-8">
                                 <label for="payment_terms" class="form-label">Como será feito o pagamento?</label>
@@ -241,7 +241,7 @@
                     </x-tools.form-panel>
 
                     <x-tools.form-panel
-                        title="Cláusulas inteligentes"
+                        title="Optional clause library"
                         description="Adicione cláusulas opcionais identificáveis ao contrato. Modelos profissionais podem pré-selecionar cláusulas compatíveis."
                         class="mb-4"
                     >
@@ -258,25 +258,25 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="alert alert-secondary mb-0">Cláusulas inteligentes fazem parte do Prazzu Plus no modo monetizado.</div>
+                            <div class="alert alert-secondary mb-0">Optional clause library fazem parte do Prazzu Plus no modo monetizado.</div>
                         @endif
                     </x-tools.form-panel>
 
                     <x-tools.form-panel
                         data-testid="contract-closing-panel"
                         title="4. Fechamento do contrato"
-                        description="Defina foro, local e data de assinatura e, se necessário, condições adicionais."
+                        description="Choose the governing state, dispute venue, signing location/date, and any additional terms."
                         class="mb-4"
                     >
                         <div class="row g-3">
                             <div class="col-8 col-md-5">
-                                <x-tools.form.input name="jurisdiction_city" label="Cidade do foro" maxlength="120" required />
+                                <x-tools.form.input name="jurisdiction_city" label="Venue city" maxlength="120" required />
                             </div>
                             <div class="col-4 col-md-2">
-                                <x-tools.form.input name="jurisdiction_state" label="UF do foro" maxlength="2" required />
+                                <x-tools.form.input name="jurisdiction_state" label="Governing state" maxlength="2" required />
                             </div>
                             <div class="col-12 col-md-5">
-                                <x-tools.form.input name="signing_city" label="Cidade da assinatura" maxlength="120" required />
+                                <x-tools.form.input name="signing_city" label="City da assinatura" maxlength="120" required />
                             </div>
                             <div class="col-12 col-md-4">
                                 <x-tools.form.input name="signing_date" label="Data da assinatura" type="date" required />
@@ -300,7 +300,7 @@
                                 <i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>
                                 Gerar contrato completo
                             </button>
-                            <a href="{{ route('tools.gerador-de-contratos.index') }}" class="btn btn-outline-secondary">Trocar modalidade</a>
+                            <a href="{{ route('tools.contract-generator.index') }}" class="btn btn-outline-secondary">Trocar modalidade</a>
                         </div>
                     </x-tools.form-panel>
                 </form>
@@ -336,11 +336,11 @@
                             <strong>{{ $draft['type_label'] }}</strong>
                         </div>
                         <div class="col-12 col-md-4">
-                            <span class="text-body-secondary d-block">Valor</span>
+                            <span class="text-body-secondary d-block">Amount</span>
                             <strong>{{ $draft['amount_formatted'] }}</strong>
                         </div>
                         <div class="col-12 col-md-4">
-                            <span class="text-body-secondary d-block">Foro</span>
+                            <span class="text-body-secondary d-block">Venue</span>
                             <strong>{{ $draft['jurisdiction_city'] }}/{{ $draft['jurisdiction_state'] }}</strong>
                         </div>
                     </div>
@@ -363,7 +363,7 @@
                         </div>
                     @endif
 
-                    <form data-testid="contract-editor" method="POST" action="{{ route('tools.gerador-de-contratos.preview') }}" aria-label="Editor e exportação do contrato" data-analytics-form="editor">
+                    <form data-testid="contract-editor" method="POST" action="{{ route('tools.contract-generator.preview') }}" aria-label="Editor e exportação do contrato" data-analytics-form="editor">
                         @csrf
                         <input type="hidden" name="contract_type" value="{{ $selectedType?->value }}">
                         <input type="hidden" name="source_run_id" value="{{ $currentRunId }}">
@@ -385,7 +385,7 @@
                                 Atualizar visualização
                             </button>
                             @if($featureAccess['history'] && auth()->check())
-                                <button type="submit" class="btn btn-outline-dark" formaction="{{ route('tools.gerador-de-contratos.versions.store') }}">
+                                <button type="submit" class="btn btn-outline-dark" formaction="{{ route('tools.contract-generator.versions.store') }}">
                                     <i class="bi bi-clock-history me-1" aria-hidden="true"></i>
                                     Salvar nova versão
                                 </button>
@@ -394,16 +394,16 @@
                                 type="submit"
                                 class="btn btn-outline-primary"
                                 data-testid="contract-export-pdf"
-                                formaction="{{ route('tools.gerador-de-contratos.export.pdf') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="pdf"
+                                formaction="{{ route('tools.contract-generator.export.pdf') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="pdf"
                             >
                                 <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
-                                Exportar PDF
+                                Export PDF
                             </button>
                             <button
                                 type="submit"
                                 class="btn btn-outline-success"
                                 data-testid="contract-export-xlsx"
-                                formaction="{{ route('tools.gerador-de-contratos.export.xlsx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="xlsx"
+                                formaction="{{ route('tools.contract-generator.export.xlsx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="xlsx"
                             >
                                 <i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i>
                                 Baixar Excel
@@ -412,12 +412,12 @@
                                 type="submit"
                                 class="btn btn-outline-primary"
                                 data-testid="contract-export-docx"
-                                formaction="{{ route('tools.gerador-de-contratos.export.docx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="docx"
+                                formaction="{{ route('tools.contract-generator.export.docx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="docx"
                             >
                                 <i class="bi bi-file-earmark-word me-1" aria-hidden="true"></i>
                                 Baixar Word
                             </button>
-                            <a href="{{ route('tools.gerador-de-contratos.index', ['tipo' => $selectedType?->value]) }}" class="btn btn-outline-secondary">Refazer perguntas</a>
+                            <a href="{{ route('tools.contract-generator.index', ['tipo' => $selectedType?->value]) }}" class="btn btn-outline-secondary">Refazer perguntas</a>
                         </div>
                     </form>
                 </x-tools.form-panel>
@@ -432,10 +432,10 @@
             @endif
 
             @if($featureAccess['history'] && auth()->check())
-                <x-tools.form-panel title="Histórico de contratos" description="Versões persistidas na sua conta e disponíveis para favoritos e comparação." class="mt-4">
+                <x-tools.form-panel title="Contract history" description="Versões persistidas na sua conta e disponíveis para favoritos e comparação." class="mt-4">
                     <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
                         <span class="text-body-secondary">{{ count($recentHistory) }} versão(ões) recente(s)</span>
-                        <a class="btn btn-outline-primary btn-sm" href="{{ route('tools.gerador-de-contratos.history.index') }}">Abrir histórico completo</a>
+                        <a class="btn btn-outline-primary btn-sm" href="{{ route('tools.contract-generator.history.index') }}">Abrir histórico completo</a>
                     </div>
                     @forelse($recentHistory as $run)
                         <div class="border rounded p-3 mb-2 d-flex justify-content-between gap-3 align-items-center">

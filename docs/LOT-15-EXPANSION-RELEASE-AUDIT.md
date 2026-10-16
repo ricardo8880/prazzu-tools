@@ -31,7 +31,6 @@ O cache de rotas incluído neste patch foi regenerado apenas para compatibilidad
 
 ### 2. Contrato de qualidade incompleto nos Lotes 12 e 13
 
-`docs/TOOL_QUALITY.md` exige casos dourados concretos e gate de qualidade para ferramentas novas ativas. `NetSalaryCalculator` já atendia ao contrato, mas `OvertimeCalculator` e `DifalIcmsCalculator` possuíam perfil de risco sem a suíte de casos dourados correspondente.
 
 Foram adicionados para ambos:
 

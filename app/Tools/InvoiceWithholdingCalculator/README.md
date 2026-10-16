@@ -69,9 +69,9 @@ A ferramenta é deliberadamente paramétrica. Natureza do serviço, prestador/to
 
 ## Integração com a plataforma
 
-- Slug: `calculadora-retencoes-nota-fiscal`
-- Rota principal: `tools.calculadora-retencoes-nota-fiscal.index`
-- Namespace de views: `tools-calculadora-retencoes-nota-fiscal`
+- Slug: `backup-withholding-calculator`
+- Rota principal: `tools.backup-withholding-calculator.index`
+- Namespace de views: `tools-backup-withholding-calculator`
 - Histórico: habilitado
 - Exportações: PDF e XLSX
 

@@ -18,7 +18,7 @@ final class MultiVerticalExpansionProofTest extends TestCase
         $this->app->make(VerticalContext::class)->activate($vertical);
 
         $catalog = $this->app->make(ToolCatalog::class);
-        self::assertSame(['calculadora-turnover'], $catalog->all()->pluck('slug')->all());
+        self::assertSame(['employee-turnover-calculator'], $catalog->all()->pluck('slug')->all());
 
         $this->get(route('home', ['vertical' => 'rh']))
             ->assertOk()

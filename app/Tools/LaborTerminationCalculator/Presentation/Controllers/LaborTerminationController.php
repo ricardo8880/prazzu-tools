@@ -18,8 +18,6 @@ use App\Http\Controllers\Controller;
 use App\Tools\LaborTerminationCalculator\Application\Actions\CalculateLaborTermination;
 use App\Tools\LaborTerminationCalculator\Application\Actions\ManageLaborTerminationHistory;
 use App\Tools\LaborTerminationCalculator\Domain\Calculators\LaborTerminationCalculator;
-use App\Tools\LaborTerminationCalculator\Domain\Enums\NoticeType;
-use App\Tools\LaborTerminationCalculator\Domain\Enums\TerminationType;
 use App\Tools\LaborTerminationCalculator\Presentation\Requests\CalculateLaborTerminationRequest;
 use App\Tools\LaborTerminationCalculator\Tool;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +32,7 @@ final class LaborTerminationController extends Controller
 {
     public function index(Request $request, ManageLaborTerminationHistory $history): View
     {
-        return view('tools-calculadora-de-rescisao::index', $this->pageData($request, $history));
+        return view('tools-final-pay-severance-calculator::index', $this->pageData($request, $history));
     }
 
     public function calculate(
@@ -66,7 +64,7 @@ final class LaborTerminationController extends Controller
             }
         } catch (InvalidValue $exception) {
             $this->recordFailure($recorder, $run, 'calculation.invalid_input');
-            throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
+            throw ValidationException::withMessages(['hourly_rate' => $exception->getMessage()]);
         } catch (Throwable $exception) {
             $this->recordFailure($recorder, $run, 'calculation.failed');
             throw $exception;
@@ -74,7 +72,7 @@ final class LaborTerminationController extends Controller
 
         $request->flash();
 
-        return view('tools-calculadora-de-rescisao::index', $this->pageData($request, $history, [
+        return view('tools-final-pay-severance-calculator::index', $this->pageData($request, $history, [
             'calculationResult' => $result->toArray(),
             'calculationInput' => $input,
             'historySaved' => $run !== null,
@@ -90,8 +88,7 @@ final class LaborTerminationController extends Controller
 
         Log::info('Labor termination PDF report requested.', [
             'tool' => Tool::SLUG,
-            'termination_type' => $input['termination_type'] ?? null,
-            'notice_type' => $input['notice_type'] ?? null,
+            'separation_type' => $input['separation_type'] ?? null,
             'user_id' => $request->user()?->getAuthIdentifier(),
         ]);
 
@@ -99,14 +96,14 @@ final class LaborTerminationController extends Controller
             $result = $action->execute($input)->toArray();
 
             return $exporter->download(new PdfDocument(
-                filename: 'rescisao-'.now()->format('Y-m-d'),
+                filename: 'final-pay-severance-'.now()->format('Y-m-d'),
                 view: 'exports.printable-document',
                 data: [
-                    'title' => 'Relatório de Rescisão Trabalhista',
-                    'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
+                    'title' => 'Final Pay & Severance Report',
+                    'contentView' => 'tools-final-pay-severance-calculator::pdf.report',
                     'contentData' => ['result' => $result, 'input' => $input],
                     'generatedAt' => now()->format('d/m/Y H:i'),
-                    'summaryLabel' => 'Valor líquido estimado',
+                    'summaryLabel' => 'Estimated net final pay',
                     'summaryValue' => $result['net_total'] ?? null,
                 ],
             ));
@@ -115,7 +112,7 @@ final class LaborTerminationController extends Controller
                 'tool' => Tool::SLUG,
                 'message' => $exception->getMessage(),
             ]);
-            throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
+            throw ValidationException::withMessages(['hourly_rate' => $exception->getMessage()]);
         } catch (Throwable $exception) {
             Log::error('Labor termination PDF report failed.', [
                 'tool' => Tool::SLUG,
@@ -136,10 +133,10 @@ final class LaborTerminationController extends Controller
         try {
             $result = $action->execute($input)->toArray();
         } catch (InvalidValue $exception) {
-            throw ValidationException::withMessages(['notice_type' => $exception->getMessage()]);
+            throw ValidationException::withMessages(['hourly_rate' => $exception->getMessage()]);
         }
 
-        return $exporter->download($documents->spreadsheet('rescisao-'.now()->format('Y-m-d'), $result, $input));
+        return $exporter->download($documents->spreadsheet('final-pay-severance-'.now()->format('Y-m-d'), $result, $input));
     }
 
     public function exportHistory(
@@ -150,18 +147,18 @@ final class LaborTerminationController extends Controller
         $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
         return view('exports.printable-document', [
-            'title' => 'Relatório de Rescisão Trabalhista',
-            'contentView' => 'tools-calculadora-de-rescisao::pdf.report',
+            'title' => 'Final Pay & Severance Report',
+            'contentView' => 'tools-final-pay-severance-calculator::pdf.report',
             'contentData' => ['result' => $run->result, 'input' => $run->input],
             'generatedAt' => $run->finishedAt->format('d/m/Y H:i'),
-            'summaryLabel' => 'Valor líquido estimado',
+            'summaryLabel' => 'Estimated net final pay',
             'summaryValue' => $run->result['net_total'] ?? null,
         ]);
     }
 
     public function history(Request $request, ManageLaborTerminationHistory $history): View
     {
-        return view('tools-calculadora-de-rescisao::history.index', [
+        return view('tools-final-pay-severance-calculator::history.index', [
             'runs' => $history->paginate((int) $request->user()->getAuthIdentifier(), page: max(1, $request->integer('page', 1))),
         ]);
     }
@@ -170,24 +167,24 @@ final class LaborTerminationController extends Controller
     {
         $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
-        return view('tools-calculadora-de-rescisao::history.show', ['run' => $run]);
+        return view('tools-final-pay-severance-calculator::history.show', ['run' => $run]);
     }
 
     public function repeatHistory(Request $request, string $run, ManageLaborTerminationHistory $history): RedirectResponse
     {
         $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
-        return redirect()->route('tools.calculadora-de-rescisao.index')
+        return redirect()->route('tools.final-pay-severance-calculator.index')
             ->withInput($run->input)
-            ->with('history_message', 'Os dados do cálculo foram carregados. Revise-os antes de calcular novamente.');
+            ->with('history_message', 'Saved inputs were restored. Review them before calculating again.');
     }
 
     public function destroyHistory(Request $request, string $run, ManageLaborTerminationHistory $history): RedirectResponse
     {
         $history->delete($run, (int) $request->user()->getAuthIdentifier());
 
-        return redirect()->route('tools.calculadora-de-rescisao.history.index')
-            ->with('history_message', 'Cálculo removido do histórico.');
+        return redirect()->route('tools.final-pay-severance-calculator.history.index')
+            ->with('history_message', 'Calculation removed from history.');
     }
 
     /**
@@ -204,32 +201,18 @@ final class LaborTerminationController extends Controller
             : $history->recent((int) $request->user()->getAuthIdentifier());
 
         return array_merge([
-            'terminationTypes' => $this->enumOptions(TerminationType::cases()),
-            'contractTypes' => [
-                'indefinite' => 'Prazo indeterminado',
-                'fixed_term' => 'Prazo determinado',
-                'experience' => 'Contrato de experiência',
-                'domestic' => 'Empregado doméstico',
+            'separationTypes' => [
+                'resignation' => 'Resignation',
+                'layoff' => 'Layoff',
+                'termination' => 'Employer termination',
+                'contract_end' => 'Contract end',
+                'other' => 'Other',
             ],
-            'noticeTypes' => $this->enumOptions(NoticeType::cases()),
             'recentHistory' => $recentHistory,
             'calculationResult' => null,
             'calculationInput' => [],
             'historySaved' => false,
         ], $extra);
-    }
-
-    /** @param array<int, TerminationType|NoticeType> $cases
-     *  @return array<string, string>
-     */
-    private function enumOptions(array $cases): array
-    {
-        $options = [];
-        foreach ($cases as $case) {
-            $options[$case->value] = $case->label();
-        }
-
-        return $options;
     }
 
     private function recordFailure(ToolRunRecorder $recorder, ?ToolRunHandle $run, string $errorCode): void

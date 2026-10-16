@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('capital-de-giro', 'projections')]
+    #[CoversPlusFeature('working-capital-calculator', 'projections')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $features = ['projections'];

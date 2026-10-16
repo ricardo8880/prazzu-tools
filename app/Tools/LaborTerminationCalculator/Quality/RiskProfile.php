@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'calculadora-de-rescisao',
+            toolSlug: 'final-pay-severance-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::High,
             personalDataExposure: PersonalDataExposure::Sensitive,

@@ -21,19 +21,19 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível com a calculadora de ponto de equilíbrio.');
+            throw new InvalidArgumentException('Incompatible break-even input.');
         }
 
         $price = $input->salePrice->minorAmount();
         $contribution = $price - $input->variableCost->minorAmount();
         if ($price <= 0 || $contribution <= 0) {
-            throw new InvalidArgumentException('O preço deve ser positivo e maior que o custo variável.');
+            throw new InvalidArgumentException('Selling price must be positive and greater than variable cost.');
         }
 
         $fixed = $input->fixedCosts->minorAmount();
         $units = intdiv($fixed + $contribution - 1, $contribution);
         if ($units > intdiv(PHP_INT_MAX, $price)) {
-            throw new InvalidArgumentException('O faturamento calculado excede o intervalo monetário suportado.');
+            throw new InvalidArgumentException('Calculated revenue exceeds the supported monetary range.');
         }
 
         $revenue = Money::fromMinor($units * $price);
@@ -46,38 +46,38 @@ final class Calculator implements ToolCalculator
         if ($fixed === 0) {
             $warnings[] = new ToolCalculationWarning(
                 code: 'no_fixed_costs',
-                message: 'Com custos fixos iguais a zero, o ponto de equilíbrio contábil ocorre antes da primeira unidade. A ferramenta mantém quantidade e faturamento mínimos em zero.',
+                message: 'With zero fixed costs, accounting break-even occurs before the first unit. The calculator keeps minimum units and revenue at zero.',
                 level: ToolCalculationWarningLevel::Info,
                 title: 'Sem custos fixos informados',
             );
         }
 
         return new ToolCalculationResult(
-            toolSlug: 'ponto-de-equilibrio',
+            toolSlug: 'break-even-calculator',
             schemaVersion: '1.2.0',
             summary: [
-                new ToolCalculationSummaryItem('break_even_revenue', 'Faturamento mínimo', $revenue->formatPtBr(), 'Faturamento na primeira unidade inteira que cobre os custos.'),
-                new ToolCalculationSummaryItem('break_even_units', 'Quantidade mínima', $units.' unidade'.($units === 1 ? '' : 's')),
-                new ToolCalculationSummaryItem('unit_contribution', 'Margem de contribuição unitária', $unitContribution->formatPtBr()),
-                new ToolCalculationSummaryItem('contribution_margin', 'Índice de margem de contribuição', $formattedMargin),
-                new ToolCalculationSummaryItem('coverage_surplus', 'Folga após o arredondamento', $coverageSurplus->formatPtBr(), 'Contribuição excedente na primeira quantidade inteira que cobre os custos fixos.'),
+                new ToolCalculationSummaryItem('break_even_revenue', 'Minimum break-even revenue', $revenue->formatEnUs(), 'Revenue at the first whole unit that covers fixed costs.'),
+                new ToolCalculationSummaryItem('break_even_units', 'Minimum units', $units.' unidade'.($units === 1 ? '' : 's')),
+                new ToolCalculationSummaryItem('unit_contribution', 'Unit contribution margin', $unitContribution->formatEnUs()),
+                new ToolCalculationSummaryItem('contribution_margin', 'Contribution margin ratio', $formattedMargin),
+                new ToolCalculationSummaryItem('coverage_surplus', 'Rounding surplus', $coverageSurplus->formatEnUs(), 'Excess contribution at the first whole unit that covers fixed costs.'),
             ],
             details: ['input' => $input->toArray()],
             warnings: $warnings,
             calculationMemory: new CalculationMemory(
                 schemaVersion: '1.2.0',
                 steps: [
-                    new CalculationMemoryStep('unit_contribution', 'Margem de contribuição unitária', 'preço de venda − custo variável unitário', ['sale_price' => $price, 'variable_cost' => $input->variableCost->minorAmount()], $contribution),
-                    new CalculationMemoryStep('contribution_margin', 'Índice de margem de contribuição', 'margem unitária ÷ preço de venda', ['unit_contribution' => $contribution, 'sale_price' => $price], $formattedMargin, 'Percentual truncado em basis points para duas casas decimais.'),
-                    new CalculationMemoryStep('break_even_units', 'Quantidade mínima', 'teto(custos fixos ÷ margem unitária)', ['fixed_costs' => $fixed, 'unit_contribution' => $contribution], $units, 'Arredondamento obrigatório para cima até a primeira unidade inteira.'),
-                    new CalculationMemoryStep('break_even_revenue', 'Faturamento mínimo', 'quantidade mínima × preço de venda', ['break_even_units' => $units, 'sale_price' => $price], $revenue->minorAmount(), 'Multiplicação em centavos, sem ponto flutuante.'),
-                    new CalculationMemoryStep('coverage_surplus', 'Folga após o arredondamento', '(quantidade mínima × margem unitária) − custos fixos', ['break_even_units' => $units, 'unit_contribution' => $contribution, 'fixed_costs' => $fixed], $coverageSurplus->minorAmount(), 'Mostra somente o excesso criado pelo arredondamento para unidade inteira.'),
+                    new CalculationMemoryStep('unit_contribution', 'Unit contribution margin', 'selling price − unit variable cost', ['sale_price' => $price, 'variable_cost' => $input->variableCost->minorAmount()], $contribution),
+                    new CalculationMemoryStep('contribution_margin', 'Contribution margin ratio', 'unit contribution ÷ selling price', ['unit_contribution' => $contribution, 'sale_price' => $price], $formattedMargin, 'Percentage represented in basis points to two decimals.'),
+                    new CalculationMemoryStep('break_even_units', 'Minimum units', 'ceiling(fixed costs ÷ unit contribution)', ['fixed_costs' => $fixed, 'unit_contribution' => $contribution], $units, 'Rounded up to the next whole unit.'),
+                    new CalculationMemoryStep('break_even_revenue', 'Minimum break-even revenue', 'minimum units × selling price', ['break_even_units' => $units, 'sale_price' => $price], $revenue->minorAmount(), 'Calculated in cents using integer arithmetic.'),
+                    new CalculationMemoryStep('coverage_surplus', 'Rounding surplus', '(minimum units × unit contribution) − fixed costs', ['break_even_units' => $units, 'unit_contribution' => $contribution, 'fixed_costs' => $fixed], $coverageSurplus->minorAmount(), 'Shows the surplus created by rounding to a whole unit.'),
                 ],
                 assumptions: [
-                    'Custos fixos, preço e custo variável devem representar o mesmo período e uma estrutura operacional comparável.',
-                    'Preço e custo variável unitário permanecem constantes em todas as unidades consideradas.',
-                    'Tributos, comissões e perdas variáveis devem estar incluídos no custo variável informado quando aplicáveis.',
-                    'A quantidade mínima é arredondada para cima; por isso o faturamento exibido pode superar o ponto de equilíbrio teórico fracionário.',
+                    'Fixed costs, price, and variable cost should represent the same period and a comparable operating structure.',
+                    'Unit selling price and unit variable cost are assumed constant across the units analyzed.',
+                    'Taxes, commissions, and variable losses should be included in variable cost when applicable.',
+                    'Minimum units are rounded up, so displayed revenue may exceed the theoretical fractional break-even point.',
                 ],
                 isEstimate: true,
             ),

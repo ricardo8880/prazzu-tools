@@ -57,7 +57,7 @@ Não foram criados contratos artificiais. A ferramenta funciona isoladamente.
 
 ## Capacidades da plataforma
 
-- Slug: `emissor-de-recibos`
+- Slug: `receipt-generator`
 - Estado: `draft`
 - Histórico versionado: declarado para o futuro lote Plus
 - Exportação: PDF

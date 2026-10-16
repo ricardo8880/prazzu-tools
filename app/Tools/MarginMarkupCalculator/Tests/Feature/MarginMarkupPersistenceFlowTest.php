@@ -15,7 +15,7 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[CoversPlusFeature('calculadora-margem-markup', 'history')]
+    #[CoversPlusFeature('margin-markup-calculator', 'history')]
     public function test_authenticated_user_can_list_repeat_export_and_delete_owned_history(): void
     {
         $user = User::factory()->create();
@@ -24,35 +24,35 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
         $otherRun = $this->createRun($otherUser, salePrice: 'R$ 999,00');
 
         $this->actingAs($user)
-            ->get(route('tools.calculadora-margem-markup.history.index'))
+            ->get(route('tools.margin-markup-calculator.history.index'))
             ->assertOk()
             ->assertSee('R$ 160,00')
             ->assertDontSee('R$ 999,00');
 
         $this->actingAs($user)
-            ->get(route('tools.calculadora-margem-markup.history.show', $run))
+            ->get(route('tools.margin-markup-calculator.history.show', $run))
             ->assertOk()
             ->assertSee('Detalhes do cálculo')
             ->assertSee('R$ 160,00');
 
         $this->actingAs($user)
-            ->get(route('tools.calculadora-margem-markup.history.show', $otherRun))
+            ->get(route('tools.margin-markup-calculator.history.show', $otherRun))
             ->assertNotFound();
 
         $this->actingAs($user)
-            ->post(route('tools.calculadora-margem-markup.history.repeat', $run))
-            ->assertRedirect(route('tools.calculadora-margem-markup.index'))
+            ->post(route('tools.margin-markup-calculator.history.repeat', $run))
+            ->assertRedirect(route('tools.margin-markup-calculator.index'))
             ->assertSessionHasInput('base_cost', '100,00');
 
         $this->actingAs($user)
-            ->get(route('tools.calculadora-margem-markup.history.pdf', $run))
+            ->get(route('tools.margin-markup-calculator.history.pdf', $run))
             ->assertOk()
             ->assertSee('Relatório de Margem, Markup e Formação de Preço')
             ->assertSee('R$ 160,00');
 
         $this->actingAs($user)
-            ->delete(route('tools.calculadora-margem-markup.history.destroy', $run))
-            ->assertRedirect(route('tools.calculadora-margem-markup.history.index'));
+            ->delete(route('tools.margin-markup-calculator.history.destroy', $run))
+            ->assertRedirect(route('tools.margin-markup-calculator.history.index'));
 
         $this->assertDatabaseMissing('tool_runs', ['id' => $run->id]);
         $this->assertDatabaseHas('audit_logs', [
@@ -66,7 +66,7 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
     {
         return ToolRun::query()->create([
             'user_id' => $user->id,
-            'tool_slug' => 'calculadora-margem-markup',
+            'tool_slug' => 'margin-markup-calculator',
             'tool_version' => '1.0.0',
             'rule_version' => '2.0.0',
             'reference_date' => '2026-07-15',

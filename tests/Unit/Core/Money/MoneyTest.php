@@ -12,12 +12,12 @@ use PHPUnit\Framework\TestCase;
 
 final class MoneyTest extends TestCase
 {
-    public function test_it_parses_and_formats_brazilian_money_without_float(): void
+    public function test_it_parses_and_formats_us_money_without_float(): void
     {
         $money = Money::fromDecimal('R$ 1.234,56');
 
         self::assertSame(123456, $money->minorAmount());
-        self::assertSame('R$ 1.234,56', $money->formatPtBr());
+        self::assertSame('R$ 1.234,56', $money->formatEnUs());
         self::assertTrue($money->equals(Money::fromDecimal('1234.56')));
     }
 

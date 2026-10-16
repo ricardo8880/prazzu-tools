@@ -17,7 +17,7 @@ final class GoldenCases
         $reference = 'INSS: Portaria Interministerial MPS/MF nº 13/2026; IRRF: Receita Federal, Tributação de 2026 e Lei nº 15.270/2025; casos protegidos por CalculatorTest.';
 
         return new GoldenCaseSuite(
-            toolSlug: 'calculadora-salario-liquido',
+            toolSlug: 'take-home-pay-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

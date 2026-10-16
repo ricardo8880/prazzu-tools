@@ -69,9 +69,9 @@ A ferramenta não define automaticamente vida útil contábil/fiscal, valor resi
 
 ## Integração com a plataforma
 
-- Slug: `calculadora-depreciacao-ativos`
-- Rota principal: `tools.calculadora-depreciacao-ativos.index`
-- Namespace de views: `tools-calculadora-depreciacao-ativos`
+- Slug: `asset-depreciation-calculator`
+- Rota principal: `tools.asset-depreciation-calculator.index`
+- Namespace de views: `tools-asset-depreciation-calculator`
 - Histórico: desabilitado
 - Exportações: PDF e XLSX
 

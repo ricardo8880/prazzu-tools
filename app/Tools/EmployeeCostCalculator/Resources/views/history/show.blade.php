@@ -13,8 +13,8 @@
 <div class="prazzu-page">
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{{ route('tools.custo-funcionario-clt.index') }}">Custo de funcionário CLT</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.custo-funcionario-clt.history.index') }}">Histórico</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('tools.employee-cost-calculator.index') }}">Custo de funcionário CLT</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('tools.employee-cost-calculator.history.index') }}">Histórico</a></li>
             <li class="breadcrumb-item active" aria-current="page">Detalhes</li>
         </ol>
     </nav>
@@ -39,7 +39,7 @@
                         </div>
                     @endforeach
                 </div>
-                <h3 class="h5 mt-4">Memória de cálculo</h3>
+                <h3 class="h5 mt-4">Calculation details</h3>
                 <div class="table-responsive">
                     <table class="table table-sm">
                         <tbody>
@@ -75,14 +75,14 @@
     @endif
 
     <div class="d-flex flex-wrap gap-2">
-        <form method="post" action="{{ route('tools.custo-funcionario-clt.history.repeat', $run->id) }}">
+        <form method="post" action="{{ route('tools.employee-cost-calculator.history.repeat', $run->id) }}">
             @csrf
-            <button class="btn btn-primary" type="submit">Reutilizar dados</button>
+            <button class="btn btn-primary" type="submit">Reuse data</button>
         </form>
         @if($singleResult)
-            <a class="btn btn-outline-secondary" href="{{ route('tools.custo-funcionario-clt.history.print', $run->id) }}">Imprimir / PDF</a>
+            <a class="btn btn-outline-secondary" href="{{ route('tools.employee-cost-calculator.history.print', $run->id) }}">Imprimir / PDF</a>
         @endif
-        <form method="post" action="{{ route('tools.custo-funcionario-clt.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo?">
+        <form method="post" action="{{ route('tools.employee-cost-calculator.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo?">
             @csrf
             @method('DELETE')
             <button class="btn btn-outline-danger" type="submit">Excluir</button>

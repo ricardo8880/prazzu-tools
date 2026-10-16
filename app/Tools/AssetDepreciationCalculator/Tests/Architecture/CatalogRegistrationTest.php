@@ -11,8 +11,8 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('calculadora-depreciacao-ativos');
+        $module = app(ToolRegistry::class)->findModule('asset-depreciation-calculator');
         self::assertNotNull($module);
-        self::assertSame('calculadora-depreciacao-ativos', $module->manifest()->slug);
+        self::assertSame('asset-depreciation-calculator', $module->manifest()->slug);
     }
 }

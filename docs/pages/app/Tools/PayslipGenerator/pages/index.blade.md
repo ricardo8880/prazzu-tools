@@ -8,8 +8,8 @@ O gerador não apura automaticamente INSS ou IRRF.
 
 ## Funcionamento
 
-- `GET /ferramentas/gerador-holerite` abre o formulário público.
-- `POST /ferramentas/gerador-holerite` valida e gera o demonstrativo.
+- `GET /ferramentas/pay-stub-generator` abre o formulário público.
+- `POST /ferramentas/pay-stub-generator` valida e gera o demonstrativo.
 - O usuário informa funcionário, documento, empregador, competência, salário,
   outros proventos, INSS, IRRF e outros descontos.
 - O domínio soma proventos e descontos, impede descontos superiores aos
@@ -19,8 +19,8 @@ O gerador não apura automaticamente INSS ou IRRF.
 ## Implementação principal
 
 - **View:** `app/Tools/PayslipGenerator/Resources/views/index.blade.php`
-- **Rotas:** `tools.gerador-holerite.index` e
-  `tools.gerador-holerite.calculate`
+- **Rotas:** `tools.pay-stub-generator.index` e
+  `tools.pay-stub-generator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

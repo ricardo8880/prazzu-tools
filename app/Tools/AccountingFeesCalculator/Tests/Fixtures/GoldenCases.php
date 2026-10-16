@@ -18,7 +18,7 @@ final class GoldenCases
         $adjustmentReference = 'FeeAdjustmentCalculatorTest protege reajuste positivo, negativo, arredondamento HalfUp e rejeição de valor não positivo.';
 
         return new GoldenCaseSuite(
-            toolSlug: 'calculadora-de-honorarios-contabeis',
+            toolSlug: 'accounting-fee-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

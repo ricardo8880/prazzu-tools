@@ -10,7 +10,7 @@ final class ToolAcquisitionSeoTest extends TestCase
 {
     public function test_standard_tool_page_exposes_canonical_structured_data_and_trust_content(): void
     {
-        $canonical = route('tools.calculadora-salario-liquido.index');
+        $canonical = route('tools.take-home-pay-calculator.index');
 
         $this->get($canonical)
             ->assertOk()
@@ -25,7 +25,7 @@ final class ToolAcquisitionSeoTest extends TestCase
 
     public function test_legacy_tool_page_keeps_its_specific_guidance_and_receives_structured_data(): void
     {
-        $this->get(route('tools.calculadora-ferias.index'))
+        $this->get(route('tools.pto-calculator.index'))
             ->assertOk()
             ->assertSee('"@type":"WebApplication"', false)
             ->assertSee('Como interpretar')

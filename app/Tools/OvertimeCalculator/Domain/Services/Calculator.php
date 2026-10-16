@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tools\OvertimeCalculator\Domain\Services;
 
+use App\Core\Math\IntegerRounding;
+use App\Core\Math\RoundingMode;
+use App\Core\Money\Money;
+use App\Core\Tools\Calculation\Data\CalculationMemory;
+use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Core\Tools\Calculation\Data\ToolCalculationResult;
 use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
 use App\Core\Tools\Calculation\Data\ToolCalculationWarning;
@@ -13,25 +18,68 @@ use App\Core\Tools\Contracts\ToolCalculator;
 use App\Tools\OvertimeCalculator\Application\Data\CalculationInput;
 use InvalidArgumentException;
 
-final readonly class Calculator implements ToolCalculator
+final class Calculator implements ToolCalculator
 {
-    public function __construct(private ?OvertimeCalculator $calculator = null) {}
-
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível com a calculadora de hora extra.');
+            throw new InvalidArgumentException('Incompatible overtime input.');
         }
-        $r = ($this->calculator ?? new OvertimeCalculator)->calculate($input->toDomain());
 
-        return new ToolCalculationResult('calculadora-hora-extra', '1.0.0', [
-            new ToolCalculationSummaryItem('hourly', 'Hora normal', $r->hourlyRate->formatPtBr()),
-            new ToolCalculationSummaryItem('overtime', 'Horas extras', $r->overtime50->add($r->overtime100)->add($r->customOvertime)->formatPtBr()),
-            new ToolCalculationSummaryItem('night', 'Adicional noturno', $r->nightPremium->add($r->nightOvertime)->formatPtBr()),
-            new ToolCalculationSummaryItem('dsr', 'DSR', $r->dsr->formatPtBr()),
-            new ToolCalculationSummaryItem('total', 'Total variável', $r->monthlyTotal->formatPtBr()),
+        $regularHours = $input->regularThousandths();
+        $overtimeHours = $input->overtimeThousandths();
+        if ($regularHours > 40_000) {
+            throw new InvalidArgumentException('Regular hours cannot exceed 40 in this weekly FLSA estimator. Put hours over 40 in overtime hours.');
+        }
+        if ($regularHours + $overtimeHours > 168_000) {
+            throw new InvalidArgumentException('Weekly hours cannot exceed 168.');
+        }
+
+        $hourly = $input->hourlyMoney();
+        $bonus = $input->bonusMoney();
+        $totalHours = $regularHours + $overtimeHours;
+
+        // Nondiscretionary bonuses generally enter the FLSA regular-rate calculation.
+        // Allocate the weekly bonus over all hours worked, then apply the overtime premium
+        // to overtime hours. This simplified calculator assumes an hourly employee.
+        $bonusPerHour = $totalHours > 0
+            ? Money::fromMinor(IntegerRounding::divide($bonus->minorAmount() * 1000, $totalHours, RoundingMode::HalfUp))
+            : Money::zero();
+        $regularRate = $hourly->add($bonusPerHour);
+        $regularPay = $this->hoursValue($hourly, $regularHours);
+        $overtimePay = $this->hoursValue($regularRate->percentage($input->multiplierPercent()), $overtimeHours);
+        $weeklyTotal = $regularPay->add($overtimePay)->add($bonus);
+
+        $memory = new CalculationMemory('2.0.0', [
+            new CalculationMemoryStep('regular_rate', 'Regular rate', 'hourly rate + allocated nondiscretionary bonus per hour', ['hours_thousandths' => $totalHours, 'bonus_minor' => $bonus->minorAmount()], $regularRate->minorAmount()),
+            new CalculationMemoryStep('regular_pay', 'Regular-hours pay', 'hourly rate × regular hours', ['regular_hours_thousandths' => $regularHours], $regularPay->minorAmount()),
+            new CalculationMemoryStep('overtime_pay', 'Overtime pay', 'regular rate × overtime multiplier × overtime hours', ['overtime_hours_thousandths' => $overtimeHours, 'multiplier' => $input->overtimeMultiplier], $overtimePay->minorAmount()),
+            new CalculationMemoryStep('weekly_total', 'Estimated weekly pay', 'regular pay + overtime pay + nondiscretionary bonus', [], $weeklyTotal->minorAmount()),
+        ], assumptions: [
+            'This estimator is for a covered, nonexempt hourly employee under the federal FLSA.',
+            'Federal overtime is generally at least 1.5× the regular rate after 40 hours in a workweek.',
+            'State law, collective bargaining agreements, contracts, or employer policy can require more favorable rules.',
+            'Federal law does not generally require a night, weekend, or holiday premium by itself.',
+        ], isEstimate: true);
+
+        return new ToolCalculationResult('overtime-pay-calculator', '2.0.0', [
+            new ToolCalculationSummaryItem('regular_rate', 'Regular rate used', $regularRate->formatEnUs()),
+            new ToolCalculationSummaryItem('regular_pay', 'Regular-hours pay', $regularPay->formatEnUs()),
+            new ToolCalculationSummaryItem('overtime_pay', 'Overtime pay', $overtimePay->formatEnUs()),
+            new ToolCalculationSummaryItem('bonus', 'Nondiscretionary bonus', $bonus->formatEnUs()),
+            new ToolCalculationSummaryItem('weekly_total', 'Estimated weekly total', $weeklyTotal->formatEnUs()),
         ], [
-            'input' => $input->toArray(), 'hourly_minor' => $r->hourlyRate->minorAmount(), 'ot50_minor' => $r->overtime50->minorAmount(), 'ot100_minor' => $r->overtime100->minorAmount(), 'custom_minor' => $r->customOvertime->minorAmount(), 'night_minor' => $r->nightPremium->minorAmount(), 'night_overtime_minor' => $r->nightOvertime->minorAmount(), 'variable_minor' => $r->variableTotal->minorAmount(), 'dsr_minor' => $r->dsr->minorAmount(), 'total_minor' => $r->monthlyTotal->minorAmount(), 'thirteenth_minor' => $r->thirteenthReflex->minorAmount(), 'vacation_minor' => $r->vacationReflex->minorAmount(), 'vacation_third_minor' => $r->vacationThirdReflex->minorAmount(), 'fgts_minor' => $r->fgtsEstimate->minorAmount(),
-        ], warnings: [new ToolCalculationWarning('collective_rules', 'Confira convenção/acordo coletivo, escala e categoria profissional: percentuais e critérios podem ser mais favoráveis que os mínimos usados na simulação.', ToolCalculationWarningLevel::Info)], calculationMemory: $r->memory);
+            'input' => $input->toArray(),
+            'hourly_minor' => $hourly->minorAmount(),
+            'regular_rate_minor' => $regularRate->minorAmount(),
+            'regular_pay_minor' => $regularPay->minorAmount(),
+            'overtime_minor' => $overtimePay->minorAmount(),
+            'total_minor' => $weeklyTotal->minorAmount(),
+        ], [new ToolCalculationWarning('state_law', 'Check state overtime rules and any applicable agreement before relying on the result.', ToolCalculationWarningLevel::Info)], calculationMemory: $memory);
+    }
+
+    private function hoursValue(Money $hourly, int $thousandths): Money
+    {
+        return Money::fromMinor(IntegerRounding::divide($hourly->minorAmount() * $thousandths, 1000, RoundingMode::HalfUp));
     }
 }

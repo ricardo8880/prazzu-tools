@@ -39,7 +39,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'fluxo-de-caixa',
+            toolSlug: 'cash-flow-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -58,12 +58,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'fluxo-de-caixa',
-            name: 'Calculadora de Fluxo de Caixa',
-            description: 'Calcule entradas, saídas, geração operacional e saldo final previsto do período.',
+            slug: 'cash-flow-calculator',
+            name: 'Cash Flow Calculator',
+            description: 'Project cash inflows, outflows, and ending cash balance for a business.',
             category: ToolCategory::Calculators,
             icon: 'bi-graph-up-arrow',
-            routeName: 'tools.fluxo-de-caixa.index',
+            routeName: 'tools.cash-flow-calculator.index',
             vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
@@ -71,14 +71,14 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 180,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['fluxo de caixa', 'entradas', 'saídas', 'saldo', 'previsão financeira', 'tesouraria'],
+            keywords: ['cash flow', 'cash flow calculator', 'cash projection', 'business cash'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
                 new ToolFeature('cash_flow_scenarios', 'Comparação de cenários de entradas e saídas', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
@@ -105,6 +105,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-fluxo-de-caixa';
+        return 'tools-cash-flow-calculator';
     }
 }

@@ -15,7 +15,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'simulador-admissao',
+            toolSlug: 'new-hire-cost-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

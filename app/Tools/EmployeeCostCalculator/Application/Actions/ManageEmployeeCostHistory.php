@@ -12,7 +12,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 final readonly class ManageEmployeeCostHistory
 {
-    private const TOOL_SLUG = 'custo-funcionario-clt';
+    private const TOOL_SLUG = 'employee-cost-calculator';
 
     public function __construct(private ToolRunHistory $history) {}
 

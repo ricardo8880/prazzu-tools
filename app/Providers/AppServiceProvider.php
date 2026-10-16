@@ -33,8 +33,8 @@ use App\Core\Tools\History\Services\DatabaseToolRunFavorites;
 use App\Core\Tools\History\Services\DatabaseToolRunHistory;
 use App\Core\Tools\History\Services\DatabaseToolRunRecorder;
 use App\Core\Tools\ToolRegistry;
-use App\Core\Validation\BrazilianMoneyValidator;
-use App\Core\Validation\BrazilianPercentageValidator;
+use App\Core\Validation\USMoneyValidator;
+use App\Core\Validation\PercentageValidator;
 use App\Core\Verticals\Application\VerticalContext;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -108,33 +108,33 @@ class AppServiceProvider extends ServiceProvider
             URL::defaults(['vertical' => $defaultPublicSlug]);
         }
 
-        $moneyValidation = $this->app->make(BrazilianMoneyValidator::class);
+        $moneyValidation = $this->app->make(USMoneyValidator::class);
         Validator::extend(
-            'brazilian_money',
+            'us_money',
             static fn (string $attribute, mixed $value): bool => $moneyValidation->isValid($value),
-            'O campo :attribute deve ser um valor monetário válido.',
+            'The :attribute field must be a valid U.S. dollar amount.',
         );
         Validator::extend(
             'money_min',
             static fn (string $attribute, mixed $value, array $parameters): bool => $moneyValidation->hasMinimum($value, $parameters),
-            'O campo :attribute não atende ao valor mínimo permitido.',
+            'The :attribute field is below the minimum allowed amount.',
         );
 
-        $percentageValidation = $this->app->make(BrazilianPercentageValidator::class);
+        $percentageValidation = $this->app->make(PercentageValidator::class);
         Validator::extend(
-            'brazilian_percentage',
+            'percentage_value',
             static fn (string $attribute, mixed $value): bool => $percentageValidation->isValid($value),
-            'O campo :attribute deve ser um percentual válido com até seis casas decimais.',
+            'The :attribute field must be a valid percentage with up to six decimal places.',
         );
         Validator::extend(
             'percentage_min',
             static fn (string $attribute, mixed $value, array $parameters): bool => $percentageValidation->hasMinimum($value, $parameters),
-            'O campo :attribute não atende ao percentual mínimo permitido.',
+            'The :attribute field is below the minimum allowed percentage.',
         );
         Validator::extend(
             'percentage_max',
             static fn (string $attribute, mixed $value, array $parameters): bool => $percentageValidation->hasMaximum($value, $parameters),
-            'O campo :attribute excede o percentual máximo permitido.',
+            'The :attribute field exceeds the maximum allowed percentage.',
         );
 
         RateLimiter::for('tools-api', function (Request $request): Limit {

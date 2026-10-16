@@ -2,7 +2,7 @@
 
 - **Tipo:** Documento de saída/impressão
 - **Implementação principal:** `app/Tools/EmployeeCostCalculator/Resources/views/report-batch.blade.php`
-- **Fluxo:** `tools.custo-funcionario-clt.batch.print`
+- **Fluxo:** `tools.employee-cost-calculator.batch.print`
 - **Status:** ativo
 
 ## Objetivo

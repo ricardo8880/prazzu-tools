@@ -9,7 +9,7 @@
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.custo-funcionario-clt.index') }}">Custo de funcionário CLT</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('tools.employee-cost-calculator.index') }}">Custo de funcionário CLT</a></li>
             <li class="breadcrumb-item active" aria-current="page">Histórico</li>
         </ol>
     </nav>
@@ -39,7 +39,7 @@
             </div>
             <div class="col-12 col-md-4 d-flex gap-2">
                 <button class="btn btn-primary" type="submit">Filtrar</button>
-                <a class="btn btn-outline-secondary" href="{{ route('tools.custo-funcionario-clt.history.index') }}">Limpar</a>
+                <a class="btn btn-outline-secondary" href="{{ route('tools.employee-cost-calculator.history.index') }}">Clear</a>
             </div>
         </div>
     </form>
@@ -69,7 +69,7 @@
                         <td>{{ $run->input['scenario_name'] ?? $run->input['employee_name'] ?? 'Simulação sem nome' }}</td>
                         <td>{{ $type === 'batch' ? 'Lote' : 'Individual' }}</td>
                         <td class="text-end">
-                            <a class="btn btn-outline-primary btn-sm" href="{{ route('tools.custo-funcionario-clt.history.show', $run->id) }}">Abrir</a>
+                            <a class="btn btn-outline-primary btn-sm" href="{{ route('tools.employee-cost-calculator.history.show', $run->id) }}">Abrir</a>
                         </td>
                     </tr>
                 @endforeach

@@ -24,40 +24,19 @@ A classificação não usa simples ocorrência de texto como evidência de cober
 
 | Dor | Estado | Evidência atual | Decisão de produto |
 |---|---|---|---|
-| Nota Fiscal | **Completa por composição** | `InvoiceWithholdingCalculator` resolve retenções de NF de serviço; `FiscalXmlConverter` lê NF-e/NFC-e 55/65, itens, tributos e totalizadores | Não criar um emissor/ERP. Manter os dois módulos independentes e melhorar validações fiscais nos lotes de CFOP/SEFAZ quando houver ganho concreto. |
-| CFOP | **Parcial** | `FiscalXmlConverter` extrai `CFOP` do XML, mas não possui catálogo normativo, busca, explicação, sugestão ou validação semântica | Criar ferramenta dedicada de consulta/validação de CFOP. O XML poderá futuramente consumir um catálogo compartilhado somente quando a reutilização estiver concreta. |
 | Certificado Digital | **Ausente** | Não há domínio, rota ou ferramenta dedicada | Criar analisador de certificado A1 `.pfx/.p12`, sem emissão ICP-Brasil e sem persistência de senha/chave privada. A3 e assinatura ficam fora da primeira versão. |
-| Simples Nacional | **Completa** | `SimplesNacionalCalculator` é módulo oficial e `FactorRSimulator`/`RetroactiveDasRegularizationCalculator` permanecem independentes por escopo | Preservar. Revisar apenas regressões ou integração normativa necessária pelos novos módulos. |
-| Lucro Presumido | **Completa** | `PresumedProfitIrpjCsllCalculator` é ferramenta oficial dedicada; o comparador também possui estimativa própria desacoplada | Preservar a ferramenta dedicada e evitar duplicar regras em novos módulos. |
-| Lucro Real | **Parcial** | `TaxRegimeComparator` possui `ActualProfitTaxEstimateProvider` e `ActualProfitTaxRule`, mas apenas como estimativa de comparação e sem apuração dedicada | Criar calculadora dedicada de Lucro Real com escopo de estimativa/apuração assistida bem delimitado; extrair regra normativa somente quando a segunda utilização tornar a reutilização concreta. |
-| Fator R | **Completa** | `FactorRSimulator` possui domínio próprio e usa regra normativa versionada do Core | Preservar. |
-| Reforma Tributária | **Muito parcial** | Há referências à transição CBS/IBS em `PisCofinsRule` e alertas do `TaxRegimeComparator`, mas não existe ferramenta dedicada | Criar simulador de transição/impacto da Reforma Tributária por competência, com regras versionadas e fontes oficiais. Não embutir toda a reforma dentro de PIS/Cofins. |
-| PIS/Cofins | **Completa no escopo atual** | `PisCofinsCalculator` cobre cumulativo/não cumulativo e possui regra normativa 2026 | Preservar cálculo histórico/atual e deixar CBS/IBS para a ferramenta de Reforma Tributária, evitando misturar regimes em uma única calculadora. |
-| SEFAZ | **Parcial** | `FiscalXmlConverter` trata XML autorizado e alerta que não substitui conferência oficial; módulos de ICMS referenciam fontes estaduais, mas não há utilitário SEFAZ | Criar utilitário fiscal de diagnóstico/validação documental com camada offline primeiro. Integração on-line com webservices deve ser opcional e só entrar quando houver contrato técnico estável e segurança de certificado resolvida. |
-| ICMS | **Parcial** | `IcmsStCalculator` cobre ICMS-ST e `DifalIcmsCalculator` cobre DIFAL/FCP; não há calculadora independente de ICMS próprio para operação comum | Criar calculadora paramétrica de ICMS próprio, mantendo ST e DIFAL como módulos especializados. |
 | ECAD | **Ausente** | Não existe domínio dedicado; ocorrências textuais encontradas não representam implementação | Criar simulador orientativo de direitos autorais/ECAD. A primeira versão deve ser paramétrica e transparente; tabelas externas só podem ser automatizadas quando houver fonte vigente e regra de atualização confiável. |
-| DIFAL | **Completa** | `DifalIcmsCalculator` é ferramenta oficial dedicada, com FCP, base simples/dupla, memória e exportações | Preservar. |
 
 ## Ferramentas novas aprovadas para este ciclo
 
 O Lote 1 aprova escopo, não publicação. Os nomes técnicos abaixo são reservas de implementação e ainda não alteram `config/product_tools.php`:
 
-1. `DigitalCertificateAnalyzer` — Analisador de Certificado Digital A1.
-2. `CfopAdvisor` — Consultor e Validador de CFOP.
-3. `ActualProfitCalculator` — Calculadora de Lucro Real.
 4. `TaxReformSimulator` — Simulador da Reforma Tributária do Consumo.
-5. `SefazFiscalValidator` — Validador/Diagnóstico Fiscal SEFAZ, começando por validação offline.
-6. `IcmsCalculator` — Calculadora de ICMS Próprio.
-7. `EcadRoyaltySimulator` — Simulador Orientativo de ECAD/Direitos Autorais.
 
 Os slugs públicos só devem ser definidos no lote de publicação de cada ferramenta, após verificar colisões, páginas, SEO, rotas e `release_order`.
 
 ## Ajustes aprovados em ferramentas existentes
 
-- `FiscalXmlConverter`: preservar o parser seguro atual e, após existir um catálogo de CFOP confiável, adicionar validação semântica opcional sem transformar o módulo em emissor de nota ou cliente SEFAZ.
-- `TaxRegimeComparator`: continuar sendo comparador. A nova calculadora de Lucro Real não pode importar classes internas do comparador; a regra normativa equivalente deverá migrar para o Core apenas quando a segunda implementação confirmar equivalência.
-- `PisCofinsCalculator`: manter PIS/Cofins como domínio próprio e versionado. Não incorporar um motor completo de CBS/IBS apenas para “cobrir” Reforma Tributária.
-- `IcmsStCalculator` e `DifalIcmsCalculator`: manter escopos especializados. A futura `IcmsCalculator` resolve ICMS próprio sem absorver ST ou DIFAL.
 
 ## Ordem dos próximos lotes
 
@@ -104,5 +83,3 @@ O escopo do Lote 3 poderá publicar até três ferramentas, mas cada uma continu
 - próximos lotes: **escopo fechado sem publicação prematura**.
 
 ## Continuidade obrigatória para o Lote 2
-
-O Lote 2 deve reconstruir obrigatoriamente o projeto a partir do ZIP original e reaplicar este Lote 1 antes de qualquer alteração. Depois deve reler os documentos obrigatórios da raiz e verificar novamente o inventário real. O trabalho deve se limitar ao `DigitalCertificateAnalyzer` e às capacidades estritamente necessárias à primeira versão A1; assinatura digital, A3, emissão e gestão operacional permanecem fora do escopo.

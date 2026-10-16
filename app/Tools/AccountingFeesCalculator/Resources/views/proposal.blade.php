@@ -4,9 +4,9 @@
 @section('meta_description', 'Proposta comercial de serviços contábeis pronta para apresentação e impressão.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-de-honorarios-contabeis-proposta">
+<div class="prazzu-page tool-page" data-tool="accounting-fee-calculator-proposta">
     <div class="d-print-none mb-3 d-flex flex-column flex-sm-row justify-content-between gap-2">
-        <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">
+        <a class="btn btn-outline-secondary" href="{{ route('tools.accounting-fee-calculator.index') }}">
             <i class="bi bi-arrow-left me-1"></i>Voltar à calculadora
         </a>
         <x-tools.print-button label="Imprimir proposta" />
@@ -67,7 +67,7 @@
                         <div class="card border-primary h-100">
                             <div class="card-body">
                                 <div class="text-body-secondary">Honorário mensal</div>
-                                <div class="display-6 fw-bold text-primary">{{ $proposal->monthlyFee->formatPtBr() }}</div>
+                                <div class="display-6 fw-bold text-primary">{{ $proposal->monthlyFee->formatEnUs() }}</div>
                                 <div class="small text-body-secondary mt-2">Vencimento todo dia {{ $proposal->dueDay }}.</div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                         <div class="card h-100">
                             <div class="card-body">
                                 <div class="text-body-secondary">Implantação</div>
-                                <div class="h3 fw-bold mb-0">{{ $proposal->setupFee->formatPtBr() }}</div>
+                                <div class="h3 fw-bold mb-0">{{ $proposal->setupFee->formatEnUs() }}</div>
                                 <div class="small text-body-secondary mt-2">Cobrança única para início e organização cadastral.</div>
                             </div>
                         </div>

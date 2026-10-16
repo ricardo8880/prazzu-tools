@@ -15,22 +15,22 @@ enum SmartClause: string
     public function label(): string
     {
         return match ($this) {
-            self::Confidentiality => 'Confidencialidade',
-            self::DataProtection => 'Proteção de dados',
-            self::IntellectualProperty => 'Propriedade intelectual',
-            self::LatePayment => 'Atraso de pagamento',
-            self::WarrantyAndDelivery => 'Garantia e entrega',
+            self::Confidentiality => 'Confidentiality',
+            self::DataProtection => 'Privacy and data handling',
+            self::IntellectualProperty => 'Intellectual property',
+            self::LatePayment => 'Late payment',
+            self::WarrantyAndDelivery => 'Warranty and delivery',
         };
     }
 
     public function text(): string
     {
         return match ($this) {
-            self::Confidentiality => 'As partes deverão preservar o caráter confidencial das informações não públicas recebidas em razão deste contrato, utilizando-as somente para sua execução, ressalvadas divulgações exigidas por lei ou autorizadas pela parte titular.',
-            self::DataProtection => 'As partes deverão tratar dados pessoais acessados na execução deste contrato apenas para finalidades legítimas relacionadas ao objeto contratado, adotando medidas razoáveis de segurança e observando as obrigações legais aplicáveis.',
-            self::IntellectualProperty => 'Materiais, métodos, marcas, conteúdos e ativos intelectuais preexistentes permanecem de titularidade de seus respectivos proprietários. Eventual cessão ou licença sobre entregáveis deverá decorrer de disposição expressa deste instrumento.',
-            self::LatePayment => 'O atraso de pagamento sujeita a parte inadimplente aos encargos expressamente previstos entre as partes e admitidos pela legislação aplicável, sem afastar a cobrança do valor principal vencido.',
-            self::WarrantyAndDelivery => 'A entrega e a verificação do bem deverão observar as condições descritas neste instrumento. Garantias eventualmente oferecidas devem ser comprovadas e não afastam direitos legalmente inderrogáveis quando aplicáveis.',
+            self::Confidentiality => 'Each party will protect nonpublic information received in connection with this agreement and will use it only for the purposes of the agreement, except when disclosure is authorized or required by law.',
+            self::DataProtection => 'Each party will handle personal information only for legitimate purposes related to this agreement, use reasonable security safeguards, and comply with privacy laws that apply to that party and the transaction.',
+            self::IntellectualProperty => 'Pre-existing materials, methods, trademarks, content, and other intellectual property remain the property of their respective owners. Any assignment or license covering deliverables must be expressly stated in this agreement.',
+            self::LatePayment => 'Past-due amounts may be subject only to late fees or interest expressly agreed by the parties and permitted by applicable law, without waiving the underlying payment obligation.',
+            self::WarrantyAndDelivery => 'Delivery, inspection, and any agreed warranty will follow the terms stated in this agreement. Nothing in this clause waives nonwaivable rights or remedies under applicable law.',
         };
     }
 }

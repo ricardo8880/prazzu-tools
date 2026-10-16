@@ -6,49 +6,49 @@
 
 @section('content')
 <x-tools.page :title="$tool->name" :description="$tool->description" :icon="$tool->icon" :slug="$tool->slug">
-    <x-tools.form-panel title="Movimentação no período" description="Use o mesmo período de referência para admissões, desligamentos e quadro médio.">
-        <form method="POST" action="{{ route('tools.calculadora-turnover.calculate') }}" class="row g-3">
+    <x-tools.form-panel title="Workforce movement" description="Use the same reporting period for hires, separations, and average headcount.">
+        <form method="POST" action="{{ route('tools.employee-turnover-calculator.calculate') }}" class="row g-3">
             @csrf
-            <div class="col-12 col-md-4"><x-tools.form.input name="admissions" label="Admissões" type="number" min="0" step="1" :value="old('admissions')" required /></div>
-            <div class="col-12 col-md-4"><x-tools.form.input name="terminations" label="Desligamentos" type="number" min="0" step="1" :value="old('terminations')" required /></div>
-            <div class="col-12 col-md-4"><x-tools.form.input name="average_headcount" label="Quadro médio" type="number" min="1" step="1" :value="old('average_headcount')" required /></div>
-            <div class="col-12"><button class="btn btn-primary" type="submit">Calcular turnover</button></div>
+            <div class="col-12 col-md-4"><x-tools.form.input name="admissions" label="Hires" type="number" min="0" step="1" :value="old('admissions')" required /></div>
+            <div class="col-12 col-md-4"><x-tools.form.input name="terminations" label="Separations" type="number" min="0" step="1" :value="old('terminations')" required /></div>
+            <div class="col-12 col-md-4"><x-tools.form.input name="average_headcount" label="Average headcount" type="number" min="1" step="1" :value="old('average_headcount')" required /></div>
+            <div class="col-12"><button class="btn btn-primary" type="submit">Calculate turnover</button></div>
         </form>
     </x-tools.form-panel>
 
     @isset($result)
         <span data-analytics-result="main" hidden></span>
-        <x-tools.result-panel title="Resultado do turnover">
+        <x-tools.result-panel title="Turnover result">
             <div class="row g-3">
                 @foreach($result->summary as $item)
                     <div class="col-12 col-md-6"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description" /></div>
                 @endforeach
             </div>
             <div class="alert alert-info mt-4 mb-0">
-                Fórmula utilizada: ((admissões + desligamentos) ÷ 2) ÷ quadro médio × 100. Este é um indicador operacional e pode diferir da metodologia interna da sua organização.
+                Formula: ((hires + separations) ÷ 2) ÷ average headcount × 100. This operational metric may differ from your organization’s internal methodology.
             </div>
         </x-tools.result-panel>
     @endisset
 
-    <x-tools.form-panel class="mt-4" title="Prazzu Plus — análise por período ou segmento" description="Compare de 2 a 12 recortes usando exatamente a mesma fórmula do cálculo Essencial.">
-        <form method="POST" action="{{ route('tools.calculadora-turnover.segmented-analysis') }}" class="row g-3">
+    <x-tools.form-panel class="mt-4" title="Prazzu Plus — period or segment analysis" description="Compare 2 to 12 periods or segments using the same formula.">
+        <form method="POST" action="{{ route('tools.employee-turnover-calculator.segmented-analysis') }}" class="row g-3">
             @csrf
             <div class="col-12">
-                <label for="segments" class="form-label">Períodos/segmentos</label>
+                <label for="segments" class="form-label">Periods/segments</label>
                 <textarea id="segments" name="segments" rows="5" class="form-control" required data-e2e-value="1º trimestre|12|8|120&#10;2º trimestre|7|10|118" placeholder="1º trimestre|12|8|120
 2º trimestre|7|10|118">{{ old('segments', $segmentInput ?? '') }}</textarea>
-                <div class="form-text">Formato por linha: nome|admissões|desligamentos|quadro_médio.</div>
+                <div class="form-text">One line per segment: name|hires|separations|average_headcount.</div>
                 @error('segments')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>
-            <div class="col-12"><button class="btn btn-outline-primary" type="submit">Comparar turnover</button></div>
+            <div class="col-12"><button class="btn btn-outline-primary" type="submit">Compare turnover</button></div>
         </form>
     </x-tools.form-panel>
 
     @isset($segmentAnalysis)
-        <x-tools.result-panel class="mt-4" title="Comparação de turnover">
+        <x-tools.result-panel class="mt-4" title="Turnover comparison">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
-                    <thead><tr><th>Período/segmento</th><th>Admissões</th><th>Desligamentos</th><th>Quadro médio</th><th>Turnover</th></tr></thead>
+                    <thead><tr><th>Period/segment</th><th>Hires</th><th>Separations</th><th>Average headcount</th><th>Turnover</th></tr></thead>
                     <tbody>
                     @foreach($segmentAnalysis as $row)
                         <tr>

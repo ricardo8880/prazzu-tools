@@ -26,22 +26,11 @@ final class NormativeTrustExperienceTest extends TestCase
     public function test_tools_that_expose_normative_rules_also_expose_the_shared_trust_surface(): void
     {
         $modules = [
-            'DifalIcmsCalculator',
             'EmployeeCostCalculator',
-            'EmployerInssCalculator',
-            'FactorRSimulator',
-            'IcmsStCalculator',
             'InvoiceWithholdingCalculator',
             'LaborChargesCalculator',
-            'LateDasCalculator',
             'NetSalaryCalculator',
             'OvertimeCalculator',
-            'PisCofinsCalculator',
-            'PresumedProfitIrpjCsllCalculator',
-            'ProLaboreProfitDistributionCalculator',
-            'ProLaboreSimulator',
-            'RetroactiveDasRegularizationCalculator',
-            'TaxRegimeComparator',
         ];
 
         foreach ($modules as $module) {

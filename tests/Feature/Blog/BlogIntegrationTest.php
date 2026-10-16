@@ -43,12 +43,12 @@ final class BlogIntegrationTest extends TestCase
             'post_id' => $post->getKey(),
             'post_slug' => $post->slug,
             'reading_id' => 'reading-test-tool-click',
-            'tool_slug' => 'calculadora-simples-nacional',
+            'tool_slug' => 'working-capital-calculator',
         ])->assertOk()->assertJson(['recorded' => true]);
 
         $event = PlatformAnalyticsEvent::query()->firstOrFail();
         self::assertSame(AnalyticsEventName::BlogToolClicked->value, $event->event_name);
-        self::assertSame('calculadora-simples-nacional', $event->metadata['tool_slug']);
+        self::assertSame('working-capital-calculator', $event->metadata['tool_slug']);
     }
 
     public function test_only_internal_administrators_can_preview_drafts(): void

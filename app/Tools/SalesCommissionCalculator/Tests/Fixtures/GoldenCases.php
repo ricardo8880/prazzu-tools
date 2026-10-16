@@ -16,7 +16,7 @@ final class GoldenCases
     {
         $reference = 'Regras paramétricas do README e regressões do CalculatorTest, revisadas para o schema 1.2.0.';
 
-        return new GoldenCaseSuite('comissao-vendedores', [
+        return new GoldenCaseSuite('sales-commission-calculator', [
             new GoldenCase('typical-with-goal', 'Comissão líquida de estornos com meta atingida', GoldenCaseKind::Typical,
                 ['sales_minor' => 1000000, 'reversals_minor' => 50000, 'rate' => '5', 'goal_minor' => 800000, 'goal_bonus_rate' => '2'],
                 ['commissionable_sales_minor' => 950000, 'base_commission_minor' => 47500, 'goal_bonus_minor' => 19000, 'total_commission_minor' => 66500, 'goal_achievement' => '118,75 %'], $reference, '1.2.0', 'Money::percentage; valores em centavos.'),

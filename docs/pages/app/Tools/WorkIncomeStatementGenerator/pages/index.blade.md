@@ -7,8 +7,8 @@ pronta para conferência, assinatura e impressão.
 
 ## Funcionamento
 
-- `GET /ferramentas/declaracao-trabalho-renda` abre o formulário público.
-- `POST /ferramentas/declaracao-trabalho-renda` valida e gera a declaração.
+- `GET /ferramentas/employment-income-letter-generator` abre o formulário público.
+- `POST /ferramentas/employment-income-letter-generator` valida e gera a declaração.
 - O usuário informa trabalhador, documento, empregador/declarante, função,
   cidade, início do vínculo, renda mensal e data de emissão.
 - O domínio compõe o texto e os campos de local, data e assinatura.
@@ -17,8 +17,8 @@ pronta para conferência, assinatura e impressão.
 ## Implementação principal
 
 - **View:** `app/Tools/WorkIncomeStatementGenerator/Resources/views/index.blade.php`
-- **Rotas:** `tools.declaracao-trabalho-renda.index` e
-  `tools.declaracao-trabalho-renda.calculate`
+- **Rotas:** `tools.employment-income-letter-generator.index` e
+  `tools.employment-income-letter-generator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

@@ -56,7 +56,7 @@ O novo `config/tools/journeys.php` declara o próximo passo editorial das 43 fer
 
 A ordem editorial tem prioridade. Se uma jornada tiver menos itens válidos na vertical atual, a heurística histórica de mesma categoria e palavras-chave completa as vagas. Não há cruzamento automático de verticais.
 
-A vertical de RH continua com uma única ferramenta oficial, portanto `calculadora-turnover` não recebe sugestões artificiais de Contabilidade.
+A vertical de RH continua com uma única ferramenta oficial, portanto `employee-turnover-calculator` não recebe sugestões artificiais de Contabilidade.
 
 ## Limites preservados
 

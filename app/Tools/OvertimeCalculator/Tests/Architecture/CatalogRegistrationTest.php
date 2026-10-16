@@ -11,7 +11,7 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered(): void
     {
-        $m = app(ToolRegistry::class)->findModule('calculadora-hora-extra');
+        $m = app(ToolRegistry::class)->findModule('overtime-pay-calculator');
         self::assertNotNull($m);
     }
 }

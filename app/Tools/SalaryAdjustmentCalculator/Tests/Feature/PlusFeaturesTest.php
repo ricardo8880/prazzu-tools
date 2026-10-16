@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('reajuste-salarial', 'spreadsheet_export')]
+    #[CoversPlusFeature('salary-increase-calculator', 'spreadsheet_export')]
     public function test_spreadsheet_export_blocks_free_and_allows_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

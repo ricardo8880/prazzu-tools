@@ -22,11 +22,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 - [Recibo para impressão e PDF](app/Tools/ReceiptIssuer/pages/pdf/receipt.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/pdf/receipt.blade.php`
 
 - [Batch Report.Blade](app/Tools/BusinessDocumentValidator/pages/print/batch-report.blade.md) — `app/Tools/BusinessDocumentValidator/Resources/views/print/batch-report.blade.php`
-- [Resumo orientativo](app/Tools/FederalPaymentGuideGenerator/pages/pdf/report.blade.md) — `app/Tools/FederalPaymentGuideGenerator/Resources/views/pdf/report.blade.php`
 - [Dados considerados](app/Tools/LaborTerminationCalculator/pages/pdf/report.blade.md) — `app/Tools/LaborTerminationCalculator/Resources/views/pdf/report.blade.php`
 - [Report.Blade](app/Tools/MarginMarkupCalculator/pages/pdf/report.blade.md) — `app/Tools/MarginMarkupCalculator/Resources/views/pdf/report.blade.php`
-- [Resumo do cálculo](app/Tools/ProLaboreProfitDistributionCalculator/pages/pdf/report.blade.md) — `app/Tools/ProLaboreProfitDistributionCalculator/Resources/views/pdf/report.blade.php`
-- [Resumo](app/Tools/TaxRegimeComparator/pages/pdf/report.blade.md) — `app/Tools/TaxRegimeComparator/Resources/views/pdf/report.blade.php`
 - [Resumo](app/Tools/VacationCalculator/pages/pdf/report.blade.md) — `app/Tools/VacationCalculator/Resources/views/pdf/report.blade.php`
 - [conteúdo dinâmico](exports/browser-print.blade.md) — `resources/views/exports/browser-print.blade.php`
 
@@ -89,16 +86,7 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 ### Página de ferramenta
 
 - [Calculadora de Retenções na Nota Fiscal](../../app/Tools/InvoiceWithholdingCalculator/pages/index.blade.md) — `app/Tools/InvoiceWithholdingCalculator/Resources/views/index.blade.php`
-- [Calculadora PIS e COFINS](../../app/Tools/PisCofinsCalculator/pages/index.blade.md) — `app/Tools/PisCofinsCalculator/Resources/views/index.blade.php`
-- [Calculadora de ICMS-ST](../../app/Tools/IcmsStCalculator/pages/index.blade.md) — `app/Tools/IcmsStCalculator/Resources/views/index.blade.php`
-- [Calculadora DIFAL / ICMS Interestadual + FCP](../../app/Tools/DifalIcmsCalculator/pages/index.blade.md) — `app/Tools/DifalIcmsCalculator/Resources/views/index.blade.php`
-- [Analisador de Certificado Digital A1](../../app/Tools/DigitalCertificateAnalyzer/pages/index.blade.md) — `app/Tools/DigitalCertificateAnalyzer/Resources/views/index.blade.php`
-- [Calculadora de Lucro Real](../../app/Tools/ActualProfitCalculator/pages/index.blade.md) — `app/Tools/ActualProfitCalculator/Resources/views/index.blade.php`
 - [Simulador da Reforma Tributária do Consumo](../../app/Tools/TaxReformSimulator/pages/index.blade.md) — `app/Tools/TaxReformSimulator/Resources/views/index.blade.php`
-- [Simulador Orientativo de ECAD e Direitos Autorais](../../app/Tools/EcadRoyaltySimulator/pages/index.blade.md) — `app/Tools/EcadRoyaltySimulator/Resources/views/index.blade.php`
-- [Consultor e Validador de CFOP](../../app/Tools/CfopAdvisor/pages/index.blade.md) — `app/Tools/CfopAdvisor/Resources/views/index.blade.php`
-- [Validador Fiscal SEFAZ](../../app/Tools/SefazFiscalValidator/pages/index.blade.md) — `app/Tools/SefazFiscalValidator/Resources/views/index.blade.php`
-- [Calculadora de ICMS Próprio](../../app/Tools/IcmsCalculator/pages/index.blade.md) — `app/Tools/IcmsCalculator/Resources/views/index.blade.php`
 
 - [Gerador de Contratos — Prazzu Tools](app/Tools/ContractGenerator/pages/index.blade.md) — `app/Tools/ContractGenerator/Resources/views/index.blade.php`
 
@@ -109,17 +97,11 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 - [Calculadora de Honorários Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/index.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/index.blade.php`
 - [Proposta Comercial de Serviços Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/proposal.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/proposal.blade.php`
 - [Validador Inteligente de CNPJ, CPF e IE — Prazzu Tools](app/Tools/BusinessDocumentValidator/pages/index.blade.md) — `app/Tools/BusinessDocumentValidator/Resources/views/index.blade.php`
-- [Gerador Inteligente de DARF/GPS — Prazzu Tools](app/Tools/FederalPaymentGuideGenerator/pages/index.blade.md) — `app/Tools/FederalPaymentGuideGenerator/Resources/views/index.blade.php`
-- [Conversor Fiscal de XML — Prazzu Tools](app/Tools/FiscalXmlConverter/pages/index.blade.md) — `app/Tools/FiscalXmlConverter/Resources/views/index.blade.php`
 - [Calculadora de Rescisão Trabalhista — Prazzu Tools](app/Tools/LaborTerminationCalculator/pages/index.blade.md) — `app/Tools/LaborTerminationCalculator/Resources/views/index.blade.php`
 - [Calculadora de Margem, Markup e Formação de Preço — Prazzu Tools](app/Tools/MarginMarkupCalculator/pages/index.blade.md) — `app/Tools/MarginMarkupCalculator/Resources/views/index.blade.php`
-- [Calculadora de Pró-Labore e Distribuição de Lucros — Prazzu Tools](app/Tools/ProLaboreProfitDistributionCalculator/pages/index.blade.md) — `app/Tools/ProLaboreProfitDistributionCalculator/Resources/views/index.blade.php`
-- [Calculadora de Simples Nacional — Prazzu Tools](app/Tools/SimplesNacionalCalculator/pages/index.blade.md) — `app/Tools/SimplesNacionalCalculator/Resources/views/index.blade.php`
-- [Comparador Tributário — Prazzu Tools](app/Tools/TaxRegimeComparator/pages/index.blade.md) — `app/Tools/TaxRegimeComparator/Resources/views/index.blade.php`
 - [Calculadora de Férias — Prazzu Tools](app/Tools/VacationCalculator/pages/index.blade.md) — `app/Tools/VacationCalculator/Resources/views/index.blade.php`
 - [Planejamento de férias](app/Tools/VacationCalculator/pages/planner.blade.md) — `app/Tools/VacationCalculator/Resources/views/planner.blade.php`
 
-- [Calculadora de IRPJ e CSLL — Lucro Presumido](app/Tools/PresumedProfitIrpjCsllCalculator/pages/index.blade.md) — `app/Tools/PresumedProfitIrpjCsllCalculator/Resources/views/index.blade.php`
 - [Calculadora de Depreciação de Ativos](app/Tools/AssetDepreciationCalculator/pages/index.blade.md) — `app/Tools/AssetDepreciationCalculator/Resources/views/index.blade.php`
 
 ### Página de histórico
@@ -129,16 +111,10 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 - [Histórico de recibos — Prazzu Tools](app/Tools/ReceiptIssuer/pages/history/index.blade.md) — `app/Tools/ReceiptIssuer/Resources/views/history/index.blade.php`
 - [Histórico de Honorários Contábeis — Prazzu Tools](app/Tools/AccountingFeesCalculator/pages/history/index.blade.md) — `app/Tools/AccountingFeesCalculator/Resources/views/history/index.blade.php`
 - [Histórico do Validador — Prazzu Tools](app/Tools/BusinessDocumentValidator/pages/history/index.blade.md) — `app/Tools/BusinessDocumentValidator/Resources/views/history/index.blade.php`
-- [Histórico de DARF/GPS](app/Tools/FederalPaymentGuideGenerator/pages/history/index.blade.md) — `app/Tools/FederalPaymentGuideGenerator/Resources/views/history/index.blade.php`
-- [Histórico do Conversor Fiscal de XML](app/Tools/FiscalXmlConverter/pages/history/index.blade.md) — `app/Tools/FiscalXmlConverter/Resources/views/history/index.blade.php`
 - [Histórico de Rescisões — Prazzu Tools](app/Tools/LaborTerminationCalculator/pages/history/index.blade.md) — `app/Tools/LaborTerminationCalculator/Resources/views/history/index.blade.php`
 - [Detalhes do cálculo de rescisão — Prazzu Tools](app/Tools/LaborTerminationCalculator/pages/history/show.blade.md) — `app/Tools/LaborTerminationCalculator/Resources/views/history/show.blade.php`
 - [Histórico de Margem e Markup — Prazzu Tools](app/Tools/MarginMarkupCalculator/pages/history/index.blade.md) — `app/Tools/MarginMarkupCalculator/Resources/views/history/index.blade.php`
 - [Detalhes de Margem e Markup — Prazzu Tools](app/Tools/MarginMarkupCalculator/pages/history/show.blade.md) — `app/Tools/MarginMarkupCalculator/Resources/views/history/show.blade.php`
-- [Histórico — Pró-Labore e Lucros](app/Tools/ProLaboreProfitDistributionCalculator/pages/history/index.blade.md) — `app/Tools/ProLaboreProfitDistributionCalculator/Resources/views/history/index.blade.php`
-- [Simulação salva — Pró-Labore e Lucros](app/Tools/ProLaboreProfitDistributionCalculator/pages/history/show.blade.md) — `app/Tools/ProLaboreProfitDistributionCalculator/Resources/views/history/show.blade.php`
-- [Histórico — Comparador Tributário](app/Tools/TaxRegimeComparator/pages/history/index.blade.md) — `app/Tools/TaxRegimeComparator/Resources/views/history/index.blade.php`
-- [Comparação salva — Comparador Tributário](app/Tools/TaxRegimeComparator/pages/history/show.blade.md) — `app/Tools/TaxRegimeComparator/Resources/views/history/show.blade.php`
 - [Histórico de férias](app/Tools/VacationCalculator/pages/history/index.blade.md) — `app/Tools/VacationCalculator/Resources/views/history/index.blade.php`
 
 ### Página de organização
@@ -152,11 +128,8 @@ Cada nova documentação deve informar, no mínimo: objetivo, funcionamento, imp
 
 <!-- requested-tools-pages -->
 - [Calculadora de Custo de Funcionário CLT](app/Tools/EmployeeCostCalculator/pages/index.blade.md) — `app/Tools/EmployeeCostCalculator/Resources/views/index.blade.php`
-- [Simulador de Fator R](app/Tools/FactorRSimulator/pages/index.blade.md) — `app/Tools/FactorRSimulator/Resources/views/index.blade.php`
-- [Calculadora de DAS em Atraso](app/Tools/LateDasCalculator/pages/index.blade.md) — `app/Tools/LateDasCalculator/Resources/views/index.blade.php`
 - [Calculadora de Encargos Trabalhistas](app/Tools/LaborChargesCalculator/pages/index.blade.md) — `app/Tools/LaborChargesCalculator/Resources/views/index.blade.php`
 - [Simulador CLT × PJ × Autônomo](app/Tools/EmploymentModelComparator/pages/index.blade.md) — `app/Tools/EmploymentModelComparator/Resources/views/index.blade.php`
-- [Calculadora de INSS Patronal](app/Tools/EmployerInssCalculator/pages/index.blade.md) — `app/Tools/EmployerInssCalculator/Resources/views/index.blade.php`
 - [Calculadora de Capital de Giro](app/Tools/WorkingCapitalCalculator/pages/index.blade.md) — `app/Tools/WorkingCapitalCalculator/Resources/views/index.blade.php`
 - [Calculadora de Fluxo de Caixa](app/Tools/CashFlowCalculator/pages/index.blade.md) — `app/Tools/CashFlowCalculator/Resources/views/index.blade.php`
 - [Calculadora de Ponto de Equilíbrio](app/Tools/BreakEvenCalculator/pages/index.blade.md) — `app/Tools/BreakEvenCalculator/Resources/views/index.blade.php`

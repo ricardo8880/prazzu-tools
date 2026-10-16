@@ -40,22 +40,22 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'comparador-clt-pj-autonomo',
+            toolSlug: 'employee-vs-contractor-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                        new ToolAnalyticsField('clt_gross', 'input', selector: '[name="clt_gross"]'),
-                        new ToolAnalyticsField('clt_benefits', 'input', selector: '[name="clt_benefits"]'),
-                        new ToolAnalyticsField('clt_employee_deductions', 'input', selector: '[name="clt_employee_deductions"]'),
-                        new ToolAnalyticsField('clt_company_burden', 'input', selector: '[name="clt_company_burden"]'),
-                        new ToolAnalyticsField('pj_invoice', 'input', selector: '[name="pj_invoice"]'),
-                        new ToolAnalyticsField('pj_taxes', 'input', selector: '[name="pj_taxes"]'),
-                        new ToolAnalyticsField('pj_expenses', 'input', selector: '[name="pj_expenses"]'),
-                        new ToolAnalyticsField('autonomous_gross', 'input', selector: '[name="autonomous_gross"]'),
-                        new ToolAnalyticsField('autonomous_deductions', 'input', selector: '[name="autonomous_deductions"]'),
-                        new ToolAnalyticsField('autonomous_company_burden', 'input', selector: '[name="autonomous_company_burden"]'),
+                        new ToolAnalyticsField('w2_gross', 'input', selector: '[name="w2_gross"]'),
+                        new ToolAnalyticsField('w2_benefits', 'input', selector: '[name="w2_benefits"]'),
+                        new ToolAnalyticsField('w2_employee_deductions', 'input', selector: '[name="w2_employee_deductions"]'),
+                        new ToolAnalyticsField('w2_employer_burden', 'input', selector: '[name="w2_employer_burden"]'),
+                        new ToolAnalyticsField('contractor_revenue', 'input', selector: '[name="contractor_revenue"]'),
+                        new ToolAnalyticsField('contractor_tax_rate', 'input', selector: '[name="contractor_tax_rate"]'),
+                        new ToolAnalyticsField('contractor_expenses', 'input', selector: '[name="contractor_expenses"]'),
+                        new ToolAnalyticsField('self_employed_revenue', 'input', selector: '[name="self_employed_revenue"]'),
+                        new ToolAnalyticsField('self_employed_tax_rate', 'input', selector: '[name="self_employed_tax_rate"]'),
+                        new ToolAnalyticsField('self_employed_expenses', 'input', selector: '[name="self_employed_expenses"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -68,12 +68,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'comparador-clt-pj-autonomo',
-            name: 'Simulador CLT × PJ × Autônomo',
-            description: 'Compare remuneração líquida e custo empresarial nos três modelos.',
+            slug: 'employee-vs-contractor-calculator',
+            name: 'W-2 vs 1099 Contractor Calculator',
+            description: 'Compare estimated worker take-home amounts and payer costs for W-2 employment, 1099 contracting, and self-employment scenarios.',
             category: ToolCategory::Labor,
             icon: 'bi-arrow-left-right',
-            routeName: 'tools.comparador-clt-pj-autonomo.index',
+            routeName: 'tools.employee-vs-contractor-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -81,15 +81,15 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 150,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['clt pj autônomo', 'pejotização', 'contratação', 'remuneração líquida', 'custo empresa'],
+            keywords: ['W-2 vs 1099', 'contractor calculator', 'employee vs contractor', 'self employed'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
+                new ToolFeature('spreadsheet_export', 'Advanced Excel export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'xlsx']),
@@ -100,7 +100,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['clt_gross', 'clt_benefits', 'clt_employee_deductions', 'clt_company_burden', 'pj_invoice', 'pj_taxes', 'pj_expenses', 'autonomous_gross', 'autonomous_deductions', 'autonomous_company_burden'], resultFields: ['clt_net', 'pj_net', 'autonomous_net', 'highest_net'], sensitiveFields: []);
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['w2_gross', 'w2_benefits', 'w2_employee_deductions', 'w2_employer_burden', 'contractor_revenue', 'contractor_tax_rate', 'contractor_expenses', 'self_employed_revenue', 'self_employed_tax_rate', 'self_employed_expenses'], resultFields: ['w2_net', 'contractor_net', 'self_employed_net', 'highest_net'], sensitiveFields: []);
     }
 
     public function webRoutesPath(): string
@@ -115,6 +115,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-comparador-clt-pj-autonomo';
+        return 'tools-employee-vs-contractor-calculator';
     }
 }

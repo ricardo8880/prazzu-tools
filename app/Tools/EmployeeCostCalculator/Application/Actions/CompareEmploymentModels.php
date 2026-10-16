@@ -32,31 +32,31 @@ final readonly class CompareEmploymentModels
         return [
             'models' => [
                 [
-                    'model' => 'CLT',
-                    'gross' => $cltGross->formatPtBr(),
-                    'discounts' => $cltDiscounts->formatPtBr(),
-                    'net' => $cltNet->formatPtBr(),
+                    'model' => 'W-2 employee',
+                    'gross' => $cltGross->formatEnUs(),
+                    'discounts' => $cltDiscounts->formatEnUs(),
+                    'net' => $cltNet->formatEnUs(),
                     'company_cost_minor' => $cltCost->minorAmount(),
-                    'company_cost' => $cltCost->formatPtBr(),
+                    'company_cost' => $cltCost->formatEnUs(),
                 ],
                 [
-                    'model' => 'PJ',
-                    'gross' => $pjGross->formatPtBr(),
-                    'discounts' => $pjTaxes->add($pjExpenses)->formatPtBr(),
-                    'net' => $pjNet->formatPtBr(),
+                    'model' => '1099 contractor',
+                    'gross' => $pjGross->formatEnUs(),
+                    'discounts' => $pjTaxes->add($pjExpenses)->formatEnUs(),
+                    'net' => $pjNet->formatEnUs(),
                     'company_cost_minor' => $pjGross->minorAmount(),
-                    'company_cost' => $pjGross->formatPtBr(),
+                    'company_cost' => $pjGross->formatEnUs(),
                 ],
                 [
-                    'model' => 'Autônomo',
-                    'gross' => $autonomousGross->formatPtBr(),
-                    'discounts' => $autonomousDiscounts->formatPtBr(),
-                    'net' => $autonomousNet->formatPtBr(),
+                    'model' => 'Self-employed',
+                    'gross' => $autonomousGross->formatEnUs(),
+                    'discounts' => $autonomousDiscounts->formatEnUs(),
+                    'net' => $autonomousNet->formatEnUs(),
                     'company_cost_minor' => $autonomousCost->minorAmount(),
-                    'company_cost' => $autonomousCost->formatPtBr(),
+                    'company_cost' => $autonomousCost->formatEnUs(),
                 ],
             ],
-            'disclaimer' => 'A comparação é exclusivamente numérica. A modalidade correta depende da realidade da relação de trabalho e exige análise jurídica e contábil.',
+            'disclaimer' => 'Financial comparison only. Worker classification depends on the actual relationship and applicable federal/state law.',
         ];
     }
 }

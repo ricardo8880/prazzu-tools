@@ -20,12 +20,12 @@ final class ToolController extends Controller
 {
     public function index(ShowToolPage $page): View
     {
-        return view('tools-capital-de-giro::index', $page->execute());
+        return view('tools-working-capital-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
-        return view('tools-capital-de-giro::index', [
+        return view('tools-working-capital-calculator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($request->validated()),
             'calculationInput' => $request->validated(),
@@ -42,7 +42,7 @@ final class ToolController extends Controller
             'financial_liability_growth_rate' => ['required', 'numeric', 'between:-90,500'],
         ]);
 
-        return view('tools-capital-de-giro::index', [...$page->execute(), 'projectionScenarios' => $action->execute($data)]);
+        return view('tools-working-capital-calculator::index', [...$page->execute(), 'projectionScenarios' => $action->execute($data)]);
     }
 
     public function exportPdf(
@@ -56,7 +56,7 @@ final class ToolController extends Controller
 
         return $exporter->download($documents->pdf(
             title: 'Cálculo de Capital de Giro',
-            filename: 'capital-de-giro-'.now()->format('Y-m-d'),
+            filename: 'working-capital-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));
@@ -72,7 +72,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->spreadsheet(
-            filename: 'capital-de-giro-'.now()->format('Y-m-d'),
+            filename: 'working-capital-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));

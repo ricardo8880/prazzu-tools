@@ -6,7 +6,6 @@ Concluir o saneamento sem reduzir o catálogo para 31 ferramentas, sem inventar 
 
 ## Decisão
 
-O módulo histórico foi reposicionado como **Planejador de Retirada de Sócios**. A implementação já possuía domínio próprio para consolidar pró-labore, retenções, custo empresarial, lucro disponível, distribuição pretendida, total líquido recebido e cenários múltiplos. Esse resultado conjunto é diferente dos cálculos isolados oferecidos por `ProLaboreSimulator` e `ProfitDistributionCalculator`.
 
 ## Compatibilidade preservada
 

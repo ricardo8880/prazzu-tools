@@ -64,16 +64,11 @@ O endpoint de execução exige a ability `tools:execute`.
 
 | Ferramenta | Ação | Content-Type |
 |---|---|---|
-| `calculadora-de-honorarios-contabeis` | `calculate` | JSON |
-| `validador-de-cnpj` | `validate` | JSON |
-| `gerador-darf-gps` | `calculate` | JSON |
-| `conversor-fiscal-xml` | `convert` | multipart/form-data |
-| `calculadora-de-rescisao` | `calculate` | JSON |
-| `calculadora-margem-markup` | `calculate` | JSON |
-| `calculadora-pro-labore-distribuicao-lucros` | `calculate` | JSON |
-| `calculadora-simples-nacional` | `calculate` | JSON |
-| `comparador-tributario` | `compare` | JSON |
-| `calculadora-ferias` | `calculate` | JSON |
+| `accounting-fee-calculator` | `calculate` | JSON |
+| `us-tax-id-validator` | `validate` | JSON |
+| `final-pay-severance-calculator` | `calculate` | JSON |
+| `margin-markup-calculator` | `calculate` | JSON |
+| `pto-calculator` | `calculate` | JSON |
 
 Os exemplos completos estão em `prazzu-tools.postman_collection.json`. O contrato OpenAPI está em `openapi.json`.
 
@@ -86,7 +81,6 @@ curl -X POST \
   -H 'Authorization: Bearer SEU_TOKEN' \
   -H 'Accept: application/json' \
   -F 'xml_file=@nota.xml;type=application/xml' \
-  https://tools.prazzu.com.br/api/v1/tools/conversor-fiscal-xml/convert
 ```
 
 ## Exemplo PHP para o Core

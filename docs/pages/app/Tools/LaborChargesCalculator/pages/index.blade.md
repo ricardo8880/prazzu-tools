@@ -7,8 +7,8 @@ Estimar o custo mensal provisionado de um empregado, discriminando benefícios,
 
 ## Funcionamento
 
-- `GET /ferramentas/encargos-trabalhistas` abre o formulário público.
-- `POST /ferramentas/encargos-trabalhistas` valida e calcula o caso individual.
+- `GET /ferramentas/employer-payroll-tax-calculator` abre o formulário público.
+- `POST /ferramentas/employer-payroll-tax-calculator` valida e calcula o caso individual.
 - O usuário informa salário, benefícios, regime, RAT ajustado e terceiros.
 - O domínio cria as provisões mensais, forma a base de incidência e calcula cada
   encargo conforme o enquadramento escolhido.
@@ -17,8 +17,8 @@ Estimar o custo mensal provisionado de um empregado, discriminando benefícios,
 ## Implementação principal
 
 - **View:** `app/Tools/LaborChargesCalculator/Resources/views/index.blade.php`
-- **Rotas:** `tools.encargos-trabalhistas.index` e
-  `tools.encargos-trabalhistas.calculate`
+- **Rotas:** `tools.employer-payroll-tax-calculator.index` e
+  `tools.employer-payroll-tax-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

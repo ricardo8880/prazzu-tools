@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ContractGenerator\Tests\Unit;
 
-use App\Core\Money\BrazilianMoneyInWords;
+use App\Core\Money\AmericanMoneyInWords;
 use App\Tools\ContractGenerator\Application\Actions\BuildContractDraft;
 use App\Tools\ContractGenerator\Domain\Services\ContractTextGenerator;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +14,7 @@ final class ContractTextGeneratorTest extends TestCase
     public function test_generates_complete_service_contract_text(): void
     {
         $draft = (new BuildContractDraft)->execute($this->servicePayload());
-        $contract = (new ContractTextGenerator(new BrazilianMoneyInWords))->generate($draft);
+        $contract = (new ContractTextGenerator(new AmericanMoneyInWords))->generate($draft);
 
         self::assertSame('CONTRATO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS', $contract->title);
         self::assertStringContainsString('CONTRATANTE: Empresa Contratante Ltda.', $contract->content);
@@ -35,7 +35,7 @@ final class ContractTextGeneratorTest extends TestCase
         $payload['delivery_location'] = 'São Paulo/SP';
 
         $draft = (new BuildContractDraft)->execute($payload);
-        $contract = (new ContractTextGenerator(new BrazilianMoneyInWords))->generate($draft);
+        $contract = (new ContractTextGenerator(new AmericanMoneyInWords))->generate($draft);
 
         self::assertSame('CONTRATO PARTICULAR DE COMPRA E VENDA DE BEM MÓVEL', $contract->title);
         self::assertStringContainsString('VENDEDOR: Empresa Contratante Ltda.', $contract->content);

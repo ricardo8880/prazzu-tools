@@ -40,7 +40,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'comissao-vendedores',
+            toolSlug: 'sales-commission-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -63,12 +63,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'comissao-vendedores',
-            name: 'Calculadora de Comissão de Vendedores',
-            description: 'Calcule comissão-base, bônus por meta, total e percentual de atingimento.',
+            slug: 'sales-commission-calculator',
+            name: 'Sales Commission Calculator',
+            description: 'Calculate sales commissions, reversals, goal bonuses, and seller scenarios.',
             category: ToolCategory::Calculators,
             icon: 'bi-person-check',
-            routeName: 'tools.comissao-vendedores.index',
+            routeName: 'tools.sales-commission-calculator.index',
             vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
@@ -76,15 +76,15 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 200,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['comissão de vendas', 'vendedor', 'meta', 'bônus', 'faturamento'],
+            keywords: ['sales commission', 'commission calculator', 'sales bonus', 'commission rate'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('batch_sellers', 'Processamento em lote de múltiplos vendedores', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
+                new ToolFeature('batch_sellers', 'Batch processing for multiple sellers', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),
@@ -110,6 +110,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-comissao-vendedores';
+        return 'tools-sales-commission-calculator';
     }
 }

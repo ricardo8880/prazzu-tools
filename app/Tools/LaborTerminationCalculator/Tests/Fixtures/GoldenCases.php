@@ -18,7 +18,7 @@ final class GoldenCases
         $taxReference = 'PayrollTaxCalculatorTest protege faixas progressivas de INSS e redução do IRRF usadas pelo módulo para 2026; README referencia a Portaria Interministerial MPS/MF nº 13/2026.';
 
         return new GoldenCaseSuite(
-            toolSlug: 'calculadora-de-rescisao',
+            toolSlug: 'final-pay-severance-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

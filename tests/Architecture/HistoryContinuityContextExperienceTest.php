@@ -13,8 +13,8 @@ final class HistoryContinuityContextExperienceTest extends TestCase
         $resolver = file_get_contents(base_path('app/Core/Tools/History/Services/ToolHistoryContextResolver.php'));
 
         self::assertIsString($resolver);
-        self::assertStringNotContainsString('calculadora-salario-liquido', $resolver);
-        self::assertStringNotContainsString('calculadora-simples-nacional', $resolver);
+        self::assertStringNotContainsString('take-home-pay-calculator', $resolver);
+        self::assertStringNotContainsString('working-capital-calculator', $resolver);
         self::assertStringContainsString('ProvidesHistoryContext', $resolver);
     }
 

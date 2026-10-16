@@ -19,7 +19,6 @@ Adicionar a ferramenta `NetSalaryCalculator` sem quebrar a arquitetura modular, 
 
 ## Decisão de Core ativada neste lote
 
-A regra mensal de IRRF 2026 já existia em `ProLaboreSimulator` e `ProLaboreProfitDistributionCalculator` e passou a ser necessária também em `NetSalaryCalculator`. Como a regra é equivalente, transversal e sem condicionais de domínio, foi promovida ao Core em:
 
 - `App\Core\Tax\Normative\MonthlyPersonalIncomeTaxRule`;
 - `App\Core\Tax\Normative\MonthlyIrrfBracket`.
@@ -56,8 +55,6 @@ Esses valores podem ser informados quando já apurados pelo usuário, conforme o
   - IRRF compartilhado de 2026;
   - salário de R$ 5.000,00;
   - salário de R$ 10.000,00 e teto do INSS;
-  - regressão do `ProLaboreSimulator`;
-  - regressão do `ProLaboreProfitDistributionCalculator`.
 
 ### Não executadas por limitação do ambiente
 

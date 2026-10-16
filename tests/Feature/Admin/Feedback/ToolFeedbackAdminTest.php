@@ -43,7 +43,7 @@ final class ToolFeedbackAdminTest extends TestCase
         ]);
 
         $this->get(route('admin.feedback.tools.index', [
-            'tool' => 'gerador-de-contratos',
+            'tool' => 'contract-generator',
             'type' => ToolFeedbackType::Problem->value,
             'status' => ToolFeedbackStatus::New->value,
         ]))
@@ -99,16 +99,16 @@ final class ToolFeedbackAdminTest extends TestCase
     {
         return ToolFeedback::query()->create(array_merge([
             'session_id' => 'test-session',
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'tool_name' => 'Gerador de Contratos',
             'tool_version' => '1.0.0',
             'type' => ToolFeedbackType::Problem,
             'status' => ToolFeedbackStatus::New,
             'message' => 'O botão de gerar não respondeu.',
             'attempted_action' => 'Preencher o contrato de serviços.',
-            'path' => '/ferramentas/gerador-de-contratos',
-            'url' => 'https://example.test/ferramentas/gerador-de-contratos',
-            'context' => ['route_name' => 'tools.gerador-de-contratos.index'],
+            'path' => '/ferramentas/contract-generator',
+            'url' => 'https://example.test/ferramentas/contract-generator',
+            'context' => ['route_name' => 'tools.contract-generator.index'],
         ], $overrides));
     }
 }

@@ -24,12 +24,8 @@ final class ProgressiveDisclosureExperienceTest extends TestCase
     {
         $modules = [
             'EmployeeCostCalculator',
-            'IcmsStCalculator',
             'NetSalaryCalculator',
             'OvertimeCalculator',
-            'PisCofinsCalculator',
-            'PresumedProfitIrpjCsllCalculator',
-            'ProLaboreSimulator',
         ];
 
         foreach ($modules as $module) {

@@ -16,12 +16,12 @@ enum AccountingService: string
     public function label(): string
     {
         return match ($this) {
-            self::Accounting => 'Escrituração contábil e demonstrações',
-            self::Tax => 'Apuração fiscal e obrigações acessórias',
+            self::Accounting => 'Bookkeeping and financial statements',
+            self::Tax => 'Tax preparation and compliance',
             self::Payroll => 'Folha de pagamento e rotinas trabalhistas',
-            self::Corporate => 'Rotinas societárias recorrentes',
+            self::Corporate => 'Recurring entity compliance',
             self::Advisory => 'Consultoria e acompanhamento gerencial',
-            self::Financial => 'BPO financeiro e conciliações',
+            self::Financial => 'Bookkeeping operations and reconciliations',
         };
     }
 }

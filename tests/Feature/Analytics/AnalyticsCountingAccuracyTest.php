@@ -51,12 +51,12 @@ final class AnalyticsCountingAccuracyTest extends TestCase
 
     public function test_legacy_tool_url_produces_the_same_tool_open_event_as_canonical_routing(): void
     {
-        $this->get('/ferramentas/calculadora-margem-markup')->assertOk();
+        $this->get('/ferramentas/margin-markup-calculator')->assertOk();
 
         $this->assertDatabaseHas('platform_analytics_events', [
             'event_name' => AnalyticsEventName::ToolOpened->value,
             'channel' => 'tool',
-            'subject_slug' => 'calculadora-margem-markup',
+            'subject_slug' => 'margin-markup-calculator',
         ]);
     }
 }

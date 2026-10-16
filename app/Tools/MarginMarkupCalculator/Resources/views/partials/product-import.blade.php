@@ -5,12 +5,12 @@
             <h2 id="product-import-title" class="mb-1">Importar produtos por CSV ou Excel</h2>
             <p class="text-body-secondary mb-0">Envie até 100 produtos, confira os dados e escolha qual coluna corresponde a cada campo.</p>
         </div>
-        <a class="btn btn-outline-success align-self-lg-end" href="{{ route('tools.calculadora-margem-markup.import.template') }}">
+        <a class="btn btn-outline-success align-self-lg-end" href="{{ route('tools.margin-markup-calculator.import.template') }}">
             <i class="bi bi-download me-1"></i>Baixar modelo CSV
         </a>
     </div>
 
-    <form method="post" action="{{ route('tools.calculadora-margem-markup.import.preview') }}" enctype="multipart/form-data" class="row g-3 align-items-end">
+    <form method="post" action="{{ route('tools.margin-markup-calculator.import.preview') }}" enctype="multipart/form-data" class="row g-3 align-items-end">
         @csrf
         <div class="col-12 col-lg-8">
             <label class="form-label" for="import_file">Arquivo de produtos</label>
@@ -55,7 +55,7 @@
                     <span class="badge text-bg-primary align-self-start">Pré-visualização pronta</span>
                 </div>
 
-                <form method="post" action="{{ route('tools.calculadora-margem-markup.import.process') }}">
+                <form method="post" action="{{ route('tools.margin-markup-calculator.import.process') }}">
                     @csrf
                     <input type="hidden" name="import_token" value="{{ $preview['token'] }}">
                     @foreach($preview['headers'] as $header)

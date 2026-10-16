@@ -15,9 +15,9 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('calculadora-ferias', $manifest->slug);
+        self::assertSame('pto-calculator', $manifest->slug);
         self::assertSame('Calculadora de Férias', $manifest->name);
-        self::assertSame('tools.calculadora-ferias.index', $manifest->routeName);
+        self::assertSame('tools.pto-calculator.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));

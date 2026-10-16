@@ -15,10 +15,10 @@ final class ExecuteToolRequest extends FormRequest
 
     public function rules(): array
     {
-        $nonNegative = ['required', 'brazilian_money', 'money_min:0'];
+        $nonNegative = ['required', 'us_money', 'money_min:0'];
 
         return [
-            'opening_balance' => ['required', 'brazilian_money'],
+            'opening_balance' => ['required', 'us_money'],
             'sales_receipts' => $nonNegative,
             'other_inflows' => $nonNegative,
             'operating_payments' => $nonNegative,

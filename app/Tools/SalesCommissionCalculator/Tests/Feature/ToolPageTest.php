@@ -10,7 +10,7 @@ final class ToolPageTest extends TestCase
 {
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.comissao-vendedores.index'))
+        $this->get(route('tools.sales-commission-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Comissão de Vendedores');
     }

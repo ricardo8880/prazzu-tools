@@ -14,8 +14,8 @@ final class ToolManifestTest extends TestCase
     public function test_manifest_has_expected_identity_and_tiers(): void
     {
         $m = (new Tool)->manifest();
-        self::assertSame('calculadora-retencoes-nota-fiscal', $m->slug);
-        self::assertSame('tools.calculadora-retencoes-nota-fiscal.index', $m->routeName);
+        self::assertSame('backup-withholding-calculator', $m->slug);
+        self::assertSame('tools.backup-withholding-calculator.index', $m->routeName);
         self::assertSame(ToolStatus::Active, $m->status);
         self::assertNotEmpty($m->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($m->featuresFor(ToolFeatureTier::Plus));

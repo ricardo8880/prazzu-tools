@@ -17,9 +17,8 @@ Nesse estado existem 32 módulos em `app/Tools`: 20 ferramentas oficiais do cicl
 
 ## Integração realizada
 
-- `NetSalaryCalculator` foi promovido ao catálogo oficial como ID 21, chave `net-salary` e slug público preservado `calculadora-salario-liquido`.
-- `OvertimeCalculator` foi promovido ao catálogo oficial como ID 22, chave `overtime` e slug público preservado `calculadora-hora-extra`.
-- `DifalIcmsCalculator` foi promovido ao catálogo oficial como ID 23, chave `difal-icms` e slug público preservado `calculadora-difal-icms`.
+- `NetSalaryCalculator` foi promovido ao catálogo oficial como ID 21, chave `net-salary` e slug público preservado `take-home-pay-calculator`.
+- `OvertimeCalculator` foi promovido ao catálogo oficial como ID 22, chave `overtime` e slug público preservado `overtime-pay-calculator`.
 - Os três registros temporários `expansion_lot_11`, `expansion_lot_12` e `expansion_lot_13` foram removidos de `additional_modules`.
 - O inventário executável agora representa 23 ferramentas oficiais e 9 módulos adicionais, totalizando 32 módulos classificados exatamente uma vez.
 - Busca, categorias, páginas relacionadas e sitemap continuam usando `ToolCatalog`/`ToolRegistry`; nenhuma lógica paralela foi criada. Como os três módulos já estavam registrados em `config/tools/modules.php` e visíveis em estado `beta`, a promoção de produto não exigiu duplicação de registro.
@@ -29,7 +28,6 @@ Nesse estado existem 32 módulos em `app/Tools`: 20 ferramentas oficiais do cicl
 
 - Nenhum slug das 29 ferramentas preexistentes foi alterado.
 - Nenhum módulo preexistente foi removido.
-- `ProLaboreProfitDistributionCalculator` continua classificado como compatibilidade legada até auditoria específica.
 - Os schemas de resultado `1.0.0` das três ferramentas da expansão permanecem inalterados.
 - O lote não move regras de domínio para o Core e não cria integração direta entre ferramentas.
 

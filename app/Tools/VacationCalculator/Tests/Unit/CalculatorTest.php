@@ -19,7 +19,7 @@ final class CalculatorTest extends TestCase
             convertOneThirdToCash: true,
         ));
 
-        self::assertSame('calculadora-ferias', $result->toolSlug);
+        self::assertSame('pto-calculator', $result->toolSlug);
         self::assertSame('1.0.0', $result->schemaVersion);
         self::assertSame('entitled_days', $result->summary[0]->key);
         self::assertSame(400000, $result->details['remuneration']['gross_total_minor']);

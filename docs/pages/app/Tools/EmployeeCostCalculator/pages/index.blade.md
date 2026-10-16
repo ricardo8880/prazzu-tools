@@ -9,7 +9,7 @@ incidências, CCT, FPAS, RAT/FAP e enquadramento informados.
 
 ## Funcionamento
 
-- `GET /ferramentas/custo-funcionario-clt` abre a página pública.
+- `GET /ferramentas/employee-cost-calculator` abre a página pública.
 - A simulação individual recebe salário, média variável, benefícios, regime,
   RAT, terceiros e jornada mensal; nome, departamento, cenário e empresa são
   opcionais.
@@ -34,8 +34,8 @@ incidências, CCT, FPAS, RAT/FAP e enquadramento informados.
 ## Implementação principal
 
 - **View principal:** `app/Tools/EmployeeCostCalculator/Resources/views/index.blade.php`
-- **Grupo de rotas:** prefixo `ferramentas/custo-funcionario-clt`, nomes sob
-  `tools.custo-funcionario-clt.*`
+- **Grupo de rotas:** prefixo `ferramentas/employee-cost-calculator`, nomes sob
+  `tools.employee-cost-calculator.*`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Form Requests:** `ExecuteToolRequest`, `CalculateBatchRequest`,
   `CompareScenariosRequest`, `CompareEmploymentModelsRequest`,

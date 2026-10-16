@@ -40,7 +40,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'reajuste-salarial',
+            toolSlug: 'salary-increase-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -62,12 +62,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'reajuste-salarial',
-            name: 'Calculadora de Reajuste Salarial',
-            description: 'Calcule novo salário, diferenças retroativas e impacto anual do reajuste.',
+            slug: 'salary-increase-calculator',
+            name: 'Salary Increase Calculator',
+            description: 'Calculate a pay raise, new salary, retroactive difference, and twelve-month payroll impact.',
             category: ToolCategory::Labor,
             icon: 'bi-currency-dollar',
-            routeName: 'tools.reajuste-salarial.index',
+            routeName: 'tools.salary-increase-calculator.index',
             vertical: 'contabilidade',
             version: '1.1.0',
             access: ToolAccess::Free,
@@ -75,15 +75,15 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 230,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['reajuste salarial', 'dissídio', 'convenção coletiva', 'aumento salarial', 'retroativo'],
+            keywords: ['salary increase', 'pay raise calculator', 'salary adjustment', 'raise percentage'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
+                new ToolFeature('spreadsheet_export', 'Advanced Excel export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'xlsx']),
@@ -109,6 +109,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-reajuste-salarial';
+        return 'tools-salary-increase-calculator';
     }
 }

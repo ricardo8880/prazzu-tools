@@ -17,7 +17,7 @@ final class GoldenCases
         $reference = 'MarginMarkupCalculatorTest protege fórmula, composição de custos, rejeições de domínio e memória de cálculo da regra 2.1.0.';
 
         return new GoldenCaseSuite(
-            toolSlug: 'calculadora-margem-markup',
+            toolSlug: 'margin-markup-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

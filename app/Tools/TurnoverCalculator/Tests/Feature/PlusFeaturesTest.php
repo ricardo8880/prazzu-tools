@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-turnover', 'segmented_analysis')]
+    #[CoversPlusFeature('employee-turnover-calculator', 'segmented_analysis')]
     public function test_segmented_analysis_blocks_free_and_allows_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

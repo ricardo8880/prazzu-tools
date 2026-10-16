@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'encargos-trabalhistas',
+            toolSlug: 'employer-payroll-tax-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::High,
             personalDataExposure: PersonalDataExposure::None,

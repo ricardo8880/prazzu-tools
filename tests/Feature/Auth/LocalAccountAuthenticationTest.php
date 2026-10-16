@@ -34,7 +34,7 @@ final class LocalAccountAuthenticationTest extends TestCase
     {
         $this->post(route('register.store', [
             'source' => 'result_continuity',
-            'tool' => 'calculadora-salario-liquido',
+            'tool' => 'take-home-pay-calculator',
         ]), [
             'name' => 'Pessoa Retorno',
             'email' => 'retorno@example.com',
@@ -47,7 +47,7 @@ final class LocalAccountAuthenticationTest extends TestCase
             ->firstOrFail();
 
         self::assertSame('result_continuity', $event->metadata['source']);
-        self::assertSame('calculadora-salario-liquido', $event->metadata['tool_slug']);
+        self::assertSame('take-home-pay-calculator', $event->metadata['tool_slug']);
         self::assertArrayNotHasKey('email', $event->metadata);
     }
 
@@ -55,7 +55,7 @@ final class LocalAccountAuthenticationTest extends TestCase
     {
         $this->post(route('register.store', [
             'source' => 'tool_favorite',
-            'tool' => 'calculadora-salario-liquido',
+            'tool' => 'take-home-pay-calculator',
         ]), [
             'name' => 'Pessoa Favorito',
             'email' => 'favorito@example.com',
@@ -67,7 +67,7 @@ final class LocalAccountAuthenticationTest extends TestCase
 
         $this->assertDatabaseHas('user_tool_favorites', [
             'user_id' => $user->getKey(),
-            'tool_slug' => 'calculadora-salario-liquido',
+            'tool_slug' => 'take-home-pay-calculator',
         ]);
 
         $event = PlatformAnalyticsEvent::query()
@@ -75,7 +75,7 @@ final class LocalAccountAuthenticationTest extends TestCase
             ->firstOrFail();
 
         self::assertSame('tool_favorite', $event->metadata['source']);
-        self::assertSame('calculadora-salario-liquido', $event->metadata['tool_slug']);
+        self::assertSame('take-home-pay-calculator', $event->metadata['tool_slug']);
         self::assertArrayNotHasKey('email', $event->metadata);
     }
 
@@ -87,12 +87,12 @@ final class LocalAccountAuthenticationTest extends TestCase
 
         UserToolFavorite::query()->create([
             'user_id' => $user->getKey(),
-            'tool_slug' => 'calculadora-salario-liquido',
+            'tool_slug' => 'take-home-pay-calculator',
         ]);
 
         $this->post(route('login.store', [
             'source' => 'tool_favorite',
-            'tool' => 'calculadora-salario-liquido',
+            'tool' => 'take-home-pay-calculator',
         ]), [
             'email' => $user->email,
             'password' => 'senha1234',
@@ -101,7 +101,7 @@ final class LocalAccountAuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($user);
         self::assertSame(1, UserToolFavorite::query()
             ->where('user_id', $user->getKey())
-            ->where('tool_slug', 'calculadora-salario-liquido')
+            ->where('tool_slug', 'take-home-pay-calculator')
             ->count());
     }
 

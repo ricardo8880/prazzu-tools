@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class BuildBatchExportRowsTest extends TestCase
 {
-    #[CoversPlusFeature('validador-de-cnpj', 'batch_export')]
+    #[CoversPlusFeature('us-tax-id-validator', 'batch_export')]
     public function test_it_exports_only_problematic_rows_when_requested(): void
     {
         $result = ['rows' => [

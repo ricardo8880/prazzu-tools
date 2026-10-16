@@ -11,9 +11,9 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('ponto-de-equilibrio');
+        $module = app(ToolRegistry::class)->findModule('break-even-calculator');
 
         self::assertNotNull($module);
-        self::assertSame('ponto-de-equilibrio', $module->manifest()->slug);
+        self::assertSame('break-even-calculator', $module->manifest()->slug);
     }
 }

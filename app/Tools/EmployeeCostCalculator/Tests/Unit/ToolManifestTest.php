@@ -15,8 +15,8 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('custo-funcionario-clt', $manifest->slug);
-        self::assertSame('tools.custo-funcionario-clt.index', $manifest->routeName);
+        self::assertSame('employee-cost-calculator', $manifest->slug);
+        self::assertSame('tools.employee-cost-calculator.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));

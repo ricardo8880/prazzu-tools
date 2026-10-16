@@ -32,7 +32,7 @@ final readonly class CompareScenarios
 
         return [
             ['name' => 'Base', 'result' => $this->calculate->execute($base), 'input' => $base],
-            ['name' => trim((string) ($data['scenario_name'] ?? 'Cenário alternativo')) ?: 'Cenário alternativo', 'result' => $this->calculate->execute($scenario), 'input' => $scenario],
+            ['name' => trim((string) ($data['scenario_name'] ?? 'Alternative scenario')) ?: 'Alternative scenario', 'result' => $this->calculate->execute($scenario), 'input' => $scenario],
         ];
     }
 
@@ -41,6 +41,6 @@ final readonly class CompareScenarios
         $money = Money::fromDecimal($amount);
         $adjusted = $money->add($money->percentage(Percentage::fromString($rate)));
 
-        return $adjusted->formatPtBr();
+        return $adjusted->formatEnUs();
     }
 }

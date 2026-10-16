@@ -27,7 +27,7 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
     {
         return [
             'admission' => [
-                'tools.simulador-admissao.calculate',
+                'tools.new-hire-cost-calculator.calculate',
                 [
                     'salary' => '3.000,00',
                     'benefits' => '500,00',
@@ -40,12 +40,12 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                 'Custo da admissão',
             ],
             'break even' => [
-                'tools.ponto-de-equilibrio.calculate',
+                'tools.break-even-calculator.calculate',
                 ['fixed_costs' => '10.000,00', 'sale_price' => '100,00', 'variable_cost' => '60,00'],
                 'Ponto de equilíbrio',
             ],
             'cash flow' => [
-                'tools.fluxo-de-caixa.calculate',
+                'tools.cash-flow-calculator.calculate',
                 [
                     'opening_balance' => '1.000,00',
                     'sales_receipts' => '10.000,00',
@@ -57,14 +57,8 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                     'other_outflows' => '0,00',
                 ],
                 'Previsão de caixa',
-            ],
-            'employer inss' => [
-                'tools.inss-patronal.calculate',
-                ['payroll' => '100.000,00', 'regime' => 'general', 'adjusted_rat' => '1', 'third_parties' => '5.8'],
-                'Contribuições patronais',
-            ],
-            'employment models' => [
-                'tools.comparador-clt-pj-autonomo.calculate',
+            ],            'employment models' => [
+                'tools.employee-vs-contractor-calculator.calculate',
                 [
                     'clt_gross' => '5.000,00',
                     'clt_benefits' => '800,00',
@@ -78,14 +72,8 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                     'autonomous_company_burden' => '20',
                 ],
                 'Comparação',
-            ],
-            'factor r' => [
-                'tools.simulador-fator-r.calculate',
-                ['payroll_12' => '30.000,00', 'revenue_12' => '100.000,00'],
-                'Resultado do Fator R',
-            ],
-            'income statement' => [
-                'tools.declaracao-rendimentos.calculate',
+            ],            'income statement' => [
+                'tools.earnings-statement-generator.calculate',
                 [
                     'name' => 'Ana Lima',
                     'document' => '123.456.789-00',
@@ -99,17 +87,11 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                 'Declaração de Rendimentos',
             ],
             'labor charges' => [
-                'tools.encargos-trabalhistas.calculate',
+                'tools.employer-payroll-tax-calculator.calculate',
                 ['salary' => '5.000,00', 'benefits' => '800,00', 'regime' => 'general', 'rat' => '1', 'third_parties' => '5.8'],
                 'Custo provisionado',
-            ],
-            'late das' => [
-                'tools.das-em-atraso.calculate',
-                ['principal' => '1.000,00', 'due_date' => '2026-01-01', 'payment_date' => '2026-02-01', 'accumulated_selic' => '1.5'],
-                'Atualização',
-            ],
-            'payslip' => [
-                'tools.gerador-holerite.calculate',
+            ],            'payslip' => [
+                'tools.pay-stub-generator.calculate',
                 [
                     'name' => 'Ana Lima',
                     'document' => '123.456.789-00',
@@ -124,17 +106,17 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                 'Holerite',
             ],
             'salary adjustment' => [
-                'tools.reajuste-salarial.calculate',
+                'tools.salary-increase-calculator.calculate',
                 ['current_salary' => '5.000,00', 'adjustment_rate' => '5', 'fixed_addition' => '100,00', 'retroactive_months' => 3],
                 'Resultado do reajuste',
             ],
             'sales commission' => [
-                'tools.comissao-vendedores.calculate',
+                'tools.sales-commission-calculator.calculate',
                 ['sales' => '100.000,00', 'rate' => '2', 'goal' => '80.000,00', 'goal_bonus_rate' => '0.5'],
                 'Resultado da comissão',
             ],
             'work income statement' => [
-                'tools.declaracao-trabalho-renda.calculate',
+                'tools.employment-income-letter-generator.calculate',
                 [
                     'name' => 'Ana Lima',
                     'document' => '123.456.789-00',
@@ -148,7 +130,7 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                 'Declaração pronta',
             ],
             'working capital' => [
-                'tools.capital-de-giro.calculate',
+                'tools.working-capital-calculator.calculate',
                 [
                     'cash' => '20.000,00',
                     'receivables' => '50.000,00',
@@ -166,8 +148,8 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
 
     public function test_document_generators_return_validation_errors_instead_of_domain_exceptions(): void
     {
-        $this->from(route('tools.declaracao-rendimentos.index'))
-            ->post(route('tools.declaracao-rendimentos.calculate'), [
+        $this->from(route('tools.earnings-statement-generator.index'))
+            ->post(route('tools.earnings-statement-generator.calculate'), [
                 'name' => 'Ana Lima',
                 'document' => '123.456.789-00',
                 'payer' => 'Empresa Exemplo Ltda.',
@@ -177,11 +159,11 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                 'irrf' => '500,00',
                 'other_deductions' => '0,00',
             ])
-            ->assertRedirect(route('tools.declaracao-rendimentos.index'))
+            ->assertRedirect(route('tools.earnings-statement-generator.index'))
             ->assertSessionHasErrors('other_deductions');
 
-        $this->from(route('tools.gerador-holerite.index'))
-            ->post(route('tools.gerador-holerite.calculate'), [
+        $this->from(route('tools.pay-stub-generator.index'))
+            ->post(route('tools.pay-stub-generator.calculate'), [
                 'name' => 'Ana Lima',
                 'document' => '123.456.789-00',
                 'employer' => 'Empresa Exemplo Ltda.',
@@ -192,7 +174,7 @@ final class RequestedToolsCalculationSmokeTest extends TestCase
                 'irrf' => '500,00',
                 'other_deductions' => '0,00',
             ])
-            ->assertRedirect(route('tools.gerador-holerite.index'))
+            ->assertRedirect(route('tools.pay-stub-generator.index'))
             ->assertSessionHasErrors('other_deductions');
     }
 }

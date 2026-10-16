@@ -1,9 +1,9 @@
 # Gerador de Contratos — Prazzu Tools
 
 - **View:** `app/Tools/ContractGenerator/Resources/views/index.blade.php`
-- **Rota GET:** `tools.gerador-de-contratos.index`
-- **Rota POST de geração:** `tools.gerador-de-contratos.build`
-- **Rota POST de visualização:** `tools.gerador-de-contratos.preview`
+- **Rota GET:** `tools.contract-generator.index`
+- **Rota POST de geração:** `tools.contract-generator.build`
+- **Rota POST de visualização:** `tools.contract-generator.preview`
 - **Estado do módulo:** `beta`
 
 ## Objetivo

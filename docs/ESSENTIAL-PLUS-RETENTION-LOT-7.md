@@ -22,9 +22,8 @@ Garantir que a divisão Essencial × Plus continue obedecendo à promessa da rai
 
 A auditoria encontrou três capacidades declaradas como Plus que são necessárias para conferir o resultado básico:
 
-- `calculadora-pis-cofins:memory` — memória de cálculo e fontes normativas;
-- `calculadora-retencoes-nota-fiscal:memory` — memória de cálculo e premissas;
-- `calculadora-retencoes-nota-fiscal:report` — a implementação atual controla a conferência por tributo e nota dentro da própria tela de resultado.
+- `backup-withholding-calculator:memory` — memória de cálculo e premissas;
+- `backup-withholding-calculator:report` — a implementação atual controla a conferência por tributo e nota dentro da própria tela de resultado.
 
 As três foram promovidas para `Essential`. As views deixaram de condicionar essas superfícies ao acesso Plus e agora possuem marcadores `data-essential-transparency` protegidos por teste arquitetural.
 
@@ -62,7 +61,7 @@ Nenhum slug, rota pública, ID, vertical, `release_order`, fórmula, regra norma
 
 ## Estado após o lote
 
-- 50 ferramentas oficiais;
+- 28 ferramentas oficiais;
 - 49 Contabilidade + 1 RH;
 - 13 `active`, 37 `beta`, 0 `draft`;
 - 141 contratos Plus declarados;

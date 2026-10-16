@@ -10,7 +10,7 @@ final class ToolPageTest extends TestCase
 {
     public function test_tool_page_is_available_from_the_public_catalog(): void
     {
-        $this->get(route('tools.distribuicao-de-lucros.index'))
+        $this->get(route('tools.owner-distribution-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Distribuição de Lucros');
     }

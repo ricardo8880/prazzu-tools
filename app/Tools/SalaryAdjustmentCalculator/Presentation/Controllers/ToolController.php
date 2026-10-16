@@ -20,14 +20,14 @@ final class ToolController extends Controller
 
     public function index(ShowToolPage $page): View
     {
-        return view('tools-reajuste-salarial::index', $page->execute());
+        return view('tools-salary-increase-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
         $input = $request->validated();
 
-        return view('tools-reajuste-salarial::index', [
+        return view('tools-salary-increase-calculator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($input),
             'calculationInput' => $input,
@@ -38,13 +38,13 @@ final class ToolController extends Controller
     {
         $input = $request->validated();
 
-        return $exporter->download($documents->pdf('Cálculo de Reajuste Salarial', 'reajuste-salarial-'.now()->format('Y-m-d'), $action->execute($input), $input));
+        return $exporter->download($documents->pdf('Salary Increase Calculation', 'salary-increase-calculator-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 
     public function exportExcel(ExecuteToolRequest $request, CalculateTool $action, SpreadsheetExporter $exporter, ToolResultExportFactory $documents): Response
     {
         $input = $request->validated();
 
-        return $exporter->download($documents->spreadsheet('reajuste-salarial-'.now()->format('Y-m-d'), $action->execute($input), $input));
+        return $exporter->download($documents->spreadsheet('salary-increase-calculator-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 }

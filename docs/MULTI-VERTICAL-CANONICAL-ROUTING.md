@@ -30,7 +30,7 @@ O mapeamento pertence a `config/verticals.php`.
 ## Isolamento
 
 Uma ferramenta só pode responder dentro da vertical declarada em seu `ToolManifest`.
-Exemplo: `calculadora-turnover` responde em `\/tools\/rh\/ferramentas\/calculadora-turnover`
+Exemplo: `employee-turnover-calculator` responde em `\/tools\/rh\/ferramentas\/employee-turnover-calculator`
 e deve retornar 404 quando chamada sob `\/tools\/contabil`. O mesmo princípio vale
 para posts e Recursos.
 

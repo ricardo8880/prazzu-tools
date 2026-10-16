@@ -11,9 +11,9 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('gerador-holerite');
+        $module = app(ToolRegistry::class)->findModule('pay-stub-generator');
 
         self::assertNotNull($module);
-        self::assertSame('gerador-holerite', $module->manifest()->slug);
+        self::assertSame('pay-stub-generator', $module->manifest()->slug);
     }
 }

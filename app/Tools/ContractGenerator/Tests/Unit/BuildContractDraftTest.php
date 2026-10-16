@@ -42,7 +42,7 @@ final class BuildContractDraftTest extends TestCase
         self::assertSame(ContractType::ServiceProvision, $draft->type);
         self::assertSame('04.252.011/0001-10', $draft->firstParty->document);
         self::assertSame('529.982.247-25', $draft->secondParty->document);
-        self::assertSame('R$ 2.500,00', $draft->amount->formatPtBr());
+        self::assertSame('R$ 2.500,00', $draft->amount->formatEnUs());
         self::assertSame('SP', $draft->jurisdictionState);
         self::assertSame('Consultoria contábil mensal.', $draft->specificTerms['service_description']);
         self::assertNull($draft->specificTerms['end_date']);

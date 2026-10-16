@@ -29,7 +29,7 @@ final class CalculatorTest extends TestCase
             city: 'São Paulo',
         ));
 
-        self::assertSame('emissor-de-recibos', $result->toolSlug);
+        self::assertSame('receipt-generator', $result->toolSlug);
         self::assertSame('1.0.0', $result->schemaVersion);
         self::assertSame('REC-2026-0001', $result->summary[0]->value);
         self::assertSame('R$ 1.250,45', $result->summary[1]->value);

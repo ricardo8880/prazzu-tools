@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'custo-funcionario-clt',
+            toolSlug: 'employee-cost-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::High,
             personalDataExposure: PersonalDataExposure::None,

@@ -17,7 +17,7 @@
         <button class="btn btn-outline-primary align-self-lg-end" type="button" id="scenario-add"><i class="bi bi-plus-lg me-1"></i>Adicionar cenário</button>
     </div>
 
-    <form method="post" action="{{ route('tools.calculadora-margem-markup.scenarios.simulate') }}" id="scenario-form">
+    <form method="post" action="{{ route('tools.margin-markup-calculator.scenarios.simulate') }}" id="scenario-form">
         @csrf
         <div class="row g-3 mb-3">
             <div class="col-12 col-md-6 col-xl-3">
@@ -64,7 +64,7 @@
                             ] as $field => [$type, $placeholder])
                                 <td><input class="form-control form-control-sm" type="{{ $type }}" step="0.000001" name="scenarios[{{ $index }}][{{ $field }}]" value="{{ $scenario[$field] ?? '' }}" placeholder="{{ $placeholder }}" {{ in_array($field, ['name','desired_margin'], true) ? 'required' : '' }}></td>
                             @endforeach
-                            <td><button class="btn btn-sm btn-outline-danger scenario-remove" type="button" aria-label="Remover cenário"><i class="bi bi-trash"></i></button></td>
+                            <td><button class="btn btn-sm btn-outline-danger scenario-remove" type="button" aria-label="Remove cenário"><i class="bi bi-trash"></i></button></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -108,7 +108,7 @@
     @foreach (['cost_adjustment'=>'0','desired_margin'=>'30','discount_percentage'=>'0','taxes_percentage'=>'0','commission_percentage'=>'0','card_fees_percentage'=>'0','marketplace_fees_percentage'=>'0'] as $field => $value)
         <td><input class="form-control form-control-sm" type="number" step="0.000001" name="scenarios[__INDEX__][{{ $field }}]" value="{{ $value }}" {{ $field === 'desired_margin' ? 'required' : '' }}></td>
     @endforeach
-    <td><button class="btn btn-sm btn-outline-danger scenario-remove" type="button" aria-label="Remover cenário"><i class="bi bi-trash"></i></button></td>
+    <td><button class="btn btn-sm btn-outline-danger scenario-remove" type="button" aria-label="Remove cenário"><i class="bi bi-trash"></i></button></td>
 </tr>
 </template>
 

@@ -27,7 +27,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'calculadora-parcelamento-tributario';
+    public const SLUG = 'irs-payment-plan-calculator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -38,11 +38,11 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Calculadora de Parcelamento Tributário',
-            description: 'Simule parcelas de uma dívida tributária com encargos informados e compare entrada, prazos, saldo e custo final.',
+            name: 'IRS Payment Plan Calculator',
+            description: 'Model monthly payments and estimated charges for an IRS tax balance using user-entered term and rate assumptions.',
             category: ToolCategory::Calculators,
             icon: 'bi-calendar2-check',
-            routeName: 'tools.calculadora-parcelamento-tributario.index',
+            routeName: 'tools.irs-payment-plan-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -51,11 +51,11 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
             featured: true,
             supportsHistory: false,
             storesSensitiveData: false,
-            keywords: ['parcelamento tributário', 'dívida tributária', 'parcelas', 'encargos', 'saldo devedor', 'tributos'],
+            keywords: ['IRS payment plan', 'tax payment plan', 'IRS installment agreement', 'tax debt'],
             capabilities: [ToolCapability::Export],
             features: [
                 new ToolFeature('calculate', 'Dívida, parcelas e encargos com parcela média e custo final', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Memória de cálculo do cenário principal', ToolFeatureTier::Essential),
+                new ToolFeature('memory', 'Calculation details do cenário principal', ToolFeatureTier::Essential),
                 new ToolFeature('scenario_comparison', 'Comparação de entrada, prazos e encargos', ToolFeatureTier::Plus),
                 new ToolFeature('balance_evolution', 'Evolução mensal do saldo e cronograma', ToolFeatureTier::Plus),
                 new ToolFeature('report', 'Relatório com cenários e cronograma', ToolFeatureTier::Plus),
@@ -80,7 +80,7 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-parcelamento-tributario';
+        return 'tools-irs-payment-plan-calculator';
     }
 
     public function analyticsJourney(): ToolAnalyticsJourney
@@ -97,7 +97,7 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
                     new ToolAnalyticsField('entry_amount', 'plus', selector: '[name="entry_amount"]'),
                 ],
                 actions: ['calculate', 'export'],
-                selector: 'form[action*="calculadora-parcelamento-tributario"]',
+                selector: 'form[action*="irs-payment-plan-calculator"]',
                 resultSelector: '[data-analytics-result="main"]',
             )],
         );

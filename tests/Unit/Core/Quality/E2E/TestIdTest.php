@@ -17,7 +17,7 @@ final class TestIdTest extends TestCase
     public static function identifiers(): array
     {
         return [
-            ['tool-page', 'custo-funcionario-clt', 'tool-page-custo-funcionario-clt'],
+            ['tool-page', 'employee-cost-calculator', 'tool-page-employee-cost-calculator'],
             ['field', 'scenarios[0][monthly_revenue]', 'field-scenarios-0-monthly-revenue'],
             ['download', 'Exportar PDF', 'download-exportar-pdf'],
             ['action', 'Pró-Labore', 'action-pro-labore'],

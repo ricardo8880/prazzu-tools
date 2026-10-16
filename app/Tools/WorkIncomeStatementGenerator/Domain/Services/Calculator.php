@@ -21,57 +21,57 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível.');
+            throw new InvalidArgumentException('Incompatible input.');
         }
 
         $startDate = new DateTimeImmutable($input->startDate);
         $issueDate = new DateTimeImmutable($input->issueDate);
         if ($startDate > $issueDate) {
-            throw new InvalidArgumentException('O início informado não pode ser posterior à emissão.');
+            throw new InvalidArgumentException('The employment start date cannot be later than the issue date.');
         }
 
-        $text = "{$input->employer} declara, sob sua responsabilidade, que {$input->name}, documento {$input->document}, exerce a atividade de {$input->occupation} desde {$startDate->format('d/m/Y')}, com renda mensal declarada de {$input->monthlyIncome->formatPtBr()}.";
+        $text = "{$input->employer} states that {$input->name}, employee/reference ID {$input->document}, has worked as {$input->occupation} since {$startDate->format('F j, Y')}, with reported monthly income of {$input->monthlyIncome->formatEnUs()}.";
         $notice = new GeneratedDocumentNotice(
-            purpose: 'Registrar uma declaração particular de atividade e renda com dados fornecidos pelo declarante.',
+            purpose: 'Create a general employment and income verification letter using employer-supplied information.',
             limitations: [
-                'Não cria, reconhece nem comprova vínculo empregatício ou relação jurídica.',
-                'Não valida identidade, renda, atividade, poderes do declarante, assinatura ou autenticidade.',
-                'A aceitação depende da instituição destinatária e dos documentos comprobatórios exigidos.',
+                'This generated letter does not independently verify employment, income, identity, or authority to sign.',
+                'Acceptance depends on the recipient and any supporting documents they require.',
+                'Use the employer’s official verification process when a lender, landlord, government agency, or other recipient requires one.',
             ],
         );
 
         return new ToolCalculationResult(
-            toolSlug: 'declaracao-trabalho-renda',
+            toolSlug: 'employment-income-letter-generator',
             schemaVersion: '1.1.0',
             summary: [
-                new ToolCalculationSummaryItem('monthly_income', 'Renda mensal declarada', $input->monthlyIncome->formatPtBr()),
-                new ToolCalculationSummaryItem('worker', 'Pessoa declarada', $input->name),
-                new ToolCalculationSummaryItem('occupation', 'Atividade declarada', $input->occupation),
+                new ToolCalculationSummaryItem('monthly_income', 'Reported monthly income', $input->monthlyIncome->formatEnUs()),
+                new ToolCalculationSummaryItem('worker', 'Employee / worker', $input->name),
+                new ToolCalculationSummaryItem('occupation', 'Job title / occupation', $input->occupation),
             ],
             details: [
                 'input' => $input->toArray(),
                 'document' => [
-                    'title' => 'Declaração de Trabalho e Renda',
+                    'title' => 'Employment and Income Verification Letter',
                     'text' => $text,
-                    'location' => "{$input->city}, {$issueDate->format('d/m/Y')}",
+                    'location' => "{$input->city}, {$issueDate->format('F j, Y')}",
                     'signer' => $input->employer,
                     'notice' => $notice->toArray(),
                 ],
             ],
             warnings: [
-                new ToolCalculationWarning('document.does_not_prove_employment', 'Este documento reproduz uma declaração particular e não comprova vínculo laboral, renda ou autenticidade sem evidências e assinatura do declarante.'),
+                new ToolCalculationWarning('document.does_not_prove_employment', 'This generated letter is informational and should be reviewed, signed, and supported by the employer’s records before use.'),
             ],
             calculationMemory: new CalculationMemory(
                 schemaVersion: '1.0.0',
                 steps: [
-                    new CalculationMemoryStep('period', 'Período declarado', 'data de início ≤ data de emissão', ['start_date' => $input->startDate, 'issue_date' => $input->issueDate], 'valid'),
-                    new CalculationMemoryStep('income', 'Renda mensal declarada', 'valor monetário informado pelo declarante', ['monthly_income_minor' => $input->monthlyIncome->minorAmount()], $input->monthlyIncome->minorAmount(), 'Money em centavos, com aritmética inteira'),
-                    new CalculationMemoryStep('document', 'Texto documental', 'interpolação literal dos dados revisáveis', ['worker' => $input->name, 'declarant' => $input->employer, 'occupation' => $input->occupation], 'generated'),
+                    new CalculationMemoryStep('period', 'Employment period', 'start date ≤ issue date', ['start_date' => $input->startDate, 'issue_date' => $input->issueDate], 'valid'),
+                    new CalculationMemoryStep('income', 'Reported monthly income', 'monthly income supplied by the employer', ['monthly_income_minor' => $input->monthlyIncome->minorAmount()], $input->monthlyIncome->minorAmount(), 'Money em centavos, com aritmética inteira'),
+                    new CalculationMemoryStep('document', 'Generated letter', 'formatted employer-supplied data', ['worker' => $input->name, 'declarant' => $input->employer, 'occupation' => $input->occupation], 'generated'),
                 ],
                 assumptions: [
-                    'A atividade e a renda são declarações do utilizador, sem verificação externa.',
-                    'O texto não qualifica juridicamente a relação nem presume vínculo empregatício.',
-                    'O documento requer revisão e assinatura do declarante antes do uso.',
+                    'Employment and income data are supplied by the user and are not independently verified.',
+                    'The tool does not determine legal worker classification or employment status.',
+                    'The letter should be reviewed and signed by an authorized employer representative before use.',
                 ],
                 isEstimate: false,
             ),

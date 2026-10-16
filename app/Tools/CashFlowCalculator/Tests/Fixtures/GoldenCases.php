@@ -16,7 +16,7 @@ final class GoldenCases
     {
         $reference = 'Fórmulas do README e regressões do CalculatorTest, revisadas para o schema 1.2.0.';
 
-        return new GoldenCaseSuite('fluxo-de-caixa', [
+        return new GoldenCaseSuite('cash-flow-calculator', [
             new GoldenCase('typical-positive', 'Período com geração e saldo final positivos', GoldenCaseKind::Typical,
                 ['opening_balance_minor' => 500000, 'sales_receipts_minor' => 2000000, 'other_inflows_minor' => 100000, 'operating_payments_minor' => 1200000, 'tax_payments_minor' => 200000, 'investments_minor' => 100000, 'financing_payments_minor' => 50000, 'other_outflows_minor' => 50000],
                 ['closing_balance_minor' => 1000000, 'net_movement_minor' => 500000, 'operating_generation_minor' => 600000], $reference, '1.2.0', 'Centavos inteiros; sem float.'),

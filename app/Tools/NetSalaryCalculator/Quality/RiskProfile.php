@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'calculadora-salario-liquido',
+            toolSlug: 'take-home-pay-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::High,
             personalDataExposure: PersonalDataExposure::None,

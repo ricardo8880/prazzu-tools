@@ -16,7 +16,7 @@ final class GoldenCases
     {
         $reference = 'CalculatorTest e memória da versão 1.1.0; impacto anual limitado às parcelas descritas no README.';
 
-        return new GoldenCaseSuite('reajuste-salarial', [
+        return new GoldenCaseSuite('salary-increase-calculator', [
             new GoldenCase('typical', 'Reajuste percentual mais aumento fixo', GoldenCaseKind::Typical,
                 ['current_salary_minor' => 300000, 'adjustment_rate' => '5', 'fixed_addition_minor' => 5000, 'retroactive_months' => 3],
                 ['new_salary_minor' => 320000, 'monthly_increase_minor' => 20000, 'effective_adjustment' => '6,66 %', 'retroactive_minor' => 60000, 'annual_impact_minor' => 266667], $reference, '1.1.0', 'Money::percentage e divisão inteira do Core.'),

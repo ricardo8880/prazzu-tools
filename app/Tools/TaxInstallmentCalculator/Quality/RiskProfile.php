@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'calculadora-parcelamento-tributario',
+            toolSlug: 'irs-payment-plan-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::Low,
             personalDataExposure: PersonalDataExposure::None,

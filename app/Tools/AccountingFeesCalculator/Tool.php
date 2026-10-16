@@ -49,7 +49,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'calculadora-de-honorarios-contabeis',
+            toolSlug: 'accounting-fee-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -96,12 +96,12 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'calculadora-de-honorarios-contabeis',
-            name: 'Calculadora de Honorários Contábeis',
-            description: 'Estime honorários contábeis com base no porte, regime tributário e complexidade da operação.',
+            slug: 'accounting-fee-calculator',
+            name: 'Accounting Fee Calculator',
+            description: 'Estimate bookkeeping and accounting service fees based on client size, transaction volume, staffing, tax complexity, and service scope.',
             category: ToolCategory::Calculators,
             icon: 'bi-calculator',
-            routeName: 'tools.calculadora-de-honorarios-contabeis.index',
+            routeName: 'tools.accounting-fee-calculator.index',
             vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
@@ -110,7 +110,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             featured: true,
             supportsHistory: true,
             storesSensitiveData: true,
-            keywords: ['honorários contábeis', 'precificação contábil', 'contador', 'mensalidade contábil', 'proposta comercial', 'contrato contábil'],
+            keywords: ['accounting fees', 'bookkeeping fees', 'CPA pricing', 'bookkeeping pricing', 'monthly accounting fee'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -120,12 +120,12 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                 ToolCapability::AcceptsIntegrations,
             ],
             features: [
-                new ToolFeature('calculate', 'Precificação completa de honorários', ToolFeatureTier::Essential),
-                new ToolFeature('adjust_fee', 'Cálculo completo de reajuste', ToolFeatureTier::Essential),
-                new ToolFeature('commercial_proposal', 'Geração de proposta comercial', ToolFeatureTier::Plus),
-                new ToolFeature('service_contract', 'Geração de contrato de serviços', ToolFeatureTier::Plus),
-                new ToolFeature('history', 'Histórico, favoritos e duplicação', ToolFeatureTier::Plus),
-                new ToolFeature('history_export', 'Exportação do histórico', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Complete accounting-fee estimate', ToolFeatureTier::Essential),
+                new ToolFeature('adjust_fee', 'Complete fee adjustment', ToolFeatureTier::Essential),
+                new ToolFeature('commercial_proposal', 'Commercial proposal generation', ToolFeatureTier::Plus),
+                new ToolFeature('service_contract', 'Service agreement generation', ToolFeatureTier::Plus),
+                new ToolFeature('history', 'History, favorites, and duplication', ToolFeatureTier::Plus),
+                new ToolFeature('history_export', 'History export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
@@ -166,7 +166,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-de-honorarios-contabeis';
+        return 'tools-accounting-fee-calculator';
     }
 
     public function migrationsPath(): string

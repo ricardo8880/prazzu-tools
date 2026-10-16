@@ -22,7 +22,7 @@ final class ToolPageTest extends TestCase
 
     public function test_page_lists_the_initial_contract_types(): void
     {
-        $this->get(route('tools.gerador-de-contratos.index'))
+        $this->get(route('tools.contract-generator.index'))
             ->assertOk()
             ->assertSee('Gerador de Contratos')
             ->assertSee('Beta')
@@ -33,7 +33,7 @@ final class ToolPageTest extends TestCase
 
     public function test_service_questionnaire_is_available(): void
     {
-        $this->get(route('tools.gerador-de-contratos.index', ['tipo' => 'prestacao-servicos']))
+        $this->get(route('tools.contract-generator.index', ['tipo' => 'prestacao-servicos']))
             ->assertOk()
             ->assertSee('Contratante')
             ->assertSee('Contratado')
@@ -43,7 +43,7 @@ final class ToolPageTest extends TestCase
 
     public function test_service_questionnaire_exposes_a_single_e2e_form_contract(): void
     {
-        $response = $this->get(route('tools.gerador-de-contratos.index', ['tipo' => 'prestacao-servicos']))
+        $response = $this->get(route('tools.contract-generator.index', ['tipo' => 'prestacao-servicos']))
             ->assertOk()
             ->assertSee('data-testid="contract-type-panel"', false)
             ->assertSee('data-testid="contract-parties-panel"', false)
@@ -60,7 +60,7 @@ final class ToolPageTest extends TestCase
             ->once()
             ->withArgs(function (AnalyticsEvent $event): bool {
                 self::assertSame('tool.calculation.completed', $event->name);
-                self::assertSame('gerador-de-contratos', $event->subjectSlug);
+                self::assertSame('contract-generator', $event->subjectSlug);
                 self::assertSame('tool', $event->subjectType);
                 self::assertArrayNotHasKey('first_party_name', $event->properties);
                 self::assertArrayNotHasKey('first_party_document', $event->properties);
@@ -69,13 +69,13 @@ final class ToolPageTest extends TestCase
                 return true;
             });
 
-        $this->post(route('tools.gerador-de-contratos.build'), $this->servicePayload())
+        $this->post(route('tools.contract-generator.build'), $this->servicePayload())
             ->assertOk();
     }
 
     public function test_valid_service_answers_generate_editable_contract(): void
     {
-        $this->post(route('tools.gerador-de-contratos.build'), $this->servicePayload())
+        $this->post(route('tools.contract-generator.build'), $this->servicePayload())
             ->assertOk()
             ->assertSee('Dados conferidos e contrato gerado')
             ->assertSee('Empresa Contratante Ltda.')
@@ -95,7 +95,7 @@ final class ToolPageTest extends TestCase
         $payload['delivery_date'] = '2026-08-10';
         $payload['delivery_location'] = 'São Paulo/SP';
 
-        $this->post(route('tools.gerador-de-contratos.build'), $payload)
+        $this->post(route('tools.contract-generator.build'), $payload)
             ->assertOk()
             ->assertSee('Vendedor')
             ->assertSee('Comprador')
@@ -108,7 +108,7 @@ final class ToolPageTest extends TestCase
     {
         $text = "CONTRATO PARA PDF\n\nCláusula preparada para impressão.";
 
-        $response = $this->post(route('tools.gerador-de-contratos.export.pdf'), [
+        $response = $this->post(route('tools.contract-generator.export.pdf'), [
             'contract_type' => 'prestacao-servicos',
             'contract_text' => $text,
         ]);
@@ -123,7 +123,7 @@ final class ToolPageTest extends TestCase
     {
         $text = "CONTRATO WORD\n\nCláusula com acentuação & símbolos <seguros>.";
 
-        $response = $this->post(route('tools.gerador-de-contratos.export.docx'), [
+        $response = $this->post(route('tools.contract-generator.export.docx'), [
             'contract_type' => 'prestacao-servicos',
             'contract_text' => $text,
         ]);
@@ -138,7 +138,7 @@ final class ToolPageTest extends TestCase
     {
         $text = "CONTRATO EDITADO\n\nCláusula personalizada pelo usuário.";
 
-        $this->post(route('tools.gerador-de-contratos.preview'), [
+        $this->post(route('tools.contract-generator.preview'), [
             'contract_type' => 'prestacao-servicos',
             'contract_text' => $text,
         ])
@@ -153,9 +153,9 @@ final class ToolPageTest extends TestCase
         $payload = $this->servicePayload();
         $payload['end_date'] = '2030-08-02';
 
-        $this->from(route('tools.gerador-de-contratos.index', ['tipo' => 'prestacao-servicos']))
-            ->post(route('tools.gerador-de-contratos.build'), $payload)
-            ->assertRedirect(route('tools.gerador-de-contratos.index', ['tipo' => 'prestacao-servicos']))
+        $this->from(route('tools.contract-generator.index', ['tipo' => 'prestacao-servicos']))
+            ->post(route('tools.contract-generator.build'), $payload)
+            ->assertRedirect(route('tools.contract-generator.index', ['tipo' => 'prestacao-servicos']))
             ->assertSessionHasErrors(['end_date']);
     }
 
@@ -164,9 +164,9 @@ final class ToolPageTest extends TestCase
         $payload = $this->servicePayload();
         $payload['first_party_document'] = '11.111.111/1111-11';
 
-        $this->from(route('tools.gerador-de-contratos.index', ['tipo' => 'prestacao-servicos']))
-            ->post(route('tools.gerador-de-contratos.build'), $payload)
-            ->assertRedirect(route('tools.gerador-de-contratos.index', ['tipo' => 'prestacao-servicos']))
+        $this->from(route('tools.contract-generator.index', ['tipo' => 'prestacao-servicos']))
+            ->post(route('tools.contract-generator.build'), $payload)
+            ->assertRedirect(route('tools.contract-generator.index', ['tipo' => 'prestacao-servicos']))
             ->assertSessionHasErrors(['first_party_document']);
     }
 

@@ -4,11 +4,8 @@ Estado-base reconstruído a partir do projeto original e do Lote 4A, preservando
 
 ## Ferramentas migradas
 
-20. Simulador Tributário (Simples × Lucro Presumido × Lucro Real)
 21. Calculadora de Salário Líquido
 22. Calculadora de Hora Extra, Adicional Noturno e DSR
-23. Calculadora DIFAL / ICMS Interestadual + FCP
-24. Planejador de Retirada de Sócios
 
 ## Resultado
 

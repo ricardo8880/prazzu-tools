@@ -29,15 +29,15 @@ final readonly class AccountingFeesResult
     public function toArray(): array
     {
         return [
-            'minimum_fee' => $this->minimumFee->formatPtBr(),
-            'recommended_fee' => $this->recommendedFee->formatPtBr(),
-            'upper_reference_fee' => $this->upperReferenceFee->formatPtBr(),
+            'minimum_fee' => $this->minimumFee->formatEnUs(),
+            'recommended_fee' => $this->recommendedFee->formatEnUs(),
+            'upper_reference_fee' => $this->upperReferenceFee->formatEnUs(),
             'complexity_score' => $this->complexityScore,
             'complexity_level' => $this->complexityLevel,
             'breakdown' => array_map(
                 static fn (array $item): array => [
                     'label' => $item['label'],
-                    'value' => $item['value']->formatPtBr(),
+                    'value' => $item['value']->formatEnUs(),
                     'percentage' => $item['percentage'],
                 ],
                 $this->breakdown,

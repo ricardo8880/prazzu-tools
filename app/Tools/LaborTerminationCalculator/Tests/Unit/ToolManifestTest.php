@@ -15,12 +15,12 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('calculadora-de-rescisao', $manifest->slug);
+        self::assertSame('final-pay-severance-calculator', $manifest->slug);
         self::assertSame('Calculadora de Rescisão Trabalhista', $manifest->name);
         self::assertSame(ToolCategory::Labor, $manifest->category);
         self::assertSame(ToolStatus::Active, $manifest->status);
         self::assertSame('1.0.0', $manifest->version);
-        self::assertSame('tools.calculadora-de-rescisao.index', $manifest->routeName);
+        self::assertSame('tools.final-pay-severance-calculator.index', $manifest->routeName);
         self::assertTrue($manifest->supportsHistory);
         self::assertTrue($manifest->storesSensitiveData);
         self::assertSame(180, (new Tool)->historyPolicy()->retentionDays);

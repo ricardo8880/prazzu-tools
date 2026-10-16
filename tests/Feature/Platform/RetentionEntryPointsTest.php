@@ -85,7 +85,7 @@ final class RetentionEntryPointsTest extends TestCase
 
     public function test_post_result_cta_prioritizes_optional_continuity_for_guests(): void
     {
-        $this->get(route('tools.calculadora-salario-liquido.index'))
+        $this->get(route('tools.take-home-pay-calculator.index'))
             ->assertOk()
             ->assertSee('data-result-continuity-cta', false)
             ->assertSee('Criar conta grátis')
@@ -98,9 +98,9 @@ final class RetentionEntryPointsTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->get(route('tools.calculadora-salario-liquido.index'))
+            ->get(route('tools.take-home-pay-calculator.index'))
             ->assertOk()
             ->assertSee('Abrir histórico')
-            ->assertSee(route('tools.calculadora-salario-liquido.history.index'), false);
+            ->assertSee(route('tools.take-home-pay-calculator.history.index'), false);
     }
 }

@@ -73,7 +73,7 @@ Nenhum recurso Plus é necessário para gerar, revisar ou exportar corretamente 
 
 ## Capacidades da plataforma
 
-- Slug: `gerador-de-contratos`
+- Slug: `contract-generator`
 - Estado: `beta`
 - Categoria: `geradores`
 - Histórico: habilitado para continuidade autenticada

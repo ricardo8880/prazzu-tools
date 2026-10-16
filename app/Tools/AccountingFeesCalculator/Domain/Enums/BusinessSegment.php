@@ -17,13 +17,13 @@ enum BusinessSegment: string
     public function label(): string
     {
         return match ($this) {
-            self::Services => 'Prestação de serviços',
-            self::Commerce => 'Comércio',
-            self::Industry => 'Indústria',
-            self::Construction => 'Construção civil',
-            self::Healthcare => 'Saúde',
-            self::DigitalBusiness => 'Negócios digitais',
-            self::Other => 'Outro segmento',
+            self::Services => 'Professional services',
+            self::Commerce => 'Retail / commerce',
+            self::Industry => 'Manufacturing',
+            self::Construction => 'Construction',
+            self::Healthcare => 'Healthcare',
+            self::DigitalBusiness => 'Digital business',
+            self::Other => 'Other',
         };
     }
 

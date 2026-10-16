@@ -15,7 +15,7 @@ final class ToolFeedbackHttpTest extends TestCase
 
     public function test_registered_tool_page_exposes_feedback_entry_in_right_sidebar(): void
     {
-        $response = $this->get(route('tools.gerador-de-contratos.index'));
+        $response = $this->get(route('tools.contract-generator.index'));
 
         $response->assertOk();
         $response->assertSee('Ajude a melhorar esta ferramenta');
@@ -34,13 +34,13 @@ final class ToolFeedbackHttpTest extends TestCase
     public function test_feedback_endpoint_stores_submission_through_shared_core(): void
     {
         $response = $this->postJson(route('feedback.tool.store'), [
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'type' => ToolFeedbackType::Problem->value,
             'message' => 'O contrato não atualizou após a edição.',
             'attempted_action' => 'Atualizar a visualização do contrato.',
-            'path' => '/ferramentas/gerador-de-contratos',
-            'url' => 'http://localhost/ferramentas/gerador-de-contratos',
-            'route_name' => 'tools.gerador-de-contratos.index',
+            'path' => '/ferramentas/contract-generator',
+            'url' => 'http://localhost/ferramentas/contract-generator',
+            'route_name' => 'tools.contract-generator.index',
             'page_title' => 'Gerador de Contratos',
         ]);
 
@@ -49,7 +49,7 @@ final class ToolFeedbackHttpTest extends TestCase
             ->assertJsonPath('message', 'Obrigado! Seu feedback foi enviado para análise.');
 
         $this->assertDatabaseHas('tool_feedback', [
-            'tool_slug' => 'gerador-de-contratos',
+            'tool_slug' => 'contract-generator',
             'type' => ToolFeedbackType::Problem->value,
             'status' => ToolFeedbackStatus::New->value,
             'message' => 'O contrato não atualizou após a edição.',

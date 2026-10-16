@@ -28,7 +28,7 @@ final readonly class CompareCostScenarios
         foreach ($scenarios as &$scenario) {
             $difference = $scenario['annual_total_minor'] - (int) $lowest['annual_total_minor'];
             $scenario['difference_from_lowest_minor'] = $difference;
-            $scenario['difference_from_lowest'] = Money::fromMinor($difference)->formatPtBr();
+            $scenario['difference_from_lowest'] = Money::fromMinor($difference)->formatEnUs();
         }
         unset($scenario);
 

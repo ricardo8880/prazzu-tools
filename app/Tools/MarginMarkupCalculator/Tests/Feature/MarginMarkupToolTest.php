@@ -15,15 +15,15 @@ final class MarginMarkupToolTest extends TestCase
 
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.calculadora-margem-markup.index'))
+        $this->get(route('tools.margin-markup-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Margem, Markup e Formação de Preço');
     }
 
     public function test_calculation_returns_expected_result(): void
     {
-        $response = $this->from(route('tools.calculadora-margem-markup.index'))
-            ->post(route('tools.calculadora-margem-markup.calculate'), [
+        $response = $this->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.calculate'), [
                 'reference_date' => '2026-07-13',
                 'base_cost' => '100,00',
                 'additional_costs' => '20,00',
@@ -38,28 +38,28 @@ final class MarginMarkupToolTest extends TestCase
 
         $this->assertDatabaseCount('tool_runs', 0);
         $this->assertDatabaseHas('tool_usage_events', [
-            'tool_slug' => 'calculadora-margem-markup',
+            'tool_slug' => 'margin-markup-calculator',
             'event' => 'calculated',
         ]);
     }
 
     public function test_export_reuses_calculation_validation(): void
     {
-        $this->from(route('tools.calculadora-margem-markup.index'))
-            ->post(route('tools.calculadora-margem-markup.export'), [
+        $this->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.export'), [
                 'reference_date' => '2026-07-13',
                 'base_cost' => 'valor-invalido',
                 'additional_costs' => '0,00',
                 'desired_margin' => '25',
             ])
-            ->assertRedirect(route('tools.calculadora-margem-markup.index'))
+            ->assertRedirect(route('tools.margin-markup-calculator.index'))
             ->assertSessionHasErrors('base_cost');
     }
 
-    #[CoversPlusFeature('calculadora-margem-markup', 'export')]
+    #[CoversPlusFeature('margin-markup-calculator', 'export')]
     public function test_export_returns_csv_and_records_metric(): void
     {
-        $response = $this->post(route('tools.calculadora-margem-markup.export'), [
+        $response = $this->post(route('tools.margin-markup-calculator.export'), [
             'reference_date' => '2026-07-13',
             'base_cost' => '100,00',
             'additional_costs' => '20,00',
@@ -72,29 +72,29 @@ final class MarginMarkupToolTest extends TestCase
             ->assertDownload('margem-markup.csv');
 
         $this->assertDatabaseHas('tool_usage_events', [
-            'tool_slug' => 'calculadora-margem-markup',
+            'tool_slug' => 'margin-markup-calculator',
             'event' => 'exported',
         ]);
     }
 
     public function test_zero_total_cost_returns_validation_error_instead_of_server_error(): void
     {
-        $this->from(route('tools.calculadora-margem-markup.index'))
-            ->post(route('tools.calculadora-margem-markup.calculate'), [
+        $this->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.calculate'), [
                 'reference_date' => '2026-07-13',
                 'base_cost' => '0,00',
                 'additional_costs' => '0,00',
                 'desired_margin' => '25',
             ])
-            ->assertRedirect(route('tools.calculadora-margem-markup.index'))
+            ->assertRedirect(route('tools.margin-markup-calculator.index'))
             ->assertSessionHasErrors('base_cost');
     }
 
-    #[CoversPlusFeature('calculadora-margem-markup', 'batch_processing')]
+    #[CoversPlusFeature('margin-markup-calculator', 'batch_processing')]
     public function test_batch_calculation_returns_results_for_multiple_products(): void
     {
-        $response = $this->from(route('tools.calculadora-margem-markup.index'))
-            ->post(route('tools.calculadora-margem-markup.batch.calculate'), [
+        $response = $this->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.batch.calculate'), [
                 'reference_date' => '2026-07-15',
                 'products' => [
                     [
@@ -122,15 +122,15 @@ final class MarginMarkupToolTest extends TestCase
             ->assertSee('R$ 266,67');
 
         $this->assertDatabaseHas('tool_usage_events', [
-            'tool_slug' => 'calculadora-margem-markup',
+            'tool_slug' => 'margin-markup-calculator',
             'event' => 'batch_calculated',
         ]);
     }
 
-    #[CoversPlusFeature('calculadora-margem-markup', 'scenarios')]
+    #[CoversPlusFeature('margin-markup-calculator', 'scenarios')]
     public function test_scenarios_compare_two_pricing_strategies(): void
     {
-        $this->post(route('tools.calculadora-margem-markup.scenarios.simulate'), [
+        $this->post(route('tools.margin-markup-calculator.scenarios.simulate'), [
             'reference_date' => '2026-07-15', 'product_name' => 'Produto A', 'base_cost' => '100,00',
             'scenarios' => [
                 ['name' => 'Conservador', 'desired_margin' => '20'],
@@ -141,12 +141,12 @@ final class MarginMarkupToolTest extends TestCase
 
     public function test_batch_calculation_requires_at_least_one_product(): void
     {
-        $this->from(route('tools.calculadora-margem-markup.index'))
-            ->post(route('tools.calculadora-margem-markup.batch.calculate'), [
+        $this->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.batch.calculate'), [
                 'reference_date' => '2026-07-15',
                 'products' => [],
             ])
-            ->assertRedirect(route('tools.calculadora-margem-markup.index'))
+            ->assertRedirect(route('tools.margin-markup-calculator.index'))
             ->assertSessionHasErrors('products');
     }
 
@@ -156,8 +156,8 @@ final class MarginMarkupToolTest extends TestCase
         $file = UploadedFile::fake()->createWithContent('produtos.csv', $csv);
 
         $previewResponse = $this->followingRedirects()
-            ->from(route('tools.calculadora-margem-markup.index'))
-            ->post(route('tools.calculadora-margem-markup.import.preview'), ['import_file' => $file]);
+            ->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.import.preview'), ['import_file' => $file]);
 
         $previewResponse->assertOk()
             ->assertSee('produtos.csv')
@@ -168,8 +168,8 @@ final class MarginMarkupToolTest extends TestCase
         $token = $matches[1];
 
         $this->followingRedirects()
-            ->from(route('tools.calculadora-margem-markup.index'))
-            ->post(route('tools.calculadora-margem-markup.import.process'), [
+            ->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.import.process'), [
                 'import_token' => $token,
                 'available_headers' => ['Produto', 'Código', 'Categoria', 'Custo base', 'Margem %'],
                 'name_column' => 'Produto',
@@ -185,22 +185,22 @@ final class MarginMarkupToolTest extends TestCase
 
     public function test_import_template_is_downloadable(): void
     {
-        $this->get(route('tools.calculadora-margem-markup.import.template'))
+        $this->get(route('tools.margin-markup-calculator.import.template'))
             ->assertOk()
             ->assertDownload('modelo-importacao-margem-markup.csv');
     }
 
     public function test_alternative_exports_cannot_bypass_the_central_access_gate(): void
     {
-        config()->set('features.tools.calculadora-margem-markup.enabled', false);
+        config()->set('features.tools.margin-markup-calculator.enabled', false);
 
-        $this->post(route('tools.calculadora-margem-markup.export.pdf'), [
+        $this->post(route('tools.margin-markup-calculator.export.pdf'), [
             'reference_date' => '2026-07-15',
             'base_cost' => '100,00',
             'desired_margin' => '25',
         ])->assertServiceUnavailable();
 
-        $this->post(route('tools.calculadora-margem-markup.batch.export'), [
+        $this->post(route('tools.margin-markup-calculator.batch.export'), [
             'reference_date' => '2026-07-15',
             'products' => [[
                 'name' => 'Produto A',
@@ -209,7 +209,7 @@ final class MarginMarkupToolTest extends TestCase
             ]],
         ])->assertServiceUnavailable();
 
-        $this->post(route('tools.calculadora-margem-markup.scenarios.export'), [
+        $this->post(route('tools.margin-markup-calculator.scenarios.export'), [
             'reference_date' => '2026-07-15',
             'product_name' => 'Produto A',
             'base_cost' => '100,00',

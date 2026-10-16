@@ -19,7 +19,7 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('10000'), Money::fromDecimal('5000'),
         ));
 
-        self::assertSame('capital-de-giro', $result->toolSlug);
+        self::assertSame('working-capital-calculator', $result->toolSlug);
         self::assertSame('1.2.0', $result->schemaVersion);
         self::assertSame('required_capital', $result->summary[0]->key);
         self::assertSame('R$ 55.000,00', $result->summary[0]->value);

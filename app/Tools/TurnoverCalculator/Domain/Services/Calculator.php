@@ -20,11 +20,11 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível com a calculadora de turnover.');
+            throw new InvalidArgumentException('Incompatible turnover input.');
         }
 
         if ($input->admissions < 0 || $input->terminations < 0 || $input->averageHeadcount <= 0) {
-            throw new InvalidArgumentException('Admissões e desligamentos não podem ser negativos, e o quadro médio deve ser maior que zero.');
+            throw new InvalidArgumentException('Hires and separations cannot be negative, and average headcount must be greater than zero.');
         }
 
         // Mantém precisão determinística com aritmética inteira: a média pode terminar em ,5 e a taxa usa basis points.
@@ -39,34 +39,34 @@ final class Calculator implements ToolCalculator
             steps: [
                 new CalculationMemoryStep(
                     'average_movement',
-                    'Movimentação média',
-                    '(admissões + desligamentos) ÷ 2',
+                    'Average workforce movement',
+                    '(hires + separations) ÷ 2',
                     ['admissions' => $input->admissions, 'terminations' => $input->terminations],
                     $averageMovement,
-                    'Indicador operacional; não representa regra legal ou normativa.',
+                    'Operational metric; not a legal or regulatory rule.',
                 ),
                 new CalculationMemoryStep(
                     'turnover_rate',
                     'Taxa de turnover',
-                    'movimentação média ÷ quadro médio × 100',
+                    'average workforce movement ÷ average headcount × 100',
                     ['average_headcount' => $input->averageHeadcount],
                     $rate,
                     'Resultado arredondado para duas casas decimais.',
                 ),
             ],
             assumptions: [
-                'O quadro médio deve representar o mesmo período das admissões e desligamentos.',
-                'A fórmula mede rotatividade geral e pode diferir de metodologias internas de RH.',
+                'Average headcount should cover the same period as hires and separations.',
+                'This formula measures general turnover and may differ from internal HR methodologies.',
             ],
             isEstimate: false,
         );
 
         return new ToolCalculationResult(
-            toolSlug: 'calculadora-turnover',
+            toolSlug: 'employee-turnover-calculator',
             schemaVersion: self::SCHEMA_VERSION,
             summary: [
                 new ToolCalculationSummaryItem('turnover_rate', 'Taxa de turnover', $rate),
-                new ToolCalculationSummaryItem('movements', 'Movimentações consideradas', $input->admissions + $input->terminations, 'Soma de admissões e desligamentos informados.'),
+                new ToolCalculationSummaryItem('movements', 'Employee movements', $input->admissions + $input->terminations, 'Sum of entered hires and separations.'),
             ],
             details: ['input' => $input->toArray(), 'rate_basis_points' => $rateBasisPoints],
             calculationMemory: $memory,

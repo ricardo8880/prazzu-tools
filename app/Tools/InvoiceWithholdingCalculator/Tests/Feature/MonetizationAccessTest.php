@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 final class MonetizationAccessTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-retencoes-nota-fiscal', 'history')]
+    #[CoversPlusFeature('backup-withholding-calculator', 'history')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

@@ -20,14 +20,14 @@ final class ToolController extends Controller
 
     public function index(ShowToolPage $page): View
     {
-        return view('tools-simulador-admissao::index', $page->execute());
+        return view('tools-new-hire-cost-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
         $input = $request->validated();
 
-        return view('tools-simulador-admissao::index', [
+        return view('tools-new-hire-cost-calculator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($input),
             'calculationInput' => $input,
@@ -38,13 +38,13 @@ final class ToolController extends Controller
     {
         $input = $request->validated();
 
-        return $exporter->download($documents->pdf('Simulação de Admissão', 'simulacao-admissao-'.now()->format('Y-m-d'), $action->execute($input), $input));
+        return $exporter->download($documents->pdf('New Hire Cost Estimate', 'new-hire-cost-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 
     public function exportExcel(ExecuteToolRequest $request, CalculateTool $action, SpreadsheetExporter $exporter, ToolResultExportFactory $documents): Response
     {
         $input = $request->validated();
 
-        return $exporter->download($documents->spreadsheet('simulacao-admissao-'.now()->format('Y-m-d'), $action->execute($input), $input));
+        return $exporter->download($documents->spreadsheet('new-hire-cost-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 }

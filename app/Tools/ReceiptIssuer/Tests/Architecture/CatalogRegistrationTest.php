@@ -11,9 +11,9 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('emissor-de-recibos');
+        $module = app(ToolRegistry::class)->findModule('receipt-generator');
 
         self::assertNotNull($module);
-        self::assertSame('emissor-de-recibos', $module->manifest()->slug);
+        self::assertSame('receipt-generator', $module->manifest()->slug);
     }
 }

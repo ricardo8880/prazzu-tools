@@ -12,6 +12,6 @@ final class ToolManifestTest extends TestCase
     public function test_manifest_declares_rh_vertical(): void
     {
         self::assertSame('rh', (new Tool)->manifest()->vertical);
-        self::assertSame('calculadora-turnover', (new Tool)->manifest()->slug);
+        self::assertSame('employee-turnover-calculator', (new Tool)->manifest()->slug);
     }
 }

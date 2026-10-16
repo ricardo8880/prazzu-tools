@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-Reduzir a carga de escolha de um catálogo com 50 ferramentas e ajudar quem conhece o problema, mas não o nome exato da ferramenta, a encontrar um ponto de entrada útil. A mudança não cria gestão, tarefas ou workflows; jornadas são somente navegação editorial entre utilitários independentes.
+Reduzir a carga de escolha de um catálogo com 28 ferramentas e ajudar quem conhece o problema, mas não o nome exato da ferramenta, a encontrar um ponto de entrada útil. A mudança não cria gestão, tarefas ou workflows; jornadas são somente navegação editorial entre utilitários independentes.
 
 ## Estado de partida
 
@@ -18,7 +18,7 @@ O lote foi construído obrigatoriamente sobre ZIP original → Lote 1 → Lote 2
 
 A Home mostra “O que você quer resolver?” fora de contextos de aquisição. O catálogo mostra “Encontre pela rotina” somente em seu estado geral, sem busca e sem categoria ativa. Ambas reutilizam o mesmo componente Blade.
 
-Contabilidade começa com quatro rotinas: Funcionários e folha, Simples Nacional, Sócios e retiradas e Financeiro da empresa. RH não recebe uma sequência artificial enquanto tiver somente `calculadora-turnover`.
+Contabilidade começa com quatro rotinas: Funcionários e folha, Simples Nacional, Sócios e retiradas e Financeiro da empresa. RH não recebe uma sequência artificial enquanto tiver somente `employee-turnover-calculator`.
 
 ## Analytics
 

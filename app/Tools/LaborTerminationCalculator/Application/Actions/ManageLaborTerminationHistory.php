@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 final readonly class ManageLaborTerminationHistory
 {
-    private const TOOL_SLUG = 'calculadora-de-rescisao';
+    private const TOOL_SLUG = 'final-pay-severance-calculator';
 
     public function __construct(private ToolRunHistory $history) {}
 

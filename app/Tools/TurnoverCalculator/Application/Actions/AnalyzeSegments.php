@@ -20,7 +20,7 @@ final readonly class AnalyzeSegments
         $lines = preg_split('/\R+/', trim($rows), -1, PREG_SPLIT_NO_EMPTY) ?: [];
         if (count($lines) < 2 || count($lines) > 12) {
             throw ValidationException::withMessages([
-                'segments' => 'Informe de 2 a 12 períodos ou segmentos, um por linha.',
+                'segments' => 'Enter 2 to 12 periods or segments, one per line.',
             ]);
         }
 
@@ -29,7 +29,7 @@ final readonly class AnalyzeSegments
             $parts = array_map('trim', explode('|', $line));
             if (count($parts) !== 4 || $parts[0] === '' || ! ctype_digit($parts[1]) || ! ctype_digit($parts[2]) || ! ctype_digit($parts[3]) || (int) $parts[3] < 1) {
                 throw ValidationException::withMessages([
-                    'segments' => 'Linha '.($index + 1).' inválida. Use: nome|admissões|desligamentos|quadro_médio.',
+                    'segments' => 'Invalid line '.($index + 1).'. Use: name|hires|separations|average_headcount.',
                 ]);
             }
 

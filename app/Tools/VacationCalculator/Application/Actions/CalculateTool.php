@@ -12,19 +12,16 @@ final readonly class CalculateTool
 {
     public function __construct(private Calculator $calculator) {}
 
-    /** @param array<string, mixed> $data */
+    /** @param array<string,mixed> $data */
     public function execute(array $data): ToolCalculationResult
     {
         return $this->calculator->calculate(new CalculationInput(
-            monthlySalary: (string) $data['monthly_salary'],
-            acquisitionStartDate: (string) $data['acquisition_start_date'],
-            vacationStartDate: (string) $data['vacation_start_date'],
-            unjustifiedAbsences: (int) ($data['unjustified_absences'] ?? 0),
-            convertOneThirdToCash: (bool) ($data['convert_one_third_to_cash'] ?? false),
-            commissionAverage: (string) ($data['commission_average'] ?? '0'),
-            overtimeAverage: (string) ($data['overtime_average'] ?? '0'),
-            recurringAdditions: (string) ($data['recurring_additions'] ?? '0'),
-            otherDeductions: (string) ($data['other_deductions'] ?? '0'),
+            hourlyRate: (string) $data['hourly_rate'],
+            accruedPtoHours: (string) $data['accrued_pto_hours'],
+            plannedPtoHours: (string) $data['planned_pto_hours'],
+            accrualHoursPerPayPeriod: (string) ($data['accrual_hours_per_pay_period'] ?? '0'),
+            payPeriodsBeforeLeave: (int) ($data['pay_periods_before_leave'] ?? 0),
+            payoutPercent: (string) ($data['payout_percent'] ?? '100'),
         ));
     }
 }

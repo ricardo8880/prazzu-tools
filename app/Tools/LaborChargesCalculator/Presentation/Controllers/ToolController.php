@@ -20,12 +20,12 @@ final class ToolController extends Controller
 
     public function index(ShowToolPage $page): View
     {
-        return view('tools-encargos-trabalhistas::index', $page->execute());
+        return view('tools-employer-payroll-tax-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
-        return view('tools-encargos-trabalhistas::index', [
+        return view('tools-employer-payroll-tax-calculator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($request->validated()),
             'calculationInput' => $request->validated(),
@@ -42,8 +42,8 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->pdf(
-            title: 'Cálculo de Encargos Trabalhistas',
-            filename: 'encargos-trabalhistas-'.now()->format('Y-m-d'),
+            title: 'Employer Payroll Tax Calculation',
+            filename: 'employer-payroll-tax-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));
@@ -59,7 +59,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->spreadsheet(
-            filename: 'encargos-trabalhistas-'.now()->format('Y-m-d'),
+            filename: 'employer-payroll-tax-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));

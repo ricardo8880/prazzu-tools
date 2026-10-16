@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class BuildServiceContractTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-de-honorarios-contabeis', 'service_contract')]
+    #[CoversPlusFeature('accounting-fee-calculator', 'service_contract')]
     public function test_it_builds_a_service_contract(): void
     {
         $contract = (new BuildServiceContract)->execute([
@@ -34,7 +34,7 @@ final class BuildServiceContractTest extends TestCase
         ]);
 
         self::assertSame('Cliente Exemplo Ltda.', $contract->clientCompany);
-        self::assertSame('R$ 1.500,00', $contract->monthlyFee->formatPtBr());
+        self::assertSame('R$ 1.500,00', $contract->monthlyFee->formatEnUs());
         self::assertSame('01/08/2026', $contract->startsAt->format('d/m/Y'));
         self::assertSame('31/07/2027', $contract->endsAt->format('d/m/Y'));
         self::assertCount(2, $contract->services);

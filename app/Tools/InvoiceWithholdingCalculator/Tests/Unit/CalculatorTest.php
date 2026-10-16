@@ -23,7 +23,7 @@ final class CalculatorTest extends TestCase
         self::assertSame(10000, $r->details['taxes']['csll']['withheld_minor']);
     }
 
-    #[CoversPlusFeature('calculadora-retencoes-nota-fiscal', 'custom_rules')]
+    #[CoversPlusFeature('backup-withholding-calculator', 'custom_rules')]
     public function test_custom_base_percentage_reduces_a_tax_base(): void
     {
         $i = $this->input(applyInss: true, inssRate: '11', inssBase: '50');
@@ -31,7 +31,7 @@ final class CalculatorTest extends TestCase
         self::assertSame(55000, $r->details['taxes']['inss']['withheld_minor']);
     }
 
-    #[CoversPlusFeature('calculadora-retencoes-nota-fiscal', 'multiple_notes')]
+    #[CoversPlusFeature('backup-withholding-calculator', 'multiple_notes')]
     public function test_multiple_notes_are_aggregated(): void
     {
         $i = $this->input(notes: [['description' => 'Nota 2', 'value' => '5.000,00']]);

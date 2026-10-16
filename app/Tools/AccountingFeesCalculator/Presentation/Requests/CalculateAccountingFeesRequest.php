@@ -21,7 +21,7 @@ final class CalculateAccountingFeesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'monthly_revenue' => ['required', 'regex:/^\s*(?:R\$\s*)?\d{1,12}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'],
+            'monthly_revenue' => ['required', 'us_money'],
             'employees' => ['required', 'integer', 'min:0', 'max:10000'],
             'partners' => ['required', 'integer', 'min:1', 'max:1000'],
             'monthly_invoices' => ['required', 'integer', 'min:0', 'max:1000000'],
@@ -36,8 +36,8 @@ final class CalculateAccountingFeesRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'monthly_revenue.regex' => 'Informe o faturamento no formato 100.000,00.',
-            'partners.min' => 'Informe pelo menos um sócio ou titular.',
+            'monthly_revenue.us_money' => 'Enter a valid U.S. dollar amount.',
+            'partners.min' => 'Enter at least one owner or partner.',
         ];
     }
 }

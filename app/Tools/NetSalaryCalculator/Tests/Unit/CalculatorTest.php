@@ -14,7 +14,7 @@ final class CalculatorTest extends TestCase
     {
         $result = (new Calculator)->calculate(new CalculationInput('2026-01', '5000.00'));
 
-        self::assertSame('calculadora-salario-liquido', $result->toolSlug);
+        self::assertSame('take-home-pay-calculator', $result->toolSlug);
         self::assertSame('R$ 501,51', $result->summary[1]->value);
         self::assertSame('R$ 0,00', $result->summary[2]->value);
         self::assertSame('R$ 4.498,49', $result->summary[4]->value);

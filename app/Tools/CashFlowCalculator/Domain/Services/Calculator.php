@@ -51,14 +51,14 @@ final class Calculator implements ToolCalculator
         }
 
         return new ToolCalculationResult(
-            toolSlug: 'fluxo-de-caixa',
+            toolSlug: 'cash-flow-calculator',
             schemaVersion: '1.2.0',
             summary: [
-                new ToolCalculationSummaryItem('closing_balance', 'Saldo final previsto', $closingBalance->formatPtBr()),
-                new ToolCalculationSummaryItem('net_movement', 'Movimento líquido do período', $netMovement->formatPtBr()),
-                new ToolCalculationSummaryItem('total_inflows', 'Total de entradas', $inflows->formatPtBr()),
-                new ToolCalculationSummaryItem('total_outflows', 'Total de saídas', $outflows->formatPtBr()),
-                new ToolCalculationSummaryItem('operating_generation', 'Geração operacional de caixa', $operatingGeneration->formatPtBr(), 'Recebimentos de vendas menos pagamentos operacionais e tributos.'),
+                new ToolCalculationSummaryItem('closing_balance', 'Saldo final previsto', $closingBalance->formatEnUs()),
+                new ToolCalculationSummaryItem('net_movement', 'Movimento líquido do período', $netMovement->formatEnUs()),
+                new ToolCalculationSummaryItem('total_inflows', 'Total de entradas', $inflows->formatEnUs()),
+                new ToolCalculationSummaryItem('total_outflows', 'Total de saídas', $outflows->formatEnUs()),
+                new ToolCalculationSummaryItem('operating_generation', 'Geração operacional de caixa', $operatingGeneration->formatEnUs(), 'Recebimentos de vendas menos pagamentos operacionais e tributos.'),
             ],
             details: ['input' => $input->toArray()],
             warnings: $warnings,

@@ -15,8 +15,7 @@ final class EssentialPlusRetentionLot7Test extends TestCase
         $registry = app(ToolRegistry::class);
 
         $expected = [
-            'calculadora-pis-cofins' => ['memory'],
-            'calculadora-retencoes-nota-fiscal' => ['memory', 'report'],
+            'backup-withholding-calculator' => ['memory', 'report'],
         ];
 
         foreach ($expected as $slug => $featureKeys) {
@@ -39,13 +38,9 @@ final class EssentialPlusRetentionLot7Test extends TestCase
 
     public function test_transparency_surfaces_are_not_conditioned_by_plus_access(): void
     {
-        $pisCofins = file_get_contents(base_path('app/Tools/PisCofinsCalculator/Resources/views/index.blade.php'));
         $withholding = file_get_contents(base_path('app/Tools/InvoiceWithholdingCalculator/Resources/views/index.blade.php'));
 
-        self::assertIsString($pisCofins);
         self::assertIsString($withholding);
-        self::assertStringContainsString('data-essential-transparency="memory"', $pisCofins);
-        self::assertStringNotContainsString('memoryAllowed', $pisCofins);
         self::assertStringContainsString('data-essential-transparency="memory"', $withholding);
         self::assertStringContainsString('data-essential-transparency="report"', $withholding);
         self::assertStringNotContainsString("plusAccess['memory']", $withholding);
@@ -55,13 +50,12 @@ final class EssentialPlusRetentionLot7Test extends TestCase
     public function test_all_legacy_tool_pages_receive_the_same_post_result_continuity_entry_point(): void
     {
         $legacy = [
-            'AccountingFeesCalculator' => 'calculadora-de-honorarios-contabeis',
-            'BusinessDocumentValidator' => 'validador-de-cnpj',
-            'FederalPaymentGuideGenerator' => 'gerador-darf-gps',
-            'LaborTerminationCalculator' => 'calculadora-de-rescisao',
-            'MarginMarkupCalculator' => 'calculadora-margem-markup',
-            'ReceiptIssuer' => 'emissor-de-recibos',
-            'VacationCalculator' => 'calculadora-ferias',
+            'AccountingFeesCalculator' => 'accounting-fee-calculator',
+            'BusinessDocumentValidator' => 'us-tax-id-validator',
+            'LaborTerminationCalculator' => 'final-pay-severance-calculator',
+            'MarginMarkupCalculator' => 'margin-markup-calculator',
+            'ReceiptIssuer' => 'receipt-generator',
+            'VacationCalculator' => 'pto-calculator',
         ];
 
         foreach ($legacy as $module => $slug) {

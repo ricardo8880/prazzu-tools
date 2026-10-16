@@ -17,7 +17,7 @@ final class StoreAssetRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:120'],
-            'value' => ['required', 'brazilian_money', 'money_min:0.01'],
+            'value' => ['required', 'us_money', 'money_min:0.01'],
             'useful_life_years' => ['required', 'integer', 'min:1', 'max:100'],
             'method' => ['required', 'in:linear,declining_balance,sum_of_years_digits'],
         ];

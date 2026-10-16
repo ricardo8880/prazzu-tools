@@ -18,7 +18,7 @@ final class GoldenCases
         $ieReference = 'StateRegistrationValidatorRegistryTest protege estratégias estaduais conhecidas e exige estado suportado sem inferência.';
 
         return new GoldenCaseSuite(
-            toolSlug: 'validador-de-cnpj',
+            toolSlug: 'us-tax-id-validator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

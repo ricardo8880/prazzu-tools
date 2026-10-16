@@ -4,7 +4,7 @@
 
 @foreach($receipts as $receipt)
     <div style="{{ !$loop->first ? 'break-before:page;page-break-before:always;' : '' }}">
-        @include('tools-emissor-de-recibos::pdf.receipt', ['receipt' => $receipt])
+        @include('tools-receipt-generator::pdf.receipt', ['receipt' => $receipt])
     </div>
 @endforeach
 

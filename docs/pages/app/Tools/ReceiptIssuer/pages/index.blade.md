@@ -23,7 +23,7 @@ O formulário envia os dados para a rota de emissão. Após a validação e o pr
 
 - layout compartilhado `layouts.app`;
 - componentes compartilhados de introdução, níveis de recursos e impressão;
-- rotas `tools.emissor-de-recibos.index`, `issue` e `export.pdf`;
+- rotas `tools.receipt-generator.index`, `issue` e `export.pdf`;
 - fluxo de domínio do módulo `ReceiptIssuer`.
 
 ## Regras de manutenção

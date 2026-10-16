@@ -52,14 +52,14 @@ final class Calculator implements ToolCalculator
         }
 
         return new ToolCalculationResult(
-            toolSlug: 'capital-de-giro',
+            toolSlug: 'working-capital-calculator',
             schemaVersion: '1.2.0',
             summary: [
-                new ToolCalculationSummaryItem('required_capital', 'Capital de giro necessário', $requiredCapital->formatPtBr(), 'Necessidade operacional positiva que precisa ser financiada.'),
-                new ToolCalculationSummaryItem('operating_need', 'Necessidade de capital de giro (NCG)', $need->formatPtBr(), 'Ativos operacionais menos passivos operacionais.'),
-                new ToolCalculationSummaryItem('net_working_capital', 'Capital circulante líquido (CCL)', $netWorkingCapital->formatPtBr(), 'Ativo circulante menos passivo circulante.'),
-                new ToolCalculationSummaryItem('funding_gap', 'Necessidade adicional de recursos', $fundingGap->formatPtBr(), 'Necessidade operacional ainda não coberta pelo CCL.'),
-                new ToolCalculationSummaryItem('funding_surplus', 'Folga de capital circulante', $fundingSurplus->formatPtBr(), 'Excesso de CCL sobre a necessidade operacional estimada.'),
+                new ToolCalculationSummaryItem('required_capital', 'Capital de giro necessário', $requiredCapital->formatEnUs(), 'Necessidade operacional positiva que precisa ser financiada.'),
+                new ToolCalculationSummaryItem('operating_need', 'Necessidade de capital de giro (NCG)', $need->formatEnUs(), 'Ativos operacionais menos passivos operacionais.'),
+                new ToolCalculationSummaryItem('net_working_capital', 'Capital circulante líquido (CCL)', $netWorkingCapital->formatEnUs(), 'Ativo circulante menos passivo circulante.'),
+                new ToolCalculationSummaryItem('funding_gap', 'Necessidade adicional de recursos', $fundingGap->formatEnUs(), 'Necessidade operacional ainda não coberta pelo CCL.'),
+                new ToolCalculationSummaryItem('funding_surplus', 'Folga de capital circulante', $fundingSurplus->formatEnUs(), 'Excesso de CCL sobre a necessidade operacional estimada.'),
             ],
             details: ['input' => $input->toArray()],
             warnings: $warnings,
@@ -67,7 +67,7 @@ final class Calculator implements ToolCalculator
                 schemaVersion: '1.2.0',
                 steps: [
                     new CalculationMemoryStep('operating_assets', 'Ativos operacionais', 'contas a receber + estoques + outros ativos circulantes operacionais', ['receivables' => $input->receivables->minorAmount(), 'inventory' => $input->inventory->minorAmount(), 'other_current_assets' => $input->otherCurrentAssets->minorAmount()], $operatingAssets->minorAmount(), 'Soma em centavos, sem ponto flutuante.'),
-                    new CalculationMemoryStep('operating_liabilities', 'Passivos operacionais', 'fornecedores + outras obrigações operacionais', ['suppliers' => $input->suppliers->minorAmount(), 'other_operating_liabilities' => $input->otherOperatingLiabilities->minorAmount()], $operatingLiabilities->minorAmount(), 'Soma em centavos, sem ponto flutuante.'),
+                    new CalculationMemoryStep('operating_liabilities', 'Operating liabilities', 'fornecedores + outras obrigações operacionais', ['suppliers' => $input->suppliers->minorAmount(), 'other_operating_liabilities' => $input->otherOperatingLiabilities->minorAmount()], $operatingLiabilities->minorAmount(), 'Soma em centavos, sem ponto flutuante.'),
                     new CalculationMemoryStep('operating_need', 'Necessidade de capital de giro (NCG)', 'ativos operacionais − passivos operacionais', ['operating_assets' => $operatingAssets->minorAmount(), 'operating_liabilities' => $operatingLiabilities->minorAmount()], $need->minorAmount()),
                     new CalculationMemoryStep('current_assets', 'Ativo circulante', 'caixa + ativos operacionais', ['cash' => $input->cash->minorAmount(), 'operating_assets' => $operatingAssets->minorAmount()], $currentAssets->minorAmount()),
                     new CalculationMemoryStep('current_liabilities', 'Passivo circulante', 'passivos operacionais + empréstimos + outras obrigações circulantes', ['operating_liabilities' => $operatingLiabilities->minorAmount(), 'loans' => $input->loans->minorAmount(), 'other_current_liabilities' => $input->otherCurrentLiabilities->minorAmount()], $currentLiabilities->minorAmount()),

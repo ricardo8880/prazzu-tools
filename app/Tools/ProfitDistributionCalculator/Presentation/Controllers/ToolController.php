@@ -21,7 +21,7 @@ final class ToolController extends Controller
 {
     public function index(Request $request, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
-        return view('tools-distribuicao-de-lucros::index', ['plusEnabled' => $features->plusEnabled($module, $request)]);
+        return view('tools-owner-distribution-calculator::index', ['plusEnabled' => $features->plusEnabled($module, $request)]);
     }
 
     public function calculate(ExecuteToolRequest $request, Calculator $calculator, ToolFeatureRequestAuthorizer $features, Tool $module): View
@@ -30,7 +30,7 @@ final class ToolController extends Controller
         $features->requireIf($this->hasMultiplePartners($data), $module, 'partners', $request);
         $result = $calculator->calculate($this->input($data));
 
-        return view('tools-distribuicao-de-lucros::index', ['result' => $result, 'plusEnabled' => $features->plusEnabled($module, $request)]);
+        return view('tools-owner-distribution-calculator::index', ['result' => $result, 'plusEnabled' => $features->plusEnabled($module, $request)]);
     }
 
     public function downloadPdf(ExecuteToolRequest $request, Calculator $calculator, PdfExporter $exporter, ToolResultExportFactory $documents, ToolFeatureRequestAuthorizer $features, Tool $module): Response
@@ -39,7 +39,7 @@ final class ToolController extends Controller
         $features->requireIf($this->hasMultiplePartners($data), $module, 'partners', $request);
         $result = $calculator->calculate($this->input($data));
 
-        return $exporter->download($documents->pdf('Relatório de Distribuição de Lucros', 'distribuicao-de-lucros-'.now()->format('Y-m-d'), $result, $data));
+        return $exporter->download($documents->pdf('Owner Distribution Report', 'owner-distribution-calculator-'.now()->format('Y-m-d'), $result, $data));
     }
 
     public function downloadExcel(ExecuteToolRequest $request, Calculator $calculator, SpreadsheetExporter $exporter, ToolResultExportFactory $documents, ToolFeatureRequestAuthorizer $features, Tool $module): Response
@@ -48,7 +48,7 @@ final class ToolController extends Controller
         $features->requireIf($this->hasMultiplePartners($data), $module, 'partners', $request);
         $result = $calculator->calculate($this->input($data));
 
-        return $exporter->download($documents->spreadsheet('distribuicao-de-lucros-'.now()->format('Y-m-d'), $result, $data));
+        return $exporter->download($documents->spreadsheet('owner-distribution-calculator-'.now()->format('Y-m-d'), $result, $data));
     }
 
     private function hasMultiplePartners(array $data): bool
@@ -62,7 +62,7 @@ final class ToolController extends Controller
     private function input(array $data): CalculationInput
     {
         return new CalculationInput(
-            partnerLabel: $data['partner_label'] ?? 'Sócio', ownershipPercentage: $data['ownership_percentage'], accountingProfit: $data['accounting_profit'],
+            partnerLabel: $data['partner_label'] ?? 'Owner', ownershipPercentage: $data['ownership_percentage'], accountingProfit: $data['accounting_profit'],
             accumulatedLosses: $data['accumulated_losses'] ?? '0', reservesAndUnavailableAmounts: $data['reserves_and_unavailable_amounts'] ?? '0',
             adjustments: $data['adjustments'] ?? '0', priorDistributions: $data['prior_distributions'] ?? '0', intendedDistribution: $data['intended_distribution'], partners: $data['partners'] ?? [],
         );

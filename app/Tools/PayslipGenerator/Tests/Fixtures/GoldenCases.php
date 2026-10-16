@@ -15,7 +15,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'gerador-holerite',
+            toolSlug: 'pay-stub-generator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

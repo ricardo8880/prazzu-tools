@@ -12,10 +12,6 @@ final class OfficialToolMaturityTest extends TestCase
 {
     /** @var array<int, string> */
     private const PROMOTED_IN_LOT_1 = [
-        'DifalIcmsCalculator',
-        'DigitalCertificateAnalyzer',
-        'EcadRoyaltySimulator',
-        'IcmsStCalculator',
         'InvoiceWithholdingCalculator',
         'NetSalaryCalculator',
         'OvertimeCalculator',

@@ -10,30 +10,17 @@ Nenhum slug público, fórmula, módulo ou escopo funcional foi ampliado neste e
 
 | Dor agrupada | Cobertura final | Ferramenta(s) oficial(is) |
 |---|---|---|
-| Nota Fiscal | Completa por composição | Retenções na Nota Fiscal + Conversor Fiscal de XML |
-| CFOP | Completa no escopo definido | Consultor e Validador de CFOP |
-| Certificado Digital | Completa na primeira versão aprovada | Analisador de Certificado Digital A1 |
-| Simples Nacional | Completa | Calculadora de Simples Nacional |
-| Lucro Presumido | Completa | Calculadora de IRPJ e CSLL — Lucro Presumido |
-| Lucro Real | Completa no escopo de apuração assistida | Calculadora de Lucro Real |
-| Fator R | Completa | Simulador de Fator R |
 | Reforma Tributária | Completa no escopo de simulação de transição | Simulador da Reforma Tributária do Consumo |
-| PIS/Cofins | Completa no escopo histórico/atual separado da Reforma | Calculadora PIS e COFINS |
-| SEFAZ | Completa no escopo offline aprovado | Validador Fiscal SEFAZ |
 | ICMS | Completa por especialização | ICMS Próprio + ICMS-ST, mantendo DIFAL separado |
-| ECAD | Completa no escopo paramétrico/orientativo aprovado | Simulador Orientativo de ECAD e Direitos Autorais |
-| DIFAL | Completa | Calculadora DIFAL / ICMS Interestadual + FCP |
 
 “Completa” aqui significa **completa dentro do escopo aprovado no Lote 1**, e não promessa de substituir autoridades, emissores, ERP, webservices estaduais, tabelas externas ou serviços de terceiros. Certificado continua A1 e sem emissão; SEFAZ continua offline; ECAD continua paramétrico; Reforma Tributária continua versionada/paramétrica por competência.
 
 ## Auditoria de catálogo e arquitetura
 
-O inventário executável permanece com **50 ferramentas oficiais**, **49 em `contabilidade` e 1 em `rh`**, `expected_module_count = 50` e `release_order` único cobrindo 1 a 50. Não foi criada ferramenta nova no Lote 6.
+O inventário executável permanece com **28 ferramentas oficiais**, **27 em `contabilidade` e 1 em `rh`**, `expected_module_count = 28` e `release_order` único cobrindo 1 a 28. Não foi criada ferramenta nova no Lote 6.
 
 As reutilizações confirmadas nos lotes anteriores permanecem no Core somente onde havia segunda utilização concreta:
 
-- `App\Core\Tax\Fiscal\CfopCatalog` — CFOP + Conversor Fiscal de XML;
-- `App\Core\Tax\Normative\ActualProfitIncomeTaxRule` — Calculadora de Lucro Real + Comparador Tributário.
 
 A auditoria não encontrou nova repetição estrutural que justifique extração adicional para o Core. A leitura PKCS#12 continua corretamente dentro do módulo de Certificado Digital; a linha do tempo da Reforma continua no próprio módulo.
 
@@ -65,7 +52,7 @@ Foi criado `scripts/check-accounting-pains.php`. O script não executa cálculos
 - `php scripts/lint-php.php`: aprovado.
 - `php artisan tools:check-architecture`: aprovado, sem violações.
 - `php artisan analytics:check`: aprovado.
-- `php scripts/e2e-tool-scenarios.php check`: 100 cenários válidos cobrindo 50 ferramentas, com válido + inválido.
+- `php scripts/e2e-tool-scenarios.php check`: 100 cenários válidos cobrindo 28 ferramentas, com válido + inválido.
 - `php artisan route:list --json`: 717 rotas carregadas; as 15 rotas principais usadas pelas 13 dores foram confirmadas no padrão canônico `tools/{vertical}/ferramentas/{slug}`, inclusive com o cache regenerado.
 - Governança Plus: 144 contratos declarados, 144 estritos, 144 funcionais e dívida legada zero.
 

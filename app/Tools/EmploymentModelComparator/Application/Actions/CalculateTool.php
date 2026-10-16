@@ -16,6 +16,17 @@ final readonly class CalculateTool
 
     public function execute(array $d): ToolCalculationResult
     {
-        return $this->calculator->calculate(new CalculationInput(Money::fromDecimal($d['clt_gross']), Money::fromDecimal($d['clt_benefits']), Percentage::fromString($d['clt_employee_deductions']), Percentage::fromString($d['clt_company_burden']), Money::fromDecimal($d['pj_invoice']), Percentage::fromString($d['pj_taxes']), Money::fromDecimal($d['pj_expenses']), Money::fromDecimal($d['autonomous_gross']), Percentage::fromString($d['autonomous_deductions']), Percentage::fromString($d['autonomous_company_burden'])));
+        return $this->calculator->calculate(new CalculationInput(
+            Money::fromDecimal((string) $d['w2_gross']),
+            Money::fromDecimal((string) $d['w2_benefits']),
+            Percentage::fromString((string) $d['w2_employee_deductions']),
+            Percentage::fromString((string) $d['w2_employer_burden']),
+            Money::fromDecimal((string) $d['contractor_revenue']),
+            Percentage::fromString((string) $d['contractor_tax_rate']),
+            Money::fromDecimal((string) $d['contractor_expenses']),
+            Money::fromDecimal((string) $d['self_employed_revenue']),
+            Percentage::fromString((string) $d['self_employed_tax_rate']),
+            Money::fromDecimal((string) $d['self_employed_expenses']),
+        ));
     }
 }

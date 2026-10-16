@@ -2,7 +2,7 @@
 
 - **Tipo:** Página de histórico autenticada
 - **Implementação principal:** `app/Tools/EmployeeCostCalculator/Resources/views/history/index.blade.php`
-- **Rota:** `tools.custo-funcionario-clt.history.index`
+- **Rota:** `tools.employee-cost-calculator.history.index`
 - **Robots:** `noindex,nofollow`
 - **Status:** ativo
 

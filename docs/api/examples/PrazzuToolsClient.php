@@ -43,7 +43,6 @@ final readonly class PrazzuToolsClient
         try {
             $response = $this->request()
                 ->attach('xml_file', $stream, basename($absolutePath))
-                ->post('/api/v1/tools/conversor-fiscal-xml/convert');
         } finally {
             fclose($stream);
         }

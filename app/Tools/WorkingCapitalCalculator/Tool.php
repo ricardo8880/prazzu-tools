@@ -37,7 +37,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'capital-de-giro',
+            toolSlug: 'working-capital-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -63,12 +63,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'capital-de-giro',
-            name: 'Calculadora de Capital de Giro',
-            description: 'Calcule a necessidade operacional, o capital circulante líquido e a necessidade adicional de recursos.',
+            slug: 'working-capital-calculator',
+            name: 'Working Capital Calculator',
+            description: 'Calculate net working capital and project operating liquidity scenarios.',
             category: ToolCategory::Calculators,
             icon: 'bi-cash-stack',
-            routeName: 'tools.capital-de-giro.index',
+            routeName: 'tools.working-capital-calculator.index',
             vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
@@ -76,7 +76,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 170,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['capital de giro', 'ncg', 'ccl', 'liquidez', 'caixa'],
+            keywords: ['working capital', 'net working capital', 'current assets', 'current liabilities'],
             capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export],
             features: [
                 new ToolFeature('calculate', 'Cálculo completo com memória', ToolFeatureTier::Essential),
@@ -112,6 +112,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-capital-de-giro';
+        return 'tools-working-capital-calculator';
     }
 }

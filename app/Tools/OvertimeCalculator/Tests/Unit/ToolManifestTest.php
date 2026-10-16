@@ -14,7 +14,7 @@ final class ToolManifestTest extends TestCase
     public function test_manifest_has_essential_and_plus(): void
     {
         $m = (new Tool)->manifest();
-        self::assertSame('calculadora-hora-extra', $m->slug);
+        self::assertSame('overtime-pay-calculator', $m->slug);
         self::assertSame(ToolStatus::Active, $m->status);
         self::assertNotEmpty($m->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($m->featuresFor(ToolFeatureTier::Plus));

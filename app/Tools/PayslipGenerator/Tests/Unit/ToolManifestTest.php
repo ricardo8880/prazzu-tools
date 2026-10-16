@@ -15,8 +15,8 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('gerador-holerite', $manifest->slug);
-        self::assertSame('tools.gerador-holerite.index', $manifest->routeName);
+        self::assertSame('pay-stub-generator', $manifest->slug);
+        self::assertSame('tools.pay-stub-generator.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));

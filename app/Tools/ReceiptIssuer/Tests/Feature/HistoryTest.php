@@ -15,28 +15,28 @@ final class HistoryTest extends TestCase
 
     public function test_history_requires_authentication(): void
     {
-        $this->get(route('tools.emissor-de-recibos.history.index'))->assertRedirect();
+        $this->get(route('tools.receipt-generator.history.index'))->assertRedirect();
     }
 
     public function test_history_routes_are_registered(): void
     {
         $router = app('router');
 
-        self::assertTrue($router->has('tools.emissor-de-recibos.history.index'));
-        self::assertTrue($router->has('tools.emissor-de-recibos.history.repeat'));
-        self::assertTrue($router->has('tools.emissor-de-recibos.history.destroy'));
-        self::assertTrue($router->has('tools.emissor-de-recibos.history.export.pdf'));
+        self::assertTrue($router->has('tools.receipt-generator.history.index'));
+        self::assertTrue($router->has('tools.receipt-generator.history.repeat'));
+        self::assertTrue($router->has('tools.receipt-generator.history.destroy'));
+        self::assertTrue($router->has('tools.receipt-generator.history.export.pdf'));
     }
 
-    #[CoversPlusFeature('emissor-de-recibos', 'history')]
+    #[CoversPlusFeature('receipt-generator', 'history')]
     public function test_authenticated_user_can_open_history_when_feature_is_available(): void
     {
         $user = User::factory()->create();
-        $this->actingAs($user)->post(route('tools.emissor-de-recibos.issue'), [
+        $this->actingAs($user)->post(route('tools.receipt-generator.issue'), [
             'number' => 'REC-HIST-1', 'payer_name' => 'Cliente', 'payee_name' => 'Prestador',
             'amount' => '100,00', 'description' => 'Serviço', 'issued_at' => '2026-07-23',
         ])->assertOk();
-        $this->actingAs($user)->get(route('tools.emissor-de-recibos.history.index'))
+        $this->actingAs($user)->get(route('tools.receipt-generator.history.index'))
             ->assertOk()->assertSee('REC-HIST-1');
     }
 }

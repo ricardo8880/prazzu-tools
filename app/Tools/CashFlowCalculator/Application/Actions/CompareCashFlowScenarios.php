@@ -58,6 +58,6 @@ final readonly class CompareCashFlowScenarios
         $money = Money::fromDecimal($amount);
         $adjusted = $money->add($money->percentage($rate));
 
-        return $adjusted->formatPtBr();
+        return $adjusted->formatEnUs();
     }
 }

@@ -36,7 +36,7 @@ final class ToolController extends Controller
 {
     public function index(Request $request, ShowToolPage $page, ManageReceiptHistory $history, ManageReceiptPartyProfiles $profiles): View
     {
-        return view('tools-emissor-de-recibos::index', [
+        return view('tools-receipt-generator::index', [
             ...$page->execute(),
             'result' => $request->session()->get('receipt_result'),
             'recentHistory' => $request->user() ? $history->recent((int) $request->user()->getAuthIdentifier()) : [],
@@ -67,7 +67,7 @@ final class ToolController extends Controller
             return $this->downloadPdf($result, $pdf);
         }
 
-        return $spreadsheet->download($documents->spreadsheet('recibo-'.now()->format('Y-m-d'), $result, $input));
+        return $spreadsheet->download($documents->spreadsheet('receipt-'.now()->format('Y-m-d'), $result, $input));
     }
 
     public function printCurrent(
@@ -87,15 +87,15 @@ final class ToolController extends Controller
 
         $receipt = $result['details']['receipt'] ?? null;
         if (! is_array($receipt)) {
-            throw ValidationException::withMessages(['receipt' => 'Não foi possível preparar o recibo para impressão.']);
+            throw ValidationException::withMessages(['receipt' => 'The receipt could not be prepared for printing.']);
         }
 
         return view('exports.printable-document', [
-            'title' => 'Recibo nº '.$receipt['number'],
-            'contentView' => 'tools-emissor-de-recibos::pdf.receipt',
+            'title' => 'Receipt nº '.$receipt['number'],
+            'contentView' => 'tools-receipt-generator::pdf.receipt',
             'contentData' => ['receipt' => $receipt],
             'generatedAt' => now()->format('d/m/Y H:i'),
-            'summaryLabel' => 'Valor',
+            'summaryLabel' => 'Amount',
             'summaryValue' => $receipt['amount'],
         ]);
     }
@@ -136,7 +136,7 @@ final class ToolController extends Controller
 
         $request->flash();
 
-        return view('tools-emissor-de-recibos::index', [
+        return view('tools-receipt-generator::index', [
             ...$page->execute(),
             'result' => $result,
             'historySaved' => $saved,
@@ -147,7 +147,7 @@ final class ToolController extends Controller
 
     public function history(Request $request, ManageReceiptHistory $history): View
     {
-        return view('tools-emissor-de-recibos::history.index', [
+        return view('tools-receipt-generator::history.index', [
             'runs' => $history->paginate(
                 (int) $request->user()->getAuthIdentifier(),
                 max(1, $request->integer('page', 1)),
@@ -159,17 +159,17 @@ final class ToolController extends Controller
     {
         $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
-        return redirect()->route('tools.emissor-de-recibos.index')
+        return redirect()->route('tools.receipt-generator.index')
             ->withInput($entry->input)
             ->with('receipt_result', $entry->result)
-            ->with('history_message', 'Recibo recuperado. Revise os dados antes de emitir novamente.');
+            ->with('history_message', 'Receipt recuperado. Revise os dados antes de emitir novamente.');
     }
 
     public function destroyHistory(Request $request, string $run, ManageReceiptHistory $history): RedirectResponse
     {
         $history->delete($run, (int) $request->user()->getAuthIdentifier());
 
-        return back()->with('history_message', 'Recibo removido do histórico.');
+        return back()->with('history_message', 'Receipt removed from history.');
     }
 
     public function exportHistory(Request $request, string $run, string $format, ManageReceiptHistory $history, StructuredResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet): Response
@@ -177,12 +177,12 @@ final class ToolController extends Controller
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         $entry = $history->owned($run, (int) $request->user()->getAuthIdentifier());
 
-        return $format === 'pdf' ? $this->downloadPdf($entry->result, $pdf) : $spreadsheet->download($documents->spreadsheet('recibo-historico', $entry->result, $entry->input));
+        return $format === 'pdf' ? $this->downloadPdf($entry->result, $pdf) : $spreadsheet->download($documents->spreadsheet('receipt-history', $entry->result, $entry->input));
     }
 
     public function batch(): View
     {
-        return view('tools-emissor-de-recibos::batch.index');
+        return view('tools-receipt-generator::batch.index');
     }
 
     public function issueBatch(BatchIssueRequest $request, GenerateReceiptBatch $batch): View
@@ -190,8 +190,8 @@ final class ToolController extends Controller
         $result = $batch->execute($request->file('file'));
 
         return view('exports.printable-document', [
-            'title' => 'Recibos em lote',
-            'contentView' => 'tools-emissor-de-recibos::pdf.batch',
+            'title' => 'Receipts em lote',
+            'contentView' => 'tools-receipt-generator::pdf.batch',
             'contentData' => $result,
             'generatedAt' => now()->format('d/m/Y H:i'),
         ]);
@@ -199,7 +199,7 @@ final class ToolController extends Controller
 
     public function profiles(Request $request, ManageReceiptPartyProfiles $profiles): View
     {
-        return view('tools-emissor-de-recibos::profiles.index', [
+        return view('tools-receipt-generator::profiles.index', [
             'profiles' => $profiles->all((int) $request->user()->getAuthIdentifier()),
         ]);
     }
@@ -216,11 +216,11 @@ final class ToolController extends Controller
         $saved = $profiles->owned($profile, (int) $request->user()->getAuthIdentifier());
         $prefix = $saved->party_type === 'payer' ? 'payer' : 'payee';
 
-        return redirect()->route('tools.emissor-de-recibos.index')->withInput([
+        return redirect()->route('tools.receipt-generator.index')->withInput([
             $prefix.'_name' => $saved->name,
             $prefix.'_document_type' => $saved->document_type,
             $prefix.'_document' => $saved->document,
-        ])->with('profile_message', 'Perfil aplicado. Complete os demais dados do recibo.');
+        ])->with('profile_message', 'Profile applied. Complete the remaining receipt details.');
     }
 
     public function destroyProfile(Request $request, int $profile, ManageReceiptPartyProfiles $profiles): RedirectResponse
@@ -255,9 +255,9 @@ final class ToolController extends Controller
     {
         $receipt = $result['details']['receipt'] ?? null;
         if (! is_array($receipt)) {
-            throw ValidationException::withMessages(['receipt' => 'Não foi possível preparar o recibo para exportação.']);
+            throw ValidationException::withMessages(['receipt' => 'The receipt could not be prepared for export.']);
         }
 
-        return $pdf->download(new PdfDocument(filename: 'recibo-'.$receipt['number'], view: 'tools-emissor-de-recibos::pdf.receipt', data: ['receipt' => $receipt]));
+        return $pdf->download(new PdfDocument(filename: 'receipt-'.$receipt['number'], view: 'tools-receipt-generator::pdf.receipt', data: ['receipt' => $receipt]));
     }
 }

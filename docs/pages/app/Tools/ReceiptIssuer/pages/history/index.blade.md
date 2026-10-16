@@ -2,7 +2,7 @@
 
 ## Rota
 
-`GET /ferramentas/emissor-de-recibos/historico`
+`GET /ferramentas/receipt-generator/historico`
 
 ## Acesso
 

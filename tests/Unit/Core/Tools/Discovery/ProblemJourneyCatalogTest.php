@@ -23,12 +23,12 @@ final class ProblemJourneyCatalogTest extends TestCase
         ], $journeys->pluck('key')->all());
 
         $employees = $journeys->firstWhere('key', 'funcionarios-folha');
-        self::assertSame('simulador-admissao', $employees['start_slug']);
+        self::assertSame('new-hire-cost-calculator', $employees['start_slug']);
         self::assertSame([
-            'simulador-admissao',
-            'custo-funcionario-clt',
-            'calculadora-salario-liquido',
-            'encargos-trabalhistas',
+            'new-hire-cost-calculator',
+            'employee-cost-calculator',
+            'take-home-pay-calculator',
+            'employer-payroll-tax-calculator',
         ], $employees['steps']->pluck('slug')->all());
     }
 

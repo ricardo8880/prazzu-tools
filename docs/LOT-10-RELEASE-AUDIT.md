@@ -14,7 +14,6 @@ Este lote encerra o plano aprovado sem alterar fórmulas de domínio. A auditori
 
 ## Compatibilidade legada
 
-`ProLaboreProfitDistributionCalculator` não foi removido. O código-fonte não contém evidência suficiente para provar ausência de consumo externo, histórico persistido ou chamadas à API legada. A classificação passa a ser `preserve_until_migration_audit`.
 
 A remoção futura exige, no mínimo:
 

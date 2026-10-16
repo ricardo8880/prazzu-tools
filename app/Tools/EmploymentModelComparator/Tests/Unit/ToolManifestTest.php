@@ -15,8 +15,8 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('comparador-clt-pj-autonomo', $manifest->slug);
-        self::assertSame('tools.comparador-clt-pj-autonomo.index', $manifest->routeName);
+        self::assertSame('employee-vs-contractor-calculator', $manifest->slug);
+        self::assertSame('tools.employee-vs-contractor-calculator.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));

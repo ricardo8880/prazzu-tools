@@ -20,9 +20,9 @@ final class HomeContinuityTest extends TestCase
         $other = User::factory()->create();
         $secret = 'NAO-DEVE-APARECER-NA-HOME';
 
-        $salaryRun = $this->runFor($user, 'calculadora-salario-liquido', now(), ['secret' => $secret, 'competence' => '2026-08']);
-        $this->runFor($user, 'calculadora-ferias', now()->subMinute());
-        $this->runFor($other, 'capital-de-giro', now()->addMinute());
+        $salaryRun = $this->runFor($user, 'take-home-pay-calculator', now(), ['secret' => $secret, 'competence' => '2026-08']);
+        $this->runFor($user, 'pto-calculator', now()->subMinute());
+        $this->runFor($other, 'working-capital-calculator', now()->addMinute());
 
         $response = $this->actingAs($user)
             ->get(route('home'))
@@ -35,12 +35,12 @@ final class HomeContinuityTest extends TestCase
             ->assertSee('Contexto: Agosto/2026')
             ->assertSee('Ver resultados salvos')
             ->assertSee($salaryRun->reference_date->format('d/m/Y'))
-            ->assertSee(url()->query(route('tools.calculadora-salario-liquido.history.index'), ['source' => 'home_continuity']), false)
-            ->assertDontSee(route('tools.calculadora-salario-liquido.history.repeat', [$salaryRun->id]).'?source=home_continuity', false)
+            ->assertSee(url()->query(route('tools.take-home-pay-calculator.history.index'), ['source' => 'home_continuity']), false)
+            ->assertDontSee(route('tools.take-home-pay-calculator.history.repeat', [$salaryRun->id]).'?source=home_continuity', false)
             ->assertDontSee($secret);
 
         $response->assertViewHas('continueTools', static function ($tools): bool {
-            return ! $tools->pluck('tool_slug')->contains('capital-de-giro');
+            return ! $tools->pluck('tool_slug')->contains('working-capital-calculator');
         });
     }
 

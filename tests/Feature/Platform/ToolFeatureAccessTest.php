@@ -21,33 +21,31 @@ final class ToolFeatureAccessTest extends TestCase
     {
         config()->set('access.commercial_mode', CommercialAccessMode::Monetized->value);
 
-        $this->post(route('tools.calculadora-simples-nacional.calculate'), [
-            'annex' => 'I',
-            'rbt12' => '180.000,00',
-            'monthly_revenue' => '15.000,00',
-        ])->assertOk()->assertHeaderMissing('X-Prazzu-Access-Reason');
+        $this->post(route('tools.margin-markup-calculator.calculate'), $this->marginPayload())
+            ->assertOk()
+            ->assertHeaderMissing('X-Prazzu-Access-Reason');
     }
 
     public function test_plus_feature_requires_a_plus_plan_when_monetized(): void
     {
         config()->set('access.commercial_mode', CommercialAccessMode::Monetized->value);
 
-        $this->post(route('tools.calculadora-simples-nacional.plus.alerts'), $this->alertPayload())
-            ->assertRedirect(route('tools.calculadora-simples-nacional.index'))
+        $this->post(route('tools.margin-markup-calculator.scenarios.simulate'), $this->scenarioPayload())
+            ->assertRedirect(route('tools.margin-markup-calculator.index'))
             ->assertSessionHas('access_warning')
             ->assertHeader('X-Prazzu-Access-Reason', 'feature.authentication_required');
 
         $freeUser = User::factory()->create(['subscription_plan' => SubscriptionPlan::Free]);
         $this->actingAs($freeUser)
-            ->post(route('tools.calculadora-simples-nacional.plus.alerts'), $this->alertPayload())
-            ->assertRedirect(route('tools.calculadora-simples-nacional.index'))
+            ->post(route('tools.margin-markup-calculator.scenarios.simulate'), $this->scenarioPayload())
+            ->assertRedirect(route('tools.margin-markup-calculator.index'))
             ->assertSessionHas('access_warning')
             ->assertHeader('X-Prazzu-Access-Reason', 'feature.plus_required');
 
         $plusUser = User::factory()->create(['subscription_plan' => SubscriptionPlan::Plus]);
         $this->actingAs($plusUser)
-            ->from(route('tools.calculadora-simples-nacional.index'))
-            ->post(route('tools.calculadora-simples-nacional.plus.alerts'), $this->alertPayload())
+            ->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.scenarios.simulate'), $this->scenarioPayload())
             ->assertOk()
             ->assertSessionMissing('access_warning');
     }
@@ -56,8 +54,8 @@ final class ToolFeatureAccessTest extends TestCase
     {
         config()->set('access.commercial_mode', CommercialAccessMode::LaunchFree->value);
 
-        $this->from(route('tools.calculadora-simples-nacional.index'))
-            ->post(route('tools.calculadora-simples-nacional.plus.alerts'), $this->alertPayload())
+        $this->from(route('tools.margin-markup-calculator.index'))
+            ->post(route('tools.margin-markup-calculator.scenarios.simulate'), $this->scenarioPayload())
             ->assertOk()
             ->assertSessionMissing('access_warning');
     }
@@ -81,15 +79,15 @@ final class ToolFeatureAccessTest extends TestCase
     public function test_disabled_feature_returns_service_unavailable_in_every_commercial_mode(): void
     {
         config()->set('access.commercial_mode', CommercialAccessMode::LaunchFree->value);
-        config()->set('features.tools.calculadora-simples-nacional.features.alerts.enabled', false);
+        config()->set('features.tools.margin-markup-calculator.features.scenarios.enabled', false);
 
-        $this->post(route('tools.calculadora-simples-nacional.plus.alerts'), $this->alertPayload())
+        $this->post(route('tools.margin-markup-calculator.scenarios.simulate'), $this->scenarioPayload())
             ->assertServiceUnavailable();
     }
 
     public function test_middleware_returns_not_found_for_an_undeclared_feature_key(): void
     {
-        Route::middleware('tool.feature:calculadora-simples-nacional,unknown_feature')
+        Route::middleware('tool.feature:margin-markup-calculator,unknown_feature')
             ->get('/_test/unknown-tool-feature', static fn (): string => 'unreachable');
 
         $this->get('/_test/unknown-tool-feature')->assertNotFound();
@@ -101,32 +99,36 @@ final class ToolFeatureAccessTest extends TestCase
         $freeUser = User::factory()->create(['subscription_plan' => SubscriptionPlan::Free]);
 
         $this->actingAs($freeUser)
-            ->post(route('tools.calculadora-margem-markup.calculate'), $this->marginPayload())
+            ->post(route('tools.margin-markup-calculator.calculate'), $this->marginPayload())
             ->assertOk();
 
         $this->assertDatabaseMissing('tool_runs', [
             'user_id' => $freeUser->getAuthIdentifier(),
-            'tool_slug' => 'calculadora-margem-markup',
+            'tool_slug' => 'margin-markup-calculator',
         ]);
 
         $plusUser = User::factory()->create(['subscription_plan' => SubscriptionPlan::Plus]);
         $this->actingAs($plusUser)
-            ->post(route('tools.calculadora-margem-markup.calculate'), $this->marginPayload())
+            ->post(route('tools.margin-markup-calculator.calculate'), $this->marginPayload())
             ->assertOk();
 
         $this->assertDatabaseHas('tool_runs', [
             'user_id' => $plusUser->getAuthIdentifier(),
-            'tool_slug' => 'calculadora-margem-markup',
+            'tool_slug' => 'margin-markup-calculator',
         ]);
     }
 
-    /** @return array<string, string> */
-    private function alertPayload(): array
+    /** @return array<string, mixed> */
+    private function scenarioPayload(): array
     {
         return [
-            'annex' => 'I',
-            'rbt12' => '175.000,00',
-            'monthly_revenue' => '15.000,00',
+            'reference_date' => '2026-07-18',
+            'product_name' => 'Produto teste',
+            'base_cost' => '100,00',
+            'scenarios' => [
+                ['name' => 'Base', 'desired_margin' => '20'],
+                ['name' => 'Meta', 'desired_margin' => '30'],
+            ],
         ];
     }
 

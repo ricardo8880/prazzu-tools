@@ -7,7 +7,6 @@ Migração incremental das ferramentas oficiais 25–28:
 25. Calculadora de Honorários Contábeis;
 26. Validador Inteligente de CNPJ, CPF e IE;
 27. Gerador de Contratos;
-28. Gerador Inteligente de DARF/GPS.
 
 ## Implementação
 
@@ -18,5 +17,3 @@ Migração incremental das ferramentas oficiais 25–28:
 - O fluxo de impressão do navegador foi removido dos controllers alterados.
 
 ## Continuidade
-
-O Lote 5B deve migrar as ferramentas 29–32: Conversor Fiscal de XML, Emissor de Recibos, Calculadora de Simples Nacional e Calculadora de Férias. O lote final permanece responsável pela busca global e remoção de qualquer legado restante.

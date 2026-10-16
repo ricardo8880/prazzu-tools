@@ -20,7 +20,7 @@ final class ToolController extends Controller
 
     public function index(ShowToolPage $page): View
     {
-        return view('tools-declaracao-trabalho-renda::index', $page->execute());
+        return view('tools-employment-income-letter-generator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
@@ -28,7 +28,7 @@ final class ToolController extends Controller
         $input = $request->validated();
         $request->session()->flashInput($input);
 
-        return view('tools-declaracao-trabalho-renda::index', [
+        return view('tools-employment-income-letter-generator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($input),
         ]);
@@ -39,7 +39,7 @@ final class ToolController extends Controller
         $input = $request->validated();
         $result = $action->execute($input);
 
-        return $exporter->download($documents->pdf('Declaração de Trabalho/Renda', 'declaracao-trabalho-renda-'.now()->format('Y-m-d'), $result, $input));
+        return $exporter->download($documents->pdf('Employment and Income Verification Letter', 'employment-income-letter-generator-'.now()->format('Y-m-d'), $result, $input));
     }
 
     public function downloadExcel(ExecuteToolRequest $request, CalculateTool $action, SpreadsheetExporter $exporter, ToolResultExportFactory $documents): Response
@@ -47,6 +47,6 @@ final class ToolController extends Controller
         $input = $request->validated();
         $result = $action->execute($input);
 
-        return $exporter->download($documents->spreadsheet('declaracao-trabalho-renda-'.now()->format('Y-m-d'), $result, $input));
+        return $exporter->download($documents->spreadsheet('employment-income-letter-generator-'.now()->format('Y-m-d'), $result, $input));
     }
 }

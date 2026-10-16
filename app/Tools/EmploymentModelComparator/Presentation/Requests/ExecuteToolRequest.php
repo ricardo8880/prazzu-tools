@@ -8,16 +8,14 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class ExecuteToolRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
+    public function authorize(): bool { return true; }
     public function rules(): array
     {
-        $m = ['required', 'brazilian_money', 'money_min:0'];
-        $p = ['required', 'numeric', 'min:0', 'max:100'];
-
-        return ['clt_gross' => ['required', 'brazilian_money', 'money_min:0.01'], 'clt_benefits' => $m, 'clt_employee_deductions' => $p, 'clt_company_burden' => $p, 'pj_invoice' => ['required', 'brazilian_money', 'money_min:0.01'], 'pj_taxes' => $p, 'pj_expenses' => $m, 'autonomous_gross' => ['required', 'brazilian_money', 'money_min:0.01'], 'autonomous_deductions' => $p, 'autonomous_company_burden' => $p];
+        $m=['required','us_money','money_min:0']; $p=['required','numeric','min:0','max:100'];
+        return [
+            'w2_gross'=>['required','us_money','money_min:0.01'],'w2_benefits'=>$m,'w2_employee_deductions'=>$p,'w2_employer_burden'=>$p,
+            'contractor_revenue'=>['required','us_money','money_min:0.01'],'contractor_tax_rate'=>$p,'contractor_expenses'=>$m,
+            'self_employed_revenue'=>['required','us_money','money_min:0.01'],'self_employed_tax_rate'=>$p,'self_employed_expenses'=>$m,
+        ];
     }
 }

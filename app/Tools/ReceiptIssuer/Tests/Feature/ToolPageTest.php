@@ -10,7 +10,7 @@ final class ToolPageTest extends TestCase
 {
     public function test_tool_page_is_available_with_essential_form(): void
     {
-        $this->get(route('tools.emissor-de-recibos.index'))
+        $this->get(route('tools.receipt-generator.index'))
             ->assertOk()
             ->assertSee('Emissor de Recibos')
             ->assertSee('Dados do recibo')
@@ -19,7 +19,7 @@ final class ToolPageTest extends TestCase
 
     public function test_valid_input_generates_complete_receipt_review(): void
     {
-        $response = $this->post(route('tools.emissor-de-recibos.issue'), [
+        $response = $this->post(route('tools.receipt-generator.issue'), [
             'number' => 'REC-2026-001',
             'payer_name' => 'Empresa Pagadora Ltda.',
             'payer_document_type' => 'cnpj',
@@ -42,7 +42,7 @@ final class ToolPageTest extends TestCase
 
     public function test_valid_input_opens_dedicated_pdf_export(): void
     {
-        $this->post(route('tools.emissor-de-recibos.export.pdf'), [
+        $this->post(route('tools.receipt-generator.export.pdf'), [
             'number' => 'REC-2026-003',
             'payer_name' => 'Empresa Pagadora Ltda.',
             'payer_document_type' => 'cnpj',
@@ -64,9 +64,9 @@ final class ToolPageTest extends TestCase
 
     public function test_pdf_export_cannot_bypass_central_access_gate(): void
     {
-        config()->set('features.tools.emissor-de-recibos.enabled', false);
+        config()->set('features.tools.receipt-generator.enabled', false);
 
-        $this->post(route('tools.emissor-de-recibos.export.pdf'), [
+        $this->post(route('tools.receipt-generator.export.pdf'), [
             'number' => 'REC-2026-004',
             'payer_name' => 'João Pagador',
             'payee_name' => 'Maria Recebedora',
@@ -78,8 +78,8 @@ final class ToolPageTest extends TestCase
 
     public function test_invalid_document_is_returned_as_validation_error(): void
     {
-        $this->from(route('tools.emissor-de-recibos.index'))
-            ->post(route('tools.emissor-de-recibos.issue'), [
+        $this->from(route('tools.receipt-generator.index'))
+            ->post(route('tools.receipt-generator.issue'), [
                 'number' => 'REC-001',
                 'payer_name' => 'Empresa Pagadora',
                 'payer_document_type' => 'cnpj',
@@ -89,13 +89,13 @@ final class ToolPageTest extends TestCase
                 'description' => 'Prestação de serviços',
                 'issued_at' => '2026-07-23',
             ])
-            ->assertRedirect(route('tools.emissor-de-recibos.index'))
+            ->assertRedirect(route('tools.receipt-generator.index'))
             ->assertSessionHasErrors(['receipt']);
     }
 
     public function test_document_fields_are_optional_as_a_pair(): void
     {
-        $this->post(route('tools.emissor-de-recibos.issue'), [
+        $this->post(route('tools.receipt-generator.issue'), [
             'number' => 'REC-002',
             'payer_name' => 'João Pagador',
             'payee_name' => 'Maria Recebedora',

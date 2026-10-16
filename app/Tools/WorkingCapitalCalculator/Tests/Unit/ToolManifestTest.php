@@ -15,8 +15,8 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('capital-de-giro', $manifest->slug);
-        self::assertSame('tools.capital-de-giro.index', $manifest->routeName);
+        self::assertSame('working-capital-calculator', $manifest->slug);
+        self::assertSame('tools.working-capital-calculator.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));

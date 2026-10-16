@@ -19,7 +19,7 @@ final class StrategicAnalyticsDecisionEngineTest extends TestCase
                 'conversions' => ['value' => 0, 'previous' => 0, 'change' => null],
             ],
             'tool_performance' => [[
-                'name' => 'calculadora-ferias', 'opened' => 2, 'started' => 0,
+                'name' => 'pto-calculator', 'opened' => 2, 'started' => 0,
                 'completed' => 0, 'exported' => 0,
             ]],
             'channel_breakdown' => [['name' => 'direct', 'events' => 29, 'visitors' => 1, 'conversions' => 0]],

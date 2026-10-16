@@ -4,9 +4,9 @@
 @section('meta_description', 'Modelo de contrato de prestação de serviços contábeis pronto para revisão e impressão.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-de-honorarios-contabeis-contrato">
+<div class="prazzu-page tool-page" data-tool="accounting-fee-calculator-contrato">
     <div class="d-print-none mb-3 d-flex flex-column flex-sm-row justify-content-between gap-2">
-        <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">
+        <a class="btn btn-outline-secondary" href="{{ route('tools.accounting-fee-calculator.index') }}">
             <i class="bi bi-arrow-left me-1"></i>Voltar à calculadora
         </a>
         <x-tools.print-button label="Imprimir contrato" />
@@ -47,7 +47,7 @@
 
             <section class="mb-4">
                 <h2 class="h5">Cláusula 3ª — Honorários e pagamento</h2>
-                <p>Os honorários mensais serão de <strong>{{ $contract->monthlyFee->formatPtBr() }}</strong>, com vencimento no dia <strong>{{ $contract->dueDay }}</strong> de cada mês.</p>
+                <p>Os honorários mensais serão de <strong>{{ $contract->monthlyFee->formatEnUs() }}</strong>, com vencimento no dia <strong>{{ $contract->dueDay }}</strong> de cada mês.</p>
                 <p class="mb-0">No atraso, poderá incidir multa de <strong>{{ $contract->lateFeePercent }}%</strong>, além de atualização e juros previstos na cobrança ou na legislação aplicável.</p>
             </section>
 

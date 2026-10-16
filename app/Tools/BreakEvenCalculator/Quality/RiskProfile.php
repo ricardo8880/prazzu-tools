@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'ponto-de-equilibrio',
+            toolSlug: 'break-even-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::None,
             personalDataExposure: PersonalDataExposure::None,

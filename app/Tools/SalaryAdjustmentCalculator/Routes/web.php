@@ -5,10 +5,10 @@ declare(strict_types=1);
 use App\Tools\SalaryAdjustmentCalculator\Presentation\Controllers\ToolController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/ferramentas/reajuste-salarial', [ToolController::class, 'index'])
-    ->name('tools.reajuste-salarial.index');
-Route::post('/ferramentas/reajuste-salarial', [ToolController::class, 'calculate'])
-    ->name('tools.reajuste-salarial.calculate');
+Route::get('/tools/salary-increase-calculator', [ToolController::class, 'index'])
+    ->name('tools.salary-increase-calculator.index');
+Route::post('/tools/salary-increase-calculator', [ToolController::class, 'calculate'])
+    ->name('tools.salary-increase-calculator.calculate');
 
-Route::post('/ferramentas/reajuste-salarial/exportar/pdf', [ToolController::class, 'exportPdf'])->name('tools.reajuste-salarial.export.pdf');
-Route::post('/ferramentas/reajuste-salarial/exportar/excel', [ToolController::class, 'exportExcel'])->middleware('tool.feature:reajuste-salarial,spreadsheet_export')->name('tools.reajuste-salarial.export.excel');
+Route::post('/tools/salary-increase-calculator/export/pdf', [ToolController::class, 'exportPdf'])->name('tools.salary-increase-calculator.export.pdf');
+Route::post('/tools/salary-increase-calculator/export/excel', [ToolController::class, 'exportExcel'])->middleware('tool.feature:salary-increase-calculator,spreadsheet_export')->name('tools.salary-increase-calculator.export.excel');

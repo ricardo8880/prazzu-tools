@@ -60,7 +60,7 @@ final readonly class CalculationInput implements ToolCalculationInput
         $shares = [new PartnerProfitShare(
             key: 'partner-1',
             ownershipPercentage: Percentage::fromString($this->ownershipPercentage),
-            label: trim($this->partnerLabel) !== '' ? trim($this->partnerLabel) : 'Sócio 1',
+            label: trim($this->partnerLabel) !== '' ? trim($this->partnerLabel) : 'Owner 1',
         )];
 
         foreach ($this->partners as $index => $partner) {
@@ -70,7 +70,7 @@ final readonly class CalculationInput implements ToolCalculationInput
             $shares[] = new PartnerProfitShare(
                 key: 'partner-'.($index + 2),
                 ownershipPercentage: Percentage::fromString((string) $partner['ownership_percentage']),
-                label: trim((string) ($partner['label'] ?? '')) !== '' ? trim((string) $partner['label']) : 'Sócio '.($index + 2),
+                label: trim((string) ($partner['label'] ?? '')) !== '' ? trim((string) $partner['label']) : 'Owner '.($index + 2),
             );
         }
 

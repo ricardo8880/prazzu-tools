@@ -35,7 +35,7 @@ Permitir que o usuário calcule a depreciação de um ativo e acompanhe seu valo
 
 ## Regras de manutenção
 
-- o JavaScript específico deve permanecer limitado a `[data-tool="calculadora-depreciacao-ativos"]`;
+- o JavaScript específico deve permanecer limitado a `[data-tool="asset-depreciation-calculator"]`;
 - não criar cadastro patrimonial persistente dentro da ferramenta;
 - não usar `float` para cálculos monetários;
 - não duplicar exportadores;

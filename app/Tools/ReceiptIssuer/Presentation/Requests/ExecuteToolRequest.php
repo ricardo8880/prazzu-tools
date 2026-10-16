@@ -20,12 +20,12 @@ final class ExecuteToolRequest extends FormRequest
         return [
             'number' => ['required', 'string', 'max:40', 'regex:/^[A-Za-z0-9.\/_-]+$/'],
             'payer_name' => ['required', 'string', 'min:2', 'max:160'],
-            'payer_document_type' => ['nullable', Rule::in(['cpf', 'cnpj']), 'required_with:payer_document'],
-            'payer_document' => ['nullable', 'string', 'max:18', 'required_with:payer_document_type'],
+            'payer_document_type' => ['nullable', Rule::in(['ein', 'id']), 'required_with:payer_document'],
+            'payer_document' => ['nullable', 'string', 'max:40', 'required_with:payer_document_type'],
             'payee_name' => ['required', 'string', 'min:2', 'max:160'],
-            'payee_document_type' => ['nullable', Rule::in(['cpf', 'cnpj']), 'required_with:payee_document'],
-            'payee_document' => ['nullable', 'string', 'max:18', 'required_with:payee_document_type'],
-            'amount' => ['required', 'regex:/^\s*(?:R\$\s*)?\d{1,9}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'],
+            'payee_document_type' => ['nullable', Rule::in(['ein', 'id']), 'required_with:payee_document'],
+            'payee_document' => ['nullable', 'string', 'max:40', 'required_with:payee_document_type'],
+            'amount' => ['required', 'us_money', 'money_min:0.01'],
             'description' => ['required', 'string', 'min:3', 'max:1000'],
             'issued_at' => ['required', 'date_format:Y-m-d'],
             'city' => ['nullable', 'string', 'max:120'],
@@ -39,12 +39,12 @@ final class ExecuteToolRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'number.regex' => 'Use apenas letras, números e os separadores ponto, barra, sublinhado ou hífen no número do recibo.',
-            'amount.regex' => 'Informe o valor no formato 1.000,00.',
-            'payer_document_type.required_with' => 'Selecione o tipo do documento do pagador.',
-            'payer_document.required_with' => 'Informe o documento do pagador.',
-            'payee_document_type.required_with' => 'Selecione o tipo do documento do recebedor.',
-            'payee_document.required_with' => 'Informe o documento do recebedor.',
+            'number.regex' => 'Use letters, numbers, periods, slashes, underscores, or hyphens in the receipt number.',
+            'amount.regex' => 'Enter a valid U.S. dollar amount, for example 1,000.00.',
+            'payer_document_type.required_with' => 'Select the payer ID type.',
+            'payer_document.required_with' => 'Enter the payer ID.',
+            'payee_document_type.required_with' => 'Select the payee ID type.',
+            'payee_document.required_with' => 'Enter the payee ID.',
         ];
     }
 

@@ -16,7 +16,7 @@ final class ToolPageTest extends TestCase
 
     public function test_tool_page_is_available_with_essential_form(): void
     {
-        $this->get(route('tools.calculadora-ferias.index'))
+        $this->get(route('tools.pto-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Férias')
             ->assertSee('Dados das férias')
@@ -24,7 +24,7 @@ final class ToolPageTest extends TestCase
             ->assertSee('Como interpretar');
     }
 
-    #[CoversPlusFeature('calculadora-ferias', 'professional_export')]
+    #[CoversPlusFeature('pto-calculator', 'professional_export')]
     public function test_valid_input_calculates_and_displays_the_result(): void
     {
         $metrics = $this->mock(UsageMetrics::class);
@@ -33,7 +33,7 @@ final class ToolPageTest extends TestCase
         $analytics = $this->mock(PlatformAnalytics::class);
         $analytics->shouldReceive('track')->zeroOrMoreTimes();
 
-        $response = $this->post(route('tools.calculadora-ferias.calculate'), [
+        $response = $this->post(route('tools.pto-calculator.calculate'), [
             'monthly_salary' => '3.000,00',
             'acquisition_start_date' => '2025-01-01',
             'vacation_start_date' => '2026-07-01',
@@ -56,19 +56,19 @@ final class ToolPageTest extends TestCase
 
     public function test_invalid_money_and_dates_are_rejected(): void
     {
-        $this->from(route('tools.calculadora-ferias.index'))
-            ->post(route('tools.calculadora-ferias.calculate'), [
+        $this->from(route('tools.pto-calculator.index'))
+            ->post(route('tools.pto-calculator.calculate'), [
                 'monthly_salary' => 'valor inválido',
                 'acquisition_start_date' => '2026-01-01',
                 'vacation_start_date' => '2025-12-01',
             ])
-            ->assertRedirect(route('tools.calculadora-ferias.index'))
+            ->assertRedirect(route('tools.pto-calculator.index'))
             ->assertSessionHasErrors(['monthly_salary', 'vacation_start_date']);
     }
 
     public function test_page_contains_seo_metadata(): void
     {
-        $this->get(route('tools.calculadora-ferias.index'))
+        $this->get(route('tools.pto-calculator.index'))
             ->assertOk()
             ->assertSee('<title>Calculadora de Férias — Prazzu Tools</title>', false)
             ->assertSee('Calcule férias, terço constitucional', false);

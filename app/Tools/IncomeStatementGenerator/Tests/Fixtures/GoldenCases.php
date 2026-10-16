@@ -15,7 +15,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'declaracao-rendimentos',
+            toolSlug: 'earnings-statement-generator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

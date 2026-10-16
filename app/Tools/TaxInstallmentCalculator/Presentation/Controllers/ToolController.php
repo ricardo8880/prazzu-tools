@@ -23,7 +23,7 @@ final class ToolController extends Controller
 {
     public function index(Request $request, ShowToolPage $page, ToolFeatureRequestAuthorizer $features, Tool $module): View
     {
-        return view('tools-calculadora-parcelamento-tributario::index', [...$page->execute(), 'plusEnabled' => $features->plusEnabled($module, $request), 'balanceEvolutionAllowed' => $features->allows($module, 'balance_evolution', $request)]);
+        return view('tools-irs-payment-plan-calculator::index', [...$page->execute(), 'plusEnabled' => $features->plusEnabled($module, $request), 'balanceEvolutionAllowed' => $features->allows($module, 'balance_evolution', $request)]);
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action, ToolFeatureRequestAuthorizer $features, Tool $module, ShowToolPage $page): View
@@ -35,7 +35,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
         $request->flash();
 
-        return view('tools-calculadora-parcelamento-tributario::index', [...$page->execute(), 'result' => $result, 'calculationInput' => $data, 'plusEnabled' => $features->plusEnabled($module, $request), 'balanceEvolutionAllowed' => $features->allows($module, 'balance_evolution', $request)]);
+        return view('tools-irs-payment-plan-calculator::index', [...$page->execute(), 'result' => $result, 'calculationInput' => $data, 'plusEnabled' => $features->plusEnabled($module, $request), 'balanceEvolutionAllowed' => $features->allows($module, 'balance_evolution', $request)]);
     }
 
     public function exportCurrent(ExecuteToolRequest $request, CalculateTool $action, ToolResultExportFactory $documents, PdfExporter $pdf, SpreadsheetExporter $spreadsheet, string $format): Response
@@ -43,15 +43,15 @@ final class ToolController extends Controller
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         $input = $this->input($request->validated());
         $result = $action->execute($input);
-        $filename = 'parcelamento-tributario-'.now()->format('Y-m-d');
+        $filename = 'irs-payment-plan-'.now()->format('Y-m-d');
 
-        return $format === 'pdf' ? $pdf->download($documents->pdf('Calculadora de Parcelamento Tributário', $filename, $result, $input->toArray())) : $spreadsheet->download($documents->spreadsheet($filename, $result, $input->toArray()));
+        return $format === 'pdf' ? $pdf->download($documents->pdf('IRS Payment Plan Estimator', $filename, $result, $input->toArray())) : $spreadsheet->download($documents->spreadsheet($filename, $result, $input->toArray()));
     }
 
     private function input(array $data): CalculationInput
     {
         $debt = (string) $data['debt_amount'];
-        $scenarios = [['name' => 'Cenário principal', 'debt' => $debt, 'entry' => (string) ($data['entry_amount'] ?? '0'), 'installments' => (int) $data['installments'], 'monthly_charge' => (string) $data['monthly_charge']]];
+        $scenarios = [['name' => 'Main scenario', 'debt' => $debt, 'entry' => (string) ($data['entry_amount'] ?? '0'), 'installments' => (int) $data['installments'], 'monthly_charge' => (string) $data['monthly_charge']]];
         foreach (($data['scenarios'] ?? []) as $index => $scenario) {
             $name = trim((string) ($scenario['name'] ?? ''));
             $entry = trim((string) ($scenario['entry_amount'] ?? ''));
@@ -60,7 +60,7 @@ final class ToolController extends Controller
             if ($name === '' && $entry === '' && $installments === '' && $charge === '') {
                 continue;
             }
-            $scenarios[] = ['name' => $name !== '' ? $name : 'Cenário '.($index + 2), 'debt' => $debt, 'entry' => $entry !== '' ? $entry : '0', 'installments' => $installments !== '' ? (int) $installments : (int) $data['installments'], 'monthly_charge' => $charge !== '' ? $charge : (string) $data['monthly_charge']];
+            $scenarios[] = ['name' => $name !== '' ? $name : 'Scenario '.($index + 2), 'debt' => $debt, 'entry' => $entry !== '' ? $entry : '0', 'installments' => $installments !== '' ? (int) $installments : (int) $data['installments'], 'monthly_charge' => $charge !== '' ? $charge : (string) $data['monthly_charge']];
         }
 
         return new CalculationInput($scenarios);

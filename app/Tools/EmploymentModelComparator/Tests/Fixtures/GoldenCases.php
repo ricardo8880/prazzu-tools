@@ -15,7 +15,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'comparador-clt-pj-autonomo',
+            toolSlug: 'employee-vs-contractor-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

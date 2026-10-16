@@ -13,23 +13,26 @@ use App\Core\Normative\NormativeRuleMetadata;
 use App\Core\Normative\NormativeRuleSnapshot;
 use App\Core\Normative\NormativeRuleVersion;
 use App\Core\Normative\NormativeSourceType;
+use App\Core\Tax\US\FederalPayroll2026;
 use InvalidArgumentException;
 
+/** Federal employer payroll rates for calendar year 2026. */
 final readonly class EmployerChargeRule implements NormativeRule
 {
-    public const VERSION = '1.0.0';
+    public const VERSION = '2026.1.0';
 
-    public function ratesFor(string $regime, Percentage $rat, Percentage $thirdParties): EmployerChargeRates
+    public function ratesFor(string $profile, Percentage $sutaRate, Percentage $otherEmployerCosts): EmployerChargeRates
     {
-        if (! in_array($regime, ['general', 'simples_annex_iv', 'simples_other'], true)) {
-            throw new InvalidArgumentException('Regime não suportado pela regra de encargos patronais.');
+        if (! in_array($profile, ['standard', 'futa_exempt'], true)) {
+            throw new InvalidArgumentException('Unsupported employer payroll profile.');
         }
 
         return new EmployerChargeRates(
-            fgts: Percentage::fromString('8'),
-            cpp: $regime === 'simples_other' ? Percentage::zero() : Percentage::fromString('20'),
-            rat: $regime === 'simples_other' ? Percentage::zero() : $rat,
-            thirdParties: str_starts_with($regime, 'simples_') ? Percentage::zero() : $thirdParties,
+            socialSecurity: FederalPayroll2026::socialSecurityRate(),
+            medicare: FederalPayroll2026::medicareRate(),
+            futa: $profile === 'futa_exempt' ? Percentage::zero() : FederalPayroll2026::futaEffectiveRate(),
+            suta: $sutaRate,
+            otherEmployerCosts: $otherEmployerCosts,
         );
     }
 
@@ -46,36 +49,27 @@ final readonly class EmployerChargeRule implements NormativeRule
     public function normativeMetadata(): NormativeRuleMetadata
     {
         return new NormativeRuleMetadata(
-            identifier: 'labor.employer-charges',
+            identifier: 'us.employer-payroll-2026',
             version: new NormativeRuleVersion(self::VERSION),
-            effectivePeriod: EffectivePeriod::from('2007-07-01'),
+            effectivePeriod: EffectivePeriod::from('2026-01-01', '2026-12-31'),
             references: [
                 new NormativeReference(
-                    type: NormativeSourceType::Law,
-                    identifier: 'lei-8212-art-22',
-                    title: 'Lei nº 8.212/1991 — contribuição da empresa',
-                    publishedAt: ReferenceDate::fromString('1991-07-25'),
-                    officialUrl: 'https://www.planalto.gov.br/ccivil_03/leis/l8212compilado.htm',
-                    article: 'Art. 22, incisos I e II',
-                ),
-                new NormativeReference(
-                    type: NormativeSourceType::Law,
-                    identifier: 'lei-8036-art-15',
-                    title: 'Lei nº 8.036/1990 — depósitos do FGTS',
-                    publishedAt: ReferenceDate::fromString('1990-05-11'),
-                    officialUrl: 'https://www.planalto.gov.br/ccivil_03/leis/l8036consol.htm',
-                    article: 'Art. 15',
+                    type: NormativeSourceType::Other,
+                    identifier: 'irs-pub-15a-2026',
+                    title: 'IRS Publication 15-A (2026) — Employer’s Supplemental Tax Guide',
+                    publishedAt: ReferenceDate::fromString('2026-01-01'),
+                    officialUrl: 'https://www.irs.gov/publications/p15a',
                 ),
                 new NormativeReference(
                     type: NormativeSourceType::Other,
-                    identifier: 'rfb-simples-anexo-iv-cpp',
-                    title: 'Contribuição Previdenciária — Anexo IV do Simples Nacional',
-                    publishedAt: ReferenceDate::fromString('2016-09-25'),
-                    officialUrl: 'https://www.gov.br/receitafederal/pt-br/assuntos/orientacao-tributaria/cobrancas-e-intimacoes/contribuicao-previdenciaria-anexo-iv-do-simples-nacional',
+                    identifier: 'irs-topic-751',
+                    title: 'IRS Topic No. 751 — Social Security and Medicare withholding rates',
+                    publishedAt: ReferenceDate::fromString('2026-01-01'),
+                    officialUrl: 'https://www.irs.gov/taxtopics/tc751',
                 ),
             ],
-            verifiedAt: ReferenceDate::fromString('2026-07-25'),
-            verifiedBy: 'Prazzu Tools — Lote 3',
+            verifiedAt: ReferenceDate::fromString('2026-10-16'),
+            verifiedBy: 'Prazzu Tools',
         );
     }
 }

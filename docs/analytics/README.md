@@ -102,7 +102,7 @@ A implementação dos módulos deve reutilizar esse contrato em vez de criar lis
 
 ## Métricas de UX e retorno
 
-O painel de ferramentas usa a jornada declarada pelas 50 ferramentas para separar três etapas de experiência:
+O painel de ferramentas usa a jornada declarada pelas 28 ferramentas para separar três etapas de experiência:
 
 1. `tool.opened` — abriu a ferramenta;
 2. `tool.started` — começou a interagir com a tarefa principal;

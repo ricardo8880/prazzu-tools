@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Validation;
 
-use App\Core\Validation\BrazilianPercentageValidator;
+use App\Core\Validation\PercentageValidator;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
-final class BrazilianPercentageValidatorTest extends TestCase
+final class PercentageValidatorTest extends TestCase
 {
     #[DataProvider('validPercentages')]
     public function test_it_accepts_exactly_the_formats_supported_by_percentage(string|int $value): void
     {
-        self::assertTrue((new BrazilianPercentageValidator)->isValid($value));
+        self::assertTrue((new PercentageValidator)->isValid($value));
     }
 
     #[DataProvider('invalidPercentages')]
     public function test_it_rejects_values_that_percentage_cannot_parse(mixed $value): void
     {
-        self::assertFalse((new BrazilianPercentageValidator)->isValid($value));
+        self::assertFalse((new PercentageValidator)->isValid($value));
     }
 
     public function test_it_compares_minimum_and_maximum_using_scaled_integer_units(): void
     {
-        $validator = new BrazilianPercentageValidator;
+        $validator = new PercentageValidator;
 
         self::assertTrue($validator->hasMinimum('-0,000001', ['-0.000001']));
         self::assertTrue($validator->hasMinimum('28,000001', ['28.000001']));
@@ -37,7 +37,7 @@ final class BrazilianPercentageValidatorTest extends TestCase
 
     public function test_limits_fail_closed_when_the_parameter_or_value_is_invalid(): void
     {
-        $validator = new BrazilianPercentageValidator;
+        $validator = new PercentageValidator;
 
         self::assertFalse($validator->hasMinimum('10', []));
         self::assertFalse($validator->hasMaximum('10', []));
@@ -51,27 +51,27 @@ final class BrazilianPercentageValidatorTest extends TestCase
     {
         self::assertTrue(Validator::make(
             ['rate' => '28,123456'],
-            ['rate' => ['brazilian_percentage', 'percentage_min:0', 'percentage_max:100']],
+            ['rate' => ['percentage_value', 'percentage_min:0', 'percentage_max:100']],
         )->passes());
 
         self::assertTrue(Validator::make(
             ['rate' => '28.123456'],
-            ['rate' => ['brazilian_percentage', 'percentage_min:28.123456', 'percentage_max:28.123456']],
+            ['rate' => ['percentage_value', 'percentage_min:28.123456', 'percentage_max:28.123456']],
         )->passes());
 
         self::assertFalse(Validator::make(
             ['rate' => '28,1234567'],
-            ['rate' => ['brazilian_percentage']],
+            ['rate' => ['percentage_value']],
         )->passes());
 
         self::assertFalse(Validator::make(
             ['rate' => '1e2'],
-            ['rate' => ['brazilian_percentage']],
+            ['rate' => ['percentage_value']],
         )->passes());
 
         self::assertFalse(Validator::make(
             ['rate' => '100,000001'],
-            ['rate' => ['brazilian_percentage', 'percentage_max:100']],
+            ['rate' => ['percentage_value', 'percentage_max:100']],
         )->passes());
     }
 

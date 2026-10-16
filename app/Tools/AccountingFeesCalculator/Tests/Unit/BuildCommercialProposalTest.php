@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 final class BuildCommercialProposalTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-de-honorarios-contabeis', 'commercial_proposal')]
+    #[CoversPlusFeature('accounting-fee-calculator', 'commercial_proposal')]
     public function test_builds_a_printable_commercial_proposal(): void
     {
         $proposal = (new BuildCommercialProposal)->execute([
@@ -27,8 +27,8 @@ final class BuildCommercialProposalTest extends TestCase
         ]);
 
         self::assertSame('Empresa Exemplo Ltda.', $proposal->clientCompany);
-        self::assertSame('R$ 1.930,19', $proposal->monthlyFee->formatPtBr());
-        self::assertSame('R$ 500,00', $proposal->setupFee->formatPtBr());
+        self::assertSame('R$ 1.930,19', $proposal->monthlyFee->formatEnUs());
+        self::assertSame('R$ 500,00', $proposal->setupFee->formatEnUs());
         self::assertSame(10, $proposal->dueDay);
         self::assertCount(3, $proposal->services);
         self::assertSame('Escrituração contábil e demonstrações', $proposal->services[0]);
@@ -50,6 +50,6 @@ final class BuildCommercialProposalTest extends TestCase
             'notes' => null,
         ]);
 
-        self::assertSame('R$ 0,00', $proposal->setupFee->formatPtBr());
+        self::assertSame('R$ 0,00', $proposal->setupFee->formatEnUs());
     }
 }

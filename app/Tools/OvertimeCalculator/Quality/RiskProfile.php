@@ -18,6 +18,6 @@ final class RiskProfile
 {
     public static function define(): ToolRiskProfile
     {
-        return new ToolRiskProfile('calculadora-hora-extra', ToolNature::Calculation, NormativeDependency::High, PersonalDataExposure::None, ExternalIntegrationDependency::None, PersistenceMode::History, ProcessingMode::Synchronous, ResultRisk::Labor, UpdateFrequency::Annual, ['pdf', 'csv']);
+        return new ToolRiskProfile('overtime-pay-calculator', ToolNature::Calculation, NormativeDependency::High, PersonalDataExposure::None, ExternalIntegrationDependency::None, PersistenceMode::History, ProcessingMode::Synchronous, ResultRisk::Labor, UpdateFrequency::Annual, ['pdf', 'csv']);
     }
 }

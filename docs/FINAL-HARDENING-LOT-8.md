@@ -37,12 +37,12 @@ A superfície E2E suportada ficou explícita:
 - `e2e:ci:complete`;
 - `e2e:browser:complete`.
 
-O npm recebeu `e2e:test:downloads`, simétrico ao teste de ações já existente. O GitHub Actions passou a validar também o contrato estático dos 100 cenários E2E das 50 ferramentas antes de `composer release:check`.
+O npm recebeu `e2e:test:downloads`, simétrico ao teste de ações já existente. O GitHub Actions passou a validar também o contrato estático dos 100 cenários E2E das 28 ferramentas antes de `composer release:check`.
 
 ## Estado preservado
 
-- 50 ferramentas oficiais;
-- 49 em `contabilidade` e 1 em `rh`;
+- 28 ferramentas oficiais;
+- 27 em `contabilidade` e 1 em `rh`;
 - 13 `active`, 37 `beta`, 0 `draft`;
 - 141 contratos Plus declarados/estritos/funcionais;
 - dívida Plus zero.
@@ -58,9 +58,9 @@ O ambiente usado para o lote não possui as extensões PHP `dom`, `mbstring`, `p
 Passaram neste ambiente:
 
 - `php scripts/check-repository-integrity.php`;
-- `php scripts/e2e-tool-scenarios.php check` — 100 cenários, 50 ferramentas, válido + inválido;
+- `php scripts/e2e-tool-scenarios.php check` — 100 cenários, 28 ferramentas, válido + inválido;
 - `php artisan tools:check-architecture`;
-- `php scripts/check-accounting-pains.php` — 50 ferramentas e Plus 141/141 com dívida zero;
+- `php scripts/check-accounting-pains.php` — 28 ferramentas e Plus 141/141 com dívida zero;
 - `php artisan analytics:check`;
 - `node --check resources/js/app.js`;
 - lint dos arquivos PHP alterados;

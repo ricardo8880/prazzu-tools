@@ -20,12 +20,12 @@ final class ToolController extends Controller
 {
     public function index(ShowToolPage $page): View
     {
-        return view('tools-fluxo-de-caixa::index', $page->execute());
+        return view('tools-cash-flow-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
-        return view('tools-fluxo-de-caixa::index', [
+        return view('tools-cash-flow-calculator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($request->validated()),
             'calculationInput' => $request->validated(),
@@ -40,7 +40,7 @@ final class ToolController extends Controller
             'inflow_change_rate' => ['required', 'numeric', 'between:0,90'], 'outflow_change_rate' => ['required', 'numeric', 'between:0,90'],
         ]);
 
-        return view('tools-fluxo-de-caixa::index', [...$page->execute(), 'cashFlowScenarios' => $action->execute($data)]);
+        return view('tools-cash-flow-calculator::index', [...$page->execute(), 'cashFlowScenarios' => $action->execute($data)]);
     }
 
     public function exportPdf(
@@ -54,7 +54,7 @@ final class ToolController extends Controller
 
         return $exporter->download($documents->pdf(
             title: 'Cálculo de Fluxo de Caixa',
-            filename: 'fluxo-de-caixa-'.now()->format('Y-m-d'),
+            filename: 'cash-flow-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));
@@ -70,7 +70,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->spreadsheet(
-            filename: 'fluxo-de-caixa-'.now()->format('Y-m-d'),
+            filename: 'cash-flow-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,
         ));

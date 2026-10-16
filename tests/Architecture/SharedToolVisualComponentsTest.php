@@ -56,14 +56,13 @@ final class SharedToolVisualComponentsTest extends TestCase
         }
     }
 
-    public function test_simples_nacional_is_the_visual_standard_pilot(): void
+    public function test_working_capital_is_a_shared_visual_components_pilot(): void
     {
-        $view = file_get_contents(base_path('app/Tools/SimplesNacionalCalculator/Resources/views/index.blade.php'));
+        $view = file_get_contents(base_path('app/Tools/WorkingCapitalCalculator/Resources/views/index.blade.php'));
 
         self::assertIsString($view);
         self::assertStringContainsString('<x-tools.page', $view);
         self::assertStringContainsString('<x-tools.form.money', $view);
-        self::assertStringContainsString('<x-tools.integration-import', $view);
         self::assertStringContainsString('<x-tools.result-metric', $view);
     }
 }

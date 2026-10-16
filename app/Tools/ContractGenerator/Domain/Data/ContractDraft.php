@@ -44,7 +44,7 @@ final readonly class ContractDraft
             'first_party' => $this->firstParty->toArray(),
             'second_party' => $this->secondParty->toArray(),
             'amount_minor' => $this->amount->minorAmount(),
-            'amount_formatted' => $this->amount->formatPtBr(),
+            'amount_formatted' => $this->amount->formatEnUs(),
             'payment_terms' => $this->paymentTerms,
             'jurisdiction_city' => $this->jurisdictionCity,
             'jurisdiction_state' => $this->jurisdictionState,

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tools\ContractGenerator\Application\Actions;
 
-use App\Core\Identifiers\Cnpj;
-use App\Core\Identifiers\Cpf;
 use App\Core\Money\Money;
 use App\Tools\ContractGenerator\Domain\Data\ContractDraft;
 use App\Tools\ContractGenerator\Domain\Data\ContractParty;
@@ -21,9 +19,7 @@ final class BuildContractDraft
     public function execute(array $data): ContractDraft
     {
         $type = ContractType::from((string) $data['contract_type']);
-        $template = isset($data['template_key']) && filled($data['template_key'])
-            ? ContractTemplate::from((string) $data['template_key'])
-            : ContractTemplate::essentialFor($type);
+        $template = isset($data['template_key']) && filled($data['template_key']) ? ContractTemplate::from((string) $data['template_key']) : ContractTemplate::essentialFor($type);
         $selectedClauses = array_values(array_unique([
             ...array_map(static fn (mixed $value): SmartClause => SmartClause::from((string) $value), (array) ($data['smart_clauses'] ?? [])),
             ...$template->presetClauses(),
@@ -50,36 +46,32 @@ final class BuildContractDraft
     private function party(array $data, string $prefix): ContractParty
     {
         $documentType = PartyDocumentType::from((string) $data[$prefix.'_document_type']);
-        $document = (string) $data[$prefix.'_document'];
-
-        $formattedDocument = match ($documentType) {
-            PartyDocumentType::Cpf => Cpf::fromString($document)->formatted(),
-            PartyDocumentType::Cnpj => Cnpj::fromString($document)->formatted(),
-        };
-
+        $document = trim((string) $data[$prefix.'_document']);
+        if ($documentType === PartyDocumentType::Ein) {
+            $digits = preg_replace('/\D+/', '', $document) ?? '';
+            $document = substr($digits, 0, 2).'-'.substr($digits, 2);
+        }
         return new ContractParty(
             name: trim((string) $data[$prefix.'_name']),
             documentType: $documentType,
-            document: $formattedDocument,
+            document: $document,
             address: trim((string) $data[$prefix.'_address']),
             city: trim((string) $data[$prefix.'_city']),
             state: strtoupper((string) $data[$prefix.'_state']),
         );
     }
 
-    /** @param array<string, mixed> $data
-     *  @return array<string, scalar|null>
-     */
+    /** @param array<string, mixed> $data @return array<string, scalar|null> */
     private function specificTerms(ContractType $type, array $data): array
     {
         return match ($type) {
-            ContractType::ServiceProvision => [
+            ContractType::ServiceAgreement => [
                 'service_description' => trim((string) $data['service_description']),
                 'start_date' => (string) $data['start_date'],
                 'end_date' => filled($data['end_date'] ?? null) ? (string) $data['end_date'] : null,
                 'termination_notice_days' => (int) $data['termination_notice_days'],
             ],
-            ContractType::MovableAssetSale => [
+            ContractType::GoodsSaleAgreement => [
                 'asset_description' => trim((string) $data['asset_description']),
                 'delivery_date' => (string) $data['delivery_date'],
                 'delivery_location' => trim((string) $data['delivery_location']),

@@ -30,30 +30,19 @@ if (count($official) !== $expectedCount) {
 
 $accountingCount = count(array_filter($official, static fn (array $tool): bool => ($tool['vertical'] ?? null) === 'contabilidade'));
 $rhCount = count(array_filter($official, static fn (array $tool): bool => ($tool['vertical'] ?? null) === 'rh'));
-if ($accountingCount !== 49 || $rhCount !== 1) {
+if (($accountingCount + $rhCount) !== $expectedCount) {
     $errors[] = "Distribuição por vertical inesperada: contabilidade={$accountingCount}, rh={$rhCount}.";
 }
 
 $releaseOrders = array_map(static fn (array $tool): int => (int) ($tool['release_order'] ?? 0), $official);
 sort($releaseOrders);
-if ($releaseOrders !== range(1, 50)) {
-    $errors[] = 'release_order deve formar exatamente a sequência 1..50.';
+if ($releaseOrders !== range(1, $expectedCount)) {
+    $errors[] = sprintf('release_order deve formar exatamente a sequência 1..%d.', $expectedCount);
 }
 
 $pains = [
-    'Nota Fiscal' => ['calculadora-retencoes-nota-fiscal', 'conversor-fiscal-xml'],
-    'CFOP' => ['consultor-validador-cfop'],
-    'Certificado Digital' => ['analisador-certificado-digital-a1'],
-    'Simples Nacional' => ['calculadora-simples-nacional'],
-    'Lucro Presumido' => ['calculadora-irpj-csll-lucro-presumido'],
-    'Lucro Real' => ['calculadora-lucro-real'],
-    'Fator R' => ['simulador-fator-r'],
-    'Reforma Tributária' => ['simulador-reforma-tributaria-consumo'],
-    'PIS/Cofins' => ['calculadora-pis-cofins'],
-    'SEFAZ' => ['validador-fiscal-sefaz'],
-    'ICMS' => ['calculadora-icms-proprio', 'calculadora-icms-st'],
-    'ECAD' => ['simulador-ecad-direitos-autorais'],
-    'DIFAL' => ['calculadora-difal-icms'],
+    'Nota Fiscal' => ['backup-withholding-calculator'],
+    'Reforma Tributária' => ['sales-tax-calculator'],
 ];
 
 foreach ($pains as $pain => $slugs) {
@@ -114,8 +103,8 @@ foreach ($pains as $slugs) {
     }
 }
 
-if ((int) ($plus['catalog_tool_count'] ?? 0) !== 50) {
-    $errors[] = 'Governança Plus deve declarar catalog_tool_count=50.';
+if ((int) ($plus['catalog_tool_count'] ?? 0) !== $expectedCount) {
+    $errors[] = sprintf('Governança Plus deve declarar catalog_tool_count=%d.', $expectedCount);
 }
 $declaredPlusFeatureCount = (int) ($plus['declared_plus_feature_count'] ?? 0);
 if ($declaredPlusFeatureCount <= 0) {
@@ -129,15 +118,6 @@ if (count((array) ($plus['strict_contracts'] ?? [])) !== $declaredPlusFeatureCou
 }
 if (count((array) ($plus['functional_contracts'] ?? [])) !== $declaredPlusFeatureCount) {
     $errors[] = 'Governança Plus deve manter contratos funcionais iguais à contagem declarada.';
-}
-
-foreach ([
-    'app/Core/Tax/Fiscal/CfopCatalog.php',
-    'app/Core/Tax/Normative/ActualProfitIncomeTaxRule.php',
-] as $sharedRule) {
-    if (! is_file($root.'/'.$sharedRule)) {
-        $errors[] = "Reutilização de Core consolidada ausente: {$sharedRule}.";
-    }
 }
 
 if ($errors !== []) {

@@ -15,7 +15,7 @@ A base foi reconstruída na ordem obrigatória:
 
 Antes das alterações foram relidos `README.md`, `CORE_CANDIDATES.md`, `docs/IMPLEMENTATION-LOTS.md`, `config/product_tools.php`, os três relatórios desta rodada e a documentação de Analytics.
 
-A auditoria confirmou que as 50 ferramentas oficiais já implementam `HasAnalyticsJourney`. Portanto, este lote não criou listeners, eventos ou contratos paralelos e não alterou módulos individualmente.
+A auditoria confirmou que as 28 ferramentas oficiais já implementam `HasAnalyticsJourney`. Portanto, este lote não criou listeners, eventos ou contratos paralelos e não alterou módulos individualmente.
 
 ## Mudanças
 

@@ -32,7 +32,7 @@ use App\Tools\LaborTerminationCalculator\Api\Actions\CalculateApiAction;
 
 final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'calculadora-de-rescisao';
+    public const SLUG = 'final-pay-severance-calculator';
 
     public function apiActions(): array
     {
@@ -41,23 +41,17 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
 
     /** @var array<int, string> */
     private const HISTORY_INPUT_FIELDS = [
-        'monthly_salary', 'admission_date', 'termination_date', 'termination_type', 'contract_type', 'notice_type',
-        'days_worked_in_month', 'overdue_vacation_periods', 'double_vacation_periods', 'fgts_balance',
-        'domestic_indemnity_reserve_balance', 'other_discounts', 'dependents', 'commission_average',
-        'overtime_average', 'recurring_additions', 'contract_end_date', 'early_termination_initiative',
-        'article_480_discount', 'extraordinary_indemnities',
+        'termination_date', 'separation_type', 'hourly_rate', 'regular_hours_due', 'unused_pto_hours',
+        'pto_payout_percent', 'weekly_base_pay', 'severance_weeks', 'bonus_commission_due', 'other_pay',
+        'federal_withholding', 'state_local_withholding', 'other_deductions',
     ];
 
     /** @var array<int, string> */
     private const HISTORY_RESULT_FIELDS = [
-        'salary_base', 'salary_balance', 'overdue_vacation', 'overdue_vacation_third', 'proportional_vacation',
-        'proportional_vacation_third', 'proportional_thirteenth_salary', 'notice_pay', 'article_479_indemnity',
-        'extraordinary_indemnities', 'gross_total', 'inss_salary', 'inss_thirteenth', 'irrf_salary',
-        'irrf_thirteenth', 'notice_discount', 'article_480_discount', 'other_discounts', 'total_discounts',
-        'net_total', 'fgts_balance', 'domestic_indemnity_reserve_balance', 'domestic_compensatory_deposit',
-        'fgts_termination_deposit', 'fgts_penalty', 'estimated_fgts_available', 'fgts_withdrawal_percentage',
-        'notice_days', 'projected_termination_date', 'termination_type_label', 'notice_type_label', 'is_domestic',
-        'warnings', 'rule_version', 'tax_table_version',
+        'termination_date', 'separation_type', 'regular_pay_due', 'pto_payout', 'severance_pay',
+        'bonus_commission_due', 'other_pay', 'gross_final_pay', 'federal_withholding',
+        'state_local_withholding', 'other_deductions', 'total_deductions', 'net_final_pay', 'net_total',
+        'warnings', 'rule_version', 'calculation_memory',
     ];
 
     public function integrations(): ToolIntegrationManifest
@@ -71,29 +65,25 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'calculadora-de-rescisao',
+            toolSlug: 'final-pay-severance-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
                     steps: ['input'],
                     fields: [
-                        new ToolAnalyticsField('monthly_salary', 'input', selector: '[name="monthly_salary"]'),
-                        new ToolAnalyticsField('admission_date', 'input', selector: '[name="admission_date"]'),
                         new ToolAnalyticsField('termination_date', 'input', selector: '[name="termination_date"]'),
-                        new ToolAnalyticsField('termination_type', 'input', selector: '[name="termination_type"]'),
-                        new ToolAnalyticsField('contract_type', 'input', selector: '[name="contract_type"]'),
-                        new ToolAnalyticsField('notice_type', 'input', selector: '[name="notice_type"]'),
-                        new ToolAnalyticsField('days_worked_in_month', 'input', selector: '[name="days_worked_in_month"]'),
-                        new ToolAnalyticsField('overdue_vacation_periods', 'input', selector: '[name="overdue_vacation_periods"]'),
-                        new ToolAnalyticsField('double_vacation_periods', 'input', selector: '[name="double_vacation_periods"]'),
-                        new ToolAnalyticsField('contract_end_date', 'input', selector: '[name="contract_end_date"]'),
-                        new ToolAnalyticsField('early_termination_initiative', 'input', selector: '[name="early_termination_initiative"]'),
-                        new ToolAnalyticsField('article_480_discount', 'input', selector: '[name="article_480_discount"]'),
-                        new ToolAnalyticsField('extraordinary_indemnities', 'input', selector: '[name="extraordinary_indemnities"]'),
-                        new ToolAnalyticsField('fgts_balance', 'input', selector: '[name="fgts_balance"]'),
-                        new ToolAnalyticsField('domestic_indemnity_reserve_balance', 'input', selector: '[name="domestic_indemnity_reserve_balance"]'),
-                        new ToolAnalyticsField('other_discounts', 'input', selector: '[name="other_discounts"]'),
-                        new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
+                        new ToolAnalyticsField('separation_type', 'input', selector: '[name="separation_type"]'),
+                        new ToolAnalyticsField('hourly_rate', 'input', selector: '[name="hourly_rate"]'),
+                        new ToolAnalyticsField('regular_hours_due', 'input', selector: '[name="regular_hours_due"]'),
+                        new ToolAnalyticsField('unused_pto_hours', 'input', selector: '[name="unused_pto_hours"]'),
+                        new ToolAnalyticsField('pto_payout_percent', 'input', selector: '[name="pto_payout_percent"]'),
+                        new ToolAnalyticsField('weekly_base_pay', 'input', selector: '[name="weekly_base_pay"]'),
+                        new ToolAnalyticsField('severance_weeks', 'input', selector: '[name="severance_weeks"]'),
+                        new ToolAnalyticsField('bonus_commission_due', 'input', selector: '[name="bonus_commission_due"]'),
+                        new ToolAnalyticsField('other_pay', 'input', selector: '[name="other_pay"]'),
+                        new ToolAnalyticsField('federal_withholding', 'input', selector: '[name="federal_withholding"]'),
+                        new ToolAnalyticsField('state_local_withholding', 'input', selector: '[name="state_local_withholding"]'),
+                        new ToolAnalyticsField('other_deductions', 'input', selector: '[name="other_deductions"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -106,12 +96,12 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'calculadora-de-rescisao',
-            name: 'Calculadora de Rescisão Trabalhista',
-            description: 'Estime saldo de salário, férias, 13º, aviso-prévio, FGTS e multa rescisória.',
+            slug: 'final-pay-severance-calculator',
+            name: 'Final Pay & Severance Calculator',
+            description: 'Estimate final wages, PTO payout, severance, bonuses, withholding, and deductions when employment ends.',
             category: ToolCategory::Labor,
             icon: 'bi-briefcase',
-            routeName: 'tools.calculadora-de-rescisao.index',
+            routeName: 'tools.final-pay-severance-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -120,7 +110,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             featured: true,
             supportsHistory: true,
             storesSensitiveData: true,
-            keywords: ['rescisão', 'trabalhista', 'saldo de salário', 'férias', '13º salário', 'aviso-prévio', 'fgts', 'contrato de experiência', 'artigo 479', 'férias em dobro', 'comissões', 'empregado doméstico', 'simples doméstico', 'indenização compensatória', 'histórico', 'pdf', 'relatório'],
+            keywords: ['final pay', 'severance calculator', 'PTO payout', 'termination pay', 'layoff pay'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -128,11 +118,11 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                 ToolCapability::SensitiveData,
             ],
             features: [
-                new ToolFeature('calculate', 'Cálculo completo da rescisão', ToolFeatureTier::Essential),
-                new ToolFeature('current_report', 'Relatório completo do cálculo atual', ToolFeatureTier::Essential),
-                new ToolFeature('history', 'Histórico de cálculos', ToolFeatureTier::Plus),
-                new ToolFeature('repeat_history', 'Repetição de cálculo salvo', ToolFeatureTier::Plus),
-                new ToolFeature('historical_report', 'Relatório de cálculo salvo', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Final-pay and severance estimate', ToolFeatureTier::Essential),
+                new ToolFeature('current_report', 'Current calculation report', ToolFeatureTier::Essential),
+                new ToolFeature('history', 'Calculation history', ToolFeatureTier::Plus),
+                new ToolFeature('repeat_history', 'Reuse saved calculation', ToolFeatureTier::Plus),
+                new ToolFeature('historical_report', 'Saved calculation report', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 180, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf', 'print']),
@@ -153,7 +143,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-de-rescisao';
+        return 'tools-final-pay-severance-calculator';
     }
 
     public function historyPolicy(): ToolHistoryPolicy

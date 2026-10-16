@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ReceiptIssuer\Domain\Services;
 
-use App\Core\Money\BrazilianMoneyInWords;
+use App\Core\Money\AmericanMoneyInWords;
 use App\Core\Money\Money;
 use App\Tools\ReceiptIssuer\Domain\Data\Receipt;
 use App\Tools\ReceiptIssuer\Domain\Data\ReceiptParty;
@@ -14,7 +14,7 @@ use DateTimeImmutable;
 
 final readonly class ReceiptIssuer
 {
-    public function __construct(private BrazilianMoneyInWords $moneyInWords) {}
+    public function __construct(private AmericanMoneyInWords $moneyInWords) {}
 
     public function issue(
         ReceiptIdentifier $identifier,

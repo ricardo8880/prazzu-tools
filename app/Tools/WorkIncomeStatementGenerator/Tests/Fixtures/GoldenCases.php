@@ -15,7 +15,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'declaracao-trabalho-renda',
+            toolSlug: 'employment-income-letter-generator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

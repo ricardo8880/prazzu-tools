@@ -18,20 +18,20 @@ final readonly class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível com a calculadora de distribuição de lucros.');
+            throw new InvalidArgumentException('Incompatible input for the owner distribution calculator.');
         }
 
         $result = ($this->calculator ?? new ProfitDistributionCalculator)->calculate($input->toDomain());
         $partner = $result->partners[0];
 
         return new ToolCalculationResult(
-            toolSlug: 'distribuicao-de-lucros',
+            toolSlug: 'owner-distribution-calculator',
             schemaVersion: '1.0.0',
             summary: [
-                new ToolCalculationSummaryItem('available', 'Lucro máximo disponível', $result->maximumAvailableProfit->formatPtBr()),
-                new ToolCalculationSummaryItem('distributed', 'Valor distribuído', $result->distributedAmount->formatPtBr()),
-                new ToolCalculationSummaryItem('partner', 'Valor do sócio', $partner->distributedAmount->formatPtBr()),
-                new ToolCalculationSummaryItem('remaining', 'Saldo não distribuído', $result->undistributedBalance->formatPtBr()),
+                new ToolCalculationSummaryItem('available', 'Maximum available amount', $result->maximumAvailableProfit->formatEnUs()),
+                new ToolCalculationSummaryItem('distributed', 'Planned distribution', $result->distributedAmount->formatEnUs()),
+                new ToolCalculationSummaryItem('partner', 'Primary owner amount', $partner->distributedAmount->formatEnUs()),
+                new ToolCalculationSummaryItem('remaining', 'Undistributed balance', $result->undistributedBalance->formatEnUs()),
             ],
             details: [
                 'input' => $input->toArray(),
@@ -47,6 +47,10 @@ final readonly class Calculator implements ToolCalculator
                 ], $result->partners),
                 'memory' => $result->memory,
                 'warnings' => $result->warnings,
+            ],
+            warnings: [
+                new \App\Core\Tools\Calculation\Data\ToolCalculationWarning('entity_tax', 'Tax treatment of owner distributions depends on the entity type and the owner’s tax situation. This calculator does not determine whether a payment is a dividend, partnership distribution, S-corporation distribution, compensation, or yearther tax category.'),
+                new \App\Core\Tools\Calculation\Data\ToolCalculationWarning('legal_capacity', 'Confirm governing documents, state-law distribution restrictions, solvency, lender covenants, and accounting records before making a distribution.'),
             ],
         );
     }

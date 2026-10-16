@@ -11,9 +11,9 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('calculadora-retencoes-nota-fiscal');
+        $module = app(ToolRegistry::class)->findModule('backup-withholding-calculator');
 
         self::assertNotNull($module);
-        self::assertSame('calculadora-retencoes-nota-fiscal', $module->manifest()->slug);
+        self::assertSame('backup-withholding-calculator', $module->manifest()->slug);
     }
 }

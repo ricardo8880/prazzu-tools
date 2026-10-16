@@ -12,16 +12,16 @@ final class BatchGenerationTest extends TestCase
 {
     public function test_batch_page_is_public(): void
     {
-        $this->get(route('tools.emissor-de-recibos.batch.index'))->assertOk()->assertSee('Geração de recibos em lote');
+        $this->get(route('tools.receipt-generator.batch.index'))->assertOk()->assertSee('Geração de recibos em lote');
     }
 
-    #[CoversPlusFeature('emissor-de-recibos', 'batch_generation')]
+    #[CoversPlusFeature('receipt-generator', 'batch_generation')]
     public function test_valid_csv_generates_printable_receipts(): void
     {
         $csv = "number;payer_name;payee_name;amount;description;issued_at;city\nR-1;Cliente Teste;Prestador Teste;100,00;Serviço prestado;2026-07-23;São Paulo\n";
         $file = UploadedFile::fake()->createWithContent('recibos.csv', $csv);
 
-        $this->post(route('tools.emissor-de-recibos.batch.issue'), ['file' => $file])
+        $this->post(route('tools.receipt-generator.batch.issue'), ['file' => $file])
             ->assertOk()->assertSee('Recibos em lote')->assertSee('R-1')->assertSee('Cliente Teste');
     }
 }

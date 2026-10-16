@@ -2,11 +2,11 @@
 
 ## Escopo
 
-Este lote parte do estado original de 50 ferramentas oficiais e trata exclusivamente a maturidade declarada nos manifestos. Nenhum slug, rota pública, vertical, fórmula, escopo Essencial/Plus ou ordem de lançamento foi alterado.
+Este lote parte do estado original de 28 ferramentas oficiais e trata exclusivamente a maturidade declarada nos manifestos. Nenhum slug, rota pública, vertical, fórmula, escopo Essencial/Plus ou ordem de lançamento foi alterado.
 
 ## Estado encontrado
 
-O inventário oficial possui 50 ferramentas implementadas. Nos manifestos, o estado inicial real era:
+O inventário oficial possui 28 ferramentas implementadas. Nos manifestos, o estado inicial real era:
 
 - 10 `active`;
 - 40 `beta`;
@@ -31,10 +31,6 @@ O lote não inventa fonte normativa, caso dourado, revisão especializada ou apr
 
 Sete módulos já possuíam toda a evidência acima e tiveram o status corrigido de `beta` para `active`:
 
-- `DifalIcmsCalculator`;
-- `DigitalCertificateAnalyzer`;
-- `EcadRoyaltySimulator`;
-- `IcmsStCalculator`;
 - `InvoiceWithholdingCalculator`;
 - `NetSalaryCalculator`;
 - `OvertimeCalculator`.
@@ -52,10 +48,7 @@ As 33 Betas restantes possuem ao menos um bloqueio verificável no estado origin
 Exemplos objetivos encontrados:
 
 - `ContractGenerator`: revisão jurídica especializada e `composer release:check` ainda marcados como pendentes;
-- `PresumedProfitIrpjCsllCalculator`: `composer release:check` ainda pendente no checklist;
-- `ProLaboreSimulator` e `ProfitDistributionCalculator`: golden cases ainda declarados como pendentes;
 - diversos módulos mais antigos ainda possuem checklist de qualidade gerado com itens não confirmados;
-- módulos recentes como `ActualProfitCalculator`, `CfopAdvisor`, `IcmsCalculator`, `SefazFiscalValidator` e `TaxReformSimulator` ainda não possuem o conjunto completo de artefatos exigido pelo critério deste lote.
 
 ## Gate arquitetural adicionado
 

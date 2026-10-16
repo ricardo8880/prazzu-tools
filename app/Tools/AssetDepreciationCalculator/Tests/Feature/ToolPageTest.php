@@ -11,7 +11,7 @@ final class ToolPageTest extends TestCase
 {
     public function test_page_is_available(): void
     {
-        $this->get(route('tools.calculadora-depreciacao-ativos.index'))
+        $this->get(route('tools.asset-depreciation-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Depreciação de Ativos')
             ->assertSee('Prazzu Plus');
@@ -19,7 +19,7 @@ final class ToolPageTest extends TestCase
 
     public function test_linear_calculation_renders_expected_values(): void
     {
-        $this->post(route('tools.calculadora-depreciacao-ativos.calculate'), [
+        $this->post(route('tools.asset-depreciation-calculator.calculate'), [
             'asset_name' => 'Notebook',
             'asset_value' => '12.000,00',
             'useful_life_years' => 5,
@@ -27,12 +27,12 @@ final class ToolPageTest extends TestCase
         ])->assertOk()->assertSee('R$ 200,00')->assertSee('R$ 2.400,00')->assertSee('R$ 9.600,00')->assertSee('Memória de cálculo');
     }
 
-    #[CoversPlusFeature('calculadora-depreciacao-ativos', 'multiple_assets')]
-    #[CoversPlusFeature('calculadora-depreciacao-ativos', 'methods')]
-    #[CoversPlusFeature('calculadora-depreciacao-ativos', 'export')]
+    #[CoversPlusFeature('asset-depreciation-calculator', 'multiple_assets')]
+    #[CoversPlusFeature('asset-depreciation-calculator', 'methods')]
+    #[CoversPlusFeature('asset-depreciation-calculator', 'export')]
     public function test_multiple_assets_render_consolidated_projection(): void
     {
-        $this->post(route('tools.calculadora-depreciacao-ativos.calculate'), [
+        $this->post(route('tools.asset-depreciation-calculator.calculate'), [
             'asset_name' => 'Máquina',
             'asset_value' => '10.000,00',
             'useful_life_years' => 5,

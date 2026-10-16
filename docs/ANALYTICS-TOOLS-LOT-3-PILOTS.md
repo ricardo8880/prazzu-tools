@@ -6,11 +6,9 @@ Este lote foi refeito a partir do ZIP original com aplicação sequencial dos Lo
 
 ## Pilotos ativados
 
-- `capital-de-giro`: formulário financeiro simples e resultado na mesma jornada.
-- `comparador-tributario`: formulário extenso, etapas semânticas e exportação.
-- `declaracao-rendimentos`: dados pessoais sensíveis, resultado documental e impressão/PDF.
-- `gerador-de-contratos`: questionário guiado, editor posterior, resultado em duas fases e PDF/DOCX.
-- `conversor-fiscal-xml`: upload individual, upload múltiplo em lote e exportações CSV/XLSX/JSON.
+- `working-capital-calculator`: formulário financeiro simples e resultado na mesma jornada.
+- `earnings-statement-generator`: dados pessoais sensíveis, resultado documental e impressão/PDF.
+- `contract-generator`: questionário guiado, editor posterior, resultado em duas fases e PDF/DOCX.
 
 Cada módulo implementa apenas `HasAnalyticsJourney` e declara chaves semânticas, etapas, seletores e ações. O mecanismo de captura permanece integralmente no Core.
 

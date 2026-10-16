@@ -8,7 +8,7 @@ use App\Core\Tools\History\Contracts\ToolRunHistory;
 
 final readonly class DeleteMarginMarkupHistory
 {
-    private const TOOL_SLUG = 'calculadora-margem-markup';
+    private const TOOL_SLUG = 'margin-markup-calculator';
 
     public function __construct(private ToolRunHistory $history) {}
 

@@ -12,9 +12,7 @@ final class FiscalLaborAuditLot2Test extends TestCase
 {
     /** @var list<string> */
     private const BETA_UNTIL_OPEN_QUALITY_DEBT_IS_CLOSED = [
-        'ProLaboreProfitDistributionCalculator',
         'ReceiptIssuer',
-        'TaxRegimeComparator',
         'VacationCalculator',
     ];
 

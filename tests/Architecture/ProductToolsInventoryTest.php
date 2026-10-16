@@ -21,12 +21,12 @@ final class ProductToolsInventoryTest extends TestCase
     {
         $tools = $this->inventory['official'];
 
-        self::assertSame(50, $this->inventory['expected_module_count']);
-        self::assertCount(50, $tools);
-        self::assertSame(range(1, 50), array_column($tools, 'id'));
+        self::assertSame(28, $this->inventory['expected_module_count']);
+        self::assertCount(28, $tools);
+        self::assertSame(range(1, 28), array_column($tools, 'id'));
 
         foreach (['key', 'name', 'slug', 'module'] as $field) {
-            self::assertCount(50, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
+            self::assertCount(28, array_unique(array_column($tools, $field)), "O campo [{$field}] deve ser único.");
         }
     }
 
@@ -35,22 +35,22 @@ final class ProductToolsInventoryTest extends TestCase
         $tools = $this->inventory['official'];
         $releaseOrders = array_column($tools, 'release_order');
 
-        self::assertCount(50, array_unique($releaseOrders));
+        self::assertCount(28, array_unique($releaseOrders));
         sort($releaseOrders);
-        self::assertSame(range(1, 50), $releaseOrders);
+        self::assertSame(range(1, 28), $releaseOrders);
 
         usort($tools, static fn (array $left, array $right): int => $right['release_order'] <=> $left['release_order']);
         $latest = array_column(array_slice($tools, 0, 8), 'slug');
 
         self::assertSame([
-            'simulador-ecad-direitos-autorais',
-            'simulador-reforma-tributaria-consumo',
-            'calculadora-lucro-real',
-            'calculadora-icms-proprio',
-            'validador-fiscal-sefaz',
-            'consultor-validador-cfop',
-            'analisador-certificado-digital-a1',
-            'calculadora-das-retroativo-regularizacao-simples',
+            'sales-tax-calculator',
+            'owner-distribution-planner',
+            'irs-payment-plan-calculator',
+            'asset-depreciation-calculator',
+            'backup-withholding-calculator',
+            'employee-turnover-calculator',
+            'overtime-pay-calculator',
+            'take-home-pay-calculator',
         ], $latest);
     }
 
@@ -64,25 +64,21 @@ final class ProductToolsInventoryTest extends TestCase
         sort($officialModules);
 
         self::assertSame($actualModules, $officialModules);
-        self::assertCount(50, array_unique($officialModules));
+        self::assertCount(28, array_unique($officialModules));
         self::assertArrayNotHasKey('additional_modules', $this->inventory);
     }
 
-    public function test_partner_withdrawal_planner_has_a_distinct_resolved_scope(): void
+    public function test_profit_distribution_balance_has_a_distinct_resolved_scope(): void
     {
         $reviews = array_values(array_filter(
             $this->inventory['functional_overlap_reviews'],
-            static fn (array $review): bool => $review['module'] === 'ProLaboreProfitDistributionCalculator',
+            static fn (array $review): bool => $review['module'] === 'ProfitDistributionBalanceSimulator',
         ));
 
         self::assertCount(1, $reviews);
-        self::assertSame('resolved_distinct_planning_scope', $reviews[0]['classification']);
+        self::assertSame('resolved_distinct_balance_comparison_scope', $reviews[0]['classification']);
         self::assertSame('resolved', $reviews[0]['state']);
-        self::assertSame(['ProLaboreSimulator', 'ProfitDistributionCalculator'], $reviews[0]['related_modules']);
-
-        $official = array_column($this->inventory['official'], null, 'module');
-        self::assertSame('implemented', $official['ProLaboreProfitDistributionCalculator']['state']);
-        self::assertSame('Planejador de Retirada de Sócios', $official['ProLaboreProfitDistributionCalculator']['name']);
+        self::assertSame(['ProfitDistributionCalculator'], $reviews[0]['related_modules']);
     }
 
     public function test_governance_documents_exist(): void

@@ -30,7 +30,7 @@ final class CalculateFeeAdjustmentRequest extends FormRequest
     {
         return [
             'current_value.regex' => 'Informe um valor monetário válido em BRL.',
-            'reference_period.date_format' => 'Informe a competência no formato mês/ano.',
+            'reference_period.date_format' => 'Informe a competência no formato mês/year.',
         ];
     }
 }

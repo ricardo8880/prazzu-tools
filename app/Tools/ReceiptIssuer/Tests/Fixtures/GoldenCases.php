@@ -14,7 +14,7 @@ final class GoldenCases
 
     public static function suite(): GoldenCaseSuite
     {
-        return new GoldenCaseSuite('emissor-de-recibos', [
+        return new GoldenCaseSuite('receipt-generator', [
             new GoldenCase('typical', 'Recibo comum', GoldenCaseKind::Typical,
                 ['amount_minor' => 125045, 'number' => 'REC-2026-0001'],
                 ['formatted' => 'R$ 1.250,45', 'words' => 'mil duzentos e cinquenta reais e quarenta e cinco centavos'],

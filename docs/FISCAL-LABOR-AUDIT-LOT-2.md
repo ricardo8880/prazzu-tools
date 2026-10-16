@@ -35,8 +35,6 @@ O rótulo público foi alterado para `Total após descontos informados` e o READ
 
 A auditoria detectou ferramentas marcadas `active` enquanto seus próprios `QUALITY.md` ainda possuem checklists abertos. Foram corrigidas para `beta` sem retirar funcionalidades:
 
-- `TaxRegimeComparator`;
-- `ProLaboreProfitDistributionCalculator`;
 - `VacationCalculator`.
 
 Durante a validação do gate criado no Lote 1, também foi encontrado o mesmo conflito em `ReceiptIssuer`. Embora documental e fora do núcleo fiscal/trabalhista, ele foi corrigido para `beta` como reparo de continuidade, pois o gate do Lote 1 exige que ferramenta Active sob o framework atual não possua checklist aberto.

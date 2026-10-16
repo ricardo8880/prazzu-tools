@@ -8,14 +8,14 @@
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">Honorários contábeis</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('tools.accounting-fee-calculator.index') }}">Honorários contábeis</a></li>
             <li class="breadcrumb-item active" aria-current="page">Reajustes</li>
         </ol>
     </nav>
 
     <x-tools.intro icon="arrow-up-right-circle" title="Reajuste de honorários" description="Aplique o índice do período, visualize a diferença e mantenha um histórico auditável." badge="Lote 7" badge-class="badge text-bg-primary mb-2" />
 
-    @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
+    @include('tools-accounting-fee-calculator::partials.navigation')
 
     @if ($successMessage ?? session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -28,10 +28,10 @@
     @if ($result)
         <x-tools.validation-summary class="mb-4" />
 
-    <section class="row g-3 mb-4" aria-label="Resultado do reajuste">
+    <section class="row g-3 mb-4" aria-label="Salary increase result">
             <div class="col-12 col-md-4">
                 <div class="card border-0 shadow-sm h-100"><div class="card-body">
-                    <div class="small text-body-secondary">Valor atual</div>
+                    <div class="small text-body-secondary">Amount atual</div>
                     <div class="h4 mb-0">R$ {{ number_format($result['current_value_cents'] / 100, 2, ',', '.') }}</div>
                 </div></div>
             </div>
@@ -60,7 +60,7 @@
                     <div class="alert alert-info small" role="alert">
                         Consulte a fonte oficial do índice e informe o percentual acumulado aplicável ao contrato. A ferramenta não busca índices automaticamente.
                     </div>
-                    <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.calculate') }}" class="row g-3">
+                    <form method="post" action="{{ route('tools.accounting-fee-calculator.adjustments.calculate') }}" class="row g-3">
                         @csrf
                         <div class="col-12">
                             <label class="form-label" for="scenario_label">Referência do cálculo *</label>
@@ -144,7 +144,7 @@
                                             <td class="fw-semibold text-primary text-nowrap">R$ {{ number_format(data_get($adjustment->result, 'adjusted_value_cents') / 100, 2, ',', '.') }}</td>
                                             <td>{{ \Carbon\Carbon::createFromFormat('Y-m', data_get($adjustment->input, 'reference_period'))->format('m/Y') }}</td>
                                             <td class="text-end">
-                                                <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.adjustments.delete', $adjustment->id) }}" data-confirm="Remover este reajuste do histórico?">
+                                                <form method="post" action="{{ route('tools.accounting-fee-calculator.adjustments.delete', $adjustment->id) }}" data-confirm="Remove este reajuste do histórico?">
                                                     @csrf @method('DELETE')
                                                     <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir reajuste"><i class="bi bi-trash"></i></button>
                                                 </form>

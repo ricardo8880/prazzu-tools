@@ -7,8 +7,8 @@ salvamento em PDF pelo navegador, usando dados informados pelo usuário.
 
 ## Funcionamento
 
-- `GET /ferramentas/declaracao-rendimentos` abre o formulário público.
-- `POST /ferramentas/declaracao-rendimentos` valida e gera o documento.
+- `GET /ferramentas/earnings-statement-generator` abre o formulário público.
+- `POST /ferramentas/earnings-statement-generator` valida e gera o documento.
 - São informados beneficiário, documento, fonte pagadora, ano-calendário,
   rendimentos brutos, INSS, IRRF e outras deduções.
 - O domínio soma as deduções, impede que ultrapassem o bruto e calcula o líquido.
@@ -17,8 +17,8 @@ salvamento em PDF pelo navegador, usando dados informados pelo usuário.
 ## Implementação principal
 
 - **View:** `app/Tools/IncomeStatementGenerator/Resources/views/index.blade.php`
-- **Rotas:** `tools.declaracao-rendimentos.index` e
-  `tools.declaracao-rendimentos.calculate`
+- **Rotas:** `tools.earnings-statement-generator.index` e
+  `tools.earnings-statement-generator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

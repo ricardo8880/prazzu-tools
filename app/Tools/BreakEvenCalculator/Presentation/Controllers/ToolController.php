@@ -20,14 +20,14 @@ final class ToolController extends Controller
 {
     public function index(ShowToolPage $page): View
     {
-        return view('tools-ponto-de-equilibrio::index', $page->execute());
+        return view('tools-break-even-calculator::index', $page->execute());
     }
 
     public function calculate(ExecuteToolRequest $request, CalculateTool $action): View
     {
         $input = $request->validated();
 
-        return view('tools-ponto-de-equilibrio::index', [
+        return view('tools-break-even-calculator::index', [
             ...app(ShowToolPage::class)->execute(),
             'result' => $action->execute($input),
             'calculationInput' => $input,
@@ -42,20 +42,20 @@ final class ToolController extends Controller
             'variable_cost_change_rate' => ['required', 'numeric', 'between:-90,500'],
         ]);
 
-        return view('tools-ponto-de-equilibrio::index', [...$page->execute(), 'breakEvenScenarios' => $action->execute($data)]);
+        return view('tools-break-even-calculator::index', [...$page->execute(), 'breakEvenScenarios' => $action->execute($data)]);
     }
 
     public function exportPdf(ExecuteToolRequest $request, CalculateTool $action, PdfExporter $exporter, ToolResultExportFactory $documents): Response
     {
         $input = $request->validated();
 
-        return $exporter->download($documents->pdf('Calculadora de Ponto de Equilíbrio', 'ponto-de-equilibrio-'.now()->format('Y-m-d'), $action->execute($input), $input));
+        return $exporter->download($documents->pdf('Break-Even Calculator', 'break-even-calculator-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 
     public function exportExcel(ExecuteToolRequest $request, CalculateTool $action, SpreadsheetExporter $exporter, ToolResultExportFactory $documents): Response
     {
         $input = $request->validated();
 
-        return $exporter->download($documents->spreadsheet('ponto-de-equilibrio-'.now()->format('Y-m-d'), $action->execute($input), $input));
+        return $exporter->download($documents->spreadsheet('break-even-calculator-'.now()->format('Y-m-d'), $action->execute($input), $input));
     }
 }

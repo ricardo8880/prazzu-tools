@@ -8,6 +8,7 @@ use App\Core\Tools\Calculation\Data\CalculationMemory;
 use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Core\Tools\Calculation\Data\ToolCalculationResult;
 use App\Core\Tools\Calculation\Data\ToolCalculationSummaryItem;
+use App\Core\Tools\Calculation\Data\ToolCalculationWarning;
 use App\Core\Tools\Contracts\ToolCalculationInput;
 use App\Core\Tools\Contracts\ToolCalculator;
 use App\Tools\PayslipGenerator\Application\Data\CalculationInput;
@@ -15,60 +16,57 @@ use InvalidArgumentException;
 
 final class Calculator implements ToolCalculator
 {
-    public const RULE_VERSION = '1.1.0';
+    public const RULE_VERSION = '2.0.0';
 
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
-        if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível.');
-        }
+        if (! $input instanceof CalculationInput) { throw new InvalidArgumentException('Incompatible input.'); }
 
-        $earnings = $input->salary->add($input->otherEarnings);
-        $deductions = $input->inss->add($input->irrf)->add($input->otherDeductions);
-
+        $earnings = $input->regularPay->add($input->overtimePay)->add($input->otherEarnings);
+        $deductions = $input->federalIncomeTax
+            ->add($input->socialSecurity)
+            ->add($input->medicare)
+            ->add($input->stateLocalTax)
+            ->add($input->otherDeductions);
         if ($deductions->minorAmount() > $earnings->minorAmount()) {
-            throw new InvalidArgumentException('Descontos superiores aos proventos.');
+            throw new InvalidArgumentException('Deductions cannot exceed gross earnings.');
         }
-
         $net = $earnings->subtract($deductions);
-        $memory = new CalculationMemory(
-            schemaVersion: self::RULE_VERSION,
-            steps: [
-                new CalculationMemoryStep('earnings', 'Total de proventos', 'salário + outros proventos', ['salary' => $input->salary->minorAmount(), 'other_earnings' => $input->otherEarnings->minorAmount()], $earnings->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('deductions', 'Total de descontos', 'INSS + IRRF + outros descontos', ['inss' => $input->inss->minorAmount(), 'irrf' => $input->irrf->minorAmount(), 'other_deductions' => $input->otherDeductions->minorAmount()], $deductions->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('net', 'Líquido a receber', 'proventos - descontos', ['earnings' => $earnings->minorAmount(), 'deductions' => $deductions->minorAmount()], $net->minorAmount(), 'Valores monetários em centavos.'),
-            ],
-            assumptions: ['INSS, IRRF e demais descontos são informados pelo usuário; esta ferramenta emite o demonstrativo e não recalcula folhas completas.'],
-        );
 
         return new ToolCalculationResult(
-            'gerador-holerite',
+            'pay-stub-generator',
             self::RULE_VERSION,
             [
-                new ToolCalculationSummaryItem('earnings', 'Total de proventos', $earnings->formatPtBr()),
-                new ToolCalculationSummaryItem('deductions', 'Total de descontos', $deductions->formatPtBr()),
-                new ToolCalculationSummaryItem('net', 'Líquido a receber', $net->formatPtBr()),
+                new ToolCalculationSummaryItem('gross', 'Gross earnings', $earnings->formatEnUs()),
+                new ToolCalculationSummaryItem('deductions', 'Total deductions', $deductions->formatEnUs()),
+                new ToolCalculationSummaryItem('net', 'Net pay', $net->formatEnUs()),
             ],
             [
                 'input' => $input->toArray(),
                 'document' => [
-                    'employee' => $input->name,
-                    'document' => $input->document,
+                    'employee' => $input->employeeName,
+                    'employee_id' => $input->employeeId,
                     'employer' => $input->employer,
-                    'competence' => $input->competence,
+                    'pay_period' => $input->payPeriod,
                     'items' => [
-                        'Salário' => $input->salary->formatPtBr(),
-                        'Outros proventos' => $input->otherEarnings->formatPtBr(),
-                        'INSS' => '-'.$input->inss->formatPtBr(),
-                        'IRRF' => '-'.$input->irrf->formatPtBr(),
-                        'Outros descontos' => '-'.$input->otherDeductions->formatPtBr(),
+                        'Regular pay' => $input->regularPay->formatEnUs(),
+                        'Overtime pay' => $input->overtimePay->formatEnUs(),
+                        'Other earnings' => $input->otherEarnings->formatEnUs(),
+                        'Federal income tax' => '-'.$input->federalIncomeTax->formatEnUs(),
+                        'Social Security' => '-'.$input->socialSecurity->formatEnUs(),
+                        'Medicare' => '-'.$input->medicare->formatEnUs(),
+                        'State/local tax' => '-'.$input->stateLocalTax->formatEnUs(),
+                        'Other deductions' => '-'.$input->otherDeductions->formatEnUs(),
                     ],
-                    'earnings' => $earnings->formatPtBr(),
-                    'deductions' => $deductions->formatPtBr(),
-                    'net' => $net->formatPtBr(),
+                    'net' => $net->formatEnUs(),
                 ],
             ],
-            calculationMemory: $memory,
+            warnings: [new ToolCalculationWarning('payroll_input', 'This generator organizes amounts you enter. It does not replace payroll software or determine federal, state, or local withholding requirements.')],
+            calculationMemory: new CalculationMemory(self::RULE_VERSION, [
+                new CalculationMemoryStep('earnings', 'Gross earnings', 'regular pay + overtime + other earnings', [], $earnings->minorAmount()),
+                new CalculationMemoryStep('deductions', 'Total deductions', 'federal income tax + Social Security + Medicare + state/local tax + other deductions', [], $deductions->minorAmount()),
+                new CalculationMemoryStep('net', 'Net pay', 'gross earnings - deductions', [], $net->minorAmount()),
+            ], assumptions: ['All withholding amounts are supplied by the user.']),
         );
     }
 }

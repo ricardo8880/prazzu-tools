@@ -11,9 +11,9 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_the_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('capital-de-giro');
+        $module = app(ToolRegistry::class)->findModule('working-capital-calculator');
 
         self::assertNotNull($module);
-        self::assertSame('capital-de-giro', $module->manifest()->slug);
+        self::assertSame('working-capital-calculator', $module->manifest()->slug);
     }
 }

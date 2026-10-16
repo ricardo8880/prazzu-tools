@@ -30,7 +30,7 @@ use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'custo-funcionario-clt';
+    public const SLUG = 'employee-cost-calculator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -40,7 +40,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'custo-funcionario-clt',
+            toolSlug: 'employee-cost-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -69,11 +69,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Calculadora de Custo de Funcionário CLT',
-            description: 'Calcule salário, benefícios, encargos, provisões e custo mensal, anual e por hora.',
+            name: 'Employee Cost Calculator',
+            description: 'Estimate annual and monthly W-2 employee cost including wages, benefits, employer FICA, FUTA, SUTA, and other employer costs.',
             category: ToolCategory::Labor,
             icon: 'bi-person-vcard',
-            routeName: 'tools.custo-funcionario-clt.index',
+            routeName: 'tools.employee-cost-calculator.index',
             vertical: 'contabilidade',
             version: '1.1.0',
             access: ToolAccess::Free,
@@ -81,7 +81,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 110,
             supportsHistory: true,
             storesSensitiveData: true,
-            keywords: ['custo funcionário', 'custo CLT', 'encargos funcionário', 'folha de pagamento', 'custo empregador', 'FGTS'],
+            keywords: ['employee cost', 'W-2 employee cost', 'employer payroll taxes', 'FICA', 'FUTA', 'SUTA'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -156,6 +156,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-custo-funcionario-clt';
+        return 'tools-employee-cost-calculator';
     }
 }

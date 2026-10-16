@@ -7,20 +7,20 @@
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">Honorários Contábeis</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('tools.accounting-fee-calculator.index') }}">Honorários Contábeis</a></li>
             <li class="breadcrumb-item active">Histórico</li>
         </ol>
     </nav>
 
-    <x-tools.intro icon="clock-history" title="Histórico de cálculos" description="Recupere precificações e marque referências importantes para reutilizar depois.">
+    <x-tools.intro icon="clock-history" title="Calculation history" description="Recupere precificações e marque referências importantes para reutilizar depois.">
         <x-slot:actions>
-            <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-honorarios-contabeis.history.index', ['favorite' => $favorite ? null : 1]) }}"><i class="bi bi-star{{ $favorite ? '-fill' : '' }} me-1"></i>{{ $favorite ? 'Ver todos' : 'Somente favoritos' }}</a>
-            <x-tools.export-button :href="route('tools.calculadora-de-honorarios-contabeis.history.export')" label="Exportar CSV" icon="file-earmark-spreadsheet" />
-            <a class="btn btn-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a>
+            <a class="btn btn-outline-secondary" href="{{ route('tools.accounting-fee-calculator.history.index', ['favorite' => $favorite ? null : 1]) }}"><i class="bi bi-star{{ $favorite ? '-fill' : '' }} me-1"></i>{{ $favorite ? 'Ver todos' : 'Somente favoritos' }}</a>
+            <x-tools.export-button :href="route('tools.accounting-fee-calculator.history.export')" label="Exportar CSV" icon="file-earmark-spreadsheet" />
+            <a class="btn btn-primary" href="{{ route('tools.accounting-fee-calculator.index') }}"><i class="bi bi-plus-lg me-1"></i>Novo cálculo</a>
         </x-slot:actions>
     </x-tools.intro>
 
-    @include('tools-calculadora-de-honorarios-contabeis::partials.navigation')
+    @include('tools-accounting-fee-calculator::partials.navigation')
 
     @if (session('success'))
         <div class="alert alert-success" role="alert">{{ session('success') }}</div>
@@ -47,9 +47,9 @@
                     </div>
 
                     <div class="d-flex flex-wrap gap-2 mt-3">
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.duplicate', $calculation->id) }}">@csrf<button class="btn btn-sm btn-primary"><i class="bi bi-copy me-1"></i>Duplicar</button></form>
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.favorite', $calculation->id) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning"><i class="bi bi-star me-1"></i>{{ $calculation->favorite ? 'Desfavoritar' : 'Favoritar' }}</button></form>
-                        <form method="post" action="{{ route('tools.calculadora-de-honorarios-contabeis.history.delete', $calculation->id) }}" data-confirm="Remover este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
+                        <form method="post" action="{{ route('tools.accounting-fee-calculator.history.duplicate', $calculation->id) }}">@csrf<button class="btn btn-sm btn-primary"><i class="bi bi-copy me-1"></i>Duplicar</button></form>
+                        <form method="post" action="{{ route('tools.accounting-fee-calculator.history.favorite', $calculation->id) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-outline-warning"><i class="bi bi-star me-1"></i>{{ $calculation->favorite ? 'Desfavoritar' : 'Favoritar' }}</button></form>
+                        <form method="post" action="{{ route('tools.accounting-fee-calculator.history.delete', $calculation->id) }}" data-confirm="Remove este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
                     </div>
                 </div>
             </article>
@@ -58,7 +58,7 @@
                 <i class="bi bi-clock-history display-5 text-body-secondary"></i>
                 <h2 class="h5 mt-3">Nenhum cálculo encontrado</h2>
                 <p class="text-body-secondary">Faça uma precificação para iniciar seu histórico.</p>
-                <a class="btn btn-primary" href="{{ route('tools.calculadora-de-honorarios-contabeis.index') }}">Calcular honorários</a>
+                <a class="btn btn-primary" href="{{ route('tools.accounting-fee-calculator.index') }}">Calcular honorários</a>
             </div>
         @endforelse
 

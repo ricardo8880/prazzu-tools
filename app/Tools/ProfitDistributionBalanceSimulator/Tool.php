@@ -27,7 +27,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'simulador-distribuicao-lucros-balanco';
+    public const SLUG = 'owner-distribution-planner';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -46,16 +46,16 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
 
     public function viewsNamespace(): string
     {
-        return 'tools-simulador-distribuicao-lucros-balanco';
+        return 'tools-owner-distribution-planner';
     }
 
     public function manifest(): ToolManifest
     {
-        return new ToolManifest(slug: self::SLUG, name: 'Simulador de Distribuição de Lucros com Balanço × sem Balanço', description: 'Compare a capacidade estimada de distribuição usando lucro contábil e parâmetros informados para um cenário sem balanço.', category: ToolCategory::Fiscal, icon: 'bi-diagram-3', routeName: 'tools.simulador-distribuicao-lucros-balanco.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Beta, position: 204, featured: true, supportsHistory: false, storesSensitiveData: false, keywords: ['distribuição de lucros', 'balanço', 'sem balanço', 'escrituração', 'pró-labore'], capabilities: [ToolCapability::Export], features: [new ToolFeature('comparison', 'Comparação com balanço × sem balanço por parâmetros informados', ToolFeatureTier::Essential), new ToolFeature('memory', 'Memória dos dois limites estimados', ToolFeatureTier::Essential), new ToolFeature('planning', 'Simulação de escrituração/balanço, pró-labore, tributos, distribuição acumulada e planejamento anual', ToolFeatureTier::Plus), new ToolFeature('report', 'Relatório PDF/XLSX', ToolFeatureTier::Plus)], persistence: ToolPersistencePolicy::disabled(), export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'xlsx']), sharing: ToolSharingPolicy::disabled(), sensitiveData: ToolSensitiveDataPolicy::none());
+        return new ToolManifest(slug: self::SLUG, name: 'Owner Distribution Planner', description: 'Compare a planned owner distribution with cash and retained-earnings capacity and project future capacity.', category: ToolCategory::Fiscal, icon: 'bi-diagram-3', routeName: 'tools.owner-distribution-planner.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Beta, position: 204, featured: true, supportsHistory: false, storesSensitiveData: false, keywords: ['owner distribution', 'distribution planner', 'retained earnings', 'cash reserve'], capabilities: [ToolCapability::Export], features: [new ToolFeature('comparison', 'Distribution capacity comparison', ToolFeatureTier::Essential), new ToolFeature('memory', 'Calculation details for capacity limits', ToolFeatureTier::Essential), new ToolFeature('planning', 'Extended annual distribution planning', ToolFeatureTier::Plus), new ToolFeature('report', 'PDF/XLSX report', ToolFeatureTier::Plus)], persistence: ToolPersistencePolicy::disabled(), export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'xlsx']), sharing: ToolSharingPolicy::disabled(), sensitiveData: ToolSensitiveDataPolicy::none());
     }
 
     public function analyticsJourney(): ToolAnalyticsJourney
     {
-        return new ToolAnalyticsJourney(toolSlug: self::SLUG, forms: [new ToolAnalyticsForm(key: 'main', steps: ['comparison', 'planning'], fields: [new ToolAnalyticsField('annual_revenue', 'comparison', selector: '[name="annual_revenue"]'), new ToolAnalyticsField('accounting_profit', 'comparison', selector: '[name="accounting_profit"]'), new ToolAnalyticsField('reference_margin', 'comparison', selector: '[name="reference_margin"]'), new ToolAnalyticsField('taxes_on_revenue', 'comparison', selector: '[name="taxes_on_revenue"]'), new ToolAnalyticsField('monthly_pro_labore','planning',selector: '[name="monthly_pro_labore"]')], actions: ['calculate', 'export'], selector: 'form[action*="simulador-distribuicao-lucros-balanco"]', resultSelector: '[data-analytics-result="main"]')]);
+        return new ToolAnalyticsJourney(toolSlug: self::SLUG, forms: [new ToolAnalyticsForm(key: 'main', steps: ['comparison', 'planning'], fields: [new ToolAnalyticsField('annual_revenue', 'comparison', selector: '[name="annual_revenue"]'), new ToolAnalyticsField('accounting_profit', 'comparison', selector: '[name="accounting_profit"]'), new ToolAnalyticsField('reference_margin', 'comparison', selector: '[name="reference_margin"]'), new ToolAnalyticsField('taxes_on_revenue', 'comparison', selector: '[name="taxes_on_revenue"]'), new ToolAnalyticsField('monthly_pro_labore','planning',selector: '[name="monthly_pro_labore"]')], actions: ['calculate', 'export'], selector: 'form[action*="owner-distribution-planner"]', resultSelector: '[data-analytics-result="main"]')]);
     }
 }

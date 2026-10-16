@@ -31,7 +31,7 @@ use App\Core\Tools\Infrastructure\Enums\SensitiveDataMode;
 
 final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'emissor-de-recibos';
+    public const SLUG = 'receipt-generator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -44,7 +44,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'emissor-de-recibos',
+            toolSlug: 'receipt-generator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -74,18 +74,18 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Emissor de Recibos',
-            description: 'Gere recibos completos, identificados e prontos para exportação, com validação de pagador, recebedor e valor por extenso.',
+            name: 'Receipt Generator',
+            description: 'Create a printable payment receipt in U.S. dollars with payer, payee, amount, date, and description.',
             category: ToolCategory::Generators,
             icon: 'bi-receipt',
-            routeName: 'tools.emissor-de-recibos.index',
+            routeName: 'tools.receipt-generator.index',
             vertical: 'contabilidade',
             version: '0.6.0',
             access: ToolAccess::Free,
             status: ToolStatus::Beta,
             supportsHistory: true,
             storesSensitiveData: true,
-            keywords: ['recibo', 'recibo de pagamento', 'recibo online', 'comprovante de pagamento', 'gerar recibo'],
+            keywords: ['receipt generator', 'payment receipt', 'printable receipt', 'receipt template'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -95,7 +95,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
             features: [
                 new ToolFeature('receipt_generation', 'Geração completa do recibo', ToolFeatureTier::Essential),
                 new ToolFeature('party_validation', 'Validação de pagador e recebedor', ToolFeatureTier::Essential),
-                new ToolFeature('amount_in_words', 'Valor monetário por extenso', ToolFeatureTier::Essential),
+                new ToolFeature('amount_in_words', 'Amount monetário por extenso', ToolFeatureTier::Essential),
                 new ToolFeature('pdf_export', 'Exportação do recibo em PDF', ToolFeatureTier::Essential),
                 new ToolFeature('history', 'Histórico e reaproveitamento de recibos', ToolFeatureTier::Plus),
                 new ToolFeature('saved_profiles', 'Perfis reutilizáveis de pagadores e recebedores', ToolFeatureTier::Plus),
@@ -131,6 +131,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasMigrations
 
     public function viewsNamespace(): string
     {
-        return 'tools-emissor-de-recibos';
+        return 'tools-receipt-generator';
     }
 }

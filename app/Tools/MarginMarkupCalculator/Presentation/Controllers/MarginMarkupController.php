@@ -50,7 +50,7 @@ final class MarginMarkupController extends Controller
 
     public function index(): View
     {
-        return view('tools-calculadora-margem-markup::index', [
+        return view('tools-margin-markup-calculator::index', [
             'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
         ]);
     }
@@ -88,7 +88,7 @@ final class MarginMarkupController extends Controller
 
             $resultData = $result->toArray();
             $integrations->publish(new IntegrationPayload(
-                sourceTool: 'calculadora-margem-markup',
+                sourceTool: 'margin-markup-calculator',
                 contractName: 'pricing-scenario',
                 contractVersion: 1,
                 data: [
@@ -108,7 +108,7 @@ final class MarginMarkupController extends Controller
 
             $request->flash();
 
-            return view('tools-calculadora-margem-markup::index', [
+            return view('tools-margin-markup-calculator::index', [
                 'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
                 'calculationResult' => $resultData,
             ]);
@@ -159,7 +159,7 @@ final class MarginMarkupController extends Controller
 
         $request->flash();
 
-        return view('tools-calculadora-margem-markup::index', [
+        return view('tools-margin-markup-calculator::index', [
             'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
             'batchCalculationResults' => $results,
         ]);
@@ -199,7 +199,7 @@ final class MarginMarkupController extends Controller
 
         $request->flash();
 
-        return view('tools-calculadora-margem-markup::index', [
+        return view('tools-margin-markup-calculator::index', [
             'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
             'scenarioSimulationResults' => $results,
         ]);
@@ -230,7 +230,7 @@ final class MarginMarkupController extends Controller
             durationMs: (int) ((hrtime(true) - $startedAt) / 1_000_000),
         );
 
-        return $exporter->csv('margem-markup.csv', ['Campo', 'Valor'], collect([
+        return $exporter->csv('margem-markup.csv', ['Campo', 'Amount'], collect([
             'Data de referência' => $validated['reference_date'],
             'Custo total' => $result['total_cost'],
             'Preço de venda' => $result['sale_price'],
@@ -321,7 +321,7 @@ final class MarginMarkupController extends Controller
 
     public function history(Request $request, ListMarginMarkupHistory $action): View
     {
-        return view('tools-calculadora-margem-markup::history.index', [
+        return view('tools-margin-markup-calculator::history.index', [
             'runs' => $action->execute(
                 (int) $request->user()->getAuthIdentifier(),
                 $request->filled('from') ? $request->string('from')->toString() : null,
@@ -337,7 +337,7 @@ final class MarginMarkupController extends Controller
         ShowMarginMarkupHistory $action,
     ): View {
         return view(
-            'tools-calculadora-margem-markup::history.show',
+            'tools-margin-markup-calculator::history.show',
             $action->execute($run, (int) $request->user()->getAuthIdentifier()),
         );
     }
@@ -347,7 +347,7 @@ final class MarginMarkupController extends Controller
         string $run,
         RepeatMarginMarkupHistory $action,
     ): RedirectResponse {
-        return redirect()->route('tools.calculadora-margem-markup.index')
+        return redirect()->route('tools.margin-markup-calculator.index')
             ->withInput($action->execute($run, (int) $request->user()->getAuthIdentifier()))
             ->with('history_message', 'Os dados foram carregados. Revise-os antes de calcular novamente.');
     }
@@ -392,7 +392,7 @@ final class MarginMarkupController extends Controller
     ): RedirectResponse {
         $action->execute($run, (int) $request->user()->getAuthIdentifier());
 
-        return redirect()->route('tools.calculadora-margem-markup.history.index')
+        return redirect()->route('tools.margin-markup-calculator.history.index')
             ->with('history_message', 'Registro removido do histórico.');
     }
 
@@ -406,7 +406,7 @@ final class MarginMarkupController extends Controller
 
         $request->session()->flash('product_import_preview', $preview);
 
-        return redirect()->route('tools.calculadora-margem-markup.index');
+        return redirect()->route('tools.margin-markup-calculator.index');
     }
 
     public function processImport(ProcessProductImportRequest $request, ProcessProductImport $action): RedirectResponse
@@ -420,7 +420,7 @@ final class MarginMarkupController extends Controller
         $request->session()->flashInput(['products' => $result['products']]);
         $request->session()->flash('product_import_result', $result);
 
-        return redirect()->route('tools.calculadora-margem-markup.index');
+        return redirect()->route('tools.margin-markup-calculator.index');
     }
 
     public function importTemplate(TabularExportService $exporter): StreamedResponse

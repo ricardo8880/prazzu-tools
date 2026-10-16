@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'emissor-de-recibos',
+            toolSlug: 'receipt-generator',
             nature: ToolNature::Generation,
             normativeDependency: NormativeDependency::Low,
             personalDataExposure: PersonalDataExposure::Common,

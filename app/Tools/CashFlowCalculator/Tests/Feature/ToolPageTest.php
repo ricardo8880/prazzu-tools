@@ -10,7 +10,7 @@ final class ToolPageTest extends TestCase
 {
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.fluxo-de-caixa.index'))
+        $this->get(route('tools.cash-flow-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Fluxo de Caixa');
     }

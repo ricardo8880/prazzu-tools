@@ -1,57 +1,15 @@
 @extends('layouts.app')
-
-@section('title', 'Detalhes do cálculo de rescisão — Prazzu Tools')
-
+@section('title', 'Final Pay & Severance Details | Prazzu Tools')
 @section('content')
 @php($result = $run->result ?? [])
 <div class="prazzu-page tool-page">
-    <nav aria-label="Breadcrumb" class="mb-3"><ol class="breadcrumb prazzu-breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li><li class="breadcrumb-item"><a href="{{ route('tools.calculadora-de-rescisao.history.index') }}">Histórico</a></li><li class="breadcrumb-item active" aria-current="page">Detalhes</li></ol></nav>
-
-    <x-tools.intro icon="file-earmark-text" tone="pink" title="Detalhes da rescisão" :description="($result['termination_type_label'] ?? 'Rescisão trabalhista').' — realizado em '.($run->finishedAt?->format('d/m/Y H:i') ?? '—').'.'" badge="Cálculo salvo" badge-class="badge text-bg-success mb-2">
-        <x-slot:actions><div class="text-lg-end"><small class="text-body-secondary d-block">Valor líquido estimado</small><strong class="fs-3 text-success">{{ $result['net_total'] ?? '—' }}</strong></div></x-slot:actions>
+    <nav aria-label="Breadcrumb" class="mb-3"><ol class="breadcrumb prazzu-breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li><li class="breadcrumb-item"><a href="{{ route('tools.final-pay-severance-calculator.history.index') }}">History</a></li><li class="breadcrumb-item active">Details</li></ol></nav>
+    <x-tools.intro icon="file-earmark-text" tone="pink" title="Final Pay & Severance Details" :description="'Saved calculation from '.($run->finishedAt?->format('M j, Y g:i A') ?? '—')" badge="Saved calculation" badge-class="badge text-bg-success mb-2">
+        <x-slot:actions><div class="text-lg-end"><small class="text-body-secondary d-block">Estimated net final pay</small><strong class="fs-3 text-success">{{ $result['net_final_pay'] ?? ($result['net_total'] ?? '—') }}</strong></div></x-slot:actions>
     </x-tools.intro>
-
-    <nav class="mb-4" aria-label="Navegação da Calculadora de Rescisão Trabalhista">
-        <div class="nav nav-pills flex-column flex-sm-row gap-2">
-            <a class="nav-link" href="{{ route('tools.calculadora-de-rescisao.index') }}"><i class="bi bi-calculator me-1"></i>Calculadora</a>
-            <a class="nav-link active" href="{{ route('tools.calculadora-de-rescisao.history.index') }}" aria-current="page"><i class="bi bi-clock-history me-1"></i>Histórico</a>
-        </div>
-    </nav>
-
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.repeat', $run->id) }}">@csrf<button class="btn btn-primary" type="submit"><i class="bi bi-arrow-repeat me-1"></i>Repetir cálculo</button></form>
-        <a class="btn btn-outline-primary" target="_blank" href="{{ route('tools.calculadora-de-rescisao.history.pdf', $run->id) }}"><i class="bi bi-file-earmark-pdf me-1"></i>Exportar PDF</a>
-        <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-de-rescisao.history.index') }}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
-        <form method="post" action="{{ route('tools.calculadora-de-rescisao.history.destroy', $run->id) }}" data-confirm="Excluir este cálculo do histórico?">@csrf @method('DELETE')<button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash me-1"></i>Excluir</button></form>
-    </div>
-
-    <section class="prazzu-tool-card mb-4">
-        <h2 class="prazzu-section-title">Resumo</h2>
-        <div class="row g-3">
-            @foreach ([
-                'Total bruto' => 'gross_total', 'Total de descontos' => 'total_discounts', 'Valor líquido' => 'net_total',
-                'FGTS rescisório' => 'fgts_termination_deposit', 'Multa ou indenização' => 'fgts_penalty', 'FGTS disponível estimado' => 'estimated_fgts_available',
-            ] as $label => $key)
-                <div class="col-12 col-md-6 col-xl-4"><div class="border rounded-3 p-3 h-100"><small class="text-body-secondary d-block">{{ $label }}</small><strong class="fs-5">{{ $result[$key] ?? '—' }}</strong></div></div>
-            @endforeach
-        </div>
-    </section>
-
-    <section class="prazzu-tool-card">
-        <h2 class="prazzu-section-title">Verbas e descontos</h2>
-        <div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th>Item</th><th class="text-end">Valor</th></tr></thead><tbody>
-            @foreach ([
-                'Saldo de salário' => 'salary_balance', 'Férias vencidas' => 'overdue_vacation', '1/3 das férias vencidas' => 'overdue_vacation_third',
-                'Férias proporcionais' => 'proportional_vacation', '1/3 das férias proporcionais' => 'proportional_vacation_third', '13º proporcional' => 'proportional_thirteenth_salary',
-                'Aviso-prévio' => 'notice_pay', 'Indenização do art. 479' => 'article_479_indemnity', 'Indenizações adicionais' => 'extraordinary_indemnities',
-                'INSS sobre salário' => 'inss_salary', 'INSS sobre 13º' => 'inss_thirteenth', 'IRRF sobre salário' => 'irrf_salary', 'IRRF sobre 13º' => 'irrf_thirteenth',
-                'Desconto de aviso' => 'notice_discount', 'Desconto do art. 480' => 'article_480_discount', 'Outros descontos' => 'other_discounts',
-            ] as $label => $key)
-                <tr><td>{{ $label }}</td><td class="text-end fw-semibold">{{ $result[$key] ?? '—' }}</td></tr>
-            @endforeach
-        </tbody></table></div>
-    </section>
-
-    <div class="alert alert-secondary mt-4 mb-0">Versão da ferramenta {{ $run->toolVersion }}, regra {{ $run->ruleVersion }} e data de referência {{ $run->referenceDate->format('d/m/Y') }}.</div>
+    <div class="d-flex flex-wrap gap-2 mb-4"><form method="post" action="{{ route('tools.final-pay-severance-calculator.history.repeat', $run->id) }}">@csrf<button class="btn btn-primary">Reuse inputs</button></form><a class="btn btn-outline-primary" target="_blank" href="{{ route('tools.final-pay-severance-calculator.history.pdf', $run->id) }}">Export PDF</a><a class="btn btn-outline-secondary" href="{{ route('tools.final-pay-severance-calculator.history.index') }}">Back</a><form method="post" action="{{ route('tools.final-pay-severance-calculator.history.destroy', $run->id) }}" data-confirm="Delete this saved calculation?">@csrf @method('DELETE')<button class="btn btn-outline-danger">Delete</button></form></div>
+    <section class="prazzu-tool-card"><h2 class="prazzu-section-title">Summary</h2><div class="table-responsive"><table class="table table-striped"><tbody>
+    @foreach (['Regular pay due'=>'regular_pay_due','PTO payout'=>'pto_payout','Severance pay'=>'severance_pay','Bonus / commission'=>'bonus_commission_due','Gross final pay'=>'gross_final_pay','Federal withholding'=>'federal_withholding','State/local withholding'=>'state_local_withholding','Other deductions'=>'other_deductions','Estimated net final pay'=>'net_final_pay'] as $label=>$key)<tr><th>{{ $label }}</th><td class="text-end">{{ $result[$key] ?? '—' }}</td></tr>@endforeach
+    </tbody></table></div></section>
 </div>
 @endsection

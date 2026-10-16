@@ -20,7 +20,7 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível.');
+            throw new InvalidArgumentException('Incompatible input.');
         }
 
         $burden = $input->salary->percentage($input->monthlyBurden);
@@ -32,27 +32,27 @@ final class Calculator implements ToolCalculator
         $memory = new CalculationMemory(
             schemaVersion: self::RULE_VERSION,
             steps: [
-                new CalculationMemoryStep('burden', 'Encargos e provisões mensais', 'salário × percentual informado', ['salary' => $input->salary->minorAmount(), 'monthly_burden' => $input->monthlyBurden->toDecimalString()], $burden->minorAmount(), 'Money::percentage, em centavos.'),
-                new CalculationMemoryStep('recurring', 'Custo mensal recorrente', 'salário + benefícios + encargos/provisões', ['salary' => $input->salary->minorAmount(), 'benefits' => $input->benefits->minorAmount(), 'burden' => $burden->minorAmount()], $recurring->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('one_off', 'Custos únicos', 'exame + recrutamento + equipamento + treinamento', ['exam' => $input->exam->minorAmount(), 'recruitment' => $input->recruitment->minorAmount(), 'equipment' => $input->equipment->minorAmount(), 'training' => $input->training->minorAmount()], $oneOff->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('first_year', 'Projeção do primeiro ano', '(custo recorrente × 12) + custos únicos', ['recurring' => $recurring->minorAmount(), 'one_off' => $oneOff->minorAmount()], $firstYear->minorAmount(), 'Valores monetários em centavos.'),
+                new CalculationMemoryStep('burden', 'Employer payroll burden', 'base wages × user-supplied employer burden rate', ['salary' => $input->salary->minorAmount(), 'monthly_burden' => $input->monthlyBurden->toDecimalString()], $burden->minorAmount(), 'Percentage of wages; monetary values in cents.'),
+                new CalculationMemoryStep('recurring', 'Recurring monthly employer cost', 'base wages + benefits + employer burden', ['salary' => $input->salary->minorAmount(), 'benefits' => $input->benefits->minorAmount(), 'burden' => $burden->minorAmount()], $recurring->minorAmount(), 'Monetary values in cents.'),
+                new CalculationMemoryStep('one_off', 'One-time hiring costs', 'screening/onboarding + recruiting + equipment + training', ['exam' => $input->exam->minorAmount(), 'recruitment' => $input->recruitment->minorAmount(), 'equipment' => $input->equipment->minorAmount(), 'training' => $input->training->minorAmount()], $oneOff->minorAmount(), 'Monetary values in cents.'),
+                new CalculationMemoryStep('first_year', 'First-year projection', '(recurring monthly cost × 12) + one-time hiring costs', ['recurring' => $recurring->minorAmount(), 'one_off' => $oneOff->minorAmount()], $firstYear->minorAmount(), 'Monetary values in cents.'),
             ],
-            assumptions: ['O percentual mensal de encargos e provisões é declarado pelo usuário e deve refletir o enquadramento real do empregador.'],
+            assumptions: ['The employer burden rate is supplied by the user and should include applicable employer payroll taxes, insurance, and other recurring employer costs.'],
             isEstimate: true,
         );
 
         return new ToolCalculationResult(
-            'simulador-admissao',
+            'new-hire-cost-calculator',
             self::RULE_VERSION,
             [
-                new ToolCalculationSummaryItem('first_month', 'Custo do primeiro mês', $firstMonth->formatPtBr()),
-                new ToolCalculationSummaryItem('recurring', 'Custo mensal recorrente', $recurring->formatPtBr()),
-                new ToolCalculationSummaryItem('one_off', 'Custos únicos de admissão', $oneOff->formatPtBr()),
-                new ToolCalculationSummaryItem('annual', 'Projeção do primeiro ano', $firstYear->formatPtBr()),
+                new ToolCalculationSummaryItem('first_month', 'First-month employer cost', $firstMonth->formatEnUs()),
+                new ToolCalculationSummaryItem('recurring', 'Recurring monthly employer cost', $recurring->formatEnUs()),
+                new ToolCalculationSummaryItem('one_off', 'One-time hiring costs', $oneOff->formatEnUs()),
+                new ToolCalculationSummaryItem('annual', 'First-year projection', $firstYear->formatEnUs()),
             ],
             [
                 'input' => $input->toArray(),
-                'checklist' => ['Documento de identificação e CPF', 'CTPS Digital e dados do eSocial', 'Comprovante de endereço', 'Dados bancários', 'ASO admissional', 'Contrato de trabalho', 'Ficha de registro', 'Declarações de dependentes e benefícios', 'Opção de vale-transporte, quando aplicável', 'Ciência de políticas e segurança do trabalho'],
+                'checklist' => ['Form I-9 and acceptable identity/work-authorization documents', 'Form W-4', 'Applicable state/local withholding forms', 'Direct-deposit or payroll instructions', 'Offer letter or employment agreement, when used', 'Benefits elections and beneficiary forms', 'Emergency contact information', 'Required workplace notices and policies', 'Background/screening steps only when lawful and applicable', 'E-Verify steps when required or voluntarily used'],
             ],
             calculationMemory: $memory,
         );

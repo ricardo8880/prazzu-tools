@@ -263,7 +263,7 @@ substitui `AcquisitionContext`, que continua representando origem/intenção de 
 
 ## Prova de expansão: segunda vertical
 
-O Lote 6 registra `rh` como segunda vertical real e adiciona `calculadora-turnover` como módulo normal de ferramenta. A prova não introduz namespace de aplicação, Analytics, Blog, SEO, Admin ou E2E específicos de RH.
+O Lote 6 registra `rh` como segunda vertical real e adiciona `employee-turnover-calculator` como módulo normal de ferramenta. A prova não introduz namespace de aplicação, Analytics, Blog, SEO, Admin ou E2E específicos de RH.
 
 A distribuição atual do inventário oficial é:
 

@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('gerador-de-contratos', 'company_autofill')]
-    #[CoversPlusFeature('gerador-de-contratos', 'contract_library')]
-    #[CoversPlusFeature('gerador-de-contratos', 'favorites')]
-    #[CoversPlusFeature('gerador-de-contratos', 'history')]
-    #[CoversPlusFeature('gerador-de-contratos', 'smart_clauses')]
-    #[CoversPlusFeature('gerador-de-contratos', 'version_comparison')]
+    #[CoversPlusFeature('contract-generator', 'company_autofill')]
+    #[CoversPlusFeature('contract-generator', 'contract_library')]
+    #[CoversPlusFeature('contract-generator', 'favorites')]
+    #[CoversPlusFeature('contract-generator', 'history')]
+    #[CoversPlusFeature('contract-generator', 'smart_clauses')]
+    #[CoversPlusFeature('contract-generator', 'version_comparison')]
     public function test_contract_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $features = ['contract_library', 'smart_clauses', 'favorites', 'company_autofill', 'history', 'version_comparison'];

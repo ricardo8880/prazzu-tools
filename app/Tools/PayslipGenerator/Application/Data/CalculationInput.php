@@ -9,10 +9,36 @@ use App\Core\Tools\Contracts\ToolCalculationInput;
 
 final readonly class CalculationInput implements ToolCalculationInput
 {
-    public function __construct(public string $name, public string $document, public string $employer, public string $competence, public Money $salary, public Money $otherEarnings, public Money $inss, public Money $irrf, public Money $otherDeductions) {}
+    public function __construct(
+        public string $employeeName,
+        public string $employeeId,
+        public string $employer,
+        public string $payPeriod,
+        public Money $regularPay,
+        public Money $overtimePay,
+        public Money $otherEarnings,
+        public Money $federalIncomeTax,
+        public Money $socialSecurity,
+        public Money $medicare,
+        public Money $stateLocalTax,
+        public Money $otherDeductions,
+    ) {}
 
     public function toArray(): array
     {
-        return ['name' => $this->name, 'document' => $this->document, 'employer' => $this->employer, 'competence' => $this->competence, 'salary' => $this->salary->minorAmount(), 'other_earnings' => $this->otherEarnings->minorAmount(), 'inss' => $this->inss->minorAmount(), 'irrf' => $this->irrf->minorAmount(), 'other_deductions' => $this->otherDeductions->minorAmount()];
+        return [
+            'employee_name' => $this->employeeName,
+            'employee_id' => $this->employeeId,
+            'employer' => $this->employer,
+            'pay_period' => $this->payPeriod,
+            'regular_pay' => $this->regularPay->minorAmount(),
+            'overtime_pay' => $this->overtimePay->minorAmount(),
+            'other_earnings' => $this->otherEarnings->minorAmount(),
+            'federal_income_tax' => $this->federalIncomeTax->minorAmount(),
+            'social_security' => $this->socialSecurity->minorAmount(),
+            'medicare' => $this->medicare->minorAmount(),
+            'state_local_tax' => $this->stateLocalTax->minorAmount(),
+            'other_deductions' => $this->otherDeductions->minorAmount(),
+        ];
     }
 }

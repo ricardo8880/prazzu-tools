@@ -6,9 +6,6 @@ O lote foi produzido após reconstruir o ZIP original e reaplicar, em ordem, os 
 
 ## Contratos certificados
 
-- `calculadora-irpj-csll-lucro-presumido`: `periodicity`, `multiple_activities`, `scenario_comparison`, `carry_forward_limit`, `credits` e `export`.
-- `calculadora-pis-cofins`: `aggregate_credits`, `multiple_operations`, `credit_breakdown`, `comparison` e `export`.
-- `calculadora-icms-st`: `adjusted_mva`, `fcp`, `interstate`, `multiple_items` e `export`.
 
 Cada contrato possui execução observável no fluxo da ferramenta, autorização individual pelo Core, cobertura Free × Plus em modo monetizado e teste comportamental marcado com `CoversPlusFeature`.
 

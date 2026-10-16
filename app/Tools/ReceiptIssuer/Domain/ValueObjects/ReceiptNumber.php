@@ -15,11 +15,11 @@ final readonly class ReceiptNumber
         $normalized = strtoupper(trim($value));
 
         if ($normalized === '' || mb_strlen($normalized) > 40) {
-            throw new InvalidArgumentException('O número do recibo deve ter entre 1 e 40 caracteres.');
+            throw new InvalidArgumentException('Receipt number must contain 1 to 40 characters.');
         }
 
         if (! preg_match('/^[A-Z0-9][A-Z0-9.\/_-]*$/', $normalized)) {
-            throw new InvalidArgumentException('O número do recibo contém caracteres inválidos.');
+            throw new InvalidArgumentException('Receipt number contains invalid characters.');
         }
 
         return new self($normalized);

@@ -15,8 +15,8 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('fluxo-de-caixa', $manifest->slug);
-        self::assertSame('tools.fluxo-de-caixa.index', $manifest->routeName);
+        self::assertSame('cash-flow-calculator', $manifest->slug);
+        self::assertSame('tools.cash-flow-calculator.index', $manifest->routeName);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
         self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));

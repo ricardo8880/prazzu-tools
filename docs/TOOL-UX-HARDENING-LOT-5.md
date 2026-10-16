@@ -34,7 +34,6 @@ Os componentes `x-tools.form.input` e `x-tools.form.select` agora:
 - relacionam o campo à mensagem por `aria-describedby`;
 - preservam simultaneamente o texto de ajuda no mesmo `aria-describedby` quando existe `help`.
 
-O `x-tools.validation-summary` continua com `role="alert"` e passa a ser focável programaticamente com `tabindex="-1"`. As seis páginas legadas que ainda renderizam resumo próprio (`FederalPaymentGuideGenerator`, `MarginMarkupCalculator`, `ReceiptIssuer`, `AccountingFeesCalculator`, `VacationCalculator` e `LaborTerminationCalculator`) receberam o mesmo `data-testid`/`tabindex`, sem migração estrutural forçada para o wrapper moderno. Quando a página retorna com erros, o JavaScript compartilhado move o foco para esse resumo, sem alterar a validação Laravel ou o payload enviado.
 
 ## Feedback durante processamento
 
@@ -53,11 +52,8 @@ O botão não é desabilitado nativamente antes da submissão, evitando remover 
 A auditoria de todas as 50 views oficiais encontrou sete tabelas sem `table-responsive`:
 
 - `PayslipGenerator`;
-- `LateDasCalculator`;
 - `LaborChargesCalculator`;
 - `IncomeStatementGenerator`;
-- `EmployerInssCalculator`;
-- `ProLaboreSimulator`;
 - `BreakEvenCalculator`.
 
 Todas foram protegidas com o wrapper responsivo Bootstrap já utilizado pelas demais ferramentas. Conteúdo, valores, colunas e ordem dos resultados não mudaram.

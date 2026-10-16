@@ -11,10 +11,10 @@ final class ToolPageTest extends TestCase
 {
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.custo-funcionario-clt.index'))
+        $this->get(route('tools.employee-cost-calculator.index'))
             ->assertOk()
             ->assertSee('<!doctype html>', false)
-            ->assertSee('<link rel="canonical" href="'.route('tools.custo-funcionario-clt.index').'">', false)
+            ->assertSee('<link rel="canonical" href="'.route('tools.employee-cost-calculator.index').'">', false)
             ->assertSee('Calculadora de Custo de Funcionário CLT');
     }
 
@@ -22,13 +22,13 @@ final class ToolPageTest extends TestCase
     {
         $payload = $this->employeePayload();
 
-        $this->post(route('tools.custo-funcionario-clt.calculate'), $payload)
+        $this->post(route('tools.employee-cost-calculator.calculate'), $payload)
             ->assertOk()
             ->assertSee('Custo mensal provisionado')
             ->assertSee('Custo por hora')
             ->assertSee('Memória de cálculo');
 
-        $this->post(route('tools.custo-funcionario-clt.print'), $payload)
+        $this->post(route('tools.employee-cost-calculator.print'), $payload)
             ->assertOk()
             ->assertSee('<!doctype html>', false)
             ->assertSee('Relatório de Custo de Funcionário CLT')
@@ -36,8 +36,8 @@ final class ToolPageTest extends TestCase
             ->assertSee('Custo anual projetado');
     }
 
-    #[CoversPlusFeature('custo-funcionario-clt', 'batch_processing')]
-    #[CoversPlusFeature('custo-funcionario-clt', 'professional_report')]
+    #[CoversPlusFeature('employee-cost-calculator', 'batch_processing')]
+    #[CoversPlusFeature('employee-cost-calculator', 'professional_report')]
     public function test_batch_print_and_scenario_comparison_have_visible_results(): void
     {
         $employee = [
@@ -45,7 +45,7 @@ final class ToolPageTest extends TestCase
             'role' => 'Analista',
         ];
 
-        $this->post(route('tools.custo-funcionario-clt.batch.print'), [
+        $this->post(route('tools.employee-cost-calculator.batch.print'), [
             'scenario_name' => 'Equipe atual',
             'employees' => [$employee],
         ])
@@ -57,7 +57,7 @@ final class ToolPageTest extends TestCase
         $alternative = $employee;
         $alternative['salary'] = '5.500,00';
 
-        $this->post(route('tools.custo-funcionario-clt.scenarios.compare'), [
+        $this->post(route('tools.employee-cost-calculator.scenarios.compare'), [
             'scenarios' => [
                 ['scenario_name' => 'Atual', 'employees' => [$employee]],
                 ['scenario_name' => 'Alternativo', 'employees' => [$alternative]],
@@ -69,12 +69,12 @@ final class ToolPageTest extends TestCase
             ->assertSee('Alternativo');
     }
 
-    #[CoversPlusFeature('custo-funcionario-clt', 'scenarios')]
+    #[CoversPlusFeature('employee-cost-calculator', 'scenarios')]
     public function test_two_cost_scenarios_are_compared(): void
     {
         $employee = [...$this->employeePayload(), 'role' => 'Analista'];
         $alternative = [...$employee, 'salary' => '5.500,00'];
-        $this->post(route('tools.custo-funcionario-clt.scenarios.compare'), [
+        $this->post(route('tools.employee-cost-calculator.scenarios.compare'), [
             'scenarios' => [
                 ['scenario_name' => 'Atual', 'employees' => [$employee]],
                 ['scenario_name' => 'Alternativo', 'employees' => [$alternative]],
@@ -82,17 +82,17 @@ final class ToolPageTest extends TestCase
         ])->assertOk()->assertSee('Comparação de cenários')->assertSee('Atual')->assertSee('Alternativo');
     }
 
-    #[CoversPlusFeature('custo-funcionario-clt', 'csv_export')]
-    #[CoversPlusFeature('custo-funcionario-clt', 'xlsx_export')]
+    #[CoversPlusFeature('employee-cost-calculator', 'csv_export')]
+    #[CoversPlusFeature('employee-cost-calculator', 'xlsx_export')]
     public function test_csv_and_xlsx_exports_use_the_shared_download_formats(): void
     {
         $payload = $this->employeePayload();
 
-        $this->post(route('tools.custo-funcionario-clt.export.csv'), $payload)
+        $this->post(route('tools.employee-cost-calculator.export.csv'), $payload)
             ->assertOk()
             ->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
 
-        $xlsx = $this->post(route('tools.custo-funcionario-clt.export.xlsx'), $payload)
+        $xlsx = $this->post(route('tools.employee-cost-calculator.export.xlsx'), $payload)
             ->assertOk()
             ->assertHeader(
                 'Content-Type',
@@ -101,7 +101,7 @@ final class ToolPageTest extends TestCase
 
         self::assertStringStartsWith('PK', (string) $xlsx->getContent());
 
-        $this->get(route('tools.custo-funcionario-clt.import.template.xlsx'))
+        $this->get(route('tools.employee-cost-calculator.import.template.xlsx'))
             ->assertOk()
             ->assertHeader(
                 'Content-Type',

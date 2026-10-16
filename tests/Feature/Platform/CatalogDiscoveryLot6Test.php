@@ -21,7 +21,7 @@ final class CatalogDiscoveryLot6Test extends TestCase
         $results = $this->app->make(ToolCatalog::class)->search('líquido salário');
 
         self::assertNotEmpty($results);
-        self::assertSame('calculadora-salario-liquido', $results->first()['slug']);
+        self::assertSame('take-home-pay-calculator', $results->first()['slug']);
     }
 
     public function test_catalog_feeds_favorites_recent_and_featured_signals_to_smart_search(): void
@@ -30,12 +30,12 @@ final class CatalogDiscoveryLot6Test extends TestCase
 
         UserToolFavorite::query()->create([
             'user_id' => $user->id,
-            'tool_slug' => 'calculadora-salario-liquido',
+            'tool_slug' => 'take-home-pay-calculator',
         ]);
 
         ToolRun::query()->create([
             'user_id' => $user->id,
-            'tool_slug' => 'simulador-fator-r',
+            'tool_slug' => 'working-capital-calculator',
             'tool_version' => '1.0.0',
             'rule_version' => '2026.1.0',
             'reference_date' => '2026-08-19',
@@ -50,16 +50,16 @@ final class CatalogDiscoveryLot6Test extends TestCase
 
         $response = $this->actingAs($user)->get(route('tools.index'))->assertOk();
 
-        self::assertSame(['calculadora-salario-liquido'], $response->viewData('favoriteToolSlugs')->all());
-        self::assertContains('simulador-fator-r', $response->viewData('recentToolSlugs')->all());
+        self::assertSame(['take-home-pay-calculator'], $response->viewData('favoriteToolSlugs')->all());
+        self::assertContains('working-capital-calculator', $response->viewData('recentToolSlugs')->all());
         self::assertNotEmpty($response->viewData('featuredToolSlugs'));
 
         $response
             ->assertSee('Seus atalhos')
             ->assertSee('Favorita')
             ->assertSee('Usada recentemente')
-            ->assertSee('calculadora-salario-liquido', false)
-            ->assertSee('simulador-fator-r', false);
+            ->assertSee('take-home-pay-calculator', false)
+            ->assertSee('working-capital-calculator', false);
     }
 
     public function test_personalized_shortcuts_do_not_compete_with_filtered_catalog_results(): void
@@ -68,7 +68,7 @@ final class CatalogDiscoveryLot6Test extends TestCase
 
         UserToolFavorite::query()->create([
             'user_id' => $user->id,
-            'tool_slug' => 'calculadora-salario-liquido',
+            'tool_slug' => 'take-home-pay-calculator',
         ]);
 
         $this->actingAs($user)

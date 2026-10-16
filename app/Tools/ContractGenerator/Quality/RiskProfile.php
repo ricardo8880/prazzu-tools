@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'gerador-de-contratos',
+            toolSlug: 'contract-generator',
             nature: ToolNature::Generation,
             normativeDependency: NormativeDependency::High,
             personalDataExposure: PersonalDataExposure::Common,

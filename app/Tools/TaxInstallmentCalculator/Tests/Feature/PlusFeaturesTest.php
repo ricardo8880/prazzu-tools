@@ -19,8 +19,8 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-parcelamento-tributario', 'balance_evolution')]
-    #[CoversPlusFeature('calculadora-parcelamento-tributario', 'report')]
+    #[CoversPlusFeature('irs-payment-plan-calculator', 'balance_evolution')]
+    #[CoversPlusFeature('irs-payment-plan-calculator', 'report')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

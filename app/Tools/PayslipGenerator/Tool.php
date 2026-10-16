@@ -41,7 +41,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'gerador-holerite',
+            toolSlug: 'pay-stub-generator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -60,12 +60,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'gerador-holerite',
-            name: 'Gerador de Holerite',
-            description: 'Gere holerite com proventos, descontos e líquido para impressão ou PDF.',
+            slug: 'pay-stub-generator',
+            name: 'Pay Stub Generator',
+            description: 'Generate an informational pay stub from user-entered earnings, taxes, and deductions.',
             category: ToolCategory::Documents,
             icon: 'bi-file-earmark-person',
-            routeName: 'tools.gerador-holerite.index',
+            routeName: 'tools.pay-stub-generator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -73,7 +73,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 210,
             supportsHistory: true,
             storesSensitiveData: true,
-            keywords: ['holerite', 'contracheque', 'demonstrativo de pagamento', 'proventos', 'descontos', 'salário'],
+            keywords: ['pay stub generator', 'paycheck stub', 'gross pay', 'net pay'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
@@ -81,8 +81,8 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                 ToolCapability::SensitiveData,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
+                new ToolFeature('spreadsheet_export', 'Advanced Excel export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['json', 'pdf', 'xlsx']),
@@ -108,6 +108,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-gerador-holerite';
+        return 'tools-pay-stub-generator';
     }
 }

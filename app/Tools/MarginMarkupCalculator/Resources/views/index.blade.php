@@ -4,8 +4,8 @@
 @section('meta_description', 'Calcule preço de venda, margem, markup, impostos, comissões, taxas e lucro.')
 
 @section('content')
-<div class="prazzu-page tool-page" data-tool="calculadora-margem-markup" data-testid="tool-page-calculadora-margem-markup">
-    <x-tools.trust-seo slug="calculadora-margem-markup" :show-content="false" />
+<div class="prazzu-page tool-page" data-tool="margin-markup-calculator" data-testid="tool-page-margin-markup-calculator">
+    <x-tools.trust-seo slug="margin-markup-calculator" :show-content="false" />
     <nav aria-label="Breadcrumb" class="mb-3">
         <ol class="breadcrumb prazzu-breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
@@ -17,7 +17,7 @@
     <x-tools.intro icon="percent" title="Calculadora de Margem, Markup e Formação de Preço" description="Monte um preço de venda considerando custos, despesas, impostos, comissões e taxas." badge="Grátis">
         <x-slot:actions>
             @auth
-                <a class="btn btn-outline-primary" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>
+                <a class="btn btn-outline-primary" href="{{ route('tools.margin-markup-calculator.history.index') }}"><i class="bi bi-clock-history me-1"></i>Histórico</a>
             @endauth
         </x-slot:actions>
     </x-tools.intro>
@@ -42,7 +42,7 @@
             <p class="text-body-secondary mb-0">Preencha somente os campos aplicáveis ao seu negócio.</p>
         </div>
 
-        <form method="post" action="{{ route('tools.calculadora-margem-markup.calculate') }}" class="row g-3">
+        <form method="post" action="{{ route('tools.margin-markup-calculator.calculate') }}" class="row g-3">
             @csrf
 
             <div class="col-12 col-md-4">
@@ -107,7 +107,7 @@
 
             <div class="col-12 d-flex flex-wrap gap-2 pt-2">
                 <button class="btn btn-primary prazzu-btn-primary" type="submit"><i class="bi bi-calculator me-1"></i> Calcular preço</button>
-                <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-margem-markup.index') }}"><i class="bi bi-eraser me-1"></i> Limpar</a>
+                <a class="btn btn-outline-secondary" href="{{ route('tools.margin-markup-calculator.index') }}"><i class="bi bi-eraser me-1"></i> Clear</a>
             </div>
         </form>
     </section>
@@ -121,7 +121,7 @@
             <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3 mb-3">
                 <div>
                     <h2 id="calculation-result-title" class="prazzu-section-title mb-1">Resultado da formação de preço</h2>
-                    <p class="text-body-secondary mb-0">Valores estimados com base nos dados informados.</p>
+                    <p class="text-body-secondary mb-0">Amounts estimados com base nos dados informados.</p>
                 </div>
                 <span class="badge text-bg-success">Cálculo concluído</span>
             </div>
@@ -144,7 +144,7 @@
 
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
-                    <h3 class="h5 card-title">Valores descontados da venda</h3>
+                    <h3 class="h5 card-title">Amounts descontados da venda</h3>
                     <div class="table-responsive">
                         <table class="table table-sm align-middle mb-0">
                             <tbody>
@@ -161,7 +161,7 @@
             @if (!empty($result['calculation_memory']['steps']))
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
-                        <h3 class="h5 card-title">Memória de cálculo</h3>
+                        <h3 class="h5 card-title">Calculation details</h3>
                         <div class="table-responsive">
                             <table class="table table-sm align-middle mb-0">
                                 <tbody>
@@ -180,23 +180,23 @@
             @endif
 
             <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
-                <form method="post" action="{{ route('tools.calculadora-margem-markup.export') }}">
+                <form method="post" action="{{ route('tools.margin-markup-calculator.export') }}">
                     @csrf
                     @foreach (['reference_date','base_cost','additional_costs','freight_cost','packaging_cost','fixed_expenses','desired_margin','taxes_percentage','commission_percentage','card_fees_percentage','marketplace_fees_percentage'] as $field)
                         <input type="hidden" name="{{ $field }}" value="{{ old($field) }}">
                     @endforeach
                     <button class="btn btn-outline-primary" type="submit" data-testid="download-csv"><i class="bi bi-filetype-csv me-1"></i> Baixar CSV</button>
-                    <button class="btn btn-outline-danger" type="submit" data-testid="download-pdf" formaction="{{ route('tools.calculadora-margem-markup.export.pdf') }}" formtarget="_blank"><i class="bi bi-file-earmark-pdf me-1"></i> Baixar PDF</button>
+                    <button class="btn btn-outline-danger" type="submit" data-testid="download-pdf" formaction="{{ route('tools.margin-markup-calculator.export.pdf') }}" formtarget="_blank"><i class="bi bi-file-earmark-pdf me-1"></i> Baixar PDF</button>
                 </form>
                 <p class="text-body-secondary mb-0"><small>Regra {{ $result['rule_version'] }}. Estimativa para apoio gerencial.</small></p>
             </div>
         </section>
     @endif
-    @include('tools-calculadora-margem-markup::partials.pricing-scenarios')
-    @include('tools-calculadora-margem-markup::partials.product-import')
-    @include('tools-calculadora-margem-markup::partials.batch-calculator')
-    <x-tool-feature-tiers slug="calculadora-margem-markup" />
-    <x-tools.plus-result-cta slug="calculadora-margem-markup" />
+    @include('tools-margin-markup-calculator::partials.pricing-scenarios')
+    @include('tools-margin-markup-calculator::partials.product-import')
+    @include('tools-margin-markup-calculator::partials.batch-calculator')
+    <x-tool-feature-tiers slug="margin-markup-calculator" />
+    <x-tools.plus-result-cta slug="margin-markup-calculator" />
 
 </div>
 @if ($taxSnapshotIntegration)

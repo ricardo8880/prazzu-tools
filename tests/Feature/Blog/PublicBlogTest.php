@@ -52,7 +52,7 @@ final class PublicBlogTest extends TestCase
     public function test_article_page_resolves_related_tools_from_the_central_catalog(): void
     {
         $post = $this->createPost('artigo-com-ferramenta', BlogPostStatus::Published, now()->subMinute());
-        $post->syncRelatedToolSlugs(['calculadora-margem-markup']);
+        $post->syncRelatedToolSlugs(['margin-markup-calculator']);
 
         $this->get(route('blog.show', $post->slug))
             ->assertOk()

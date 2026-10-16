@@ -23,7 +23,7 @@ final class BatchIssueRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'file.required' => 'Selecione o arquivo CSV com os recibos.',
+            'file.required' => 'Select the CSV file containing the receipts.',
             'file.mimes' => 'Envie um arquivo CSV ou TXT delimitado por ponto e vírgula ou vírgula.',
             'file.max' => 'O arquivo deve ter no máximo 2 MB.',
         ];

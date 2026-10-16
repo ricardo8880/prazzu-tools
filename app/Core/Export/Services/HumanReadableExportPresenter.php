@@ -160,7 +160,7 @@ final class HumanReadableExportPresenter
 
         if ($this->looksMonetary($key) && (is_numeric($value) || (is_string($value) && preg_match('/^-?[\d.]+(?:,\d{1,2})?$/', $value)))) {
             try {
-                return Money::fromDecimal((string) $value)->formatPtBr();
+                return Money::fromDecimal((string) $value)->formatEnUs();
             } catch (Throwable) {
                 // Mantém o valor original se não representar um decimal monetário válido.
             }
@@ -254,7 +254,7 @@ final class HumanReadableExportPresenter
 
     private function formatMinor(int $minor): string
     {
-        return Money::fromMinor($minor)->formatPtBr();
+        return Money::fromMinor($minor)->formatEnUs();
     }
 
     private function looksMonetary(string $key): bool

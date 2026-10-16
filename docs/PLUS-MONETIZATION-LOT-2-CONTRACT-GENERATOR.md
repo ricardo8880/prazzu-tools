@@ -19,7 +19,7 @@ Todas as capacidades usam o authorizer/middleware central `tool.feature` e possu
 
 ## Compatibilidade
 
-- Slug público `gerador-de-contratos` preservado.
+- Slug público `contract-generator` preservado.
 - As modalidades essenciais originais continuam disponíveis.
 - PDF e DOCX essenciais permanecem sem gate Plus.
 - Nenhum novo subsistema transversal de histórico, favoritos, perfis ou autorização foi criado.

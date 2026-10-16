@@ -5,13 +5,13 @@ declare(strict_types=1);
 use App\Tools\CashFlowCalculator\Presentation\Controllers\ToolController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/ferramentas/fluxo-de-caixa', [ToolController::class, 'index'])
-    ->name('tools.fluxo-de-caixa.index');
-Route::post('/ferramentas/fluxo-de-caixa', [ToolController::class, 'calculate'])
-    ->name('tools.fluxo-de-caixa.calculate');
-Route::post('/ferramentas/fluxo-de-caixa/cenarios', [ToolController::class, 'compareScenarios'])
-    ->middleware('tool.feature:fluxo-de-caixa,cash_flow_scenarios')->name('tools.fluxo-de-caixa.scenarios');
-Route::post('/ferramentas/fluxo-de-caixa/exportar/pdf', [ToolController::class, 'exportPdf'])
-    ->name('tools.fluxo-de-caixa.export.pdf');
-Route::post('/ferramentas/fluxo-de-caixa/exportar/excel', [ToolController::class, 'exportExcel'])
-    ->name('tools.fluxo-de-caixa.export.excel');
+Route::get('/tools/cash-flow-calculator', [ToolController::class, 'index'])
+    ->name('tools.cash-flow-calculator.index');
+Route::post('/tools/cash-flow-calculator', [ToolController::class, 'calculate'])
+    ->name('tools.cash-flow-calculator.calculate');
+Route::post('/tools/cash-flow-calculator/scenarios', [ToolController::class, 'compareScenarios'])
+    ->middleware('tool.feature:cash-flow-calculator,cash_flow_scenarios')->name('tools.cash-flow-calculator.scenarios');
+Route::post('/tools/cash-flow-calculator/export/pdf', [ToolController::class, 'exportPdf'])
+    ->name('tools.cash-flow-calculator.export.pdf');
+Route::post('/tools/cash-flow-calculator/export/excel', [ToolController::class, 'exportExcel'])
+    ->name('tools.cash-flow-calculator.export.excel');

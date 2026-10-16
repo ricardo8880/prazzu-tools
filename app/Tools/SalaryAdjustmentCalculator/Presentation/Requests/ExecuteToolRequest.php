@@ -16,9 +16,9 @@ final class ExecuteToolRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'current_salary' => ['required', 'brazilian_money', 'money_min:0.01'],
+            'current_salary' => ['required', 'us_money', 'money_min:0.01'],
             'adjustment_rate' => ['required', 'numeric', 'min:0', 'max:100'],
-            'fixed_addition' => ['required', 'brazilian_money', 'money_min:0'],
+            'fixed_addition' => ['required', 'us_money', 'money_min:0'],
             'retroactive_months' => ['required', 'integer', 'min:0', 'max:60'],
         ];
     }

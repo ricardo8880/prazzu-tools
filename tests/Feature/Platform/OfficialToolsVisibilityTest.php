@@ -11,8 +11,7 @@ final class OfficialToolsVisibilityTest extends TestCase
 {
     /** @var array<string, string> */
     private const SEPARATED_TOOLS = [
-        'simulador-pro-labore-ideal' => 'Simulador de Pró-Labore Ideal',
-        'distribuicao-de-lucros' => 'Calculadora de Distribuição de Lucros',
+        'owner-distribution-calculator' => 'Calculadora de Distribuição de Lucros',
     ];
 
     public function test_separated_tools_are_visible_in_the_public_catalog(): void

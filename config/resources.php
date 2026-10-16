@@ -52,7 +52,7 @@ return [
             'view' => 'pages.resources.guides.accounting-fees-pricing',
             'tool' => [
                 'name' => 'Calculadora de Honorários Contábeis',
-                'route' => 'tools.calculadora-de-honorarios-contabeis.index',
+                'route' => 'tools.accounting-fee-calculator.index',
             ],
         ],
         [
@@ -78,7 +78,7 @@ return [
             'download' => 'downloads/resources/modelo-levantamento-honorarios-contabeis.xlsx',
             'tool' => [
                 'name' => 'Calculadora de Honorários Contábeis',
-                'route' => 'tools.calculadora-de-honorarios-contabeis.index',
+                'route' => 'tools.accounting-fee-calculator.index',
             ],
         ],
     ],

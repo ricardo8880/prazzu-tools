@@ -27,7 +27,7 @@
                 </div>
                 <div class="col-md-7">
                     <label class="form-label" for="page-feedback-path">Página</label>
-                    <input class="form-control" id="page-feedback-path" name="path" value="{{ $filters['path'] }}" placeholder="Ex.: /ferramentas/gerador-de-contratos">
+                    <input class="form-control" id="page-feedback-path" name="path" value="{{ $filters['path'] }}" placeholder="Ex.: /ferramentas/contract-generator">
                 </div>
                 <div class="col-md-2 d-grid gap-2">
                     <button class="btn btn-primary" type="submit">Filtrar</button>

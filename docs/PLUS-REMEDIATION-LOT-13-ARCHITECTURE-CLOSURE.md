@@ -7,7 +7,6 @@ Encerrar, em um único lote, as 82 violações restantes reportadas por `compose
 ## Ajustes
 
 - documentação obrigatória completada em cinco módulos;
-- comparação monetária com `float` removida da Calculadora de ISS;
 - persistência do cadastro de ativos retirada do controller e isolada em repositório de infraestrutura;
 - gate `export` explicitado na Calculadora de Parcelamento Tributário;
 - inspetor Plus atualizado para reconhecer o marcador comportamental exato `CoversPlusFeature` como evidência auditável, mantendo a verificação independente de gate e de certificação funcional.

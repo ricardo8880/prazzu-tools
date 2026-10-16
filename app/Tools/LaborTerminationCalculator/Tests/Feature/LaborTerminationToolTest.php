@@ -17,7 +17,7 @@ final class LaborTerminationToolTest extends TestCase
 
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.calculadora-de-rescisao.index'))
+        $this->get(route('tools.final-pay-severance-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Rescisão Trabalhista')
             ->assertSee('Dados da rescisão');
@@ -25,7 +25,7 @@ final class LaborTerminationToolTest extends TestCase
 
     public function test_form_calculates_indemnified_notice_and_projection(): void
     {
-        $this->post(route('tools.calculadora-de-rescisao.calculate'), [
+        $this->post(route('tools.final-pay-severance-calculator.calculate'), [
             'monthly_salary' => '3.000,00',
             'admission_date' => '2024-01-10',
             'termination_date' => '2026-07-14',
@@ -48,8 +48,8 @@ final class LaborTerminationToolTest extends TestCase
 
     public function test_incompatible_notice_is_returned_as_validation_error(): void
     {
-        $this->from(route('tools.calculadora-de-rescisao.index'))
-            ->post(route('tools.calculadora-de-rescisao.calculate'), [
+        $this->from(route('tools.final-pay-severance-calculator.index'))
+            ->post(route('tools.final-pay-severance-calculator.calculate'), [
                 'monthly_salary' => '3.000,00',
                 'admission_date' => '2026-01-10',
                 'termination_date' => '2026-07-14',
@@ -61,17 +61,17 @@ final class LaborTerminationToolTest extends TestCase
                 'fgts_balance' => '0,00',
                 'other_discounts' => '0,00',
                 'dependents' => 0,
-            ])->assertRedirect(route('tools.calculadora-de-rescisao.index'))
+            ])->assertRedirect(route('tools.final-pay-severance-calculator.index'))
             ->assertSessionHasErrors(['notice_type']);
     }
 
-    #[CoversPlusFeature('calculadora-de-rescisao', 'history')]
-    #[CoversPlusFeature('calculadora-de-rescisao', 'repeat_history')]
+    #[CoversPlusFeature('final-pay-severance-calculator', 'history')]
+    #[CoversPlusFeature('final-pay-severance-calculator', 'repeat_history')]
     public function test_authenticated_calculation_is_saved_and_can_be_repeated_and_deleted(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('tools.calculadora-de-rescisao.calculate'), [
+        $response = $this->actingAs($user)->post(route('tools.final-pay-severance-calculator.calculate'), [
             'monthly_salary' => '3.000,00',
             'admission_date' => '2024-01-10',
             'termination_date' => '2026-07-14',
@@ -101,23 +101,23 @@ final class LaborTerminationToolTest extends TestCase
         $this->assertSame('3.000,00', $run->input_payload['monthly_salary']);
         $this->assertArrayHasKey('net_total', $run->result_payload);
 
-        $this->actingAs($user)->get(route('tools.calculadora-de-rescisao.history.index'))
+        $this->actingAs($user)->get(route('tools.final-pay-severance-calculator.history.index'))
             ->assertOk()
             ->assertSee('Histórico de cálculos');
 
-        $this->actingAs($user)->post(route('tools.calculadora-de-rescisao.history.repeat', $run))
-            ->assertRedirect(route('tools.calculadora-de-rescisao.index'))
+        $this->actingAs($user)->post(route('tools.final-pay-severance-calculator.history.repeat', $run))
+            ->assertRedirect(route('tools.final-pay-severance-calculator.index'))
             ->assertSessionHasInput('monthly_salary', '3.000,00');
 
-        $this->actingAs($user)->delete(route('tools.calculadora-de-rescisao.history.destroy', $run))
-            ->assertRedirect(route('tools.calculadora-de-rescisao.history.index'));
+        $this->actingAs($user)->delete(route('tools.final-pay-severance-calculator.history.destroy', $run))
+            ->assertRedirect(route('tools.final-pay-severance-calculator.history.index'));
 
         $this->assertDatabaseCount('tool_runs', 0);
     }
 
     public function test_guest_calculation_is_not_saved_to_history_and_keeps_result_exportable_without_login(): void
     {
-        $response = $this->post(route('tools.calculadora-de-rescisao.calculate'), [
+        $response = $this->post(route('tools.final-pay-severance-calculator.calculate'), [
             'monthly_salary' => '3.000,00',
             'admission_date' => '2024-01-10',
             'termination_date' => '2026-07-14',
@@ -149,7 +149,7 @@ final class LaborTerminationToolTest extends TestCase
 
     public function test_current_calculation_can_be_exported_as_pdf_download(): void
     {
-        $response = $this->post(route('tools.calculadora-de-rescisao.export'), [
+        $response = $this->post(route('tools.final-pay-severance-calculator.export'), [
             'monthly_salary' => '3.000,00',
             'admission_date' => '2024-01-10',
             'termination_date' => '2026-07-14',
@@ -176,13 +176,13 @@ final class LaborTerminationToolTest extends TestCase
         $this->assertStringStartsWith('%PDF', $response->getContent());
     }
 
-    #[CoversPlusFeature('calculadora-de-rescisao', 'historical_report')]
+    #[CoversPlusFeature('final-pay-severance-calculator', 'historical_report')]
     public function test_user_can_export_owned_history_report(): void
     {
         $user = User::factory()->create();
         $run = ToolRun::query()->create([
             'user_id' => $user->id,
-            'tool_slug' => 'calculadora-de-rescisao',
+            'tool_slug' => 'final-pay-severance-calculator',
             'tool_version' => '1.0.0',
             'rule_version' => '1.4.0',
             'reference_date' => '2026-07-14',
@@ -195,7 +195,7 @@ final class LaborTerminationToolTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get(route('tools.calculadora-de-rescisao.history.pdf', $run))
+            ->get(route('tools.final-pay-severance-calculator.history.pdf', $run))
             ->assertOk()
             ->assertSee('Relatório de Rescisão Trabalhista')
             ->assertSee('R$ 5.000,00');

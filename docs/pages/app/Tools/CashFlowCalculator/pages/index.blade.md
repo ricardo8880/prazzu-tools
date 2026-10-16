@@ -7,8 +7,8 @@ das entradas e das saídas informadas.
 
 ## Funcionamento
 
-- `GET /ferramentas/fluxo-de-caixa` abre a calculadora pública.
-- `POST /ferramentas/fluxo-de-caixa` valida e calcula o período.
+- `GET /ferramentas/cash-flow-calculator` abre a calculadora pública.
+- `POST /ferramentas/cash-flow-calculator` valida e calcula o período.
 - O saldo inicial pode ser negativo; recebimentos e pagamentos devem ser
   valores não negativos.
 - Entradas somam vendas e outras entradas.
@@ -19,8 +19,8 @@ das entradas e das saídas informadas.
 ## Implementação principal
 
 - **View:** `app/Tools/CashFlowCalculator/Resources/views/index.blade.php`
-- **Rotas:** `tools.fluxo-de-caixa.index` e
-  `tools.fluxo-de-caixa.calculate`
+- **Rotas:** `tools.cash-flow-calculator.index` e
+  `tools.cash-flow-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

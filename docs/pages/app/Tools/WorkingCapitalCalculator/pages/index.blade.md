@@ -8,8 +8,8 @@ data-base.
 
 ## Funcionamento
 
-- `GET /ferramentas/capital-de-giro` apresenta o formulário público.
-- `POST /ferramentas/capital-de-giro` valida e calcula a posição.
+- `GET /ferramentas/working-capital-calculator` apresenta o formulário público.
+- `POST /ferramentas/working-capital-calculator` valida e calcula a posição.
 - São informados caixa, contas a receber, estoques, outros ativos,
   fornecedores, obrigações operacionais, empréstimos e outros passivos.
 - O domínio calcula ativos e passivos operacionais, NCG, ativo e passivo
@@ -19,8 +19,8 @@ data-base.
 ## Implementação principal
 
 - **View:** `app/Tools/WorkingCapitalCalculator/Resources/views/index.blade.php`
-- **Rotas:** `tools.capital-de-giro.index` e
-  `tools.capital-de-giro.calculate`
+- **Rotas:** `tools.working-capital-calculator.index` e
+  `tools.working-capital-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

@@ -29,7 +29,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'calculadora-turnover';
+    public const SLUG = 'employee-turnover-calculator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -61,11 +61,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Calculadora de Turnover',
-            description: 'Calcule a taxa de turnover a partir de admissões, desligamentos e quadro médio do período.',
+            name: 'Employee Turnover Calculator',
+            description: 'Calculate employee turnover from hires, separations, and average headcount.',
             category: ToolCategory::Labor,
             icon: 'bi-people',
-            routeName: 'tools.calculadora-turnover.index',
+            routeName: 'tools.employee-turnover-calculator.index',
             vertical: 'rh',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -74,11 +74,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             featured: true,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['turnover', 'rotatividade', 'recursos humanos', 'rh', 'gestão de pessoas'],
+            keywords: ['employee turnover', 'turnover rate', 'employee retention', 'HR calculator'],
             features: [
-                new ToolFeature('calculate', 'Taxa de turnover do período', ToolFeatureTier::Essential),
-                new ToolFeature('method', 'Memória transparente da fórmula utilizada', ToolFeatureTier::Essential),
-                new ToolFeature('segmented_analysis', 'Comparação de turnover por período ou segmento', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Turnover rate for the period', ToolFeatureTier::Essential),
+                new ToolFeature('method', 'Transparent calculation details', ToolFeatureTier::Essential),
+                new ToolFeature('segmented_analysis', 'Turnover comparison by period or segment', ToolFeatureTier::Plus),
             ],
             capabilities: [
                 ToolCapability::History,
@@ -115,6 +115,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-turnover';
+        return 'tools-employee-turnover-calculator';
     }
 }

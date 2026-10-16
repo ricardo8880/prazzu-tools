@@ -14,7 +14,7 @@ final class GoldenCases
 
     public static function suite(): GoldenCaseSuite
     {
-        return new GoldenCaseSuite('gerador-de-contratos', [
+        return new GoldenCaseSuite('contract-generator', [
             new GoldenCase('typical', 'Prestação de serviços comum', GoldenCaseKind::Typical,
                 ['contract_type' => 'prestacao-servicos', 'amount_minor' => 250000],
                 ['title' => 'CONTRATO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS', 'amount' => 'R$ 2.500,00'],

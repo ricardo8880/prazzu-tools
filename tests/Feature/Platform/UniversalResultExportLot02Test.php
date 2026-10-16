@@ -12,14 +12,11 @@ final class UniversalResultExportLot02Test extends TestCase
     /** @return iterable<string, array{string,string}> */
     public static function routes(): iterable
     {
-        yield 'custo funcionario' => ['tools.custo-funcionario-clt.download.pdf', 'tools.custo-funcionario-clt.download.excel'];
-        yield 'fator r' => ['tools.simulador-fator-r.export.pdf', 'tools.simulador-fator-r.export.excel'];
-        yield 'das atraso' => ['tools.das-em-atraso.export.pdf', 'tools.das-em-atraso.export.excel'];
-        yield 'encargos' => ['tools.encargos-trabalhistas.export.pdf', 'tools.encargos-trabalhistas.export.excel'];
-        yield 'modelos' => ['tools.comparador-clt-pj-autonomo.export.pdf', 'tools.comparador-clt-pj-autonomo.export.excel'];
-        yield 'inss patronal' => ['tools.inss-patronal.export.pdf', 'tools.inss-patronal.export.excel'];
-        yield 'capital giro' => ['tools.capital-de-giro.export.pdf', 'tools.capital-de-giro.export.excel'];
-        yield 'fluxo caixa' => ['tools.fluxo-de-caixa.export.pdf', 'tools.fluxo-de-caixa.export.excel'];
+        yield 'custo funcionario' => ['tools.employee-cost-calculator.download.pdf', 'tools.employee-cost-calculator.download.excel'];
+        yield 'encargos' => ['tools.employer-payroll-tax-calculator.export.pdf', 'tools.employer-payroll-tax-calculator.export.excel'];
+        yield 'modelos' => ['tools.employee-vs-contractor-calculator.export.pdf', 'tools.employee-vs-contractor-calculator.export.excel'];
+        yield 'capital giro' => ['tools.working-capital-calculator.export.pdf', 'tools.working-capital-calculator.export.excel'];
+        yield 'fluxo caixa' => ['tools.cash-flow-calculator.export.pdf', 'tools.cash-flow-calculator.export.excel'];
     }
 
     #[DataProvider('routes')]

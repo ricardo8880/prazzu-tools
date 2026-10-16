@@ -24,16 +24,16 @@ final readonly class Receipt
         public ?string $city = null,
     ) {
         if ($amount->minorAmount() <= 0) {
-            throw new InvalidArgumentException('O valor do recibo deve ser maior que zero.');
+            throw new InvalidArgumentException('Receipt amount must be greater than zero.');
         }
 
         $description = trim($this->description);
         if (mb_strlen($description) < 3 || mb_strlen($description) > 1000) {
-            throw new InvalidArgumentException('A descrição deve ter entre 3 e 1.000 caracteres.');
+            throw new InvalidArgumentException('Description must contain between 3 and 1,000 characters.');
         }
 
         if ($this->city !== null && (trim($this->city) === '' || mb_strlen(trim($this->city)) > 120)) {
-            throw new InvalidArgumentException('A cidade deve ter entre 1 e 120 caracteres.');
+            throw new InvalidArgumentException('City must contain between 1 and 120 characters.');
         }
     }
 
@@ -45,7 +45,7 @@ final readonly class Receipt
             'number' => $this->number->value,
             'payer' => $this->payer->toArray(),
             'payee' => $this->payee->toArray(),
-            'amount' => $this->amount->formatPtBr(),
+            'amount' => $this->amount->formatEnUs(),
             'amount_minor' => $this->amount->minorAmount(),
             'amount_in_words' => $this->amountInWords,
             'description' => trim($this->description),

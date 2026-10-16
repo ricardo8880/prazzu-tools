@@ -14,7 +14,7 @@ O estado foi reconstruído do ZIP original e recebeu, em ordem, os deltas dos Lo
 
 ## Ferramenta de prova
 
-Foi criada `TurnoverCalculator` com slug `calculadora-turnover`, vertical `rh` e categoria trabalhista. O módulo usa os mesmos contratos de `ToolModule`, `ToolManifest`, catálogo, rotas, Analytics e qualidade das demais ferramentas. A fórmula é deliberadamente operacional e sem dependência normativa: `((admissões + desligamentos) / 2) / quadro médio * 100`.
+Foi criada `TurnoverCalculator` com slug `employee-turnover-calculator`, vertical `rh` e categoria trabalhista. O módulo usa os mesmos contratos de `ToolModule`, `ToolManifest`, catálogo, rotas, Analytics e qualidade das demais ferramentas. A fórmula é deliberadamente operacional e sem dependência normativa: `((admissões + desligamentos) / 2) / quadro médio * 100`.
 
 A ferramenta não importa domínio de outro módulo, não persiste dados pessoais e não cria serviços compartilhados específicos de RH.
 
@@ -24,7 +24,7 @@ RH possui conteúdo mínimo em `config/home.php` e `config/seo.php`. A mesma Hom
 
 ## Blog
 
-Uma migration idempotente cria a categoria `Gestão de Pessoas`, dois artigos iniciais de RH, incluindo um sobre turnover e a associação com `calculadora-turnover`. São utilizadas as tabelas e a engine de Blog já existentes, com `vertical_slug = rh`.
+Uma migration idempotente cria a categoria `Gestão de Pessoas`, dois artigos iniciais de RH, incluindo um sobre turnover e a associação com `employee-turnover-calculator`. São utilizadas as tabelas e a engine de Blog já existentes, com `vertical_slug = rh`.
 
 ## Analytics e observabilidade
 
@@ -42,7 +42,7 @@ O inventário oficial passa de 32 para 33 ferramentas por este lote explícito d
 
 - `php artisan tools:check-architecture` — aprovado;
 - `php artisan analytics:check` — aprovado;
-- rotas de `calculadora-turnover` — registradas;
+- rotas de `employee-turnover-calculator` — registradas;
 - lint PHP — executado nos arquivos alterados/adicionados;
 - PHPUnit integral continua sujeito às extensões ausentes do ambiente (`dom`, `mbstring`, `xmlwriter`).
 

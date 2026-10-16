@@ -11,10 +11,10 @@ final class CatalogRegistrationTest extends TestCase
 {
     public function test_tool_is_registered_in_public_catalog(): void
     {
-        $module = app(ToolRegistry::class)->findModule('gerador-de-contratos');
+        $module = app(ToolRegistry::class)->findModule('contract-generator');
 
         self::assertNotNull($module);
-        self::assertSame('gerador-de-contratos', $module->manifest()->slug);
-        self::assertContains('gerador-de-contratos', collect(app(ToolRegistry::class)->manifests())->pluck('slug')->all());
+        self::assertSame('contract-generator', $module->manifest()->slug);
+        self::assertContains('contract-generator', collect(app(ToolRegistry::class)->manifests())->pluck('slug')->all());
     }
 }

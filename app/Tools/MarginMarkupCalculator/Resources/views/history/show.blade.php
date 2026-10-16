@@ -8,13 +8,13 @@
     $type = $result['calculation_type'] ?? $run->input['calculation_type'] ?? 'single';
 @endphp
 <div class="prazzu-page tool-page">
-    <nav aria-label="Breadcrumb" class="mb-3"><ol class="breadcrumb prazzu-breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li><li class="breadcrumb-item"><a href="{{ route('tools.calculadora-margem-markup.history.index') }}">Histórico</a></li><li class="breadcrumb-item active">Detalhes</li></ol></nav>
+    <nav aria-label="Breadcrumb" class="mb-3"><ol class="breadcrumb prazzu-breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li><li class="breadcrumb-item"><a href="{{ route('tools.margin-markup-calculator.history.index') }}">Histórico</a></li><li class="breadcrumb-item active">Detalhes</li></ol></nav>
     <x-tools.intro icon="file-earmark-text" title="Detalhes do cálculo" :description="'Realizado em '.($run->finishedAt?->format('d/m/Y H:i') ?? '—').' — referência '.$run->referenceDate->format('d/m/Y').'.'" badge="Cálculo salvo" badge-class="badge text-bg-success mb-2" />
     <div class="d-flex flex-wrap gap-2 mb-4">
-        <form method="post" action="{{ route('tools.calculadora-margem-markup.history.repeat', $run->id) }}">@csrf<button class="btn btn-primary"><i class="bi bi-arrow-repeat me-1"></i>Repetir</button></form>
-        @if($type === 'single')<a class="btn btn-outline-primary" target="_blank" href="{{ route('tools.calculadora-margem-markup.history.pdf', $run->id) }}"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>@endif
-        <a class="btn btn-outline-secondary" href="{{ route('tools.calculadora-margem-markup.history.index') }}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
-        <form method="post" action="{{ route('tools.calculadora-margem-markup.history.destroy', $run->id) }}" data-confirm="Excluir este registro?">@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
+        <form method="post" action="{{ route('tools.margin-markup-calculator.history.repeat', $run->id) }}">@csrf<button class="btn btn-primary"><i class="bi bi-arrow-repeat me-1"></i>Repetir</button></form>
+        @if($type === 'single')<a class="btn btn-outline-primary" target="_blank" href="{{ route('tools.margin-markup-calculator.history.pdf', $run->id) }}"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>@endif
+        <a class="btn btn-outline-secondary" href="{{ route('tools.margin-markup-calculator.history.index') }}"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
+        <form method="post" action="{{ route('tools.margin-markup-calculator.history.destroy', $run->id) }}" data-confirm="Excluir este registro?">@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Excluir</button></form>
     </div>
 
     @if($type === 'single')

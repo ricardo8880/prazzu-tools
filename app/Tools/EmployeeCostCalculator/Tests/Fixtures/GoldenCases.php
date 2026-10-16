@@ -15,7 +15,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'custo-funcionario-clt',
+            toolSlug: 'employee-cost-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

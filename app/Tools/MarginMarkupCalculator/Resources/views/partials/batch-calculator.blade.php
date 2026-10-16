@@ -8,7 +8,7 @@
         <div class="d-flex flex-wrap gap-2 align-self-lg-end">
             <button class="btn btn-outline-primary" type="button" id="batch-add"><i class="bi bi-plus-lg me-1"></i>Adicionar produto</button>
             <button class="btn btn-outline-secondary" type="button" id="batch-duplicate"><i class="bi bi-copy me-1"></i>Duplicar selecionados</button>
-            <button class="btn btn-outline-danger" type="button" id="batch-remove"><i class="bi bi-trash me-1"></i>Remover selecionados</button>
+            <button class="btn btn-outline-danger" type="button" id="batch-remove"><i class="bi bi-trash me-1"></i>Remove selecionados</button>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <form method="post" action="{{ route('tools.calculadora-margem-markup.batch.calculate') }}" id="batch-form">
+    <form method="post" action="{{ route('tools.margin-markup-calculator.batch.calculate') }}" id="batch-form">
         @csrf
         <div class="table-responsive border rounded">
             <table class="table table-hover table-sm align-middle mb-0" id="batch-table">
@@ -42,7 +42,7 @@
                         $products = old('products', [['name'=>'','code'=>'','category'=>'','base_cost'=>'','additional_costs'=>'0,00','freight_cost'=>'0,00','packaging_cost'=>'0,00','fixed_expenses'=>'0,00','desired_margin'=>'30','taxes_percentage'=>'0','commission_percentage'=>'0','card_fees_percentage'=>'0','marketplace_fees_percentage'=>'0']]);
                     @endphp
                     @foreach($products as $index => $product)
-                        @include('tools-calculadora-margem-markup::partials.batch-row', ['index' => $index, 'product' => $product])
+                        @include('tools-margin-markup-calculator::partials.batch-row', ['index' => $index, 'product' => $product])
                     @endforeach
                 </tbody>
             </table>
@@ -78,7 +78,7 @@
     </section>
 @endif
 
-<template id="batch-row-template">@include('tools-calculadora-margem-markup::partials.batch-row', ['index' => '__INDEX__', 'product' => []])</template>
+<template id="batch-row-template">@include('tools-margin-markup-calculator::partials.batch-row', ['index' => '__INDEX__', 'product' => []])</template>
 
 @push('scripts')
 <script nonce="{{ $cspNonce ?? '' }}">

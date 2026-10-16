@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('comissao-vendedores', 'batch_sellers')]
+    #[CoversPlusFeature('sales-commission-calculator', 'batch_sellers')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $features = ['batch_sellers'];

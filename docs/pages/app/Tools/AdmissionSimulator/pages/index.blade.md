@@ -9,8 +9,8 @@ coletiva, das exigências de SST ou do processo oficial no eSocial.
 
 ## Funcionamento
 
-- `GET /ferramentas/simulador-admissao` abre o formulário público.
-- `POST /ferramentas/simulador-admissao` valida os dados e executa a simulação.
+- `GET /ferramentas/new-hire-cost-calculator` abre o formulário público.
+- `POST /ferramentas/new-hire-cost-calculator` valida os dados e executa a simulação.
 - O usuário informa salário, benefícios, percentual mensal de encargos e
   provisões, exame admissional, recrutamento, equipamentos e treinamento.
 - O resultado separa custo do primeiro mês, custo mensal recorrente, custos
@@ -21,8 +21,8 @@ coletiva, das exigências de SST ou do processo oficial no eSocial.
 ## Implementação principal
 
 - **View:** `app/Tools/AdmissionSimulator/Resources/views/index.blade.php`
-- **Rotas:** `tools.simulador-admissao.index` e
-  `tools.simulador-admissao.calculate`
+- **Rotas:** `tools.new-hire-cost-calculator.index` e
+  `tools.new-hire-cost-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Orquestração:** `Application/Actions/ShowToolPage` e

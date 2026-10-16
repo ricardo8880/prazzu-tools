@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'declaracao-trabalho-renda',
+            toolSlug: 'employment-income-letter-generator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::Low,
             personalDataExposure: PersonalDataExposure::Common,

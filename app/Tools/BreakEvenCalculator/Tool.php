@@ -40,7 +40,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'ponto-de-equilibrio',
+            toolSlug: 'break-even-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -61,12 +61,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'ponto-de-equilibrio',
-            name: 'Calculadora de Ponto de Equilíbrio',
-            description: 'Calcule o faturamento e a quantidade mínima necessários para cobrir custos fixos e variáveis.',
+            slug: 'break-even-calculator',
+            name: 'Break-Even Calculator',
+            description: 'Calculate break-even units and revenue from fixed costs, selling price, and variable cost.',
             category: ToolCategory::Calculators,
             icon: 'bi-bullseye',
-            routeName: 'tools.ponto-de-equilibrio.index',
+            routeName: 'tools.break-even-calculator.index',
             vertical: 'contabilidade',
             version: '1.2.0',
             access: ToolAccess::Free,
@@ -74,14 +74,14 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 190,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['ponto de equilíbrio', 'faturamento mínimo', 'custos fixos', 'custos variáveis', 'margem de contribuição'],
+            keywords: ['break even', 'break-even calculator', 'fixed costs', 'contribution margin'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
                 new ToolFeature('scenario_comparison', 'Comparação de cenários de preço, custo e margem', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
@@ -108,6 +108,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-ponto-de-equilibrio';
+        return 'tools-break-even-calculator';
     }
 }

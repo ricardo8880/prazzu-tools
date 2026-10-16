@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'fluxo-de-caixa',
+            toolSlug: 'cash-flow-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::None,
             personalDataExposure: PersonalDataExposure::None,

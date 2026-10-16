@@ -42,8 +42,8 @@ final class BuildCalculationInput
             return null;
         }
 
-        return $type === 'cnpj'
-            ? PartyDocument::cnpj((string) $value)
-            : PartyDocument::cpf((string) $value);
+        return $type === 'ein'
+            ? PartyDocument::ein((string) $value)
+            : PartyDocument::id((string) $value);
     }
 }

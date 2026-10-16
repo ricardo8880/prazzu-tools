@@ -15,8 +15,8 @@ final class ExecuteToolRequest extends FormRequest
 
     public function rules(): array
     {
-        $m = ['required', 'brazilian_money', 'money_min:0'];
+        $m = ['required', 'us_money', 'money_min:0'];
 
-        return ['salary' => ['required', 'brazilian_money', 'money_min:0.01'], 'benefits' => $m, 'monthly_burden' => ['required', 'numeric', 'min:0', 'max:200'], 'exam' => $m, 'recruitment' => $m, 'equipment' => $m, 'training' => $m];
+        return ['salary' => ['required', 'us_money', 'money_min:0.01'], 'benefits' => $m, 'monthly_burden' => ['required', 'numeric', 'min:0', 'max:200'], 'exam' => $m, 'recruitment' => $m, 'equipment' => $m, 'training' => $m];
     }
 }

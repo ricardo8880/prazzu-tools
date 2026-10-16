@@ -17,7 +17,7 @@ final class GoldenCases
         $reference = 'CLT, arts. 59 e 73; Lei nº 605/1949; documentação normativa do módulo e casos protegidos por CalculatorTest.';
 
         return new GoldenCaseSuite(
-            toolSlug: 'calculadora-hora-extra',
+            toolSlug: 'overtime-pay-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

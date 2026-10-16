@@ -40,7 +40,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'simulador-admissao',
+            toolSlug: 'new-hire-cost-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -59,12 +59,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: 'simulador-admissao',
-            name: 'Simulador de Admissão',
-            description: 'Calcule custos de contratação e gere checklist admissional.',
+            slug: 'new-hire-cost-calculator',
+            name: 'New Hire Cost Calculator',
+            description: 'Estimate recurring employer cost and one-time hiring, onboarding, equipment, recruiting, and training expenses.',
             category: ToolCategory::Labor,
             icon: 'bi-person-plus',
-            routeName: 'tools.simulador-admissao.index',
+            routeName: 'tools.new-hire-cost-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -72,15 +72,15 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             position: 220,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['admissão', 'contratação', 'custo admissional', 'checklist admissional', 'documentos trabalhistas'],
+            keywords: ['new hire cost', 'hiring cost', 'onboarding cost', 'employee cost'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Solução completa do problema', ToolFeatureTier::Essential),
-                new ToolFeature('spreadsheet_export', 'Exportação avançada em Excel', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
+                new ToolFeature('spreadsheet_export', 'Advanced Excel export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['json', 'pdf', 'xlsx']),
@@ -106,6 +106,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-simulador-admissao';
+        return 'tools-new-hire-cost-calculator';
     }
 }

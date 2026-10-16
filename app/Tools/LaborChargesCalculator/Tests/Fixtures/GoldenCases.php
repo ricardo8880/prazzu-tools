@@ -15,7 +15,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'encargos-trabalhistas',
+            toolSlug: 'employer-payroll-tax-calculator',
             cases: [
                 new GoldenCase(
                     identifier: 'typical',

@@ -18,6 +18,6 @@ final class RiskProfile
 {
     public static function define(): ToolRiskProfile
     {
-        return new ToolRiskProfile(toolSlug: 'simulador-distribuicao-lucros-balanco', nature: ToolNature::Calculation, normativeDependency: NormativeDependency::Low, personalDataExposure: PersonalDataExposure::None, externalIntegrationDependency: ExternalIntegrationDependency::None, persistenceMode: PersistenceMode::Temporary, processingMode: ProcessingMode::Synchronous, resultRisk: ResultRisk::Financial, updateFrequency: UpdateFrequency::Rare, exportFormats: ['pdf', 'xlsx']);
+        return new ToolRiskProfile(toolSlug: 'owner-distribution-planner', nature: ToolNature::Calculation, normativeDependency: NormativeDependency::Low, personalDataExposure: PersonalDataExposure::None, externalIntegrationDependency: ExternalIntegrationDependency::None, persistenceMode: PersistenceMode::Temporary, processingMode: ProcessingMode::Synchronous, resultRisk: ResultRisk::Financial, updateFrequency: UpdateFrequency::Rare, exportFormats: ['pdf', 'xlsx']);
     }
 }

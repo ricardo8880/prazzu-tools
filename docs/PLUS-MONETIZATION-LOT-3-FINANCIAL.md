@@ -11,7 +11,6 @@ O trabalho partiu do ZIP original com reaplicação, em ordem, dos Lotes 1 e 2. 
 - Ponto de Equilíbrio: `advanced_productivity` substituída por `scenario_comparison`, com alteração parametrizada de custos e preço.
 - Comissão de Vendedores: `advanced_productivity` substituída por `batch_sellers`, processando de 2 a 50 vendedores sob uma regra comum.
 - Pró-Labore Ideal: `scenarios` materializada por comparação anual de 2 a 4 valores mensais nas 12 competências de 2026.
-- Planejador de Retirada de Sócios: cenários existentes ligados a `scenario_planning`; histórico, gravação e exportações ligados a `history_exports`.
 
 Todos os cálculos Essenciais permanecem livres de gate Plus. A autorização usa exclusivamente `tool.feature`/`ToolFeatureRequestAuthorizer` e a persistência compartilhada já existente.
 

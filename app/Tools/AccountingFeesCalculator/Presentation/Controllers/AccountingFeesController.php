@@ -39,7 +39,7 @@ final class AccountingFeesController extends Controller
 
     public function index(): View
     {
-        return view('tools-calculadora-de-honorarios-contabeis::index', ['taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1)]);
+        return view('tools-accounting-fee-calculator::index', ['taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1)]);
     }
 
     public function calculate(CalculateAccountingFeesRequest $request, CalculateAndStoreAccountingFees $action, ToolPersistenceAuthorizer $persistence, Tool $module, ToolResultPublisher $integrations): View
@@ -58,7 +58,7 @@ final class AccountingFeesController extends Controller
 
         $request->flash();
 
-        return view('tools-calculadora-de-honorarios-contabeis::index', [
+        return view('tools-accounting-fee-calculator::index', [
             'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
             'calculationResult' => $outcome['result'],
             'calculationInput' => $validated,
@@ -80,12 +80,12 @@ final class AccountingFeesController extends Controller
 
     public function proposal(GenerateCommercialProposalRequest $request, BuildCommercialProposal $action): View
     {
-        return view('tools-calculadora-de-honorarios-contabeis::proposal', ['proposal' => $action->execute($request->validated())]);
+        return view('tools-accounting-fee-calculator::proposal', ['proposal' => $action->execute($request->validated())]);
     }
 
     public function contract(GenerateServiceContractRequest $request, BuildServiceContract $action): View
     {
-        return view('tools-calculadora-de-honorarios-contabeis::contract', ['contract' => $action->execute($request->validated())]);
+        return view('tools-accounting-fee-calculator::contract', ['contract' => $action->execute($request->validated())]);
     }
 
     public function history(Request $request, ManageAccountingFeesHistory $history): View
@@ -93,7 +93,7 @@ final class AccountingFeesController extends Controller
         $favorite = $request->boolean('favorite');
         $page = $history->paginate($this->requiredUserId($request), ManageAccountingFeesHistory::TYPE_CALCULATION, max(1, $request->integer('page', 1)), $favorite);
 
-        return view('tools-calculadora-de-honorarios-contabeis::history.index', ['calculations' => $this->paginator($page, $request), 'favorite' => $favorite]);
+        return view('tools-accounting-fee-calculator::history.index', ['calculations' => $this->paginator($page, $request), 'favorite' => $favorite]);
     }
 
     public function duplicateCalculation(Request $request, string $run, ManageAccountingFeesHistory $history): RedirectResponse
@@ -102,7 +102,7 @@ final class AccountingFeesController extends Controller
         $input = $entry->input;
         unset($input['run_type']);
 
-        return redirect()->route('tools.calculadora-de-honorarios-contabeis.index')->withInput($input)->with('calculation_result', $entry->result)->with('success', 'Cálculo duplicado. Ajuste os dados e gere uma nova versão.');
+        return redirect()->route('tools.accounting-fee-calculator.index')->withInput($input)->with('calculation_result', $entry->result)->with('success', 'Cálculo duplicado. Ajuste os dados e gere uma nova versão.');
     }
 
     public function toggleFavorite(Request $request, string $run, ManageAccountingFeesHistory $history): RedirectResponse
@@ -128,7 +128,7 @@ final class AccountingFeesController extends Controller
     {
         $adjustments = $request->user() === null ? null : $this->paginator($history->paginate($this->requiredUserId($request), ManageAccountingFeesHistory::TYPE_ADJUSTMENT, max(1, $request->integer('page', 1))), $request);
 
-        return view('tools-calculadora-de-honorarios-contabeis::adjustments.index', compact('adjustments'));
+        return view('tools-accounting-fee-calculator::adjustments.index', compact('adjustments'));
     }
 
     public function calculateAdjustment(CalculateFeeAdjustmentRequest $request, CalculateAndStoreFeeAdjustment $action, ToolPersistenceAuthorizer $persistence, Tool $module, ManageAccountingFeesHistory $history): View
@@ -143,7 +143,7 @@ final class AccountingFeesController extends Controller
 
         $request->flash();
 
-        return view('tools-calculadora-de-honorarios-contabeis::adjustments.index', [
+        return view('tools-accounting-fee-calculator::adjustments.index', [
             'adjustments' => $adjustments,
             'adjustmentResult' => $outcome['result'],
             'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Reajuste'),

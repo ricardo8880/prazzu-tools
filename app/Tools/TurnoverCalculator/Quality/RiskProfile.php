@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'calculadora-turnover',
+            toolSlug: 'employee-turnover-calculator',
             nature: ToolNature::Calculation,
             normativeDependency: NormativeDependency::None,
             personalDataExposure: PersonalDataExposure::None,

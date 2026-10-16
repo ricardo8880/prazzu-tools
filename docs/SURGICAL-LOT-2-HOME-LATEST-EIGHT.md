@@ -23,7 +23,6 @@ Garantir que a Home apresente sempre exatamente oito ferramentas e que a seleç�
 
 ## Oito ferramentas atuais na Home
 
-1. Calculadora DIFAL / ICMS Interestadual + FCP
 2. Calculadora de Hora Extra, Adicional Noturno e DSR
 3. Calculadora de Salário Líquido
 4. Gerador de Declaração de Trabalho/Renda

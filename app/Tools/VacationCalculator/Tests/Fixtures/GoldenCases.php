@@ -17,7 +17,7 @@ final class GoldenCases
     public static function suite(): GoldenCaseSuite
     {
         return new GoldenCaseSuite(
-            toolSlug: 'calculadora-ferias',
+            toolSlug: 'pto-calculator',
             cases: [
                 new GoldenCase('full-vacation-30-days', 'Férias integrais de 30 dias com terço constitucional', GoldenCaseKind::Typical, ['monthly_salary_minor' => 300000, 'unjustified_absences' => 0, 'cash_allowance' => false], ['entitled_days' => 30, 'leave_days' => 30, 'gross_total_minor' => 400000], self::CLT_REFERENCE),
                 new GoldenCase('absence-band-24-days', 'Seis faltas injustificadas reduzem o direito para 24 dias', GoldenCaseKind::Boundary, ['monthly_salary_minor' => 300000, 'unjustified_absences' => 6, 'cash_allowance' => false], ['entitled_days' => 24, 'gross_total_minor' => 320000], self::CLT_REFERENCE),

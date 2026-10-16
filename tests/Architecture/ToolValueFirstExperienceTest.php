@@ -77,14 +77,10 @@ final class ToolValueFirstExperienceTest extends TestCase
         $modules = [
             'AccountingFeesCalculator',
             'BusinessDocumentValidator',
-            'FederalPaymentGuideGenerator',
             'LaborTerminationCalculator',
             'MarginMarkupCalculator',
-            'ProLaboreSimulator',
             'ProfitDistributionCalculator',
             'ReceiptIssuer',
-            'SimplesNacionalCalculator',
-            'TaxRegimeComparator',
             'VacationCalculator',
         ];
 

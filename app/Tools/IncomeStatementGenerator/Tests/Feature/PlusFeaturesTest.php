@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('declaracao-rendimentos', 'spreadsheet_export')]
+    #[CoversPlusFeature('earnings-statement-generator', 'spreadsheet_export')]
     public function test_spreadsheet_export_blocks_free_and_allows_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

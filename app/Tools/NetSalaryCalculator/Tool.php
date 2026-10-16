@@ -32,7 +32,7 @@ use DateTimeImmutable;
 
 final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHistoryContext, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'calculadora-salario-liquido';
+    public const SLUG = 'take-home-pay-calculator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -42,7 +42,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHisto
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'calculadora-salario-liquido',
+            toolSlug: 'take-home-pay-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -72,11 +72,11 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHisto
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Calculadora de Salário Líquido',
-            description: 'Calcule salário líquido CLT com INSS e IRRF de 2026, dependentes, pensão e descontos, com memória transparente.',
+            name: 'Take-Home Pay Calculator',
+            description: 'Estimate 2026 monthly take-home pay using federal income tax brackets, Social Security, Medicare, and user-entered deductions.',
             category: ToolCategory::Labor,
             icon: 'bi-cash-coin',
-            routeName: 'tools.calculadora-salario-liquido.index',
+            routeName: 'tools.take-home-pay-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -84,19 +84,19 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHisto
             position: 5,
             featured: true,
             supportsHistory: true,
-            keywords: ['salário líquido', 'salario liquido', 'INSS 2026', 'IRRF 2026', 'salário bruto', 'folha de pagamento'],
+            keywords: ['take home pay', 'net pay calculator', 'federal tax', 'Social Security', 'Medicare'],
             capabilities: [
                 ToolCapability::History,
                 ToolCapability::VersionedPersistence,
                 ToolCapability::Export,
             ],
             features: [
-                new ToolFeature('calculate', 'Salário líquido com INSS, IRRF e descontos', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Memória de cálculo e fontes normativas', ToolFeatureTier::Essential),
-                new ToolFeature('variable_earnings', 'Proventos tributáveis e não tributáveis personalizados', ToolFeatureTier::Plus),
-                new ToolFeature('custom_discounts', 'Benefícios e descontos personalizados', ToolFeatureTier::Plus),
-                new ToolFeature('history', 'Histórico autenticado de cálculos', ToolFeatureTier::Plus),
-                new ToolFeature('export', 'Exportação CSV e relatório para impressão/PDF', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Take-home pay with 2026 federal income-tax estimate and FICA', ToolFeatureTier::Essential),
+                new ToolFeature('memory', 'Calculation details and sources normativas', ToolFeatureTier::Essential),
+                new ToolFeature('variable_earnings', 'Custom taxable and non-taxable earnings', ToolFeatureTier::Plus),
+                new ToolFeature('custom_discounts', 'Custom benefit and other deductions', ToolFeatureTier::Plus),
+                new ToolFeature('history', 'Authenticated calculation history', ToolFeatureTier::Plus),
+                new ToolFeature('export', 'CSV and print/PDF export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),
@@ -133,6 +133,6 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHisto
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-salario-liquido';
+        return 'tools-take-home-pay-calculator';
     }
 }

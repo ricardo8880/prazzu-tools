@@ -29,7 +29,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'calculadora-retencoes-nota-fiscal';
+    public const SLUG = 'backup-withholding-calculator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -39,12 +39,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function manifest(): ToolManifest
     {
         return new ToolManifest(
-            slug: self::SLUG, name: 'Calculadora de Retenções na Nota Fiscal', description: 'Estime IRRF, INSS, ISS, PIS/Pasep, Cofins e CSLL com parâmetros revisáveis, memória de cálculo e conferência em lote.', category: ToolCategory::Fiscal, icon: 'bi-receipt-cutoff', routeName: 'tools.calculadora-retencoes-nota-fiscal.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Active, position: 14, featured: true, supportsHistory: true, storesSensitiveData: false,
-            keywords: ['retenções', 'nota fiscal', 'IRRF', 'INSS', 'ISS', 'PIS', 'COFINS', 'CSLL', 'retenção na fonte'],
+            slug: self::SLUG, name: 'Backup Withholding Calculator', description: 'Estimate U.S. federal backup withholding and other user-entered withholding on reportable payments.', category: ToolCategory::Fiscal, icon: 'bi-receipt-cutoff', routeName: 'tools.backup-withholding-calculator.index', vertical: 'contabilidade', version: '1.0.0', access: ToolAccess::Free, status: ToolStatus::Active, position: 14, featured: true, supportsHistory: true, storesSensitiveData: false,
+            keywords: ['backup withholding', '24 percent withholding', 'TIN withholding', 'IRS withholding'],
             capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export],
             features: [
                 new ToolFeature('calculate', 'Estimativa de retenções de uma nota/serviço', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Memória de cálculo e premissas', ToolFeatureTier::Essential),
+                new ToolFeature('memory', 'Calculation details e premissas', ToolFeatureTier::Essential),
                 new ToolFeature('custom_rules', 'Bases e alíquotas configuráveis por tributo', ToolFeatureTier::Plus),
                 new ToolFeature('multiple_notes', 'Múltiplas notas ou serviços no mesmo cálculo', ToolFeatureTier::Plus),
                 new ToolFeature('report', 'Conferência por tributo e nota', ToolFeatureTier::Essential),
@@ -72,13 +72,13 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-retencoes-nota-fiscal';
+        return 'tools-backup-withholding-calculator';
     }
 
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(toolSlug: self::SLUG, forms: [new ToolAnalyticsForm(key: 'main', steps: ['input', 'rules', 'plus'], fields: [
             new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'), new ToolAnalyticsField('gross_value', 'input', selector: '[name="gross_value"]'), new ToolAnalyticsField('apply_irrf', 'rules', selector: '[name="apply_irrf"]'), new ToolAnalyticsField('apply_inss', 'rules', selector: '[name="apply_inss"]'), new ToolAnalyticsField('apply_iss', 'rules', selector: '[name="apply_iss"]'), new ToolAnalyticsField('apply_pis', 'rules', selector: '[name="apply_pis"]'), new ToolAnalyticsField('apply_cofins', 'rules', selector: '[name="apply_cofins"]'), new ToolAnalyticsField('apply_csll','rules',selector: '[name="apply_csll"]'),
-        ], actions: ['calculate', 'export'], selector: 'form[action*="calculadora-retencoes-nota-fiscal"]', resultSelector: '[data-analytics-result="main"]')]);
+        ], actions: ['calculate', 'export'], selector: 'form[action*="backup-withholding-calculator"]', resultSelector: '[data-analytics-result="main"]')]);
     }
 }

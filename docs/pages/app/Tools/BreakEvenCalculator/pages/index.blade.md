@@ -7,8 +7,8 @@ cobrir os custos fixos e variáveis de um produto ou serviço.
 
 ## Funcionamento
 
-- `GET /ferramentas/ponto-de-equilibrio` exibe o formulário público.
-- `POST /ferramentas/ponto-de-equilibrio` valida e calcula o caso individual.
+- `GET /ferramentas/break-even-calculator` exibe o formulário público.
+- `POST /ferramentas/break-even-calculator` valida e calcula o caso individual.
 - As entradas são custos fixos do período, preço de venda unitário e custo
   variável unitário.
 - A margem de contribuição deve ser positiva.
@@ -18,8 +18,8 @@ cobrir os custos fixos e variáveis de um produto ou serviço.
 ## Implementação principal
 
 - **View:** `app/Tools/BreakEvenCalculator/Resources/views/index.blade.php`
-- **Rotas:** `tools.ponto-de-equilibrio.index` e
-  `tools.ponto-de-equilibrio.calculate`
+- **Rotas:** `tools.break-even-calculator.index` e
+  `tools.break-even-calculator.calculate`
 - **Controller:** `Presentation/Controllers/ToolController`
 - **Validação:** `Presentation/Requests/ExecuteToolRequest`
 - **Action:** `Application/Actions/CalculateTool`

@@ -2,7 +2,7 @@
 
 - **Tipo:** Documento de saída/impressão
 - **Implementação principal:** `app/Tools/EmployeeCostCalculator/Resources/views/report.blade.php`
-- **Fluxo:** `tools.custo-funcionario-clt.print` e segunda via do histórico
+- **Fluxo:** `tools.employee-cost-calculator.print` e segunda via do histórico
 - **Status:** ativo
 
 ## Objetivo

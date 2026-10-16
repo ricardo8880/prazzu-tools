@@ -14,10 +14,10 @@ enum OperationalComplexity: string
     public function label(): string
     {
         return match ($this) {
-            self::Low => 'Baixa',
-            self::Medium => 'Média',
-            self::High => 'Alta',
-            self::VeryHigh => 'Muito alta',
+            self::Low => 'Low',
+            self::Medium => 'Medium',
+            self::High => 'High',
+            self::VeryHigh => 'Very high',
         };
     }
 

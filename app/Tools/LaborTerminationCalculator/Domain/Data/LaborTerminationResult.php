@@ -1,91 +1,49 @@
 <?php
 
 declare(strict_types=1);
-
 namespace App\Tools\LaborTerminationCalculator\Domain\Data;
-
 use App\Core\Money\Money;
 use App\Core\Tools\Calculation\Data\CalculationMemory;
 use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
-use App\Tools\LaborTerminationCalculator\Domain\Enums\NoticeType;
-use App\Tools\LaborTerminationCalculator\Domain\Enums\TerminationType;
 use DateTimeImmutable;
-
 final readonly class LaborTerminationResult
 {
-    /** @param array<int, string> $warnings */
+    /** @param list<string> $warnings */
     public function __construct(
-        public Money $monthlySalary, public Money $salaryBase, public Money $commissionAverage, public Money $overtimeAverage,
-        public Money $recurringAdditions, public Money $dailySalary, public Money $salaryBalance,
-        public Money $overdueVacation, public Money $overdueVacationThird, public Money $proportionalVacation,
-        public Money $proportionalVacationThird, public Money $proportionalThirteenthSalary, public Money $noticePay,
-        public Money $article479Indemnity, public Money $extraordinaryIndemnities, public Money $noticeDiscount,
-        public Money $article480Discount, public Money $grossTotal, public Money $inssSalary, public Money $inssThirteenth,
-        public Money $irrfSalary, public Money $irrfThirteenth, public Money $otherDiscounts, public Money $totalDiscounts,
-        public Money $netTotal, public Money $fgtsBalance, public Money $domesticIndemnityReserveBalance, public Money $domesticCompensatoryDeposit, public Money $fgtsTerminationDeposit, public Money $fgtsPenalty,
-        public Money $estimatedFgtsAvailable, public int $fgtsWithdrawalPercentage, public int $daysWorkedInMonth,
-        public int $proportionalVacationMonths, public int $proportionalThirteenthMonths, public int $overdueVacationPeriods,
-        public int $doubleVacationPeriods, public int $noticeDays, public int $remainingContractDays, public int $dependents,
-        public DateTimeImmutable $projectedTerminationDate, public ?DateTimeImmutable $contractEndDate,
-        public TerminationType $terminationType, public NoticeType $noticeType, public string $contractType, public string $earlyTerminationInitiative,
-        public array $warnings, public string $ruleVersion, public string $taxTableVersion,
-    ) {}
-
-    /** @return array<string, mixed> */
-    public function toArray(): array
+        public DateTimeImmutable $terminationDate,
+        public string $separationType,
+        public Money $regularPayDue,
+        public Money $ptoPayout,
+        public Money $severancePay,
+        public Money $bonusCommissionDue,
+        public Money $otherPay,
+        public Money $grossFinalPay,
+        public Money $federalWithholding,
+        public Money $stateLocalWithholding,
+        public Money $otherDeductions,
+        public Money $totalDeductions,
+        public Money $netFinalPay,
+        public array $warnings,
+        public string $ruleVersion,
+    ){}
+    public function toArray():array
     {
-        $money = fn (Money $value): string => $value->formatPtBr();
-
+        $m=fn(Money $v)=>$v->formatEnUs();
         return [
-            'monthly_salary' => $money($this->monthlySalary), 'salary_base' => $money($this->salaryBase),
-            'commission_average' => $money($this->commissionAverage), 'overtime_average' => $money($this->overtimeAverage),
-            'recurring_additions' => $money($this->recurringAdditions), 'daily_salary' => $money($this->dailySalary),
-            'salary_balance' => $money($this->salaryBalance), 'overdue_vacation' => $money($this->overdueVacation),
-            'overdue_vacation_third' => $money($this->overdueVacationThird), 'proportional_vacation' => $money($this->proportionalVacation),
-            'proportional_vacation_third' => $money($this->proportionalVacationThird), 'proportional_thirteenth_salary' => $money($this->proportionalThirteenthSalary),
-            'notice_pay' => $money($this->noticePay), 'article_479_indemnity' => $money($this->article479Indemnity),
-            'extraordinary_indemnities' => $money($this->extraordinaryIndemnities), 'notice_discount' => $money($this->noticeDiscount),
-            'article_480_discount' => $money($this->article480Discount), 'gross_total' => $money($this->grossTotal),
-            'inss_salary' => $money($this->inssSalary), 'inss_thirteenth' => $money($this->inssThirteenth),
-            'irrf_salary' => $money($this->irrfSalary), 'irrf_thirteenth' => $money($this->irrfThirteenth),
-            'other_discounts' => $money($this->otherDiscounts), 'total_discounts' => $money($this->totalDiscounts), 'net_total' => $money($this->netTotal),
-            'fgts_balance' => $money($this->fgtsBalance), 'domestic_indemnity_reserve_balance' => $money($this->domesticIndemnityReserveBalance),
-            'domestic_compensatory_deposit' => $money($this->domesticCompensatoryDeposit), 'fgts_termination_deposit' => $money($this->fgtsTerminationDeposit),
-            'fgts_penalty' => $money($this->fgtsPenalty), 'estimated_fgts_available' => $money($this->estimatedFgtsAvailable),
-            'fgts_withdrawal_percentage' => $this->fgtsWithdrawalPercentage, 'days_worked_in_month' => $this->daysWorkedInMonth,
-            'proportional_vacation_months' => $this->proportionalVacationMonths, 'proportional_thirteenth_months' => $this->proportionalThirteenthMonths,
-            'overdue_vacation_periods' => $this->overdueVacationPeriods, 'double_vacation_periods' => $this->doubleVacationPeriods,
-            'notice_days' => $this->noticeDays, 'remaining_contract_days' => $this->remainingContractDays, 'dependents' => $this->dependents,
-            'projected_termination_date' => $this->projectedTerminationDate->format('d/m/Y'),
-            'contract_end_date' => $this->contractEndDate?->format('d/m/Y'),
-            'termination_type' => $this->terminationType->value, 'termination_type_label' => $this->terminationType->label(),
-            'contract_type' => $this->contractType, 'is_domestic' => $this->contractType === 'domestic',
-            'notice_type' => $this->noticeType->value, 'notice_type_label' => $this->noticeType->label(),
-            'early_termination_initiative' => $this->earlyTerminationInitiative,
-            'early_termination_initiative_label' => match ($this->earlyTerminationInitiative) {
-                'employer' => 'Empregador', 'employee' => 'Empregado', default => 'Não se aplica'
-            },
-            'warnings' => $this->warnings, 'rule_version' => $this->ruleVersion, 'tax_table_version' => $this->taxTableVersion,
-            'calculation_memory' => $this->calculationMemory()->toArray(),
+            'termination_date'=>$this->terminationDate->format('Y-m-d'),'separation_type'=>$this->separationType,
+            'regular_pay_due'=>$m($this->regularPayDue),'pto_payout'=>$m($this->ptoPayout),'severance_pay'=>$m($this->severancePay),
+            'bonus_commission_due'=>$m($this->bonusCommissionDue),'other_pay'=>$m($this->otherPay),'gross_final_pay'=>$m($this->grossFinalPay),
+            'federal_withholding'=>$m($this->federalWithholding),'state_local_withholding'=>$m($this->stateLocalWithholding),'other_deductions'=>$m($this->otherDeductions),
+            'total_deductions'=>$m($this->totalDeductions),'net_final_pay'=>$m($this->netFinalPay),'net_total'=>$m($this->netFinalPay),
+            'warnings'=>$this->warnings,'rule_version'=>$this->ruleVersion,'calculation_memory'=>$this->calculationMemory()->toArray(),
         ];
     }
-
-    public function calculationMemory(): CalculationMemory
+    public function calculationMemory():CalculationMemory
     {
-        return new CalculationMemory(
-            schemaVersion: $this->ruleVersion,
-            steps: [
-                new CalculationMemoryStep('salary_base', 'Remuneração-base', 'salário + médias + adicionais recorrentes', ['monthly_salary' => $this->monthlySalary->minorAmount(), 'commission_average' => $this->commissionAverage->minorAmount(), 'overtime_average' => $this->overtimeAverage->minorAmount(), 'recurring_additions' => $this->recurringAdditions->minorAmount()], $this->salaryBase->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('gross_total', 'Total bruto rescisório', 'soma das verbas rescisórias positivas', ['salary_balance' => $this->salaryBalance->minorAmount(), 'vacation' => $this->overdueVacation->minorAmount() + $this->overdueVacationThird->minorAmount() + $this->proportionalVacation->minorAmount() + $this->proportionalVacationThird->minorAmount(), 'thirteenth' => $this->proportionalThirteenthSalary->minorAmount(), 'notice' => $this->noticePay->minorAmount(), 'article_479' => $this->article479Indemnity->minorAmount(), 'extraordinary' => $this->extraordinaryIndemnities->minorAmount()], $this->grossTotal->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('discounts', 'Total de descontos', 'aviso + tributos + outros descontos', ['notice_discount' => $this->noticeDiscount->minorAmount(), 'inss' => $this->inssSalary->minorAmount() + $this->inssThirteenth->minorAmount(), 'irrf' => $this->irrfSalary->minorAmount() + $this->irrfThirteenth->minorAmount(), 'other_discounts' => $this->otherDiscounts->minorAmount(), 'article_480' => $this->article480Discount->minorAmount()], $this->totalDiscounts->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('net_total', 'Total líquido', 'total bruto - total de descontos', ['gross_total' => $this->grossTotal->minorAmount(), 'total_discounts' => $this->totalDiscounts->minorAmount()], $this->netTotal->minorAmount(), 'Valores monetários em centavos.'),
-                new CalculationMemoryStep('fgts', 'FGTS estimado disponível', 'saldo, depósito rescisório, saque e indenização conforme cenário', ['fgts_balance' => $this->fgtsBalance->minorAmount(), 'termination_deposit' => $this->fgtsTerminationDeposit->minorAmount(), 'penalty' => $this->fgtsPenalty->minorAmount(), 'withdrawal_percentage' => $this->fgtsWithdrawalPercentage], $this->estimatedFgtsAvailable->minorAmount(), 'Valores monetários em centavos.'),
-            ],
-            assumptions: array_merge([
-                'O cálculo é estimativo e depende da confirmação de datas, motivo da rescisão, médias, férias, FGTS e eventos transmitidos ao eSocial.',
-                'As tabelas tributárias aplicadas são identificadas pela versão '.$this->taxTableVersion.'.',
-            ], $this->warnings),
-            isEstimate: true,
-        );
+        return new CalculationMemory($this->ruleVersion,[
+            new CalculationMemoryStep('gross','Gross final pay','regular pay due + PTO payout + severance + bonus/commission + other pay',[],$this->grossFinalPay->minorAmount()),
+            new CalculationMemoryStep('deductions','Entered withholding and deductions','federal + state/local + other deductions',[],$this->totalDeductions->minorAmount()),
+            new CalculationMemoryStep('net','Estimated net final pay','gross final pay − entered deductions',[],$this->netFinalPay->minorAmount()),
+        ],assumptions:$this->warnings,isEstimate:true);
     }
 }

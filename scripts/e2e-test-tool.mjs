@@ -4,13 +4,13 @@ const rawSlug = process.argv[2]?.trim();
 
 if (!rawSlug) {
     console.error('\n[E2E TOOL] Informe o slug da ferramenta.');
-    console.error('[E2E TOOL] Exemplo: npm run e2e:test:tool gerador-de-contratos\n');
+    console.error('[E2E TOOL] Exemplo: npm run e2e:test:tool contract-generator\n');
     process.exit(1);
 }
 
 if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(rawSlug)) {
     console.error(`\n[E2E TOOL] Slug inválido: "${rawSlug}".`);
-    console.error('[E2E TOOL] Use o slug da URL, por exemplo: gerador-de-contratos\n');
+    console.error('[E2E TOOL] Use o slug da URL, por exemplo: contract-generator\n');
     process.exit(1);
 }
 

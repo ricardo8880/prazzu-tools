@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-depreciacao-ativos', 'portfolio_projection')]
+    #[CoversPlusFeature('asset-depreciation-calculator', 'portfolio_projection')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

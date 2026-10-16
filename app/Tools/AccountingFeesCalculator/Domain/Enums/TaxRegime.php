@@ -6,28 +6,31 @@ namespace App\Tools\AccountingFeesCalculator\Domain\Enums;
 
 enum TaxRegime: string
 {
-    case Mei = 'mei';
-    case SimplesNacional = 'simples_nacional';
-    case LucroPresumido = 'lucro_presumido';
-    case LucroReal = 'lucro_real';
+    case SoleProprietor = 'sole_proprietor';
+    case Partnership = 'partnership';
+    case SCorporation = 's_corporation';
+    case CCorporation = 'c_corporation';
+    case Nonprofit = 'nonprofit';
 
     public function label(): string
     {
         return match ($this) {
-            self::Mei => 'MEI',
-            self::SimplesNacional => 'Simples Nacional',
-            self::LucroPresumido => 'Lucro Presumido',
-            self::LucroReal => 'Lucro Real',
+            self::SoleProprietor => 'Sole proprietor / single-member LLC',
+            self::Partnership => 'Partnership / multi-member LLC',
+            self::SCorporation => 'S corporation',
+            self::CCorporation => 'C corporation',
+            self::Nonprofit => 'Nonprofit organization',
         };
     }
 
     public function baseFeeInCents(): int
     {
         return match ($this) {
-            self::Mei => 25_000,
-            self::SimplesNacional => 65_000,
-            self::LucroPresumido => 100_000,
-            self::LucroReal => 180_000,
+            self::SoleProprietor => 30_000,
+            self::Partnership => 55_000,
+            self::SCorporation => 70_000,
+            self::CCorporation => 90_000,
+            self::Nonprofit => 90_000,
         };
     }
 }

@@ -21,8 +21,8 @@ final class StorePartyProfileRequest extends FormRequest
             'party_type' => ['required', Rule::in(['payer', 'payee'])],
             'label' => ['required', 'string', 'min:2', 'max:80'],
             'name' => ['required', 'string', 'min:2', 'max:160'],
-            'document_type' => ['nullable', Rule::in(['cpf', 'cnpj']), 'required_with:document'],
-            'document' => ['nullable', 'string', 'max:18', 'required_with:document_type'],
+            'document_type' => ['nullable', Rule::in(['ein', 'id']), 'required_with:document'],
+            'document' => ['nullable', 'string', 'max:40', 'required_with:document_type'],
         ];
     }
 

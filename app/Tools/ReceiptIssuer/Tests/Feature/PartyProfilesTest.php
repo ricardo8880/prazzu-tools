@@ -16,15 +16,15 @@ final class PartyProfilesTest extends TestCase
 
     public function test_profiles_require_authentication(): void
     {
-        $this->get(route('tools.emissor-de-recibos.profiles.index'))->assertRedirect();
+        $this->get(route('tools.receipt-generator.profiles.index'))->assertRedirect();
     }
 
-    #[CoversPlusFeature('emissor-de-recibos', 'saved_profiles')]
+    #[CoversPlusFeature('receipt-generator', 'saved_profiles')]
     public function test_authenticated_user_can_save_and_delete_an_owned_profile(): void
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)->post(route('tools.emissor-de-recibos.profiles.store'), [
+        $this->actingAs($user)->post(route('tools.receipt-generator.profiles.store'), [
             'party_type' => 'payer',
             'label' => 'Cliente mensal',
             'name' => 'Empresa Exemplo Ltda',
@@ -36,7 +36,7 @@ final class PartyProfilesTest extends TestCase
         self::assertSame('11222333000181', $profile->document);
         self::assertNotSame('11222333000181', (string) $profile->getRawOriginal('document'));
 
-        $this->delete(route('tools.emissor-de-recibos.profiles.destroy', $profile))->assertSessionHasNoErrors();
+        $this->delete(route('tools.receipt-generator.profiles.destroy', $profile))->assertSessionHasNoErrors();
         $this->assertDatabaseMissing('receipt_party_profiles', ['id' => $profile->id]);
     }
 
@@ -51,6 +51,6 @@ final class PartyProfilesTest extends TestCase
             'name' => 'Empresa Segura Ltda',
         ]);
 
-        $this->actingAs($other)->post(route('tools.emissor-de-recibos.profiles.use', $profile))->assertNotFound();
+        $this->actingAs($other)->post(route('tools.receipt-generator.profiles.use', $profile))->assertNotFound();
     }
 }

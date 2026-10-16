@@ -6,7 +6,9 @@ namespace App\Tools\EmployeeCostCalculator\Domain\Services;
 
 use App\Core\Dates\ReferenceDate;
 use App\Core\Labor\Normative\EmployerChargeRule;
+use App\Core\Money\Money;
 use App\Core\Money\Percentage;
+use App\Core\Tax\US\FederalPayroll2026;
 use App\Core\Tools\Calculation\Data\CalculationMemory;
 use App\Core\Tools\Calculation\Data\CalculationMemoryStep;
 use App\Core\Tools\Calculation\Data\ToolCalculationResult;
@@ -23,53 +25,74 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível.');
+            throw new InvalidArgumentException('Incompatible employee-cost input.');
         }
         if ($input->monthlyHours < 1 || $input->monthlyHours > 744) {
-            throw new InvalidArgumentException('A jornada mensal deve estar entre 1 e 744 horas.');
+            throw new InvalidArgumentException('Monthly hours must be between 1 and 744.');
         }
 
+        // Legacy field names rat/thirdParties are retained in persistence for backward
+        // compatibility; in the U.S. version they represent effective SUTA and other
+        // employer payroll-cost rates supplied by the user.
         $rates = $this->chargeRule->ratesFor($input->regime, $input->rat, $input->thirdParties);
-        $remuneration = $input->salary->add($input->variablePay);
-        $thirteenth = $remuneration->divide(12);
-        $vacation = $remuneration->divide(12);
-        $vacationThird = $remuneration->divide(36);
-        $provisions = $thirteenth->add($vacation)->add($vacationThird);
-        $incidenceBase = $remuneration->add($provisions);
-        $fgts = $incidenceBase->percentage($rates->fgts);
-        $cpp = $incidenceBase->percentage($rates->cpp);
-        $rat = $incidenceBase->percentage($rates->rat);
-        $thirdParties = $incidenceBase->percentage($rates->thirdParties);
-        $charges = $fgts->add($cpp)->add($rat)->add($thirdParties);
-        $monthly = $remuneration->add($input->benefits)->add($provisions)->add($charges);
-        $annual = $monthly->multiply(12);
+        $monthlyWages = $input->salary->add($input->variablePay);
+        $annualWages = $monthlyWages->multiply(12);
+        $annualBenefits = $input->benefits->multiply(12);
+
+        $socialSecurity = FederalPayroll2026::employerSocialSecurity($annualWages);
+        $medicare = FederalPayroll2026::employerMedicare($annualWages);
+        $futa = $input->regime === 'futa_exempt' ? Money::zero() : FederalPayroll2026::employerFuta($annualWages);
+        $suta = $annualWages->percentage($rates->suta);
+        $otherEmployer = $annualWages->percentage($rates->otherEmployerCosts);
+        $annualPayrollTaxes = $socialSecurity->add($medicare)->add($futa)->add($suta)->add($otherEmployer);
+        $annual = $annualWages->add($annualBenefits)->add($annualPayrollTaxes);
+        $monthly = $annual->divide(12);
         $hourly = $monthly->divide($input->monthlyHours);
-        $additional = $monthly->subtract($remuneration);
-        $additionalPercentage = Percentage::fromBasisPoints(intdiv(($additional->minorAmount() * 10_000) + intdiv($remuneration->minorAmount(), 2), $remuneration->minorAmount()));
-        $snapshot = $this->chargeRule->snapshot(ReferenceDate::fromString('2026-07-25'));
+        $additional = $annual->subtract($annualWages);
+        $additionalPercentage = Percentage::fromBasisPoints(intdiv(($additional->minorAmount() * 10_000) + intdiv($annualWages->minorAmount(), 2), $annualWages->minorAmount()));
+        $snapshot = $this->chargeRule->snapshot(ReferenceDate::fromString('2026-10-16'));
 
         return new ToolCalculationResult(
-            toolSlug: 'custo-funcionario-clt', schemaVersion: '1.2.0',
+            toolSlug: 'employee-cost-calculator',
+            schemaVersion: '2.0.0',
             summary: [
-                new ToolCalculationSummaryItem('monthly_cost', 'Custo mensal provisionado', $monthly->formatPtBr()),
-                new ToolCalculationSummaryItem('annual_cost', 'Custo anual projetado', $annual->formatPtBr()),
-                new ToolCalculationSummaryItem('hourly_cost', 'Custo por hora', $hourly->formatPtBr()),
-                new ToolCalculationSummaryItem('additional_percentage', 'Custo adicional sobre a remuneração', $additionalPercentage->toDecimalString().'%'),
-                new ToolCalculationSummaryItem('provisions', '13º, férias e terço', $provisions->formatPtBr()),
-                new ToolCalculationSummaryItem('charges', 'FGTS e encargos patronais', $charges->formatPtBr()),
+                new ToolCalculationSummaryItem('monthly_cost', 'Estimated monthly employer cost', $monthly->formatEnUs()),
+                new ToolCalculationSummaryItem('annual_cost', 'Estimated annual employer cost', $annual->formatEnUs()),
+                new ToolCalculationSummaryItem('hourly_cost', 'Estimated employer cost per hour', $hourly->formatEnUs()),
+                new ToolCalculationSummaryItem('payroll_taxes', 'Estimated employer payroll taxes', $annualPayrollTaxes->formatEnUs()),
+                new ToolCalculationSummaryItem('additional_percentage', 'Benefits and employer taxes vs. wages', $additionalPercentage->toDecimalString().'%'),
             ],
-            details: ['input' => $input->toArray(), 'rates' => $rates->toArray(), 'amounts' => [
-                'remuneration_minor' => $remuneration->minorAmount(), 'provisions_minor' => $provisions->minorAmount(),
-                'fgts_minor' => $fgts->minorAmount(), 'cpp_minor' => $cpp->minorAmount(), 'rat_minor' => $rat->minorAmount(),
-                'third_parties_minor' => $thirdParties->minorAmount(), 'charges_minor' => $charges->minorAmount(),
-                'monthly_cost_minor' => $monthly->minorAmount(), 'annual_cost_minor' => $annual->minorAmount(), 'hourly_cost_minor' => $hourly->minorAmount(),
-            ]],
-            calculationMemory: new CalculationMemory('1.0.0', [
-                new CalculationMemoryStep('remuneration', 'Remuneração mensal', 'salário + remuneração variável', ['salary_minor' => $input->salary->minorAmount(), 'variable_pay_minor' => $input->variablePay->minorAmount()], $remuneration->minorAmount(), 'Money::add'),
-                new CalculationMemoryStep('provisions', 'Provisões mensais', '13º (1/12) + férias (1/12) + terço constitucional (1/36)', ['remuneration_minor' => $remuneration->minorAmount()], $provisions->minorAmount(), 'Money::divide'),
-                new CalculationMemoryStep('charges', 'Encargos sobre base provisionada', 'base × (FGTS + CPP + RAT + terceiros)', ['incidence_base_minor' => $incidenceBase->minorAmount(), ...$rates->toArray()], $charges->minorAmount(), 'Money::percentage'),
-                new CalculationMemoryStep('monthly_cost', 'Custo mensal', 'remuneração + benefícios + provisões + encargos', ['remuneration_minor' => $remuneration->minorAmount(), 'benefits_minor' => $input->benefits->minorAmount(), 'provisions_minor' => $provisions->minorAmount(), 'charges_minor' => $charges->minorAmount()], $monthly->minorAmount(), 'Money::add'),
-            ], [$snapshot], ['RAT e terceiros são informados pelo usuário conforme atividade, FPAS e enquadramento.'], true),
+            details: [
+                'input' => $input->toArray(),
+                'rates' => $rates->toArray(),
+                'amounts' => [
+                    'remuneration_minor' => $monthlyWages->minorAmount(),
+                    'annual_wages_minor' => $annualWages->minorAmount(),
+                    'annual_benefits_minor' => $annualBenefits->minorAmount(),
+                    'social_security_minor' => $socialSecurity->minorAmount(),
+                    'medicare_minor' => $medicare->minorAmount(),
+                    'futa_minor' => $futa->minorAmount(),
+                    'suta_minor' => $suta->minorAmount(),
+                    'other_employer_minor' => $otherEmployer->minorAmount(),
+                    'charges_minor' => $annualPayrollTaxes->divide(12)->minorAmount(),
+                    'annual_payroll_taxes_minor' => $annualPayrollTaxes->minorAmount(),
+                    'monthly_cost_minor' => $monthly->minorAmount(),
+                    'annual_cost_minor' => $annual->minorAmount(),
+                    'hourly_cost_minor' => $hourly->minorAmount(),
+                ],
+            ],
+            calculationMemory: new CalculationMemory('2.0.0', [
+                new CalculationMemoryStep('annual_wages', 'Annual cash wages', '(monthly salary + variable pay) × 12', ['monthly_wages_minor' => $monthlyWages->minorAmount()], $annualWages->minorAmount()),
+                new CalculationMemoryStep('fica', 'Employer FICA', 'Social Security (6.2%, 2026 wage base cap) + Medicare (1.45%, no wage cap)', ['annual_wages_minor' => $annualWages->minorAmount()], $socialSecurity->add($medicare)->minorAmount()),
+                new CalculationMemoryStep('futa', 'FUTA estimate', '0.6% of the first $7,000 of annual wages when the maximum state credit applies', ['annual_wages_minor' => $annualWages->minorAmount()], $futa->minorAmount()),
+                new CalculationMemoryStep('state_other', 'State and other employer costs', 'annual wages × user-supplied effective SUTA and other employer-cost rates', ['suta_rate' => $rates->suta->toDecimalString(), 'other_rate' => $rates->otherEmployerCosts->toDecimalString()], $suta->add($otherEmployer)->minorAmount()),
+                new CalculationMemoryStep('annual_cost', 'Annual employer cost', 'cash wages + benefits + employer payroll taxes', ['wages_minor' => $annualWages->minorAmount(), 'benefits_minor' => $annualBenefits->minorAmount(), 'payroll_taxes_minor' => $annualPayrollTaxes->minorAmount()], $annual->minorAmount()),
+            ], [$snapshot], [
+                'This calculator uses 2026 federal payroll rates. State and local rules vary and must be supplied by the user.',
+                'The 0.6% FUTA estimate assumes the maximum state unemployment credit and no credit-reduction adjustment.',
+                'SUTA is modeled as an effective rate on annual wages because state rates and taxable wage bases vary.',
+                'Benefits are treated as employer costs and are not automatically treated as taxable wages.',
+            ], true),
         );
     }
 }

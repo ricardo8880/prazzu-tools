@@ -36,7 +36,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
         return [CalculateApiAction::class];
     }
 
-    public const SLUG = 'calculadora-ferias';
+    public const SLUG = 'pto-calculator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -46,7 +46,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(
-            toolSlug: 'calculadora-ferias',
+            toolSlug: 'pto-calculator',
             forms: [
                 new ToolAnalyticsForm(
                     key: 'main',
@@ -70,11 +70,11 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Calculadora de Férias',
-            description: 'Calcule dias de direito, remuneração de férias, terço constitucional, abono pecuniário e prazos com memória transparente.',
+            name: 'PTO Calculator',
+            description: 'Estimate PTO value, planned usage, projected accrual, and payout using employer-policy assumptions.',
             category: ToolCategory::Labor,
             icon: 'bi-calendar2-check',
-            routeName: 'tools.calculadora-ferias.index',
+            routeName: 'tools.pto-calculator.index',
             vertical: 'contabilidade',
             version: '1.0.0',
             access: ToolAccess::Free,
@@ -83,7 +83,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
             featured: false,
             supportsHistory: true,
             storesSensitiveData: false,
-            keywords: ['férias', 'calcular férias', 'abono pecuniário', 'um terço de férias', 'período aquisitivo', 'período concessivo'],
+            keywords: ['PTO calculator', 'paid time off', 'vacation payout', 'PTO accrual'],
             capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export],
             features: [
                 new ToolFeature('vacation_calculation', 'Cálculo de férias, terço constitucional e descontos informados', ToolFeatureTier::Essential),
@@ -93,7 +93,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                 new ToolFeature('history', 'Histórico, recuperação e duplicação de cálculos', ToolFeatureTier::Plus),
                 new ToolFeature('multiple_employees', 'Cálculo e planejamento para múltiplos funcionários', ToolFeatureTier::Plus),
                 new ToolFeature('vacation_planning', 'Calendário, alertas e planejamento de períodos', ToolFeatureTier::Plus),
-                new ToolFeature('professional_export', 'Exportação profissional em PDF, XLSX, CSV e JSON', ToolFeatureTier::Plus),
+                new ToolFeature('professional_export', 'Professional PDF/XLSX/CSV/JSON export', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 180, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['pdf', 'xlsx', 'csv', 'json']),
@@ -125,6 +125,6 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-ferias';
+        return 'tools-pto-calculator';
     }
 }

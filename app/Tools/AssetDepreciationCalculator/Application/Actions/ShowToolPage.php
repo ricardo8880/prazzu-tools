@@ -17,9 +17,9 @@ final readonly class ShowToolPage
         return [
             'tool' => $this->tool->manifest(),
             'methods' => [
-                'linear' => 'Linear',
+                'linear' => 'Straight-line',
                 'declining_balance' => 'Saldos decrescentes (duplo)',
-                'sum_of_years_digits' => 'Soma dos dígitos dos anos',
+                'sum_of_years_digits' => 'Soma dos dígitos dos years',
             ],
         ];
     }

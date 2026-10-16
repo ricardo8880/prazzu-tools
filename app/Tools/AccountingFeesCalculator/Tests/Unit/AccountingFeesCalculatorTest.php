@@ -27,8 +27,8 @@ final class AccountingFeesCalculatorTest extends TestCase
             complexity: OperationalComplexity::Medium,
         );
 
-        self::assertSame('R$ 1.678,43', $result->minimumFee->formatPtBr());
-        self::assertSame('R$ 1.930,19', $result->recommendedFee->formatPtBr());
+        self::assertSame('R$ 1.678,43', $result->minimumFee->formatEnUs());
+        self::assertSame('R$ 1.930,19', $result->recommendedFee->formatEnUs());
         self::assertSame('1.0.0', $result->ruleVersion);
         self::assertCount(6, $result->breakdown);
         self::assertSame(46, $result->complexityScore);

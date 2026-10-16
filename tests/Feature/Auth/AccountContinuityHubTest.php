@@ -20,9 +20,9 @@ final class AccountContinuityHubTest extends TestCase
         $user = User::factory()->create();
         $other = User::factory()->create();
 
-        $salaryRun = $this->runFor($user, 'calculadora-salario-liquido', now()->subHour());
-        $contractRun = $this->runFor($user, 'gerador-de-contratos', now()->subHours(2));
-        $this->runFor($other, 'capital-de-giro', now());
+        $salaryRun = $this->runFor($user, 'take-home-pay-calculator', now()->subHour());
+        $contractRun = $this->runFor($user, 'contract-generator', now()->subHours(2));
+        $this->runFor($other, 'working-capital-calculator', now());
 
         ToolRunFavorite::query()->create([
             'tool_run_id' => $contractRun->id,
@@ -37,12 +37,12 @@ final class AccountContinuityHubTest extends TestCase
             ->assertViewHas('usedToolCount', 2)
             ->assertViewHas('continueRuns', function ($runs): bool {
                 return $runs->pluck('tool_slug')->all() === [
-                    'calculadora-salario-liquido',
-                    'gerador-de-contratos',
+                    'take-home-pay-calculator',
+                    'contract-generator',
                 ];
             })
             ->assertViewHas('favoriteRuns', function ($runs): bool {
-                return $runs->pluck('tool_slug')->all() === ['gerador-de-contratos'];
+                return $runs->pluck('tool_slug')->all() === ['contract-generator'];
             });
 
         self::assertNotNull($salaryRun->id);
@@ -51,13 +51,13 @@ final class AccountContinuityHubTest extends TestCase
     public function test_account_hub_reuses_existing_tool_repeat_route_when_available(): void
     {
         $user = User::factory()->create();
-        $run = $this->runFor($user, 'calculadora-salario-liquido', now());
+        $run = $this->runFor($user, 'take-home-pay-calculator', now());
 
         $this->actingAs($user)
             ->get(route('account.show'))
             ->assertOk()
             ->assertSee('Refazer cálculo')
-            ->assertSee(url()->query(route('tools.calculadora-salario-liquido.history.repeat', [$run->id]), ['source' => 'account_continuity']), false);
+            ->assertSee(url()->query(route('tools.take-home-pay-calculator.history.repeat', [$run->id]), ['source' => 'account_continuity']), false);
     }
 
     public function test_account_hub_shows_contextual_period_when_tool_provides_it(): void
@@ -65,7 +65,7 @@ final class AccountContinuityHubTest extends TestCase
         $user = User::factory()->create();
         $this->runFor(
             $user,
-            'calculadora-salario-liquido',
+            'take-home-pay-calculator',
             now(),
             ['competence' => '2026-08', 'base_salary' => '5000'],
         );
@@ -80,7 +80,7 @@ final class AccountContinuityHubTest extends TestCase
     public function test_account_hub_explains_favorites_when_history_exists_but_none_are_marked(): void
     {
         $user = User::factory()->create();
-        $this->runFor($user, 'calculadora-salario-liquido', now());
+        $this->runFor($user, 'take-home-pay-calculator', now());
 
         $this->actingAs($user)
             ->get(route('account.show'))
@@ -96,7 +96,7 @@ final class AccountContinuityHubTest extends TestCase
 
         $this->runFor(
             $user,
-            'calculadora-salario-liquido',
+            'take-home-pay-calculator',
             now(),
             ['private_input' => $secretInput],
             ['private_result' => $secretResult],

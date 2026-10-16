@@ -23,10 +23,10 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível com a calculadora de parcelamento tributário.');
+            throw new InvalidArgumentException('Incompatible input for the IRS payment-plan estimator.');
         }
         if ($input->scenarios === []) {
-            throw new InvalidArgumentException('Informe ao menos um cenário.');
+            throw new InvalidArgumentException('Enter at least one scenario.');
         }
 
         $scenarios = [];
@@ -37,13 +37,13 @@ final class Calculator implements ToolCalculator
         $main = $scenarios[0];
 
         return new ToolCalculationResult(
-            toolSlug: 'calculadora-parcelamento-tributario',
+            toolSlug: 'irs-payment-plan-calculator',
             schemaVersion: '1.0.0',
             summary: [
-                new ToolCalculationSummaryItem('debt', 'Dívida informada', Money::fromMinor($main['debt_minor'])->formatPtBr()),
-                new ToolCalculationSummaryItem('average_installment', 'Parcela média aproximada', Money::fromMinor($main['average_installment_minor'])->formatPtBr()),
-                new ToolCalculationSummaryItem('charges', 'Encargos estimados', Money::fromMinor($main['total_charges_minor'])->formatPtBr()),
-                new ToolCalculationSummaryItem('final_cost', 'Custo final estimado', Money::fromMinor($main['final_cost_minor'])->formatPtBr()),
+                new ToolCalculationSummaryItem('debt', 'Tax balance', Money::fromMinor($main['debt_minor'])->formatEnUs()),
+                new ToolCalculationSummaryItem('average_installment', 'Average estimated monthly payment', Money::fromMinor($main['average_installment_minor'])->formatEnUs()),
+                new ToolCalculationSummaryItem('charges', 'Estimated interest/penalty charges', Money::fromMinor($main['total_charges_minor'])->formatEnUs()),
+                new ToolCalculationSummaryItem('final_cost', 'Estimated total paid', Money::fromMinor($main['final_cost_minor'])->formatEnUs()),
             ],
             details: [
                 'scenarios' => $scenarios,
@@ -61,44 +61,44 @@ final class Calculator implements ToolCalculator
             warnings: [
                 new ToolCalculationWarning(
                     'approximation',
-                    'Simulação aproximada pelo sistema de amortização constante (SAC): principal uniforme e encargos mensais sobre o saldo devedor. O valor real depende das regras do programa de parcelamento.',
+                    'Planning estimate using equal principal reduction plus the user-supplied monthly combined interest/penalty rate on the outstanding balance. Actual IRS interest and penalties can change and do not follow this simplified model exactly.',
                     ToolCalculationWarningLevel::Info,
                 ),
                 new ToolCalculationWarning(
                     'normative_scope',
-                    'A ferramenta não consulta nem presume regras de Receita Federal, PGFN, Simples Nacional, estados ou municípios. Informe a taxa de encargos aplicável ao seu caso e confirme entrada mínima, parcela mínima, descontos e atualização monetária no órgão responsável.',
+                    'For individuals, IRS online-plan eligibility generally differs by balance and term; short-term plans may cover balances under $100,000 for up to 180 days, while long-term online plans generally require $50,000 or less in combined tax, penalties, and interest. Confirm current IRS eligibility, setup fees, required filings, and payment terms before applying.',
                     ToolCalculationWarningLevel::Info,
                 ),
             ],
             calculationMemory: new CalculationMemory('1.0.0', [
                 new CalculationMemoryStep(
                     'financed_balance',
-                    'Saldo parcelado',
-                    'dívida − entrada',
+                    'Balance to pay over time',
+                    'tax balance - upfront payment',
                     ['debt_minor' => $main['debt_minor'], 'entry_minor' => $main['entry_minor']],
                     $main['financed_minor'],
-                    'Valores monetários são calculados em centavos, sem ponto flutuante.',
+                    'Monetary values are calculated in cents.',
                 ),
                 new CalculationMemoryStep(
                     'principal_amortization',
-                    'Amortização do principal',
-                    'saldo parcelado ÷ quantidade de parcelas',
+                    'Monthly principal reduction',
+                    'balance ÷ number of monthly payments',
                     ['financed_minor' => $main['financed_minor'], 'installments' => $main['installments']],
                     $main['base_amortization_minor'],
-                    'Diferenças de centavos são absorvidas nas parcelas para zerar o saldo ao final.',
+                    'Rounding differences are absorbed so the modeled principal reaches zero.',
                 ),
                 new CalculationMemoryStep(
                     'monthly_charge',
-                    'Encargo de cada mês',
-                    'saldo devedor inicial do mês × taxa mensal informada',
+                    'Estimated monthly interest/penalty charge',
+                    'opening balance × user-supplied monthly rate',
                     ['monthly_charge' => $main['monthly_charge']],
                     $main['first_charge_minor'],
-                    'Como o saldo cai ao longo do tempo, os encargos e as parcelas também diminuem no modelo SAC.',
+                    'Because the modeled balance declines, estimated charges decline over time.',
                 ),
                 new CalculationMemoryStep(
                     'final_cost',
-                    'Custo final estimado',
-                    'entrada + soma das parcelas',
+                    'Estimated total paid',
+                    'upfront payment + sum of monthly payments',
                     ['entry_minor' => $main['entry_minor'], 'installments_total_minor' => $main['installments_total_minor']],
                     $main['final_cost_minor'],
                 ),
@@ -115,10 +115,10 @@ final class Calculator implements ToolCalculator
         $rate = Percentage::fromString($scenario['monthly_charge']);
 
         if ($debt->minorAmount() <= 0 || $entry->minorAmount() < 0 || $entry->minorAmount() >= $debt->minorAmount()) {
-            throw new InvalidArgumentException('Dívida ou entrada inválida no cenário '.($index + 1).'.');
+            throw new InvalidArgumentException('Invalid tax balance or upfront payment in scenario '.($index + 1).'.');
         }
-        if ($installments < 1 || $installments > 240 || $rate->millionthsOfPercent() < 0) {
-            throw new InvalidArgumentException('Prazo ou encargos inválidos no cenário '.($index + 1).'.');
+        if ($installments < 1 || $installments > 72 || $rate->millionthsOfPercent() < 0) {
+            throw new InvalidArgumentException('Invalid term or monthly rate in scenario '.($index + 1).'.');
         }
 
         $financed = $debt->minorAmount() - $entry->minorAmount();
@@ -155,7 +155,7 @@ final class Calculator implements ToolCalculator
         $finalCost = $entry->minorAmount() + $installmentsTotal;
 
         return [
-            'name' => trim($scenario['name']) !== '' ? trim($scenario['name']) : 'Cenário '.($index + 1),
+            'name' => trim($scenario['name']) !== '' ? trim($scenario['name']) : 'Scenario '.($index + 1),
             'debt_minor' => $debt->minorAmount(),
             'entry_minor' => $entry->minorAmount(),
             'financed_minor' => $financed,

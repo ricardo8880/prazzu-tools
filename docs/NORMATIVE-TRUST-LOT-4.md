@@ -76,7 +76,7 @@ Isso reduz o risco de uma nova regra normativa ser corretamente estruturada no d
 
 - lint PHP dos sete arquivos PHP alterados: aprovado;
 - `php artisan tools:check-architecture`: aprovado sem violações;
-- `php scripts/check-accounting-pains.php`: aprovado com 50 ferramentas oficiais, 49 em Contabilidade, 1 em RH e dívida Plus zero;
+- `php scripts/check-accounting-pains.php`: aprovado com 28 ferramentas oficiais, 49 em Contabilidade, 1 em RH e dívida Plus zero;
 - smoke test direto da Reforma Tributária: snapshot `2026.08.3`, referência `2029-01-01` e três fontes oficiais;
 - smoke test direto de DARF/GPS: snapshot `2026.1.0` com a data de vencimento como referência;
 - auditoria equivalente ao novo gate encontrou nove módulos de produção criando `NormativeRuleSnapshot::fromRule`, todos com `x-tools.normative-trust`;

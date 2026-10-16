@@ -57,7 +57,7 @@ return new class extends Migration
 
             DB::table('blog_post_tool')->insert([
                 'blog_post_id' => $postId,
-                'tool_slug' => 'calculadora-turnover',
+                'tool_slug' => 'employee-turnover-calculator',
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);

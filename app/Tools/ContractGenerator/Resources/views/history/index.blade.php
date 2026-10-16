@@ -4,11 +4,11 @@
 
 @section('content')
 <div class="container py-5">
-    <x-tools.page title="Histórico de Contratos" description="Revise versões salvas, marque favoritos e compare dois contratos." icon="clock-history" slug="gerador-de-contratos">
+    <x-tools.page title="Histórico de Contratos" description="Revise versões salvas, marque favoritos e compare dois contratos." icon="clock-history" slug="contract-generator">
         @if(session('history_message'))<div class="alert alert-success">{{ session('history_message') }}</div>@endif
 
         @if(count($runs->items) >= 2)
-            <form method="GET" action="{{ route('tools.gerador-de-contratos.history.compare') }}" class="border rounded p-3 mb-4">
+            <form method="GET" action="{{ route('tools.contract-generator.history.compare') }}" class="border rounded p-3 mb-4">
                 <h2 class="h5">Comparar versões <span class="badge text-bg-primary">Plus</span></h2>
                 <div class="row g-2 align-items-end">
                     <div class="col-12 col-md-5">
@@ -38,8 +38,8 @@
                     @if($run->favorite)<span class="badge text-bg-warning align-self-start">Favorito</span>@endif
                 </div>
                 <div class="d-flex flex-wrap gap-2 mt-3">
-                    <form method="POST" action="{{ route('tools.gerador-de-contratos.history.favorite', $run->id) }}">@csrf<button class="btn btn-sm btn-outline-warning" type="submit">{{ $run->favorite ? 'Remover favorito' : 'Favoritar' }}</button></form>
-                    <form method="POST" action="{{ route('tools.gerador-de-contratos.history.destroy', $run->id) }}" data-confirm="Excluir esta versão do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button></form>
+                    <form method="POST" action="{{ route('tools.contract-generator.history.favorite', $run->id) }}">@csrf<button class="btn btn-sm btn-outline-warning" type="submit">{{ $run->favorite ? 'Remove favorito' : 'Favoritar' }}</button></form>
+                    <form method="POST" action="{{ route('tools.contract-generator.history.destroy', $run->id) }}" data-confirm="Excluir esta versão do histórico?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button></form>
                 </div>
             </article>
         @empty

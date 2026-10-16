@@ -17,7 +17,7 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('gerador-de-contratos', $manifest->slug);
+        self::assertSame('contract-generator', $manifest->slug);
         self::assertSame(ToolCategory::Generators, $manifest->category);
         self::assertSame(ToolStatus::Beta, $manifest->status);
         self::assertSame('0.6.0', $manifest->version);

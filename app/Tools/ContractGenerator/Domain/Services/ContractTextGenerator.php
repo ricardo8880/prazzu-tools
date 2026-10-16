@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tools\ContractGenerator\Domain\Services;
 
-use App\Core\Money\BrazilianMoneyInWords;
+use App\Core\Money\AmericanMoneyInWords;
 use App\Tools\ContractGenerator\Domain\Data\ContractDraft;
 use App\Tools\ContractGenerator\Domain\Data\ContractParty;
 use App\Tools\ContractGenerator\Domain\Data\ContractText;
@@ -13,124 +13,81 @@ use DateTimeImmutable;
 
 final readonly class ContractTextGenerator
 {
-    public function __construct(private BrazilianMoneyInWords $moneyInWords) {}
+    public function __construct(private AmericanMoneyInWords $moneyInWords) {}
 
     public function generate(ContractDraft $draft): ContractText
     {
         return match ($draft->type) {
-            ContractType::ServiceProvision => $this->serviceProvision($draft),
-            ContractType::MovableAssetSale => $this->movableAssetSale($draft),
+            ContractType::ServiceAgreement => $this->serviceAgreement($draft),
+            ContractType::GoodsSaleAgreement => $this->goodsSaleAgreement($draft),
         };
     }
 
-    private function serviceProvision(ContractDraft $draft): ContractText
+    private function serviceAgreement(ContractDraft $draft): ContractText
     {
-        $title = 'CONTRATO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS';
-        $startDate = $this->datePtBr((string) $draft->specificTerms['start_date']);
-        $endDate = $draft->specificTerms['end_date'] !== null
-            ? $this->datePtBr((string) $draft->specificTerms['end_date'])
-            : null;
+        $title = 'SERVICE AGREEMENT';
+        $start = $this->dateUs((string) $draft->specificTerms['start_date']);
+        $end = $draft->specificTerms['end_date'] !== null ? $this->dateUs((string) $draft->specificTerms['end_date']) : null;
         $noticeDays = (int) $draft->specificTerms['termination_notice_days'];
-        $duration = $endDate !== null
-            ? "O presente contrato vigorará de {$startDate} até {$endDate}, salvo encerramento antecipado na forma deste instrumento."
-            : "O presente contrato vigorará por prazo indeterminado a partir de {$startDate}, salvo encerramento na forma deste instrumento.";
-        $notice = $noticeDays === 0
-            ? 'O contrato poderá ser encerrado por qualquer das partes mediante comunicação à outra parte, sem prejuízo das obrigações já vencidas.'
-            : "O contrato poderá ser encerrado por qualquer das partes mediante aviso prévio escrito de {$noticeDays} dias, sem prejuízo das obrigações já vencidas.";
+        $term = $end !== null
+            ? "This Agreement begins on {$start} and continues through {$end}, unless ended earlier under this Agreement."
+            : "This Agreement begins on {$start} and continues until terminated under this Agreement.";
+        $termination = $noticeDays === 0
+            ? 'Either party may terminate this Agreement by written notice to the other party, subject to obligations already accrued.'
+            : "Either party may terminate this Agreement by giving {$noticeDays} days' written notice to the other party, subject to obligations already accrued.";
 
         $sections = [
-            $title,
-            '',
-            $this->qualification('CONTRATANTE', $draft->firstParty),
-            '',
-            $this->qualification('CONTRATADO', $draft->secondParty),
-            '',
-            'As partes acima identificadas resolvem celebrar o presente contrato particular de prestação de serviços, mediante as cláusulas e condições seguintes.',
-            '',
-            'CLÁUSULA 1ª — DO OBJETO',
-            'O CONTRATADO prestará ao CONTRATANTE os seguintes serviços:',
-            (string) $draft->specificTerms['service_description'],
-            '',
-            'CLÁUSULA 2ª — DA REMUNERAÇÃO E DO PAGAMENTO',
-            sprintf(
-                'Pelos serviços contratados, o CONTRATANTE pagará ao CONTRATADO o valor de %s (%s).',
-                $draft->amount->formatPtBr(),
-                $this->moneyInWords->convert($draft->amount),
-            ),
-            'Condições de pagamento: '.$draft->paymentTerms,
-            '',
-            'CLÁUSULA 3ª — DO PRAZO',
-            $duration,
-            '',
-            'CLÁUSULA 4ª — DAS OBRIGAÇÕES DAS PARTES',
-            'O CONTRATADO compromete-se a executar os serviços descritos neste instrumento com diligência e de acordo com as condições ajustadas entre as partes.',
-            'O CONTRATANTE compromete-se a fornecer as informações e condições necessárias à execução dos serviços e a efetuar os pagamentos nos termos acordados.',
-            '',
-            'CLÁUSULA 5ª — DO ENCERRAMENTO',
-            $notice,
-            'O encerramento não afasta responsabilidades ou pagamentos relativos a obrigações constituídas durante a vigência do contrato.',
-            '',
-            'CLÁUSULA 6ª — DAS DISPOSIÇÕES GERAIS',
-            'Alterações deste contrato deverão ser acordadas entre as partes por meio que permita comprovar seu conteúdo.',
+            $title, '',
+            $this->qualification('CLIENT', $draft->firstParty), '',
+            $this->qualification('SERVICE PROVIDER', $draft->secondParty), '',
+            'The parties enter into this Service Agreement on the terms below.', '',
+            '1. SERVICES',
+            (string) $draft->specificTerms['service_description'], '',
+            '2. COMPENSATION AND PAYMENT',
+            sprintf('The Client will pay the Service Provider %s (%s).', $draft->amount->formatEnUs(), $this->moneyInWords->convert($draft->amount)),
+            'Payment terms: '.$draft->paymentTerms, '',
+            '3. TERM', $term, '',
+            '4. RESPONSIBILITIES',
+            'The Service Provider will perform the services with reasonable care and in accordance with the agreed scope.',
+            'The Client will provide reasonably necessary information, access, and timely payment under the agreed terms.', '',
+            '5. TERMINATION', $termination,
+            'Termination does not eliminate payment or other obligations that accrued before termination.', '',
+            '6. GENERAL TERMS',
+            'Changes to this Agreement should be made in a written record accepted by both parties.',
+            'This template is a general drafting aid and is not legal advice. State-specific requirements may apply.',
         ];
 
         $sections = array_merge($sections, $this->smartClauseSections($draft));
-
-        if ($draft->additionalTerms !== null) {
-            $sections[] = 'Condições adicionais: '.$draft->additionalTerms;
-        }
-
+        if ($draft->additionalTerms !== null) { $sections[] = 'Additional terms: '.$draft->additionalTerms; }
         $sections = array_merge($sections, $this->closingSections($draft));
 
         return new ContractText($title, implode("\n", $sections));
     }
 
-    private function movableAssetSale(ContractDraft $draft): ContractText
+    private function goodsSaleAgreement(ContractDraft $draft): ContractText
     {
-        $title = 'CONTRATO PARTICULAR DE COMPRA E VENDA DE BEM MÓVEL';
-
+        $title = 'GOODS SALE AGREEMENT';
         $sections = [
-            $title,
-            '',
-            $this->qualification('VENDEDOR', $draft->firstParty),
-            '',
-            $this->qualification('COMPRADOR', $draft->secondParty),
-            '',
-            'As partes acima identificadas resolvem celebrar o presente contrato particular de compra e venda de bem móvel, mediante as cláusulas e condições seguintes.',
-            '',
-            'CLÁUSULA 1ª — DO OBJETO',
-            'O VENDEDOR vende ao COMPRADOR o seguinte bem móvel:',
-            (string) $draft->specificTerms['asset_description'],
-            '',
-            'CLÁUSULA 2ª — DO PREÇO E DO PAGAMENTO',
-            sprintf(
-                'O preço ajustado para a presente compra e venda é de %s (%s).',
-                $draft->amount->formatPtBr(),
-                $this->moneyInWords->convert($draft->amount),
-            ),
-            'Condições de pagamento: '.$draft->paymentTerms,
-            '',
-            'CLÁUSULA 3ª — DA ENTREGA',
-            sprintf(
-                'A entrega do bem ocorrerá em %s, no seguinte local: %s.',
-                $this->datePtBr((string) $draft->specificTerms['delivery_date']),
-                (string) $draft->specificTerms['delivery_location'],
-            ),
-            '',
-            'CLÁUSULA 4ª — DAS OBRIGAÇÕES DAS PARTES',
-            'O VENDEDOR compromete-se a entregar o bem descrito neste instrumento nas condições acordadas.',
-            'O COMPRADOR compromete-se a receber o bem e a efetuar o pagamento conforme as condições estabelecidas neste contrato.',
-            '',
-            'CLÁUSULA 5ª — DAS DISPOSIÇÕES GERAIS',
-            'Qualquer alteração das condições desta compra e venda deverá ser acordada entre as partes por meio que permita comprovar seu conteúdo.',
+            $title, '',
+            $this->qualification('SELLER', $draft->firstParty), '',
+            $this->qualification('BUYER', $draft->secondParty), '',
+            'The parties enter into this Goods Sale Agreement on the terms below.', '',
+            '1. GOODS',
+            (string) $draft->specificTerms['asset_description'], '',
+            '2. PRICE AND PAYMENT',
+            sprintf('The purchase price is %s (%s).', $draft->amount->formatEnUs(), $this->moneyInWords->convert($draft->amount)),
+            'Payment terms: '.$draft->paymentTerms, '',
+            '3. DELIVERY',
+            sprintf('Delivery is scheduled for %s at %s.', $this->dateUs((string) $draft->specificTerms['delivery_date']), (string) $draft->specificTerms['delivery_location']), '',
+            '4. RESPONSIBILITIES',
+            'The Seller will deliver the goods as described and according to the agreed delivery terms.',
+            'The Buyer will accept conforming delivery and make payment according to this Agreement.', '',
+            '5. GENERAL TERMS',
+            'Changes to this Agreement should be made in a written record accepted by both parties.',
+            'This template is a general drafting aid and is not legal advice. State-specific requirements, including UCC rules, may apply.',
         ];
-
         $sections = array_merge($sections, $this->smartClauseSections($draft));
-
-        if ($draft->additionalTerms !== null) {
-            $sections[] = 'Condições adicionais: '.$draft->additionalTerms;
-        }
-
+        if ($draft->additionalTerms !== null) { $sections[] = 'Additional terms: '.$draft->additionalTerms; }
         $sections = array_merge($sections, $this->closingSections($draft));
 
         return new ContractText($title, implode("\n", $sections));
@@ -139,17 +96,13 @@ final readonly class ContractTextGenerator
     /** @return list<string> */
     private function smartClauseSections(ContractDraft $draft): array
     {
-        if ($draft->smartClauses === []) {
-            return [];
-        }
-
-        $sections = ['', 'CLÁUSULAS ADICIONAIS SELECIONADAS'];
+        if ($draft->smartClauses === []) { return []; }
+        $sections = ['', 'SELECTED OPTIONAL CLAUSES'];
         foreach ($draft->smartClauses as $clause) {
             $sections[] = strtoupper($clause->label());
             $sections[] = $clause->text();
             $sections[] = '';
         }
-
         return $sections;
     }
 
@@ -157,58 +110,25 @@ final readonly class ContractTextGenerator
     private function closingSections(ContractDraft $draft): array
     {
         return [
-            '',
-            'CLÁUSULA FINAL — DO FORO',
-            sprintf(
-                'Fica eleito o foro da comarca de %s/%s para dirimir questões decorrentes deste instrumento, observadas as regras legais aplicáveis.',
-                $draft->jurisdictionCity,
-                $draft->jurisdictionState,
-            ),
-            '',
-            sprintf(
-                'E, por estarem de acordo, as partes firmam o presente instrumento em %s, %s.',
-                $draft->signingCity,
-                $this->datePtBr($draft->signingDate),
-            ),
-            '',
-            '________________________________________',
-            $draft->firstParty->name,
-            $draft->type->firstPartyLabel(),
-            '',
-            '________________________________________',
-            $draft->secondParty->name,
-            $draft->type->secondPartyLabel(),
-            '',
-            'TESTEMUNHAS',
-            '',
-            '1. ____________________________________    CPF: ______________________________',
-            '',
-            '2. ____________________________________    CPF: ______________________________',
+            '', 'GOVERNING LAW AND VENUE',
+            sprintf('This Agreement is governed by the laws of the State of %s, without regard to conflict-of-law rules. Subject to applicable law, the parties select courts located in %s, %s for disputes arising from this Agreement.', $draft->jurisdictionState, $draft->jurisdictionCity, $draft->jurisdictionState),
+            '', sprintf('Agreed and signed in %s on %s.', $draft->signingCity, $this->dateUs($draft->signingDate)), '',
+            '________________________________________', $draft->firstParty->name, $draft->type->firstPartyLabel(), '',
+            '________________________________________', $draft->secondParty->name, $draft->type->secondPartyLabel(), '',
+            'OPTIONAL WITNESSES', '',
+            '1. ____________________________________', '',
+            '2. ____________________________________',
         ];
     }
 
     private function qualification(string $role, ContractParty $party): string
     {
-        return sprintf(
-            '%s: %s, inscrito(a) no %s sob o nº %s, com endereço em %s, %s/%s.',
-            $role,
-            $party->name,
-            $party->documentType->label(),
-            $party->document,
-            $party->address,
-            $party->city,
-            $party->state,
-        );
+        return sprintf('%s: %s, %s %s, with an address at %s, %s, %s.', $role, $party->name, $party->documentType->label(), $party->document, $party->address, $party->city, $party->state);
     }
 
-    private function datePtBr(DateTimeImmutable|string $date): string
+    private function dateUs(DateTimeImmutable|string $date): string
     {
         $value = $date instanceof DateTimeImmutable ? $date : new DateTimeImmutable($date);
-        $months = [
-            1 => 'janeiro', 2 => 'fevereiro', 3 => 'março', 4 => 'abril', 5 => 'maio', 6 => 'junho',
-            7 => 'julho', 8 => 'agosto', 9 => 'setembro', 10 => 'outubro', 11 => 'novembro', 12 => 'dezembro',
-        ];
-
-        return sprintf('%d de %s de %s', (int) $value->format('j'), $months[(int) $value->format('n')], $value->format('Y'));
+        return $value->format('F j, Y');
     }
 }

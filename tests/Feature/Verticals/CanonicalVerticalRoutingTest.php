@@ -16,14 +16,14 @@ final class CanonicalVerticalRoutingTest extends TestCase
 
     public function test_rh_tool_is_not_available_under_accounting_vertical(): void
     {
-        $this->get('/tools/rh/ferramentas/calculadora-turnover')->assertOk();
-        $this->get('/tools/contabil/ferramentas/calculadora-turnover')->assertNotFound();
+        $this->get('/tools/rh/ferramentas/employee-turnover-calculator')->assertOk();
+        $this->get('/tools/contabil/ferramentas/employee-turnover-calculator')->assertNotFound();
     }
 
     public function test_accounting_tool_is_not_available_under_rh_vertical(): void
     {
-        $this->get('/tools/contabil/ferramentas/calculadora-salario-liquido')->assertOk();
-        $this->get('/tools/rh/ferramentas/calculadora-salario-liquido')->assertNotFound();
+        $this->get('/tools/contabil/ferramentas/take-home-pay-calculator')->assertOk();
+        $this->get('/tools/rh/ferramentas/take-home-pay-calculator')->assertNotFound();
     }
 
     public function test_only_plans_and_about_remain_global_content_pages(): void

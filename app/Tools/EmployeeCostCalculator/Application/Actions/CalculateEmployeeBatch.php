@@ -37,9 +37,9 @@ final readonly class CalculateEmployeeBatch
                 'input' => $employee,
                 'result' => $result->toArray(),
                 'amounts' => $amounts,
-                'monthly_cost' => Money::fromMinor($monthly)->formatPtBr(),
-                'annual_cost' => Money::fromMinor($annual)->formatPtBr(),
-                'hourly_cost' => Money::fromMinor((int) $amounts['hourly_cost_minor'])->formatPtBr(),
+                'monthly_cost' => Money::fromMinor($monthly)->formatEnUs(),
+                'annual_cost' => Money::fromMinor($annual)->formatEnUs(),
+                'hourly_cost' => Money::fromMinor((int) $amounts['hourly_cost_minor'])->formatEnUs(),
             ];
         }
 
@@ -49,9 +49,9 @@ final readonly class CalculateEmployeeBatch
             $departments[] = [
                 'department' => $department,
                 'monthly_cost_minor' => $total->minorAmount(),
-                'monthly_cost' => $total->formatPtBr(),
+                'monthly_cost' => $total->formatEnUs(),
                 'annual_cost_minor' => $departmentAnnual->minorAmount(),
-                'annual_cost' => $departmentAnnual->formatPtBr(),
+                'annual_cost' => $departmentAnnual->formatEnUs(),
             ];
         }
 
@@ -63,15 +63,15 @@ final readonly class CalculateEmployeeBatch
             'departments' => $departments,
             'employee_count' => count($rows),
             'monthly_total_minor' => $monthlyTotal->minorAmount(),
-            'monthly_total' => $monthlyTotal->formatPtBr(),
+            'monthly_total' => $monthlyTotal->formatEnUs(),
             'annual_total_minor' => $annualTotal->minorAmount(),
-            'annual_total' => $annualTotal->formatPtBr(),
+            'annual_total' => $annualTotal->formatEnUs(),
             'projection_assumption' => 'Projeção-base sem reajustes, admissões, desligamentos ou alteração de benefícios.',
             'projection' => array_map(
                 static fn (int $offset): array => [
                     'competence' => $projectionStart->modify("+{$offset} months")->format('m/Y'),
                     'cost_minor' => $monthlyTotal->minorAmount(),
-                    'cost' => $monthlyTotal->formatPtBr(),
+                    'cost' => $monthlyTotal->formatEnUs(),
                 ],
                 range(0, 11),
             ),

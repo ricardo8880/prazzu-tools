@@ -27,10 +27,10 @@ final class MarginMarkupCalculatorTest extends TestCase
             marketplaceFees: Percentage::fromString('3'),
         );
 
-        self::assertSame('R$ 200,00', $result->salePrice->formatPtBr());
-        self::assertSame('R$ 120,00', $result->totalCost->formatPtBr());
-        self::assertSame('R$ 80,00', $result->grossProfit->formatPtBr());
-        self::assertSame('R$ 40,00', $result->netProfit->formatPtBr());
+        self::assertSame('R$ 200,00', $result->salePrice->formatEnUs());
+        self::assertSame('R$ 120,00', $result->totalCost->formatEnUs());
+        self::assertSame('R$ 80,00', $result->grossProfit->formatEnUs());
+        self::assertSame('R$ 40,00', $result->netProfit->formatEnUs());
         self::assertSame('66.666667', $result->markup->toDecimalString());
         self::assertSame('1,6667', $result->markupMultiplier);
         self::assertSame('2.1.0', $result->ruleVersion);

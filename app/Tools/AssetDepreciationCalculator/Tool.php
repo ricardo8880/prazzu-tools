@@ -27,7 +27,7 @@ use App\Core\Tools\Infrastructure\Data\ToolSharingPolicy;
 
 final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, HasWebRoutes, ToolModule
 {
-    public const SLUG = 'calculadora-depreciacao-ativos';
+    public const SLUG = 'asset-depreciation-calculator';
 
     public function integrations(): ToolIntegrationManifest
     {
@@ -38,11 +38,11 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
     {
         return new ToolManifest(
             slug: self::SLUG,
-            name: 'Calculadora de Depreciação de Ativos',
-            description: 'Calcule depreciação mensal e anual, acompanhe o valor contábil e projete a evolução de um ou vários ativos.',
+            name: 'Asset Depreciation Calculator',
+            description: 'Estimate straight-line or declining-balance depreciation for business assets in U.S. dollars.',
             category: ToolCategory::Calculators,
             icon: 'bi-building-down',
-            routeName: 'tools.calculadora-depreciacao-ativos.index',
+            routeName: 'tools.asset-depreciation-calculator.index',
             vertical: 'contabilidade',
             version: '1.1.0',
             access: ToolAccess::Free,
@@ -51,13 +51,13 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
             featured: true,
             supportsHistory: false,
             storesSensitiveData: false,
-            keywords: ['depreciação', 'ativo imobilizado', 'vida útil', 'valor contábil', 'patrimônio', 'imobilizado'],
+            keywords: ['asset depreciation', 'depreciation calculator', 'straight line depreciation', 'declining balance'],
             capabilities: [ToolCapability::Export],
             features: [
                 new ToolFeature('calculate', 'Depreciação mensal/anual e valor contábil de um ativo', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Memória de cálculo e projeção do ativo', ToolFeatureTier::Essential),
+                new ToolFeature('memory', 'Calculation details e projeção do ativo', ToolFeatureTier::Essential),
                 new ToolFeature('multiple_assets', 'Cadastro e uso de vários ativos', ToolFeatureTier::Plus),
-                new ToolFeature('methods', 'Métodos linear, saldos decrescentes e soma dos dígitos', ToolFeatureTier::Plus),
+                new ToolFeature('methods', 'Methods linear, saldos decrescentes e soma dos dígitos', ToolFeatureTier::Plus),
                 new ToolFeature('portfolio_projection', 'Projeção patrimonial consolidada', ToolFeatureTier::Plus),
                 new ToolFeature('export', 'Exportação em PDF e XLSX', ToolFeatureTier::Plus),
             ],
@@ -80,7 +80,7 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
 
     public function viewsNamespace(): string
     {
-        return 'tools-calculadora-depreciacao-ativos';
+        return 'tools-asset-depreciation-calculator';
     }
 
     public function analyticsJourney(): ToolAnalyticsJourney
@@ -99,7 +99,7 @@ final class Tool implements HasAnalyticsJourney, HasToolIntegrations, HasViews, 
                         new ToolAnalyticsField('method', 'plus', selector: '[name="method"]'),
                     ],
                     actions: ['calculate', 'export'],
-                    selector: 'form[action*="calculadora-depreciacao-ativos"]',
+                    selector: 'form[action*="asset-depreciation-calculator"]',
                     resultSelector: '[data-analytics-result="main"]',
                 ),
             ],

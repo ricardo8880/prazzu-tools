@@ -12,9 +12,9 @@ final class CoversPlusFeatureTest extends TestCase
 {
     public function test_it_builds_a_stable_contract_key(): void
     {
-        $attribute = new CoversPlusFeature('calculadora-turnover', 'segmented_analysis');
+        $attribute = new CoversPlusFeature('employee-turnover-calculator', 'segmented_analysis');
 
-        self::assertSame('calculadora-turnover:segmented_analysis', $attribute->contractKey());
+        self::assertSame('employee-turnover-calculator:segmented_analysis', $attribute->contractKey());
     }
 
     public function test_it_rejects_an_invalid_tool_slug(): void
@@ -28,6 +28,6 @@ final class CoversPlusFeatureTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new CoversPlusFeature('calculadora-turnover', 'segmented-analysis');
+        new CoversPlusFeature('employee-turnover-calculator', 'segmented-analysis');
     }
 }

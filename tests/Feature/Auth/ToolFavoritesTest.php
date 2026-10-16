@@ -18,16 +18,16 @@ final class ToolFavoritesTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)
-            ->post(route('account.tools.favorite', ['tool' => 'calculadora-salario-liquido']))
+            ->post(route('account.tools.favorite', ['tool' => 'take-home-pay-calculator']))
             ->assertRedirect();
 
         $this->assertDatabaseHas('user_tool_favorites', [
             'user_id' => $user->id,
-            'tool_slug' => 'calculadora-salario-liquido',
+            'tool_slug' => 'take-home-pay-calculator',
         ]);
 
         $this->actingAs($user)
-            ->get(route('tools.calculadora-salario-liquido.index'))
+            ->get(route('tools.take-home-pay-calculator.index'))
             ->assertOk()
             ->assertSee('Desfavoritar');
 
@@ -38,12 +38,12 @@ final class ToolFavoritesTest extends TestCase
             ->assertSee('Calculadora de Salário Líquido');
 
         $this->actingAs($user)
-            ->post(route('account.tools.favorite', ['tool' => 'calculadora-salario-liquido']))
+            ->post(route('account.tools.favorite', ['tool' => 'take-home-pay-calculator']))
             ->assertRedirect();
 
         self::assertFalse(UserToolFavorite::query()
             ->where('user_id', $user->id)
-            ->where('tool_slug', 'calculadora-salario-liquido')
+            ->where('tool_slug', 'take-home-pay-calculator')
             ->exists());
     }
 
@@ -51,10 +51,10 @@ final class ToolFavoritesTest extends TestCase
     {
         $favoriteIntentUrl = route('register', [
             'source' => 'tool_favorite',
-            'tool' => 'calculadora-salario-liquido',
+            'tool' => 'take-home-pay-calculator',
         ]);
 
-        $this->get(route('tools.calculadora-salario-liquido.index'))
+        $this->get(route('tools.take-home-pay-calculator.index'))
             ->assertOk()
             ->assertSee('Favoritar')
             ->assertSee($favoriteIntentUrl, false)
@@ -66,7 +66,7 @@ final class ToolFavoritesTest extends TestCase
             ->assertSee('O cadastro é opcional e não libera cálculos')
             ->assertSee(route('login', [
                 'source' => 'tool_favorite',
-                'tool' => 'calculadora-salario-liquido',
+                'tool' => 'take-home-pay-calculator',
             ]), false);
 
         $this->assertDatabaseCount('user_tool_favorites', 0);
@@ -74,7 +74,7 @@ final class ToolFavoritesTest extends TestCase
 
     public function test_guest_cannot_toggle_tool_favorite(): void
     {
-        $this->post(route('account.tools.favorite', ['tool' => 'calculadora-salario-liquido']))
+        $this->post(route('account.tools.favorite', ['tool' => 'take-home-pay-calculator']))
             ->assertRedirect(route('login'));
     }
 

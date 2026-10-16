@@ -80,25 +80,25 @@ final class RealtimeAnalyticsTest extends TestCase
 
         $this->postJson(route('analytics.tools.presence'), [
             'presence_id' => $presenceId,
-            'tool' => 'calculadora-simples-nacional',
+            'tool' => 'working-capital-calculator',
             'action' => 'heartbeat',
         ])->assertNoContent();
 
         $this->assertDatabaseHas('analytics_tool_presences', [
             'id' => $presenceId,
-            'tool_slug' => 'calculadora-simples-nacional',
+            'tool_slug' => 'working-capital-calculator',
         ]);
 
         $this->signInAsInternalAdministrator();
         $this->getJson(route('admin.analytics.realtime.data'))
             ->assertOk()
             ->assertJsonPath('summary.open_tools', 1)
-            ->assertJsonPath('tools.0.label', 'calculadora-simples-nacional')
+            ->assertJsonPath('tools.0.label', 'working-capital-calculator')
             ->assertJsonPath('tools.0.total', 1);
 
         $this->postJson(route('analytics.tools.presence'), [
             'presence_id' => $presenceId,
-            'tool' => 'calculadora-simples-nacional',
+            'tool' => 'working-capital-calculator',
             'action' => 'leave',
         ])->assertNoContent();
 

@@ -16,7 +16,7 @@ final readonly class ReceiptParty
         $name = trim($this->name);
 
         if (mb_strlen($name) < 2 || mb_strlen($name) > 160) {
-            throw new InvalidArgumentException('O nome deve ter entre 2 e 160 caracteres.');
+            throw new InvalidArgumentException('Name must contain between 2 and 160 characters.');
         }
     }
 

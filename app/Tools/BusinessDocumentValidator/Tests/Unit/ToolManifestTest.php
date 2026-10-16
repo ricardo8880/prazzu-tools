@@ -17,12 +17,12 @@ final class ToolManifestTest extends TestCase
     {
         $manifest = (new Tool)->manifest();
 
-        self::assertSame('validador-de-cnpj', $manifest->slug);
+        self::assertSame('us-tax-id-validator', $manifest->slug);
         self::assertSame('Validador Inteligente de CNPJ, CPF e IE', $manifest->name);
         self::assertSame(ToolCategory::Validators, $manifest->category);
         self::assertSame(ToolStatus::Active, $manifest->status);
         self::assertSame('1.0.0', $manifest->version);
-        self::assertSame('tools.validador-de-cnpj.index', $manifest->routeName);
+        self::assertSame('tools.us-tax-id-validator.index', $manifest->routeName);
         self::assertTrue($manifest->supportsHistory);
         self::assertTrue($manifest->storesSensitiveData);
     }

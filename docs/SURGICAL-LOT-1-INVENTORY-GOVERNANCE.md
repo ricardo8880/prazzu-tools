@@ -11,7 +11,6 @@ Consolidar o estado real do projeto num único inventário oficial, impedindo fe
 - Foi definido `expected_module_count = 32`.
 - Foram criadas validações para unicidade de ID, chave, nome, slug e módulo.
 - Foi reforçada a verificação de presença de `Tool.php` e registo em `config/tools/modules.php`.
-- A sobreposição de `ProLaboreProfitDistributionCalculator` foi movida para `functional_overlap_reviews`, sem esconder ou apagar a ferramenta.
 - A documentação passou a declarar que as 32 ferramentas devem estar visíveis na página Ferramentas.
 
 ## Decisões preservadas

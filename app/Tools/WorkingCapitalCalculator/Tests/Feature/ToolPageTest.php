@@ -10,7 +10,7 @@ final class ToolPageTest extends TestCase
 {
     public function test_tool_page_is_available(): void
     {
-        $this->get(route('tools.capital-de-giro.index'))
+        $this->get(route('tools.working-capital-calculator.index'))
             ->assertOk()
             ->assertSee('Calculadora de Capital de Giro');
     }

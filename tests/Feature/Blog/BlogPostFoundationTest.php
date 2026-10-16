@@ -58,14 +58,14 @@ final class BlogPostFoundationTest extends TestCase
         $post = $this->createPost('ferramentas', BlogPostStatus::Draft, null);
 
         $post->syncRelatedToolSlugs([
-            'calculadora-simples-nacional',
-            'calculadora-margem-markup',
-            'calculadora-simples-nacional',
+            'working-capital-calculator',
+            'margin-markup-calculator',
+            'working-capital-calculator',
         ]);
 
         $this->assertSame([
-            'calculadora-margem-markup',
-            'calculadora-simples-nacional',
+            'margin-markup-calculator',
+            'working-capital-calculator',
         ], $post->relatedToolSlugs()->all());
 
         $post->delete();

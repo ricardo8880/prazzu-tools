@@ -16,16 +16,11 @@ final class ToolApiActionsRegistrationTest extends TestCase
         sort($slugs);
 
         $this->assertSame([
-            'calculadora-de-honorarios-contabeis',
-            'calculadora-de-rescisao',
-            'calculadora-ferias',
-            'calculadora-margem-markup',
-            'calculadora-pro-labore-distribuicao-lucros',
-            'calculadora-simples-nacional',
-            'comparador-tributario',
-            'conversor-fiscal-xml',
-            'gerador-darf-gps',
-            'validador-de-cnpj',
+            'accounting-fee-calculator',
+            'final-pay-severance-calculator',
+            'pto-calculator',
+            'margin-markup-calculator',
+            'us-tax-id-validator',
         ], $slugs);
     }
 }

@@ -56,14 +56,14 @@ final class MarginMarkupCalculator
 
         foreach ($percentageUnits as $units) {
             if ($units < 0) {
-                throw new InvalidValue('Margem, impostos, comissão e taxas não podem ser negativos.');
+                throw new InvalidValue('Margin, taxes, commission, and fees cannot be negative.');
             }
         }
 
         $totalPercentageUnits = array_sum($percentageUnits);
 
         if ($totalPercentageUnits >= self::PERCENT_FACTOR) {
-            throw new InvalidValue('A soma da margem, impostos, comissão e taxas deve ser menor que 100%.');
+            throw new InvalidValue('The combined margin, taxes, commission, and fees must be below 100%.');
         }
 
         if ($totalCost->minorAmount() > intdiv(PHP_INT_MAX, self::PERCENT_FACTOR)) {
@@ -131,7 +131,7 @@ final class MarginMarkupCalculator
                     new CalculationMemoryStep(
                         key: 'sale_price',
                         label: 'Preço de venda sugerido',
-                        formula: 'custo total / (1 - margem líquida desejada - impostos - comissão - taxas)',
+                        formula: 'total cost / (1 - desired net margin - taxes - commission - fees)',
                         inputs: [
                             'total_cost_minor' => $totalCost->minorAmount(),
                             'desired_margin' => $desiredMargin->toDecimalString(),
@@ -146,7 +146,7 @@ final class MarginMarkupCalculator
                     new CalculationMemoryStep(
                         key: 'net_profit',
                         label: 'Lucro líquido estimado',
-                        formula: 'preço de venda - custo total - impostos - comissão - taxas de cartão - taxas de marketplace',
+                        formula: 'selling price - total cost - taxes - commission - card fees - marketplace fees',
                         inputs: [
                             'sale_price_minor' => $salePrice->minorAmount(),
                             'total_cost_minor' => $totalCost->minorAmount(),
@@ -170,7 +170,7 @@ final class MarginMarkupCalculator
                     ),
                 ],
                 assumptions: [
-                    'A margem desejada é líquida sobre o preço de venda, depois das deduções percentuais informadas.',
+                    'Desired margin is net of the percentage deductions entered and is measured against selling price.',
                     'O markup exibido mede o acréscimo bruto sobre o custo; não é sinônimo de margem líquida.',
                     'Custos fixos devem ser previamente rateados por unidade ou venda pelo usuário.',
                     'Percentuais e custos são tratados como constantes no cenário calculado.',

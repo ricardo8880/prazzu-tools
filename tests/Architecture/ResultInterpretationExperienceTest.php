@@ -15,10 +15,6 @@ final class ResultInterpretationExperienceTest extends TestCase
         return [
             'salario liquido' => ['app/Tools/NetSalaryCalculator/Resources/views/index.blade.php'],
             'hora extra' => ['app/Tools/OvertimeCalculator/Resources/views/index.blade.php'],
-            'icms st' => ['app/Tools/IcmsStCalculator/Resources/views/index.blade.php'],
-            'pis cofins' => ['app/Tools/PisCofinsCalculator/Resources/views/index.blade.php'],
-            'lucro presumido' => ['app/Tools/PresumedProfitIrpjCsllCalculator/Resources/views/index.blade.php'],
-            'pro labore' => ['app/Tools/ProLaboreSimulator/Resources/views/index.blade.php'],
             'custo funcionario' => ['app/Tools/EmployeeCostCalculator/Resources/views/index.blade.php'],
         ];
     }

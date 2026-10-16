@@ -19,7 +19,7 @@ final class RiskProfile
     public static function define(): ToolRiskProfile
     {
         return new ToolRiskProfile(
-            toolSlug: 'validador-de-cnpj',
+            toolSlug: 'us-tax-id-validator',
             nature: ToolNature::Validation,
             normativeDependency: NormativeDependency::Low,
             personalDataExposure: PersonalDataExposure::Sensitive,

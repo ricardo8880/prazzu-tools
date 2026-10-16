@@ -15,8 +15,20 @@ final readonly class CalculateTool
 
     public function execute(array $d): ToolCalculationResult
     {
-        $m = fn ($k) => Money::fromDecimal($d[$k]);
-
-        return $this->calculator->calculate(new CalculationInput($d['name'], $d['document'], $d['employer'], $d['competence'], $m('salary'), $m('other_earnings'), $m('inss'), $m('irrf'), $m('other_deductions')));
+        $m = static fn (string $key): Money => Money::fromDecimal((string) $d[$key]);
+        return $this->calculator->calculate(new CalculationInput(
+            employeeName: (string) $d['employee_name'],
+            employeeId: (string) $d['employee_id'],
+            employer: (string) $d['employer'],
+            payPeriod: (string) $d['pay_period'],
+            regularPay: $m('regular_pay'),
+            overtimePay: $m('overtime_pay'),
+            otherEarnings: $m('other_earnings'),
+            federalIncomeTax: $m('federal_income_tax'),
+            socialSecurity: $m('social_security'),
+            medicare: $m('medicare'),
+            stateLocalTax: $m('state_local_tax'),
+            otherDeductions: $m('other_deductions'),
+        ));
     }
 }

@@ -17,14 +17,14 @@ final class ExecuteToolRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cash' => ['required', 'brazilian_money', 'money_min:0'],
-            'receivables' => ['required', 'brazilian_money', 'money_min:0'],
-            'inventory' => ['required', 'brazilian_money', 'money_min:0'],
-            'other_current_assets' => ['required', 'brazilian_money', 'money_min:0'],
-            'suppliers' => ['required', 'brazilian_money', 'money_min:0'],
-            'other_operating_liabilities' => ['required', 'brazilian_money', 'money_min:0'],
-            'loans' => ['required', 'brazilian_money', 'money_min:0'],
-            'other_current_liabilities' => ['required', 'brazilian_money', 'money_min:0'],
+            'cash' => ['required', 'us_money', 'money_min:0'],
+            'receivables' => ['required', 'us_money', 'money_min:0'],
+            'inventory' => ['required', 'us_money', 'money_min:0'],
+            'other_current_assets' => ['required', 'us_money', 'money_min:0'],
+            'suppliers' => ['required', 'us_money', 'money_min:0'],
+            'other_operating_liabilities' => ['required', 'us_money', 'money_min:0'],
+            'loans' => ['required', 'us_money', 'money_min:0'],
+            'other_current_liabilities' => ['required', 'us_money', 'money_min:0'],
         ];
     }
 }

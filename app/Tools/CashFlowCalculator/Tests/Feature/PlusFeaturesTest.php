@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 final class PlusFeaturesTest extends TestCase
 {
-    #[CoversPlusFeature('fluxo-de-caixa', 'cash_flow_scenarios')]
+    #[CoversPlusFeature('cash-flow-calculator', 'cash_flow_scenarios')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $features = ['cash_flow_scenarios'];

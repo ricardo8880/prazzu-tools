@@ -6,6 +6,6 @@ namespace App\Tools\ReceiptIssuer\Domain\Enums;
 
 enum DocumentType: string
 {
-    case Cpf = 'cpf';
-    case Cnpj = 'cnpj';
+    case Ein = 'ein';
+    case Id = 'id';
 }

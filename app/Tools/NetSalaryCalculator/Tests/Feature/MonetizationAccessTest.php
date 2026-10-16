@@ -19,10 +19,10 @@ use PHPUnit\Framework\TestCase;
 
 final class MonetizationAccessTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-salario-liquido', 'custom_discounts')]
-    #[CoversPlusFeature('calculadora-salario-liquido', 'export')]
-    #[CoversPlusFeature('calculadora-salario-liquido', 'history')]
-    #[CoversPlusFeature('calculadora-salario-liquido', 'variable_earnings')]
+    #[CoversPlusFeature('take-home-pay-calculator', 'custom_discounts')]
+    #[CoversPlusFeature('take-home-pay-calculator', 'export')]
+    #[CoversPlusFeature('take-home-pay-calculator', 'history')]
+    #[CoversPlusFeature('take-home-pay-calculator', 'variable_earnings')]
     public function test_lot_six_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

@@ -29,11 +29,11 @@ final readonly class ProfitDistributionCalculator
         $requested = $input->intendedDistribution ?? $maximumAvailable;
 
         if ($requested->minorAmount() < 0) {
-            throw new InvalidValue('O valor pretendido de distribuição não pode ser negativo.');
+            throw new InvalidValue('The planned distribution cannot be negative.');
         }
 
         if ($requested->minorAmount() > $maximumAvailable->minorAmount()) {
-            throw new InvalidValue('A distribuição pretendida não pode superar o lucro máximo disponível.');
+            throw new InvalidValue('The planned distribution cannot exceed the available amount in this simplified model.');
         }
 
         $partners = $input->criterion === ProfitDistributionCriterion::Proportional
@@ -47,10 +47,10 @@ final readonly class ProfitDistributionCalculator
 
         $warnings = [];
         if ($availableMinor <= 0) {
-            $warnings[] = 'Não há lucro disponível para distribuição com as premissas informadas.';
+            $warnings[] = 'No amount is available for distribution under the supplied assumptions.';
         }
         if ($distributed->minorAmount() < $maximumAvailable->minorAmount()) {
-            $warnings[] = 'Parte do lucro disponível permanecerá sem distribuição.';
+            $warnings[] = 'Part of the available amount will remain undistributed.';
         }
 
         return new ProfitDistributionResult(
@@ -85,7 +85,7 @@ final readonly class ProfitDistributionCalculator
             $input->priorDistributions,
         ] as $amount) {
             if ($amount->minorAmount() < 0) {
-                throw new InvalidValue('Lucro, prejuízos, reservas e antecipações devem ser informados como valores não negativos.');
+                throw new InvalidValue('Profit, losses, reserves, and prior distributions must be nonnegative.');
             }
         }
     }
@@ -94,26 +94,26 @@ final readonly class ProfitDistributionCalculator
     private function validatePartners(array $partners): void
     {
         if ($partners === []) {
-            throw new InvalidValue('Informe pelo menos um sócio para distribuir o lucro.');
+            throw new InvalidValue('Enter at least one owner.');
         }
 
         $keys = [];
         $totalOwnership = 0;
         foreach ($partners as $partner) {
             if (isset($keys[$partner->key])) {
-                throw new InvalidValue('Cada sócio deve possuir uma chave única na simulação.');
+                throw new InvalidValue('Each owner must have a unique key.');
             }
             $keys[$partner->key] = true;
 
             $ownership = $partner->ownershipPercentage->millionthsOfPercent();
             if ($ownership < 0 || $ownership > 100_000_000) {
-                throw new InvalidValue('A participação societária deve estar entre 0% e 100%.');
+                throw new InvalidValue('Ownership percentage must be between 0% and 100%.');
             }
             $totalOwnership += $ownership;
         }
 
         if ($totalOwnership !== 100_000_000) {
-            throw new InvalidValue('A soma das participações societárias deve ser exatamente 100%.');
+            throw new InvalidValue('Ownership percentages must total exactly 100%.');
         }
     }
 
@@ -154,7 +154,7 @@ final readonly class ProfitDistributionCalculator
 
         foreach ($partners as $partner) {
             if ($partner->definedAmount === null || $partner->definedAmount->minorAmount() < 0) {
-                throw new InvalidValue('Informe um valor não negativo para cada sócio na distribuição por valores definidos.');
+                throw new InvalidValue('Enter a nonnegative amount for each owner.');
             }
             $total += $partner->definedAmount->minorAmount();
             $result[] = new PartnerProfitDistribution(
@@ -166,7 +166,7 @@ final readonly class ProfitDistributionCalculator
         }
 
         if ($total !== $requested->minorAmount()) {
-            throw new InvalidValue('A soma dos valores definidos por sócio deve ser igual ao valor pretendido de distribuição.');
+            throw new InvalidValue('Owner distribution amounts must equal the planned total distribution.');
         }
 
         return $result;

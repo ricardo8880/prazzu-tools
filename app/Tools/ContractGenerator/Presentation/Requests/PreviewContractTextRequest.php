@@ -26,7 +26,7 @@ final class PreviewContractTextRequest extends FormRequest
 
     protected function getRedirectUrl(): string
     {
-        return route('tools.gerador-de-contratos.index', ['tipo' => $this->input('contract_type')]);
+        return route('tools.contract-generator.index', ['tipo' => $this->input('contract_type')]);
     }
 
     protected function prepareForValidation(): void

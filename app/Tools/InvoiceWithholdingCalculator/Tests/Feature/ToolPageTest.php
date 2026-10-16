@@ -11,13 +11,13 @@ final class ToolPageTest extends TestCase
 {
     public function test_page_is_available(): void
     {
-        $this->get(route('tools.calculadora-retencoes-nota-fiscal.index'))->assertOk()->assertSee('Calculadora de Retenções na Nota Fiscal')->assertSee('IRRF');
+        $this->get(route('tools.backup-withholding-calculator.index'))->assertOk()->assertSee('Calculadora de Retenções na Nota Fiscal')->assertSee('IRRF');
     }
 
-    #[CoversPlusFeature('calculadora-retencoes-nota-fiscal', 'export')]
+    #[CoversPlusFeature('backup-withholding-calculator', 'export')]
     public function test_calculation_renders_expected_total(): void
     {
-        $this->post(route('tools.calculadora-retencoes-nota-fiscal.calculate'), $this->payload())
+        $this->post(route('tools.backup-withholding-calculator.calculate'), $this->payload())
             ->assertOk()
             ->assertSee('R$ 615,00')
             ->assertSee('Memória de cálculo')

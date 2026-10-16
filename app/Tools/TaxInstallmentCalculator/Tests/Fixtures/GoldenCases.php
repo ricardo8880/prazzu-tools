@@ -16,7 +16,7 @@ final class GoldenCases
     {
         $reference = 'README e CalculatorTest do módulo TaxInstallmentCalculator 1.0.0.';
 
-        return new GoldenCaseSuite(toolSlug: 'calculadora-parcelamento-tributario', cases: [
+        return new GoldenCaseSuite(toolSlug: 'irs-payment-plan-calculator', cases: [
             new GoldenCase('typical', 'Doze mil em doze parcelas a 1% a.m.', GoldenCaseKind::Typical, ['debt' => '12000', 'installments' => 12, 'rate' => '1'], ['average' => 'R$ 1.065,00', 'final_cost' => 'R$ 12.780,00'], $reference, '1.0.0', 'SAC paramétrico em centavos.'),
             new GoldenCase('boundary', 'Uma parcela sem encargos', GoldenCaseKind::Boundary, ['debt' => '1000', 'installments' => 1, 'rate' => '0'], ['payment' => 'R$ 1.000,00'], $reference, '1.0.0'),
             new GoldenCase('invalid-input', 'Entrada igual à dívida é rejeitada', GoldenCaseKind::InvalidInput, ['debt' => '1000', 'entry' => '1000'], ['outcome' => 'validation-error'], 'ExecuteToolRequest exige entrada menor que a dívida.', '1.0.0'),

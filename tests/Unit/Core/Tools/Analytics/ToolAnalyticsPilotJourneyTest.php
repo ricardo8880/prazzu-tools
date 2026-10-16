@@ -29,10 +29,8 @@ final class ToolAnalyticsPilotJourneyTest extends TestCase
 
     public static function pilots(): iterable
     {
-        yield 'capital de giro simples' => [Tool::class, 'capital-de-giro', ['main']];
-        yield 'comparador tributário extenso' => [\App\Tools\TaxRegimeComparator\Tool::class, 'comparador-tributario', ['comparison']];
-        yield 'declaração com impressão' => [\App\Tools\IncomeStatementGenerator\Tool::class, 'declaracao-rendimentos', ['statement']];
-        yield 'contrato em duas fases' => [\App\Tools\ContractGenerator\Tool::class, 'gerador-de-contratos', ['draft', 'editor']];
-        yield 'xml individual e lote' => [\App\Tools\FiscalXmlConverter\Tool::class, 'conversor-fiscal-xml', ['single', 'batch']];
+        yield 'capital de giro simples' => [Tool::class, 'working-capital-calculator', ['main']];
+        yield 'declaração com impressão' => [\App\Tools\IncomeStatementGenerator\Tool::class, 'earnings-statement-generator', ['statement']];
+        yield 'contrato em duas fases' => [\App\Tools\ContractGenerator\Tool::class, 'contract-generator', ['draft', 'editor']];
     }
 }

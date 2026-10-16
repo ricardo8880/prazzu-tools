@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 final class PlanVacationsTest extends TestCase
 {
-    #[CoversPlusFeature('calculadora-ferias', 'vacation_planning')]
+    #[CoversPlusFeature('pto-calculator', 'vacation_planning')]
     public function test_it_calculates_multiple_employees(): void
     {
         $rows = app(PlanVacations::class)->execute([

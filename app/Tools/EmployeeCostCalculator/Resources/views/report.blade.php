@@ -49,7 +49,7 @@
     @endforeach
 </div>
 
-<h2>Memória de cálculo</h2>
+<h2>Calculation details</h2>
 <table>
     <tbody>
     @foreach($result['calculation_memory']['steps'] ?? [] as $step)
