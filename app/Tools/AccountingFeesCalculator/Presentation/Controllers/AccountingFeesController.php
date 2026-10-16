@@ -11,8 +11,6 @@ use App\Core\Export\Contracts\SpreadsheetExporter;
 use App\Core\Export\Services\StructuredResultExportFactory;
 use App\Core\Export\Services\TabularExportService;
 use App\Core\ToolIntegration\Contracts\ToolResultPublisher;
-use App\Core\ToolIntegration\Contracts\ToolResultResolver;
-use App\Core\ToolIntegration\Data\IntegrationPayload;
 use App\Http\Controllers\Controller;
 use App\Tools\AccountingFeesCalculator\Application\Actions\BuildAccountingFeeHistoryExport;
 use App\Tools\AccountingFeesCalculator\Application\Actions\BuildCommercialProposal;
@@ -35,11 +33,9 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class AccountingFeesController extends Controller
 {
-    public function __construct(private readonly ToolResultResolver $resolver) {}
-
     public function index(): View
     {
-        return view('tools-accounting-fee-calculator::index', ['taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1)]);
+        return view('tools-accounting-fee-calculator::index');
     }
 
     public function calculate(CalculateAccountingFeesRequest $request, CalculateAndStoreAccountingFees $action, ToolPersistenceAuthorizer $persistence, Tool $module, ToolResultPublisher $integrations): View
@@ -59,7 +55,6 @@ final class AccountingFeesController extends Controller
         $request->flash();
 
         return view('tools-accounting-fee-calculator::index', [
-            'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
             'calculationResult' => $outcome['result'],
             'calculationInput' => $validated,
             'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Calculation'),

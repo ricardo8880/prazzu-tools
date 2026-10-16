@@ -212,7 +212,7 @@ foreach (($productTools['official'] ?? []) as $tool) {
                 ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
             ],
             expectations: [
-                ['type' => 'url', 'contains' => '/ferramentas/'.$slug],
+                ['type' => 'url', 'contains' => '/tools/'.$slug],
                 ['type' => 'visible', 'test_id' => 'tool-form-panel'],
             ],
             downloads: $downloads,
@@ -230,7 +230,7 @@ foreach (($productTools['official'] ?? []) as $tool) {
             ],
             expectations: [
                 ['type' => 'form_invalid', 'test_id' => 'tool-form-panel'],
-                ['type' => 'url', 'contains' => '/ferramentas/'.$slug],
+                ['type' => 'url', 'contains' => '/tools/'.$slug],
             ],
         ),
     ];
@@ -252,7 +252,7 @@ $tools['us-tax-id-validator'] = [
             ['action' => 'submit', 'scope_test_id' => 'batch-process-form'],
         ],
         expectations: [
-            ['type' => 'url', 'contains' => '/ferramentas/us-tax-id-validator'],
+            ['type' => 'url', 'contains' => '/tools/us-tax-id-validator'],
             ['type' => 'visible', 'test_id' => 'tool-result'],
             ['type' => 'visible', 'test_id' => 'download-actions'],
             ['type' => 'visible', 'test_id' => 'download-pdf'],
@@ -292,7 +292,7 @@ $tools['us-tax-id-validator'] = [
         ],
         expectations: [
             ['type' => 'form_invalid', 'test_id' => 'tool-form-panel'],
-            ['type' => 'url', 'contains' => '/ferramentas/us-tax-id-validator'],
+            ['type' => 'url', 'contains' => '/tools/us-tax-id-validator'],
         ],
     ),
 ];
@@ -311,7 +311,7 @@ $tools['contract-generator'] = [
             ['action' => 'submit', 'scope_test_id' => 'tool-form-panel'],
         ],
         expectations: [
-            ['type' => 'url', 'contains' => '/ferramentas/contract-generator'],
+            ['type' => 'url', 'contains' => '/tools/contract-generator'],
             ['type' => 'hidden', 'test_id' => 'tool-form-panel'],
             ['type' => 'visible', 'test_id' => 'contract-editor'],
             ['type' => 'in_viewport', 'test_id' => 'contract-editor'],
@@ -367,7 +367,7 @@ $tools['contract-generator'] = [
         ],
         expectations: [
             ['type' => 'form_invalid', 'test_id' => 'tool-form-panel'],
-            ['type' => 'url', 'contains' => '/ferramentas/contract-generator'],
+            ['type' => 'url', 'contains' => '/tools/contract-generator'],
         ],
     ),
 ];
@@ -391,7 +391,7 @@ $tools['employee-cost-calculator'] = [
         ],
         expectations: [
             ['type' => 'visible', 'test_id' => 'tool-result'],
-            ['type' => 'url', 'contains' => '/ferramentas/employee-cost-calculator'],
+            ['type' => 'url', 'contains' => '/tools/employee-cost-calculator'],
         ],
         downloads: [
             new ToolDownloadExpectation(

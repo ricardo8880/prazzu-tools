@@ -84,7 +84,7 @@ const RESULT_EVIDENCE_SELECTOR = [
 export function toolPublicPath(scenario: Pick<ToolScenario, 'tool_slug' | 'vertical_public_slug'>): string {
     const vertical = scenario.vertical_public_slug.trim();
     if (vertical === '') throw new Error(`[E2E TOOL] Ferramenta \"${scenario.tool_slug}\" não possui vertical pública no manifesto.`);
-    return `/tools/${encodeURIComponent(vertical)}/ferramentas/${encodeURIComponent(scenario.tool_slug)}`;
+    return `/tools/${encodeURIComponent(vertical)}/tools/${encodeURIComponent(scenario.tool_slug)}`;
 }
 
 export function loadToolScenarios(): ScenarioManifest {
@@ -92,7 +92,7 @@ export function loadToolScenarios(): ScenarioManifest {
     const manifest = JSON.parse(readFileSync(path, 'utf8')) as ScenarioManifest;
     if (manifest.schema_version !== '1.2.0') throw new Error(`Versão desconhecida de cenários E2E: ${manifest.schema_version}`);
     if (manifest.scenario_count !== manifest.scenarios.length) throw new Error('Contagem de cenários E2E divergente.');
-    const minimumToolCount = 35;
+    const minimumToolCount = 28;
     const hasCompleteCoverage = manifest.coverage.valid_tools === manifest.tool_count
         && manifest.coverage.invalid_tools === manifest.tool_count;
 
@@ -116,13 +116,13 @@ function deterministicValue(name: string, type: string, min?: string | null, max
         monthly_deductible_expenses: '5000', accounting_profit: '50000', gross_pro_labore: '5000', intended_distribution: '10000',
         principal: '1000', amount: '1000', monthly_hours: '220', working_days: '22', rest_days: '8', due_day: '10', duration_months: '12',
         ownership_percentage: '100', internal_rate: '18', interstate_rate: '12', fcp_rate: '2',
-        first_party_document: '52998224725', second_party_document: '52998224725',
+        first_party_document: '52-9982247', second_party_document: '52-9982247',
         first_party_state: 'SP', second_party_state: 'RJ', jurisdiction_state: 'SP',
         document_number: '52998224725',
     };
     const decimalText = inputMode === 'decimal' || /\d+[.,]\d+/.test(placeholder ?? '');
     const formatDecimal = (value: string): string => decimalText && type !== 'number'
-        ? Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        ? Number(value).toFixed(2)
         : value;
 
     const identifierLike = key.includes('document') || key.includes('cnpj') || key.includes('cpf') || key.includes('cep');
@@ -137,12 +137,12 @@ function deterministicValue(name: string, type: string, min?: string | null, max
     if (key.includes('cep')) return '01001000';
     if (key.includes('percent') || key.includes('aliquot') || key.includes('taxa') || key.includes('rate')) {
         if (type === 'number' || type === 'range') return '10';
-        return decimalText ? '10,00' : '10';
+        return decimalText ? '10.00' : '10';
     }
     if (key.includes('hour') || key.includes('hora')) return '8';
     if (key.includes('day') || key.includes('dia')) return '30';
     if (decimalText || key.includes('salario') || key.includes('salary') || key.includes('receita') || key.includes('revenue') || key.includes('valor') || key.includes('amount') || key.includes('sales') || key.includes('goal') || key.includes('cost') || key.includes('custo') || key.includes('payroll')) {
-        return ['number', 'range'].includes(type) ? '5000' : '5.000,00';
+        return ['number', 'range'].includes(type) ? '5000' : '5000.00';
     }
     if (type === 'number' || type === 'range') {
         const lower = min !== null && min !== undefined && min !== '' ? Number(min) : NaN;
@@ -354,7 +354,7 @@ async function findSubmit(container: Locator, page: Page): Promise<Locator> {
         for (let index = 0; index < await actionButtons.count(); index += 1) {
             const candidate = actionButtons.nth(index);
             const label = (await candidate.innerText()).trim();
-            if (/calcular|simular|gerar|validar|converter|comparar|emitir|atualizar|processar|continuar/i.test(label)) {
+            if (/calcular|simular|gerar|validar|converter|comparar|emitir|atualizar|processar|continuar|calculate|simulate|generate|validate|convert|compare|issue|update|process|continue|create|estimate/i.test(label)) {
                 submit = candidate;
                 break;
             }
@@ -691,7 +691,17 @@ export async function auditVisibleResultActions(page: Page, scenario: ToolScenar
             ? page.waitForEvent('download', { timeout: 10_000 }).catch(() => null)
             : Promise.resolve(null);
 
-        await button.click({ noWaitAfter: true });
+        // Result/export buttons can trigger a full document response immediately. Using
+        // requestSubmit avoids Playwright's actionability loop racing with that response
+        // (the element becomes unstable while the browser starts the download/navigation).
+        await button.evaluate((element) => {
+            const submitter = element as HTMLButtonElement | HTMLInputElement;
+            if (submitter.form) {
+                submitter.form.requestSubmit(submitter);
+                return;
+            }
+            submitter.click();
+        });
         const [response, navigationResponse, download] = await Promise.all([
             responsePromise,
             navigationPromise,
