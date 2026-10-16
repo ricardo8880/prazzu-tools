@@ -27,12 +27,12 @@ final class Calculator implements ToolCalculator
             throw new InvalidArgumentException('Incompatible employer-payroll-tax input.');
         }
 
-        $rates = $this->chargeRule->ratesFor($input->regime, $input->rat, $input->thirdParties);
+        $rates = $this->chargeRule->ratesFor($input->futaProfile, $input->sutaRate, $input->otherEmployerCostRate);
         $annualWages = $input->salary->multiply(12);
         $annualBenefits = $input->benefits->multiply(12);
         $socialSecurity = FederalPayroll2026::employerSocialSecurity($annualWages);
         $medicare = FederalPayroll2026::employerMedicare($annualWages);
-        $futa = $input->regime === 'futa_exempt' ? Money::zero() : FederalPayroll2026::employerFuta($annualWages);
+        $futa = $input->futaProfile === 'futa_exempt' ? Money::zero() : FederalPayroll2026::employerFuta($annualWages);
         $suta = $annualWages->percentage($rates->suta);
         $other = $annualWages->percentage($rates->otherEmployerCosts);
         $annualTaxes = $socialSecurity->add($medicare)->add($futa)->add($suta)->add($other);

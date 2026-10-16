@@ -11,8 +11,8 @@
             <h1>{{ $page['title'] }}</h1>
             <p>{{ $page['description'] }}</p>
             <div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
-                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('tools.index') }}">Explorar ferramentas</a>
-                <a class="btn prazzu-btn-outline" href="{{ route('home') }}">Voltar ao início</a>
+                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('tools.index') }}">Explore tools</a>
+                <a class="btn prazzu-btn-outline" href="{{ route('home') }}">Back to home</a>
             </div>
         </section>
     </div>

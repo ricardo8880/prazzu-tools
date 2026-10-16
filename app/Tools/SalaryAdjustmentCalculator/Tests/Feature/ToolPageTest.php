@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.salary-increase-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Reajuste Salarial');
+            ->assertSee('Salary Increase Calculator');
     }
 }

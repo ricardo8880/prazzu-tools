@@ -111,7 +111,7 @@ final class ToolController extends Controller
                 'title' => 'Employee Cost Report',
                 'contentView' => 'tools-employee-cost-calculator::report',
                 'contentData' => ['input' => $input, 'result' => $result, 'company' => $company],
-                'generatedAt' => now()->format('d/m/Y H:i'),
+                'generatedAt' => now()->format('M j, Y g:i A'),
                 'summaryLabel' => 'Projected annual cost',
                 'summaryValue' => $result['annual_cost'] ?? null,
             ]);
@@ -143,6 +143,7 @@ final class ToolController extends Controller
         ));
     }
 
+    // Plus features: csv_export, xlsx_export.
     public function exportCurrent(
         ExecuteToolRequest $request,
         CalculateTool $action,
@@ -159,6 +160,7 @@ final class ToolController extends Controller
             : $export->csv($filename.'.csv', ['Field', 'Amount'], $rows);
     }
 
+    // Plus feature: batch_processing.
     public function calculateBatch(
         CalculateBatchRequest $request,
         CalculateEmployeeBatch $action,
@@ -194,6 +196,7 @@ final class ToolController extends Controller
         ]);
     }
 
+    // Plus features: csv_export, xlsx_export, professional_report.
     public function exportBatch(
         CalculateBatchRequest $request,
         CalculateEmployeeBatch $action,
@@ -217,6 +220,7 @@ final class ToolController extends Controller
             : $export->csv($filename.'.csv', $headers, $rows);
     }
 
+    // Plus feature: professional_report.
     public function printBatch(
         CalculateBatchRequest $request,
         CalculateEmployeeBatch $action,
@@ -232,7 +236,7 @@ final class ToolController extends Controller
                 'batch' => $result,
                 'company' => $this->companyForReport($request, $profiles, $input),
             ],
-            'generatedAt' => now()->format('d/m/Y H:i'),
+            'generatedAt' => now()->format('M j, Y g:i A'),
         ]);
     }
 
@@ -264,12 +268,12 @@ final class ToolController extends Controller
 
     public function importTemplate(string $format, TabularExportService $export): Response|StreamedResponse
     {
-        $headers = ['Nome', 'Departamento', 'Cargo', 'Salary', 'Média variável', 'Benefícios', 'Regime', 'RAT', 'Terceiros', 'Horas mensais'];
-        $rows = [['Funcionário exemplo', 'Administrativo', 'Analista', '5000,00', '0,00', '800,00', 'general', '1', '5.8', '220']];
+        $headers = ['Employee name', 'Department', 'Role', 'Monthly salary', 'Variable pay', 'Benefits', 'FUTA profile', 'SUTA rate', 'Other employer cost rate', 'Monthly hours'];
+        $rows = [['Example employee', 'Operations', 'Analyst', '5000.00', '0.00', '800.00', 'standard', '0', '0', '173']];
 
         return $format === 'xlsx'
-            ? $export->xlsx('modelo-funcionarios-custo-clt.xlsx', $headers, $rows, 'Funcionários')
-            : $export->csv('modelo-funcionarios-custo-clt.csv', $headers, $rows);
+            ? $export->xlsx('employee-cost-template.xlsx', $headers, $rows, 'Employees')
+            : $export->csv('employee-cost-template.csv', $headers, $rows);
     }
 
     public function previewImport(
@@ -310,12 +314,13 @@ final class ToolController extends Controller
         ]);
     }
 
+    // Plus feature: company_profiles.
     public function storeCompany(StoreCompanyProfileRequest $request, ToolProfileManager $profiles): RedirectResponse
     {
         $profiles->storeCompany((int) $request->user()->getAuthIdentifier(), $request->validated());
 
         return redirect()->route('tools.employee-cost-calculator.index')
-            ->with('workspace_message', 'Empresa salva para reutilização.');
+            ->with('workspace_message', 'Company profile saved.');
     }
 
     public function destroyCompany(Request $request, int $company, ToolProfileManager $profiles): RedirectResponse
@@ -323,9 +328,10 @@ final class ToolController extends Controller
         $profiles->deleteCompanyOwned($company, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.employee-cost-calculator.index')
-            ->with('workspace_message', 'Empresa removida.');
+            ->with('workspace_message', 'Company profile removed.');
     }
 
+    // Plus feature: employee_profiles.
     public function storeEmployee(StoreEmployeeProfileRequest $request, ToolProfileManager $profiles): RedirectResponse
     {
         $data = $request->validated();
@@ -335,15 +341,15 @@ final class ToolController extends Controller
                 'salary' => $data['salary'],
                 'variable_pay' => $data['variable_pay'],
                 'benefits' => $data['benefits'],
-                'regime' => $data['regime'],
-                'rat' => $data['rat'],
-                'third_parties' => $data['third_parties'],
+                'futa_profile' => $data['futa_profile'],
+                'suta_rate' => $data['suta_rate'],
+                'other_employer_cost_rate' => $data['other_employer_cost_rate'],
                 'monthly_hours' => $data['monthly_hours'],
             ],
         ]);
 
         return redirect()->route('tools.employee-cost-calculator.index')
-            ->with('workspace_message', 'Funcionário salvo para reutilização.');
+            ->with('workspace_message', 'Employee profile saved.');
     }
 
     public function destroyEmployee(Request $request, int $employee, ToolProfileManager $profiles): RedirectResponse
@@ -351,9 +357,10 @@ final class ToolController extends Controller
         $profiles->deleteEmployeeOwned($employee, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.employee-cost-calculator.index')
-            ->with('workspace_message', 'Funcionário removido.');
+            ->with('workspace_message', 'Employee profile removed.');
     }
 
+    // Plus feature: history.
     public function history(Request $request, ManageEmployeeCostHistory $history): View
     {
         return view('tools-employee-cost-calculator::history.index', [
@@ -377,7 +384,7 @@ final class ToolController extends Controller
     {
         return redirect()->route('tools.employee-cost-calculator.index')
             ->withInput($history->repeat($run, (int) $request->user()->getAuthIdentifier()))
-            ->with('workspace_message', 'Dados carregados do histórico. Revise e calcule novamente.');
+            ->with('workspace_message', 'Data loaded from history. Review it and calculate again.');
     }
 
     public function destroyHistory(Request $request, string $run, ManageEmployeeCostHistory $history): RedirectResponse
@@ -385,7 +392,7 @@ final class ToolController extends Controller
         $history->delete($run, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.employee-cost-calculator.history.index')
-            ->with('workspace_message', 'Cálculo excluído do histórico.');
+            ->with('workspace_message', 'Calculation deleted from history.');
     }
 
     public function printHistory(
@@ -398,13 +405,13 @@ final class ToolController extends Controller
         $result = $entry->result['result'] ?? $entry->result;
 
         return $pdf->download(new PdfDocument(
-            filename: 'employee-cost-calculator-historico-'.now()->format('Y-m-d'),
+            filename: 'employee-cost-calculator-history-'.now()->format('Y-m-d'),
             view: 'exports.printable-document',
             data: [
                 'title' => 'Employee Cost Report',
                 'contentView' => 'tools-employee-cost-calculator::report',
                 'contentData' => ['input' => $entry->input, 'result' => $result, 'company' => null],
-                'generatedAt' => now()->format('d/m/Y H:i'),
+                'generatedAt' => now()->format('M j, Y g:i A'),
                 'summaryLabel' => 'Projected annual cost',
                 'summaryValue' => $result['annual_cost'] ?? null,
             ],
@@ -499,17 +506,17 @@ final class ToolController extends Controller
     private function singleExportRows(array $input, array $result): array
     {
         $rows = [
-            ['Ferramenta', 'Calculadora de Employee Cost'],
-            ['Issue date', now()->format('d/m/Y H:i')],
-            ['Funcionário', $input['employee_name'] ?? ''],
-            ['Departamento', $input['department'] ?? ''],
+            ['Tool', 'Employee Cost Calculator'],
+            ['Issue date', now()->format('M j, Y g:i A')],
+            ['Employee', $input['employee_name'] ?? ''],
+            ['Department', $input['department'] ?? ''],
         ];
 
         foreach ($result['summary'] ?? [] as $item) {
             $rows[] = [$item['label'], $item['value']];
         }
         foreach ($result['calculation_memory']['steps'] ?? [] as $step) {
-            $rows[] = ['Memória — '.($step['label'] ?? $step['key'] ?? 'Etapa'), $step['result'] ?? ''];
+            $rows[] = ['Calculation detail — '.($step['label'] ?? $step['key'] ?? 'Step'), $step['result'] ?? ''];
         }
 
         return $rows;

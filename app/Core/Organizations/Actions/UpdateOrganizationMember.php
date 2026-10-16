@@ -19,7 +19,7 @@ final readonly class UpdateOrganizationMember
     ): OrganizationMember {
         if ($member->role === OrganizationMemberRole::Owner) {
             throw ValidationException::withMessages([
-                'member' => 'O responsável pela empresa não pode ser alterado por este painel.',
+                'member' => 'The business owner cannot be changed from this panel.',
             ]);
         }
 

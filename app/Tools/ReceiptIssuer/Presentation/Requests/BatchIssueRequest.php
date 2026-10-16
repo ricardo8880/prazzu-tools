@@ -24,8 +24,8 @@ final class BatchIssueRequest extends FormRequest
     {
         return [
             'file.required' => 'Select the CSV file containing the receipts.',
-            'file.mimes' => 'Envie um arquivo CSV ou TXT delimitado por ponto e vírgula ou vírgula.',
-            'file.max' => 'O arquivo deve ter no máximo 2 MB.',
+            'file.mimes' => 'Upload a CSV or TXT file delimited by semicolons or commas.',
+            'file.max' => 'The file must be no larger than 2 MB.',
         ];
     }
 }

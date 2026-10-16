@@ -12,7 +12,7 @@ final class CalculatorTest extends TestCase
 {
     public function test_calculates_distribution_without_pro_labore_dependency(): void
     {
-        $result = (new Calculator)->calculate(new CalculationInput('Sócio', '100', '50000.00', intendedDistribution: '30000.00'));
+        $result = (new Calculator)->calculate(new CalculationInput('Owner', '100', '50000.00', intendedDistribution: '30000.00'));
 
         self::assertSame('owner-distribution-calculator', $result->toolSlug);
         self::assertSame(3000000, $result->details['distributed_amount_minor']);

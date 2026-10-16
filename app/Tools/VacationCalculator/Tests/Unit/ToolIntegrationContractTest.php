@@ -19,13 +19,13 @@ final class ToolIntegrationContractTest extends TestCase
         self::assertSame(
             count($manifest->publishes) + count($manifest->accepts),
             count($declaredContracts),
-            'O manifesto de integrações deve expor listas consistentes de contratos publicados e aceitos.',
+            'The integration manifest must expose consistent lists of published and accepted contracts.',
         );
 
         foreach ($declaredContracts as $contractKey) {
             self::assertNotNull(
                 $catalog->find(...$this->contractIdentity($contractKey)),
-                "O contrato [{$contractKey}] deve estar registrado no Core.",
+                "Contract [{$contractKey}] must be registered in Core.",
             );
         }
     }

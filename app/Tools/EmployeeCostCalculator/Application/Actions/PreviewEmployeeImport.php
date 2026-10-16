@@ -11,10 +11,7 @@ use Illuminate\Support\Str;
 
 final readonly class PreviewEmployeeImport
 {
-    public function __construct(
-        private CompositeTabularFileReader $reader,
-        private ImportDatasetStore $store,
-    ) {}
+    public function __construct(private CompositeTabularFileReader $reader, private ImportDatasetStore $store) {}
 
     public function execute(UploadedFile $file, string $ownerKey): array
     {
@@ -35,21 +32,19 @@ final readonly class PreviewEmployeeImport
     private function suggestions(array $headers): array
     {
         $aliases = [
-            'name_column' => ['nome', 'funcionario', 'funcionário'],
-            'department_column' => ['departamento', 'setor'],
-            'role_column' => ['cargo', 'funcao', 'função'],
-            'salary_column' => ['salario', 'salário'],
-            'variable_pay_column' => ['variavel', 'variável', 'media variavel', 'média variável'],
-            'benefits_column' => ['beneficios', 'benefícios'],
-            'regime_column' => ['regime'],
-            'rat_column' => ['rat'],
-            'third_parties_column' => ['terceiros'],
-            'monthly_hours_column' => ['horas mensais', 'jornada mensal'],
+            'name_column' => ['name', 'employee', 'employee name'],
+            'department_column' => ['department', 'team'],
+            'role_column' => ['role', 'job title', 'title'],
+            'salary_column' => ['salary', 'monthly salary', 'monthly base wages'],
+            'variable_pay_column' => ['variable pay', 'bonus', 'commission'],
+            'benefits_column' => ['benefits', 'employer benefits'],
+            'futa_profile_column' => ['futa profile', 'futa_profile'],
+            'suta_rate_column' => ['suta rate', 'suta_rate'],
+            'other_employer_cost_rate_column' => ['other employer cost rate', 'other_employer_cost_rate'],
+            'monthly_hours_column' => ['monthly hours', 'paid hours'],
         ];
 
-        $normalizedHeaders = collect($headers)->mapWithKeys(
-            static fn (string $header): array => [Str::slug($header) => $header],
-        );
+        $normalizedHeaders = collect($headers)->mapWithKeys(static fn (string $header): array => [Str::slug($header) => $header]);
         $result = [];
         foreach ($aliases as $field => $options) {
             foreach ($options as $option) {

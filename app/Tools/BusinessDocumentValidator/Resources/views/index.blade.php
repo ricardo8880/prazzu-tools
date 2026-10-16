@@ -20,5 +20,12 @@
             <div class="small text-body-secondary mt-3">Format validation does not confirm that the IRS issued the EIN or that it belongs to a specific business.</div>
         </x-tools.result-panel>
     @endisset
+<x-tools.form-panel title="Batch validation (Plus)">
+        <form method="POST" action="{{ route('tools.us-tax-id-validator.batch') }}" class="row g-3">@csrf
+            <div class="col-12"><label class="form-label" for="ein_list">EINs</label><textarea class="form-control" id="ein_list" name="ein_list" rows="5" placeholder="12-3456789&#10;98-7654321">{{ old('ein_list') }}</textarea><div class="form-text">One EIN per line, or separate values with commas or semicolons. Up to 200 values are processed.</div></div>
+            <div class="col-12"><button class="btn btn-outline-primary" type="submit">Validate EIN batch</button></div>
+        </form>
+    </x-tools.form-panel>
+    @isset($batchResults)<x-tools.result-panel title="Batch validation results"><div class="table-responsive"><table class="table"><thead><tr><th>EIN</th><th>Status</th></tr></thead><tbody>@foreach($batchResults as $row)<tr><td>{{ $row['formatted'] }}</td><td>{{ $row['valid'] ? 'Valid format' : 'Invalid format' }}</td></tr>@endforeach</tbody></table></div></x-tools.result-panel>@endisset
 </x-tools.page>
 @endsection

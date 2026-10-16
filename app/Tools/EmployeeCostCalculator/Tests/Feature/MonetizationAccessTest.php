@@ -21,6 +21,15 @@ final class MonetizationAccessTest extends TestCase
 {
     #[CoversPlusFeature('employee-cost-calculator', 'branded_report')]
     #[CoversPlusFeature('employee-cost-calculator', 'projections')]
+    #[CoversPlusFeature('employee-cost-calculator', 'history')]
+    #[CoversPlusFeature('employee-cost-calculator', 'company_profiles')]
+    #[CoversPlusFeature('employee-cost-calculator', 'employee_profiles')]
+    #[CoversPlusFeature('employee-cost-calculator', 'batch_processing')]
+    #[CoversPlusFeature('employee-cost-calculator', 'scenarios')]
+    #[CoversPlusFeature('employee-cost-calculator', 'employment_model_comparison')]
+    #[CoversPlusFeature('employee-cost-calculator', 'csv_export')]
+    #[CoversPlusFeature('employee-cost-calculator', 'xlsx_export')]
+    #[CoversPlusFeature('employee-cost-calculator', 'professional_report')]
     public function test_lot_six_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

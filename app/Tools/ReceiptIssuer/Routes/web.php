@@ -39,10 +39,10 @@ Route::prefix('tools/receipt-generator')->name('tools.receipt-generator.')->grou
                 ->name('export.pdf');
         });
     Route::middleware(['tool.feature:receipt-generator,saved_profiles', 'persistence.auth'])
-        ->prefix('perfis')->name('profiles.')->group(function (): void {
+        ->prefix('profiles')->name('profiles.')->group(function (): void {
             Route::get('/', [ToolController::class, 'profiles'])->name('index');
             Route::post('/', [ToolController::class, 'storeProfile'])->name('store');
-            Route::post('/{profile}/usar', [ToolController::class, 'useProfile'])->whereNumber('profile')->name('use');
+            Route::post('/{profile}/use', [ToolController::class, 'useProfile'])->whereNumber('profile')->name('use');
             Route::delete('/{profile}', [ToolController::class, 'destroyProfile'])->whereNumber('profile')->name('destroy');
         });
 

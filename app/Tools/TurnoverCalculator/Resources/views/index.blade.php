@@ -35,8 +35,8 @@
             @csrf
             <div class="col-12">
                 <label for="segments" class="form-label">Periods/segments</label>
-                <textarea id="segments" name="segments" rows="5" class="form-control" required data-e2e-value="1º trimestre|12|8|120&#10;2º trimestre|7|10|118" placeholder="1º trimestre|12|8|120
-2º trimestre|7|10|118">{{ old('segments', $segmentInput ?? '') }}</textarea>
+                <textarea id="segments" name="segments" rows="5" class="form-control" required data-e2e-value="Q1|12|8|120&#10;Q2|7|10|118" placeholder="Q1|12|8|120
+Q2|7|10|118">{{ old('segments', $segmentInput ?? '') }}</textarea>
                 <div class="form-text">One line per segment: name|hires|separations|average_headcount.</div>
                 @error('segments')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>

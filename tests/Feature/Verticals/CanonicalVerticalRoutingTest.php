@@ -28,7 +28,7 @@ final class CanonicalVerticalRoutingTest extends TestCase
 
     public function test_only_plans_and_about_remain_global_content_pages(): void
     {
-        self::assertSame('http://localhost/planos', route('plans'));
-        self::assertSame('http://localhost/sobre', route('about'));
+        self::assertSame('http://localhost/plans', route('plans'));
+        self::assertSame('http://localhost/about', route('about'));
     }
 }

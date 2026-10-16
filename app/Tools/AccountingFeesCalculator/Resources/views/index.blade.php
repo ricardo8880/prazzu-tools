@@ -17,8 +17,8 @@
         <div class="col-md-4"><x-tools.form.select name="complexity" label="Operational complexity" :options="['low'=>'Low','medium'=>'Medium','high'=>'High','very_high'=>'Very high']" :value="old('complexity','medium')" required /></div>
         <div class="col-12"><button class="btn btn-primary" type="submit">Estimate accounting fee</button></div>
     </form></x-tools.form-panel>
-    @isset($result)
-        <span data-analytics-result="main" hidden></span><x-tools.result-panel title="Fee estimate"><div class="row g-3">@foreach($result->summary as $item)<div class="col-md-6 col-xl-4"><x-tools.result-metric :label="$item->label" :value="$item->value" :description="$item->description" /></div>@endforeach</div></x-tools.result-panel>
+    @isset($calculationResult)
+        <span data-analytics-result="main" hidden></span><x-tools.result-panel title="Fee estimate"><div class="row g-3">@foreach(($calculationResult['summary'] ?? []) as $item)<div class="col-md-6 col-xl-4"><x-tools.result-metric :label="$item['label'] ?? ''" :value="$item['value'] ?? ''" :description="$item['description'] ?? null" /></div>@endforeach</div></x-tools.result-panel>
     @endisset
 </x-tools.page>
 @endsection

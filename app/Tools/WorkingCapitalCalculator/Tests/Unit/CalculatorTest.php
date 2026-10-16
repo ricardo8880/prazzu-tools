@@ -22,9 +22,9 @@ final class CalculatorTest extends TestCase
         self::assertSame('working-capital-calculator', $result->toolSlug);
         self::assertSame('1.2.0', $result->schemaVersion);
         self::assertSame('required_capital', $result->summary[0]->key);
-        self::assertSame('R$ 55.000,00', $result->summary[0]->value);
-        self::assertSame('R$ 50.000,00', $result->summary[2]->value);
-        self::assertSame('R$ 5.000,00', $result->summary[3]->value);
+        self::assertSame('$55,000.00', $result->summary[0]->value);
+        self::assertSame('$50,000.00', $result->summary[2]->value);
+        self::assertSame('$5,000.00', $result->summary[3]->value);
         self::assertNotNull($result->calculationMemory);
         self::assertTrue($result->calculationMemory->isEstimate);
         self::assertNotEmpty($result->calculationMemory->steps);
@@ -39,9 +39,9 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('0'), Money::fromDecimal('0'),
         ));
 
-        self::assertSame('R$ 15.000,00', $result->summary[0]->value);
-        self::assertSame('R$ 0,00', $result->summary[3]->value);
-        self::assertSame('R$ 50.000,00', $result->summary[4]->value);
+        self::assertSame('$15,000.00', $result->summary[0]->value);
+        self::assertSame('$0.00', $result->summary[3]->value);
+        self::assertSame('$50,000.00', $result->summary[4]->value);
         self::assertSame('funding_surplus', $result->warnings[0]->code);
     }
 }

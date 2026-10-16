@@ -1,165 +1,23 @@
 @extends('layouts.app')
-
-@section('title', 'Reajuste de Honorários Contábeis — Prazzu Tools')
-@section('meta_description', 'Calcule reajustes de honorários por IPCA, INPC, IGP-M ou percentual manual e mantenha o histórico.')
-
+@section('title', 'Accounting Fee Adjustment | Prazzu Tools')
+@section('meta_description', 'Apply a CPI-U or manually agreed percentage to an accounting or bookkeeping fee.')
 @section('content')
 <div class="prazzu-page tool-page">
-    <nav aria-label="Breadcrumb" class="mb-3">
-        <ol class="breadcrumb prazzu-breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="{{ route('home') }}">Início</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('tools.accounting-fee-calculator.index') }}">Honorários contábeis</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Reajustes</li>
-        </ol>
-    </nav>
-
-    <x-tools.intro icon="arrow-up-right-circle" title="Reajuste de honorários" description="Aplique o índice do período, visualize a diferença e mantenha um histórico auditável." badge="Lote 7" badge-class="badge text-bg-primary mb-2" />
-
+    <nav aria-label="Breadcrumb" class="mb-3"><ol class="breadcrumb prazzu-breadcrumb mb-0"><li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li><li class="breadcrumb-item"><a href="{{ route('tools.accounting-fee-calculator.index') }}">Accounting Fee Calculator</a></li><li class="breadcrumb-item active">Fee adjustment</li></ol></nav>
+    <x-tools.intro icon="arrow-up-right-circle" title="Accounting fee adjustment" description="Apply an entered CPI-U or negotiated percentage and keep an auditable history when your plan allows it." />
     @include('tools-accounting-fee-calculator::partials.navigation')
-
-    @if ($successMessage ?? session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-1"></i>{{ $successMessage ?? session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-        </div>
-    @endif
-
+    @if($successMessage ?? session('success'))<div class="alert alert-success">{{ $successMessage ?? session('success') }}</div>@endif
     @php($result = $adjustmentResult ?? session('adjustment_result'))
-    @if ($result)
-        <x-tools.validation-summary class="mb-4" />
-
-    <section class="row g-3 mb-4" aria-label="Salary increase result">
-            <div class="col-12 col-md-4">
-                <div class="card border-0 shadow-sm h-100"><div class="card-body">
-                    <div class="small text-body-secondary">Amount atual</div>
-                    <div class="h4 mb-0">R$ {{ number_format($result['current_value_cents'] / 100, 2, ',', '.') }}</div>
-                </div></div>
-            </div>
-            <div class="col-12 col-md-4">
-                <div class="card border-0 shadow-sm h-100"><div class="card-body">
-                    <div class="small text-body-secondary">Diferença ({{ number_format($result['percentage'], 4, ',', '.') }}%)</div>
-                    <div class="h4 mb-0 {{ $result['difference_cents'] >= 0 ? 'text-success' : 'text-danger' }}">
-                        {{ $result['difference_cents'] >= 0 ? '+' : '-' }} R$ {{ number_format(abs($result['difference_cents']) / 100, 2, ',', '.') }}
-                    </div>
-                </div></div>
-            </div>
-            <div class="col-12 col-md-4">
-                <div class="card border-primary shadow-sm h-100"><div class="card-body">
-                    <div class="small text-body-secondary">Novo honorário</div>
-                    <div class="h3 text-primary mb-0">R$ {{ number_format($result['adjusted_value_cents'] / 100, 2, ',', '.') }}</div>
-                </div></div>
-            </div>
-        </section>
-    @endif
-
-    <div class="row g-4">
-        <div class="col-12 col-xl-5">
-            <section class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <h2 class="h5 mb-3"><i class="bi bi-arrow-up-right-circle text-primary me-2"></i>Novo reajuste</h2>
-                    <div class="alert alert-info small" role="alert">
-                        Consulte a fonte oficial do índice e informe o percentual acumulado aplicável ao contrato. A ferramenta não busca índices automaticamente.
-                    </div>
-                    <form method="post" action="{{ route('tools.accounting-fee-calculator.adjustments.calculate') }}" class="row g-3">
-                        @csrf
-                        <div class="col-12">
-                            <label class="form-label" for="scenario_label">Referência do cálculo *</label>
-                            <input class="form-control @error('scenario_label') is-invalid @enderror" id="scenario_label" name="scenario_label" value="{{ old('scenario_label') }}" required maxlength="150" placeholder="Ex.: Renovação anual — cenário A">
-                            @error('scenario_label')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="index_type">Índice *</label>
-                            <select class="form-select @error('index_type') is-invalid @enderror" id="index_type" name="index_type" required>
-                                @foreach (['ipca' => 'IPCA', 'inpc' => 'INPC', 'igpm' => 'IGP-M', 'manual' => 'Percentual manual'] as $value => $label)
-                                    <option value="{{ $value }}" @selected(old('index_type', 'ipca') === $value)>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                            @error('index_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="reference_period">Competência *</label>
-                            <input class="form-control @error('reference_period') is-invalid @enderror" type="month" id="reference_period" name="reference_period" value="{{ old('reference_period', now()->format('Y-m')) }}" required>
-                            @error('reference_period')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="current_value">Honorário atual *</label>
-                            <div class="input-group has-validation">
-                                <span class="input-group-text">R$</span>
-                                <input class="form-control @error('current_value') is-invalid @enderror" id="current_value" name="current_value" inputmode="decimal" value="{{ old('current_value') }}" placeholder="1.500,00" required>
-                                @error('current_value')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <label class="form-label" for="percentage">Percentual *</label>
-                            <div class="input-group has-validation">
-                                <input class="form-control @error('percentage') is-invalid @enderror" type="number" step="0.0001" min="-100" max="1000" id="percentage" name="percentage" value="{{ old('percentage') }}" placeholder="4,6200" required>
-                                <span class="input-group-text">%</span>
-                                @error('percentage')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label" for="notes">Observações</label>
-                            <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" rows="3" maxlength="1000" placeholder="Fonte do índice, período acumulado ou condição negociada">{{ old('notes') }}</textarea>
-                            @error('notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-12 d-grid">
-                            <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-calculator me-1"></i>Calcular</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-        </div>
-
-        <div class="col-12 col-xl-7">
-            @guest
-                <div class="alert alert-info d-flex gap-2 align-items-start" role="note">
-                    <i class="bi bi-person-plus fs-5" aria-hidden="true"></i>
-                    <div><strong>O reajuste funciona sem login.</strong><br>Crie uma conta gratuita apenas para salvar e consultar seus resultados depois.</div>
-                </div>
-            @endguest
-            @auth
-            <section class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h2 class="h5 mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Histórico de reajustes</h2>
-                        <span class="badge text-bg-light border">{{ $adjustments->total() }} registro(s)</span>
-                    </div>
-                    @if ($adjustments->isEmpty())
-                        <div class="text-center py-5">
-                            <i class="bi bi-bar-chart display-5 text-body-tertiary"></i>
-                            <h3 class="h6 mt-3">Nenhum reajuste calculado</h3>
-                            <p class="text-body-secondary mb-0">Os cálculos salvos aparecerão aqui.</p>
-                        </div>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead><tr><th>Referência</th><th>Índice</th><th>Atual</th><th>Novo</th><th>Competência</th><th class="text-end">Ação</th></tr></thead>
-                                <tbody>
-                                    @php($indexLabels = ['ipca' => 'IPCA', 'inpc' => 'INPC', 'igpm' => 'IGP-M', 'manual' => 'Manual'])
-                                    @foreach ($adjustments as $adjustment)
-                                        <tr>
-                                            <td><div class="fw-semibold">{{ data_get($adjustment->input, 'scenario_label') }}</div><div class="small text-body-secondary">{{ number_format((float) data_get($adjustment->result, 'percentage'), 4, ',', '.') }}%</div></td>
-                                            <td><span class="badge text-bg-light border">{{ $indexLabels[data_get($adjustment->input, 'index_type')] }}</span></td>
-                                            <td class="text-nowrap">R$ {{ number_format(data_get($adjustment->result, 'current_value_cents') / 100, 2, ',', '.') }}</td>
-                                            <td class="fw-semibold text-primary text-nowrap">R$ {{ number_format(data_get($adjustment->result, 'adjusted_value_cents') / 100, 2, ',', '.') }}</td>
-                                            <td>{{ \Carbon\Carbon::createFromFormat('Y-m', data_get($adjustment->input, 'reference_period'))->format('m/Y') }}</td>
-                                            <td class="text-end">
-                                                <form method="post" action="{{ route('tools.accounting-fee-calculator.adjustments.delete', $adjustment->id) }}" data-confirm="Remove este reajuste do histórico?">
-                                                    @csrf @method('DELETE')
-                                                    <button class="btn btn-sm btn-outline-danger" type="submit" aria-label="Excluir reajuste"><i class="bi bi-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="mt-4">{{ $adjustments->links() }}</div>
-                    @endif
-                </div>
-            </section>
-            @endauth
-        </div>
-    </div>
+    @if($result)<section class="row g-3 mb-4" aria-label="Fee adjustment result"><div class="col-md-4"><div class="card"><div class="card-body"><div class="small text-body-secondary">Current fee</div><div class="h4 mb-0">${{ number_format($result['current_value_cents']/100,2,'.',',') }}</div></div></div></div><div class="col-md-4"><div class="card"><div class="card-body"><div class="small text-body-secondary">Change ({{ number_format((float)$result['percentage'],4,'.',',') }}%)</div><div class="h4 mb-0">${{ number_format(abs($result['difference_cents'])/100,2,'.',',') }}</div></div></div></div><div class="col-md-4"><div class="card border-primary"><div class="card-body"><div class="small text-body-secondary">Adjusted fee</div><div class="h3 text-primary mb-0">${{ number_format($result['adjusted_value_cents']/100,2,'.',',') }}</div></div></div></div></section>@endif
+    <div class="row g-4"><div class="col-xl-5"><section class="card"><div class="card-body p-4"><h2 class="h5 mb-3">New adjustment</h2><div class="alert alert-info small">Enter the percentage that applies under your agreement. The tool does not retrieve CPI-U or contract terms automatically.</div><form method="post" action="{{ route('tools.accounting-fee-calculator.adjustments.calculate') }}" class="row g-3">@csrf
+        <div class="col-12"><label class="form-label" for="scenario_label">Calculation label</label><input class="form-control" id="scenario_label" name="scenario_label" value="{{ old('scenario_label') }}" required maxlength="150" placeholder="Annual renewal — client A"></div>
+        <div class="col-md-6"><label class="form-label" for="index_type">Adjustment basis</label><select class="form-select" id="index_type" name="index_type" required>@foreach(['cpi_u'=>'CPI-U','manual'=>'Negotiated / manual percentage'] as $value=>$label)<option value="{{ $value }}" @selected(old('index_type','cpi_u')===$value)>{{ $label }}</option>@endforeach</select></div>
+        <div class="col-md-6"><label class="form-label" for="reference_period">Reference month</label><input class="form-control" type="month" id="reference_period" name="reference_period" value="{{ old('reference_period',now()->format('Y-m')) }}" required></div>
+        <div class="col-md-6"><x-tools.form.money name="current_value" label="Current monthly fee" :value="old('current_value')" required /></div>
+        <div class="col-md-6"><label class="form-label" for="percentage">Percentage</label><div class="input-group"><input class="form-control" type="number" step="0.0001" min="-100" max="1000" id="percentage" name="percentage" value="{{ old('percentage') }}" required><span class="input-group-text">%</span></div></div>
+        <div class="col-12"><label class="form-label" for="notes">Notes</label><textarea class="form-control" id="notes" name="notes" rows="3" maxlength="1000" placeholder="Source, period, or negotiated term">{{ old('notes') }}</textarea></div>
+        <div class="col-12 d-grid"><button class="btn btn-primary" type="submit">Calculate adjustment</button></div>
+    </form></div></section></div>
+    <div class="col-xl-7">@auth<section class="card"><div class="card-body p-4"><h2 class="h5">Adjustment history</h2>@if($adjustments->isEmpty())<p class="text-body-secondary mb-0">No saved adjustments yet.</p>@else<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Label</th><th>Basis</th><th>Current</th><th>Adjusted</th><th>Period</th><th></th></tr></thead><tbody>@php($labels=['cpi_u'=>'CPI-U','manual'=>'Manual'])@foreach($adjustments as $adjustment)<tr><td>{{ data_get($adjustment->input,'scenario_label') }}</td><td>{{ $labels[data_get($adjustment->input,'index_type')] ?? data_get($adjustment->input,'index_type') }}</td><td>${{ number_format(data_get($adjustment->result,'current_value_cents')/100,2,'.',',') }}</td><td>${{ number_format(data_get($adjustment->result,'adjusted_value_cents')/100,2,'.',',') }}</td><td>{{ \Carbon\Carbon::createFromFormat('Y-m',data_get($adjustment->input,'reference_period'))->format('M Y') }}</td><td><form method="post" action="{{ route('tools.accounting-fee-calculator.adjustments.delete',$adjustment->id) }}" data-confirm="Delete this saved adjustment?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>@endforeach</tbody></table></div>{{ $adjustments->links() }}@endif</div></section>@else<div class="alert alert-info">Sign in to save adjustment history.</div>@endauth</div></div>
 </div>
 @endsection

@@ -19,13 +19,13 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível.');
+            throw new InvalidArgumentException('Incompatible input.');
         }
 
         $reversals = $input->reversals ?? Money::fromMinor(0, $input->sales->currency());
 
         if ($reversals->minorAmount() < 0 || $reversals->minorAmount() > $input->sales->minorAmount()) {
-            throw new InvalidArgumentException('Os estornos devem estar entre zero e o faturamento bruto.');
+            throw new InvalidArgumentException('Refunds and chargebacks must be between zero and gross sales.');
         }
 
         $commissionableSales = $input->sales->subtract($reversals);
@@ -45,7 +45,7 @@ final class Calculator implements ToolCalculator
                 new ToolCalculationSummaryItem('commissionable_sales', 'Commissionable sales', $commissionableSales->formatEnUs(), 'Gross sales minus entered refunds/chargebacks.'),
                 new ToolCalculationSummaryItem('base_commission', 'Base commission rate', $base->formatEnUs()),
                 new ToolCalculationSummaryItem('goal_bonus', 'Target bonus', $bonus->formatEnUs(), $goalReached ? 'Target reached.' : 'Target not reached or not defined.'),
-                new ToolCalculationSummaryItem('goal_achievement', 'Target achievement', $achievement === null ? 'Target not defined' : number_format($achievement / 100, 2, ',', '.').' %'),
+                new ToolCalculationSummaryItem('goal_achievement', 'Target achievement', $achievement === null ? 'Target not defined' : number_format($achievement / 100, 2, '.', ',').' %'),
             ],
             [
                 'input' => $input->toArray(),
@@ -57,7 +57,7 @@ final class Calculator implements ToolCalculator
                     new CalculationMemoryStep(
                         key: 'commissionable_sales',
                         label: 'Commissionable sales',
-                        formula: 'faturamento bruto - estornos',
+                        formula: 'gross sales - refunds/chargebacks',
                         inputs: ['sales_minor' => $input->sales->minorAmount(), 'reversals_minor' => $reversals->minorAmount()],
                         result: $commissionableSales->minorAmount(),
                     ),
@@ -67,7 +67,7 @@ final class Calculator implements ToolCalculator
                         formula: 'commissionable sales × commission rate',
                         inputs: ['commissionable_sales_minor' => $commissionableSales->minorAmount(), 'rate' => $input->rate->toDecimalString()],
                         result: $base->minorAmount(),
-                        roundingPolicy: 'Money::percentage com arredondamento monetário do Core.',
+                        roundingPolicy: 'Money::percentage using the Core monetary rounding policy.',
                     ),
                     new CalculationMemoryStep(
                         key: 'goal_bonus',
@@ -75,7 +75,7 @@ final class Calculator implements ToolCalculator
                         formula: 'commissionable sales × bonus rate when the net target is reached',
                         inputs: ['commissionable_sales_minor' => $commissionableSales->minorAmount(), 'goal_minor' => $input->goal->minorAmount(), 'goal_bonus_rate' => $input->goalBonusRate->toDecimalString(), 'goal_reached' => $goalReached],
                         result: $bonus->minorAmount(),
-                        roundingPolicy: 'Money::percentage com arredondamento monetário do Core.',
+                        roundingPolicy: 'Money::percentage using the Core monetary rounding policy.',
                     ),
                     new CalculationMemoryStep(
                         key: 'total_commission',

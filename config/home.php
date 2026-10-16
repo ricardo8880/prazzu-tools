@@ -1,95 +1,34 @@
 <?php
 
 $accounting = [
-    'page_title' => 'Prazzu Tools — Ferramentas para contabilidade',
-    'meta_description' => 'Ferramentas contábeis gratuitas e profissionais para facilitar a rotina de contadores e empresas.',
-    'tools_section_title' => 'Novas ferramentas para resolver sua rotina',
-
+    'page_title' => 'Prazzu Tools — Free Business Calculators and Generators',
+    'meta_description' => 'Free online business, payroll, tax-planning, accounting, and document tools for U.S. users.',
+    'tools_section_title' => 'Tools for the task in front of you',
     'hero' => [
-        'title_before' => 'O que você precisa',
-        'title_line' => 'resolver',
-        'title_highlight' => 'hoje?',
-        'description' => 'Descreva sua necessidade e encontre a ferramenta certa para calcular, validar, simular ou gerar o que você precisa.',
-        'search_label' => 'Descreva o que você precisa resolver',
-        'search_placeholder' => 'Ex.: calcular rescisão, validar CNPJ, comparar impostos...',
+        'title_before' => 'What do you need', 'title_line' => 'to solve', 'title_highlight' => 'today?',
+        'description' => 'Describe the task and find a calculator, validator, simulator, or generator built for it.',
+        'search_label' => 'Describe what you need to solve',
+        'search_placeholder' => 'e.g. calculate overtime, validate an EIN, estimate sales tax...',
         'problem_shortcuts' => [
-            ['label' => 'Calcular rescisão', 'query' => 'rescisão'],
-            ['label' => 'Validar CNPJ ou CPF', 'query' => 'CNPJ CPF'],
-            ['label' => 'Calcular impostos', 'query' => 'impostos'],
-            ['label' => 'Custo de funcionário', 'query' => 'custo funcionário'],
+            ['label'=>'Estimate final pay','query'=>'final pay'], ['label'=>'Validate an EIN','query'=>'EIN'], ['label'=>'Estimate sales tax','query'=>'sales tax'], ['label'=>'Estimate employee cost','query'=>'employee cost'],
         ],
         'benefits' => [
-            ['label' => '100% Gratuito em muitos', 'icon' => 'bi-check-circle-fill'],
-            ['label' => 'Sem cadastro para usar', 'icon' => 'bi-check-circle-fill'],
-            ['label' => 'Seguro e confiável', 'icon' => 'bi-check-circle-fill'],
-            ['label' => 'Sempre atualizado', 'icon' => 'bi-check-circle-fill'],
+            ['label'=>'Many tools are free','icon'=>'bi-check-circle-fill'], ['label'=>'No account required for basic use','icon'=>'bi-check-circle-fill'], ['label'=>'Privacy-conscious workflows','icon'=>'bi-check-circle-fill'], ['label'=>'Versioned calculation assumptions','icon'=>'bi-check-circle-fill'],
         ],
     ],
-
-    'cta' => [
-        'title' => 'Não encontrou o que precisa?',
-        'description' => 'Temos novas ferramentas sendo adicionadas toda semana!',
-        'label' => 'Ver todas as ferramentas',
-        'url' => '/ferramentas',
-    ],
+    'cta' => ['title'=>'Looking for another tool?','description'=>'Browse the full catalog.','label'=>'View all tools','url'=>'/tools'],
 ];
 
 $hr = [
-    'page_title' => 'Prazzu Tools — Ferramentas para Recursos Humanos',
-    'meta_description' => 'Ferramentas práticas para apoiar indicadores, rotinas e decisões de Recursos Humanos.',
-    'tools_section_title' => 'Ferramentas para resolver sua rotina de RH',
-
-    'hero' => [
-        'title_before' => 'O que você precisa',
-        'title_line' => 'resolver em',
-        'title_highlight' => 'RH hoje?',
-        'description' => 'Descreva sua necessidade de Recursos Humanos e encontre a ferramenta certa para chegar à resposta com rapidez.',
-        'search_label' => 'Descreva o que você precisa resolver em RH',
-        'search_placeholder' => 'Ex.: calcular turnover...',
-        'problem_shortcuts' => [
-            ['label' => 'Calcular turnover', 'query' => 'turnover'],
-        ],
-        'benefits' => $accounting['hero']['benefits'],
-    ],
-
-    'cta' => [
-        'title' => 'Explore as ferramentas de RH',
-        'description' => 'A vertical de Recursos Humanos começa pequena para validar a arquitetura multi-nicho e poderá crescer sem duplicar a plataforma.',
-        'label' => 'Ver ferramentas de RH',
-        'url' => '/ferramentas',
-    ],
+    'page_title'=>'Prazzu Tools — HR Calculators','meta_description'=>'Practical calculators for HR metrics, workforce planning, and payroll-related decisions.','tools_section_title'=>'HR tools',
+    'hero'=>['title_before'=>'What do you need','title_line'=>'to solve in','title_highlight'=>'HR today?','description'=>'Find practical HR calculators and workforce planning tools.','search_label'=>'Describe your HR task','search_placeholder'=>'e.g. calculate turnover...','problem_shortcuts'=>[['label'=>'Calculate turnover','query'=>'turnover']],'benefits'=>$accounting['hero']['benefits']],
+    'cta'=>['title'=>'Explore HR tools','description'=>'Browse the available HR calculators.','label'=>'View HR tools','url'=>'/tools'],
 ];
 
 $global = [
-    'page_title' => 'Prazzu Tools — Ferramentas para o seu dia a dia',
-    'meta_description' => 'Ferramentas práticas para diferentes áreas de negócio em uma única plataforma.',
-    'tools_section_title' => 'Ferramentas para resolver agora',
-
-    'hero' => [
-        'title_before' => 'O que você precisa',
-        'title_line' => 'resolver',
-        'title_highlight' => 'hoje?',
-        'description' => 'Descreva sua necessidade e encontre a ferramenta certa entre as áreas disponíveis no Prazzu.',
-        'search_label' => 'Descreva o que você precisa resolver',
-        'search_placeholder' => 'Ex.: calcular, validar, simular ou gerar...',
-        'problem_shortcuts' => [],
-        'benefits' => $accounting['hero']['benefits'],
-    ],
-
-    'cta' => $accounting['cta'],
+    'page_title'=>'Prazzu Tools — Free Online Business Tools','meta_description'=>'Practical online tools for business, payroll, finance, accounting, and HR.','tools_section_title'=>'Tools to solve it now',
+    'hero'=>['title_before'=>'What do you need','title_line'=>'to solve','title_highlight'=>'today?','description'=>'Search the Prazzu catalog for a calculator, validator, simulator, or generator.','search_label'=>'Describe what you need to solve','search_placeholder'=>'e.g. calculate, validate, simulate, or generate...','problem_shortcuts'=>[],'benefits'=>$accounting['hero']['benefits']],
+    'cta'=>$accounting['cta'],
 ];
 
-return [
-    // Compatibilidade: o contrato histórico permanece apontando para a experiência
-    // atual de Contabilidade enquanto ela continuar sendo a vertical padrão.
-    ...$accounting,
-
-    // Fallback da plataforma quando VerticalContext = null.
-    'global' => $global,
-
-    // Conteúdo específico é configuração de negócio, não uma Home paralela.
-    'verticals' => [
-        'contabilidade' => $accounting,
-        'rh' => $hr,
-    ],
-];
+return [...$accounting, 'global'=>$global, 'verticals'=>['contabilidade'=>$accounting,'rh'=>$hr]];

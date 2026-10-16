@@ -75,7 +75,7 @@ final class ToolController extends Controller
             'method' => (string) $data['method'],
         ]);
 
-        return back()->with('asset_registry_success', 'Ativo salvo no cadastro patrimonial da calculadora.');
+        return back()->with('asset_registry_success', 'Asset saved to the calculator registry.');
     }
 
     public function destroyAsset(Request $request, RegisteredAsset $asset, RegisteredAssetRepository $assets): RedirectResponse
@@ -85,7 +85,7 @@ final class ToolController extends Controller
             404,
         );
 
-        return back()->with('asset_registry_success', 'Ativo removido do cadastro.');
+        return back()->with('asset_registry_success', 'Asset removed from the registry.');
     }
 
     public function exportCurrent(
@@ -101,7 +101,7 @@ final class ToolController extends Controller
         $userId = $request->user() ? (int) $request->user()->getAuthIdentifier() : null;
         $input = $this->input($request->validated(), $assets, $userId);
         $result = $action->execute($input);
-        $filename = 'depreciacao-ativos-'.now()->format('Y-m-d');
+        $filename = 'asset-depreciation-'.now()->format('Y-m-d');
 
         return $format === 'pdf'
             ? $pdf->download($documents->pdf('Asset Depreciation Calculator', $filename, $result, $input->toArray()))
@@ -126,7 +126,7 @@ final class ToolController extends Controller
             }
 
             $assets[] = [
-                'name' => $name !== '' ? $name : 'Ativo adicional',
+                'name' => $name !== '' ? $name : 'Additional asset',
                 'value' => $value !== '' ? $value : '0',
                 'residual_value' => (string) (($asset['residual_value'] ?? '') ?: '0'),
                 'useful_life_years' => (int) ($asset['useful_life_years'] ?? 1),

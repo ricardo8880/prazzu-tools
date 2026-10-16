@@ -55,7 +55,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->pdf(
-            title: 'Cálculo de Capital de Giro',
+            title: 'Working Capital Calculation',
             filename: 'working-capital-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,

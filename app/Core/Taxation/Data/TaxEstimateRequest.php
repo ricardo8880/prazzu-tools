@@ -19,6 +19,6 @@ final readonly class TaxEstimateRequest
         public ?Percentage $indirectTaxRate = null,
         public ?Money $monthlyOperatingCosts = null,
         public ?Money $monthlyDeductibleExpenses = null,
-        public ?Money $monthlyPisCofinsCreditBase = null,
+        public ?Money $monthlyTaxCreditBase = null,
     ) {}
 }

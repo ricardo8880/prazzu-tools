@@ -8,10 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class CompareScenariosRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
+    public function authorize(): bool { return true; }
 
     public function rules(): array
     {
@@ -25,9 +22,9 @@ final class CompareScenariosRequest extends FormRequest
             'scenarios.*.employees.*.salary' => ['required', 'us_money', 'money_min:0.01'],
             'scenarios.*.employees.*.variable_pay' => ['required', 'us_money', 'money_min:0'],
             'scenarios.*.employees.*.benefits' => ['required', 'us_money', 'money_min:0'],
-            'scenarios.*.employees.*.regime' => ['required', 'in:general,simples_annex_iv,simples_other'],
-            'scenarios.*.employees.*.rat' => ['required', 'numeric', 'min:0', 'max:15'],
-            'scenarios.*.employees.*.third_parties' => ['required', 'numeric', 'min:0', 'max:15'],
+            'scenarios.*.employees.*.futa_profile' => ['required', 'in:standard,futa_exempt'],
+            'scenarios.*.employees.*.suta_rate' => ['required', 'numeric', 'min:0', 'max:15'],
+            'scenarios.*.employees.*.other_employer_cost_rate' => ['required', 'numeric', 'min:0', 'max:25'],
             'scenarios.*.employees.*.monthly_hours' => ['required', 'integer', 'min:1', 'max:744'],
         ];
     }

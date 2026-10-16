@@ -111,7 +111,7 @@ final class NormativeTrustContent
         }
 
         try {
-            return (new DateTimeImmutable($value))->format('d/m/Y');
+            return (new DateTimeImmutable($value))->format('M j, Y');
         } catch (Throwable) {
             return trim($value);
         }

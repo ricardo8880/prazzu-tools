@@ -102,7 +102,7 @@ final class LaborTerminationController extends Controller
                     'title' => 'Final Pay & Severance Report',
                     'contentView' => 'tools-final-pay-severance-calculator::pdf.report',
                     'contentData' => ['result' => $result, 'input' => $input],
-                    'generatedAt' => now()->format('d/m/Y H:i'),
+                    'generatedAt' => now()->format('M j, Y g:i A'),
                     'summaryLabel' => 'Estimated net final pay',
                     'summaryValue' => $result['net_total'] ?? null,
                 ],
@@ -139,6 +139,7 @@ final class LaborTerminationController extends Controller
         return $exporter->download($documents->spreadsheet('final-pay-severance-'.now()->format('Y-m-d'), $result, $input));
     }
 
+    // Plus feature: historical_report.
     public function exportHistory(
         Request $request,
         string $run,
@@ -150,7 +151,7 @@ final class LaborTerminationController extends Controller
             'title' => 'Final Pay & Severance Report',
             'contentView' => 'tools-final-pay-severance-calculator::pdf.report',
             'contentData' => ['result' => $run->result, 'input' => $run->input],
-            'generatedAt' => $run->finishedAt->format('d/m/Y H:i'),
+            'generatedAt' => $run->finishedAt->format('M j, Y g:i A'),
             'summaryLabel' => 'Estimated net final pay',
             'summaryValue' => $run->result['net_total'] ?? null,
         ]);
@@ -170,6 +171,7 @@ final class LaborTerminationController extends Controller
         return view('tools-final-pay-severance-calculator::history.show', ['run' => $run]);
     }
 
+    // Plus feature: repeat_history.
     public function repeatHistory(Request $request, string $run, ManageLaborTerminationHistory $history): RedirectResponse
     {
         $run = $history->owned($run, (int) $request->user()->getAuthIdentifier());

@@ -21,7 +21,7 @@ final readonly class CalculateTool
             Percentage::fromString($data['rate']),
             Money::fromDecimal($data['goal'] ?? '0'),
             Percentage::fromString((string) ($data['goal_bonus_rate'] ?? '0')),
-            Money::fromDecimal($data['reversals'] ?? '0,00'),
+            Money::fromDecimal($data['reversals'] ?? '0.00'),
         ));
     }
 }

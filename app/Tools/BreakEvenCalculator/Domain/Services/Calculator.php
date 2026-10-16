@@ -48,7 +48,7 @@ final class Calculator implements ToolCalculator
                 code: 'no_fixed_costs',
                 message: 'With zero fixed costs, accounting break-even occurs before the first unit. The calculator keeps minimum units and revenue at zero.',
                 level: ToolCalculationWarningLevel::Info,
-                title: 'Sem custos fixos informados',
+                title: 'No fixed costs entered',
             );
         }
 

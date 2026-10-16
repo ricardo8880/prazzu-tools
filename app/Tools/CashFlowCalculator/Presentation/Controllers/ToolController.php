@@ -53,7 +53,7 @@ final class ToolController extends Controller
         $result = $action->execute($input);
 
         return $exporter->download($documents->pdf(
-            title: 'Cálculo de Fluxo de Caixa',
+            title: 'Cash Flow Calculation',
             filename: 'cash-flow-calculator-'.now()->format('Y-m-d'),
             result: $result,
             input: $input,

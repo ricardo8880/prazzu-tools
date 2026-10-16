@@ -3,7 +3,7 @@
     $firstTextLine = true;
 @endphp
 
-<section aria-label="Contrato" style="padding-top:34px;font-family:Arial,DejaVu Sans,sans-serif;color:#212529;">
+<section aria-label="Agreement" style="padding-top:34px;font-family:Arial,DejaVu Sans,sans-serif;color:#212529;">
     @foreach ($lines as $line)
         @php($line = rtrim($line))
 

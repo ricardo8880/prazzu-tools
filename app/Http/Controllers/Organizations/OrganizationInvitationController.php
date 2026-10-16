@@ -21,7 +21,7 @@ final class OrganizationInvitationController extends Controller
         $invitation = $action->execute($organization, $request->user());
 
         return back()
-            ->with('status', 'Link de convite gerado. Envie-o somente para a pessoa que deve entrar na empresa.')
+            ->with('status', 'Invitation link generated. Send it only to the person who should join the business.')
             ->with('invitation_link', route('organizations.invitations.show', $invitation->token));
     }
 
@@ -36,7 +36,7 @@ final class OrganizationInvitationController extends Controller
             ])->save();
         }
 
-        return back()->with('status', 'Link de convite cancelado.');
+        return back()->with('status', 'Invitation link canceled.');
     }
 
     public function restore(Request $request, Organization $organization, OrganizationInvitation $invitation): RedirectResponse
@@ -54,7 +54,7 @@ final class OrganizationInvitationController extends Controller
         ])->save();
 
         return back()
-            ->with('status', 'Link restaurado com um novo endereço e validade de 7 dias.')
+            ->with('status', 'Invitation restored with a new link valid for 7 days.')
             ->with('invitation_link', route('organizations.invitations.show', $invitation->token));
     }
 
@@ -66,7 +66,7 @@ final class OrganizationInvitationController extends Controller
 
         $invitation->delete();
 
-        return back()->with('status', 'Convite apagado definitivamente.');
+        return back()->with('status', 'Invitation permanently deleted.');
     }
 
     private function authorizeManagement(Request $request, Organization $organization, ?OrganizationInvitation $invitation = null): void

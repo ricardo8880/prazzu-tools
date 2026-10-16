@@ -13,5 +13,6 @@ final class ExecuteToolRequest extends FormRequest
         'district_rate'=>['nullable','percentage_value','percentage_min:0','percentage_max:100'],
         'quantity'=>['required','integer','min:1','max:1000000'],
         'tax_included'=>['nullable','boolean'],
+        'show_diagnostics'=>['nullable','boolean'],
     ];}
 }

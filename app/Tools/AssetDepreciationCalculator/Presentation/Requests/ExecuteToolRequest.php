@@ -46,10 +46,10 @@ final class ExecuteToolRequest extends FormRequest
                 $assetValue = Money::fromDecimal((string) $this->input('asset_value'))->minorAmount();
                 $residualValue = Money::fromDecimal((string) ($this->input('residual_value') ?: '0'))->minorAmount();
                 if ($residualValue >= $assetValue) {
-                    $validator->errors()->add('residual_value', 'O valor residual deve ser menor que o valor do bem.');
+                    $validator->errors()->add('residual_value', 'Salvage value must be less than the asset cost.');
                 }
             } catch (Throwable) {
-                // Regras de formato já reportam o erro correspondente.
+                // Format rules already report the corresponding error.
             }
 
             foreach ((array) $this->input('assets', []) as $index => $asset) {
@@ -66,19 +66,19 @@ final class ExecuteToolRequest extends FormRequest
                     continue;
                 }
                 if ($name === '') {
-                    $validator->errors()->add("assets.$index.name", 'Informe o nome do ativo adicional.');
+                    $validator->errors()->add("assets.$index.name", 'Enter the additional asset name.');
                 }
                 if ($minor <= 0) {
-                    $validator->errors()->add("assets.$index.value", 'Informe um valor maior que zero para o ativo adicional.');
+                    $validator->errors()->add("assets.$index.value", 'Enter an amount greater than zero for the additional asset.');
                 }
 
                 try {
                     $residualMinor = Money::fromDecimal((string) (($asset['residual_value'] ?? '') ?: '0'))->minorAmount();
                     if ($minor > 0 && $residualMinor >= $minor) {
-                        $validator->errors()->add("assets.$index.residual_value", 'O valor residual deve ser menor que o valor do ativo adicional.');
+                        $validator->errors()->add("assets.$index.residual_value", 'Salvage value must be less than the additional asset cost.');
                     }
                 } catch (Throwable) {
-                    // Regras de formato já reportam o erro correspondente.
+                    // Format rules already report the corresponding error.
                 }
             }
         });
@@ -87,9 +87,9 @@ final class ExecuteToolRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'asset_name.required' => 'Informe o bem que será depreciado.',
-            'asset_value.required' => 'Informe o valor do bem.',
-            'useful_life_years.required' => 'Informe a vida útil em years.',
+            'asset_name.required' => 'Enter the asset to depreciate.',
+            'asset_value.required' => 'Enter the asset cost.',
+            'useful_life_years.required' => 'Enter the useful life in years.',
         ];
     }
 }

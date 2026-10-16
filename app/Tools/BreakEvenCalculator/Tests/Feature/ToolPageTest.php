@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.break-even-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Ponto de Equilíbrio');
+            ->assertSee('Break-Even Calculator');
     }
 }

@@ -11,7 +11,7 @@
 
     {{--
         O tema precisa ser resolvido antes do carregamento das folhas de estilo.
-        Isso evita que o HTML seja pintado em dark e só depois trocado para light.
+        This prevents the HTML from rendering in dark mode and then switching to light mode.
     --}}
     <script nonce="{{ $cspNonce ?? '' }}">
         (() => {
@@ -21,7 +21,7 @@
             try {
                 theme = window.localStorage.getItem(storageKey);
             } catch (_) {
-                // localStorage pode estar indisponível em modos restritos do navegador.
+                // localStorage may be unavailable in restricted browser modes.
             }
 
             if (theme !== 'light' && theme !== 'dark') {
@@ -109,7 +109,7 @@
     class="visually-hidden-focusable prazzu-skip-link"
     href="#main-content"
 >
-    Pular para o conteúdo
+    Skip to content
 </a>
 
 
@@ -138,7 +138,7 @@
                         type="button"
                         class="btn-close"
                         data-bs-dismiss="alert"
-                        aria-label="Fechar"
+                        aria-label="Close"
                     ></button>
                 </div>
             @endif
@@ -147,7 +147,7 @@
                 <div class="alert alert-warning prazzu-flash-alert alert-dismissible fade show" role="alert">
                     <i class="bi bi-lock-fill" aria-hidden="true"></i>
                     <span>{{ session('access_warning') }}</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
 

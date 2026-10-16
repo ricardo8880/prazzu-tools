@@ -33,8 +33,8 @@ final class HistoryTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user)->post(route('tools.receipt-generator.issue'), [
-            'number' => 'REC-HIST-1', 'payer_name' => 'Cliente', 'payee_name' => 'Prestador',
-            'amount' => '100,00', 'description' => 'Serviço', 'issued_at' => '2026-07-23',
+            'number' => 'REC-HIST-1', 'payer_name' => 'Client', 'payee_name' => 'Provider',
+            'amount' => '100.00', 'description' => 'Professional services', 'issued_at' => '2026-07-23',
         ])->assertOk();
         $this->actingAs($user)->get(route('tools.receipt-generator.history.index'))
             ->assertOk()->assertSee('REC-HIST-1');

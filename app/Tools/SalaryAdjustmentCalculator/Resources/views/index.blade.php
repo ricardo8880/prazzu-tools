@@ -9,7 +9,7 @@
     <x-tools.form-panel title="Salary increase inputs" description="Enter the percentage increase and any fixed additional increase.">
         <form method="POST" action="{{ route('tools.salary-increase-calculator.calculate') }}" class="row g-3">
             @csrf
-            <div class="col-12 col-md-6"><x-tools.form.money name="current_salary" label="Salary atual" :value="old('current_salary')" required /></div>
+            <div class="col-12 col-md-6"><x-tools.form.money name="current_salary" label="Current salary" :value="old('current_salary')" required /></div>
             <div class="col-12 col-md-6"><x-tools.form.input name="adjustment_rate" label="Increase percentage" type="number" step="0.000001" min="0" max="100" suffix="%" :value="old('adjustment_rate')" required /></div>
             <div class="col-12 col-md-6"><x-tools.form.money name="fixed_addition" label="Additional fixed increase" :value="old('fixed_addition')" required /></div>
             <div class="col-12 col-md-6"><x-tools.form.input name="retroactive_months" label="Retroactive months" type="number" min="0" max="60" :value="old('retroactive_months')" required /></div>

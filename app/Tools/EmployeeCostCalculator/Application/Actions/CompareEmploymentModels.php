@@ -14,49 +14,31 @@ final readonly class CompareEmploymentModels
     /** @param array<string, mixed> $data */
     public function execute(array $data): array
     {
-        $clt = $this->calculator->execute($data);
-        $cltCost = Money::fromMinor((int) $clt->details['amounts']['monthly_cost_minor']);
-        $cltGross = Money::fromDecimal($data['salary'])->add(Money::fromDecimal($data['variable_pay']));
-        $cltDiscounts = $cltGross->percentage(Percentage::fromString($data['clt_employee_discount_rate']));
-        $cltNet = $cltGross->subtract($cltDiscounts)->add(Money::fromDecimal($data['benefits']));
-        $pjGross = Money::fromDecimal($data['pj_monthly_invoice']);
-        $pjTaxes = $pjGross->percentage(Percentage::fromString($data['pj_tax_rate']));
-        $pjExpenses = Money::fromDecimal($data['pj_expenses']);
-        $pjNet = $pjGross->subtract($pjTaxes)->subtract($pjExpenses);
-        $autonomousGross = Money::fromDecimal($data['autonomous_gross']);
-        $autonomousDiscounts = $autonomousGross->percentage(Percentage::fromString($data['autonomous_discount_rate']));
-        $autonomousEmployerCharge = $autonomousGross->percentage(Percentage::fromString($data['autonomous_employer_rate']));
-        $autonomousNet = $autonomousGross->subtract($autonomousDiscounts);
-        $autonomousCost = $autonomousGross->add($autonomousEmployerCharge);
+        // Plus feature: employment_model_comparison.
+        $employee = $this->calculator->execute($data);
+        $employeeCost = Money::fromMinor((int) $employee->details['amounts']['monthly_cost_minor']);
+        $w2Gross = Money::fromDecimal((string) $data['salary'])->add(Money::fromDecimal((string) $data['variable_pay']));
+        $w2Deductions = $w2Gross->percentage(Percentage::fromString((string) $data['w2_employee_deduction_rate']));
+        $w2Net = $w2Gross->subtract($w2Deductions)->add(Money::fromDecimal((string) $data['benefits']));
+
+        $contractorGross = Money::fromDecimal((string) $data['contractor_monthly_payment']);
+        $contractorTaxes = $contractorGross->percentage(Percentage::fromString((string) $data['contractor_tax_rate']));
+        $contractorExpenses = Money::fromDecimal((string) $data['contractor_expenses']);
+        $contractorNet = $contractorGross->subtract($contractorTaxes)->subtract($contractorExpenses);
+
+        $selfEmployedGross = Money::fromDecimal((string) $data['self_employed_gross']);
+        $selfEmployedTaxes = $selfEmployedGross->percentage(Percentage::fromString((string) $data['self_employed_tax_rate']));
+        $payerOverhead = $selfEmployedGross->percentage(Percentage::fromString((string) $data['self_employed_payer_overhead_rate']));
+        $selfEmployedNet = $selfEmployedGross->subtract($selfEmployedTaxes);
+        $selfEmployedPayerCost = $selfEmployedGross->add($payerOverhead);
 
         return [
             'models' => [
-                [
-                    'model' => 'W-2 employee',
-                    'gross' => $cltGross->formatEnUs(),
-                    'discounts' => $cltDiscounts->formatEnUs(),
-                    'net' => $cltNet->formatEnUs(),
-                    'company_cost_minor' => $cltCost->minorAmount(),
-                    'company_cost' => $cltCost->formatEnUs(),
-                ],
-                [
-                    'model' => '1099 contractor',
-                    'gross' => $pjGross->formatEnUs(),
-                    'discounts' => $pjTaxes->add($pjExpenses)->formatEnUs(),
-                    'net' => $pjNet->formatEnUs(),
-                    'company_cost_minor' => $pjGross->minorAmount(),
-                    'company_cost' => $pjGross->formatEnUs(),
-                ],
-                [
-                    'model' => 'Self-employed',
-                    'gross' => $autonomousGross->formatEnUs(),
-                    'discounts' => $autonomousDiscounts->formatEnUs(),
-                    'net' => $autonomousNet->formatEnUs(),
-                    'company_cost_minor' => $autonomousCost->minorAmount(),
-                    'company_cost' => $autonomousCost->formatEnUs(),
-                ],
+                ['model' => 'W-2 employee', 'gross' => $w2Gross->formatEnUs(), 'discounts' => $w2Deductions->formatEnUs(), 'net' => $w2Net->formatEnUs(), 'company_cost_minor' => $employeeCost->minorAmount(), 'company_cost' => $employeeCost->formatEnUs()],
+                ['model' => '1099 contractor', 'gross' => $contractorGross->formatEnUs(), 'discounts' => $contractorTaxes->add($contractorExpenses)->formatEnUs(), 'net' => $contractorNet->formatEnUs(), 'company_cost_minor' => $contractorGross->minorAmount(), 'company_cost' => $contractorGross->formatEnUs()],
+                ['model' => 'Self-employed service provider', 'gross' => $selfEmployedGross->formatEnUs(), 'discounts' => $selfEmployedTaxes->formatEnUs(), 'net' => $selfEmployedNet->formatEnUs(), 'company_cost_minor' => $selfEmployedPayerCost->minorAmount(), 'company_cost' => $selfEmployedPayerCost->formatEnUs()],
             ],
-            'disclaimer' => 'Financial comparison only. Worker classification depends on the actual relationship and applicable federal/state law.',
+            'disclaimer' => 'Financial comparison only. Worker classification depends on the actual relationship and applicable federal and state law.',
         ];
     }
 }

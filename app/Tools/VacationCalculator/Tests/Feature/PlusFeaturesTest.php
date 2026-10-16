@@ -18,19 +18,21 @@ final class PlusFeaturesTest extends TestCase
         $this->get(route('tools.pto-calculator.history.index'))->assertRedirect();
     }
 
-    public function test_planner_route_is_registered(): void
-    {
-        self::assertTrue(app('router')->has('tools.pto-calculator.planner'));
-        self::assertTrue(app('router')->has('tools.pto-calculator.plan'));
-    }
-
     #[CoversPlusFeature('pto-calculator', 'history')]
-    public function test_authenticated_user_can_open_history_when_feature_is_available(): void
+    public function test_authenticated_user_can_open_pto_history(): void
     {
         $user = User::factory()->create();
+
         $this->actingAs($user)
             ->get(route('tools.pto-calculator.history.index'))
             ->assertOk()
-            ->assertSee('Histórico de férias');
+            ->assertSee('PTO calculation history');
+    }
+
+    #[CoversPlusFeature('pto-calculator', 'professional_export')]
+    public function test_professional_export_route_is_feature_gated(): void
+    {
+        self::assertTrue(app('router')->has('tools.pto-calculator.export'));
+        self::assertTrue(app('router')->has('tools.pto-calculator.history.export'));
     }
 }

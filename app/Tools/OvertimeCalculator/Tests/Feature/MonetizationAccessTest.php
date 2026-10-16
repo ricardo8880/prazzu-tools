@@ -19,16 +19,10 @@ use PHPUnit\Framework\TestCase;
 
 final class MonetizationAccessTest extends TestCase
 {
-    #[CoversPlusFeature('overtime-pay-calculator', 'dsr')]
     #[CoversPlusFeature('overtime-pay-calculator', 'export')]
-    #[CoversPlusFeature('overtime-pay-calculator', 'night')]
-    #[CoversPlusFeature('overtime-pay-calculator', 'reflexes')]
     public function test_lot_six_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();
-        $this->assertFeatureAccess($manifest, 'night');
-        $this->assertFeatureAccess($manifest, 'dsr');
-        $this->assertFeatureAccess($manifest, 'reflexes');
         $this->assertFeatureAccess($manifest, 'export');
     }
 

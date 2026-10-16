@@ -16,7 +16,7 @@ final class CalculateMarginMarkupBatchRequest extends FormRequest
     /** @return array<string, array<int, string>> */
     public function rules(): array
     {
-        $money = ['nullable', 'regex:/^\s*(?:R\$\s*)?\d{1,8}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'];
+        $money = ['nullable', 'us_money', 'money_min:0'];
         $percentage = ['nullable', 'numeric', 'min:0', 'lt:100'];
 
         return [
@@ -25,7 +25,7 @@ final class CalculateMarginMarkupBatchRequest extends FormRequest
             'products.*.name' => ['required', 'string', 'max:120'],
             'products.*.code' => ['nullable', 'string', 'max:60'],
             'products.*.category' => ['nullable', 'string', 'max:80'],
-            'products.*.base_cost' => ['required', 'regex:/^\s*(?:R\$\s*)?\d{1,8}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'],
+            'products.*.base_cost' => ['required', 'us_money', 'money_min:0.01'],
             'products.*.additional_costs' => $money,
             'products.*.freight_cost' => $money,
             'products.*.packaging_cost' => $money,
@@ -42,12 +42,12 @@ final class CalculateMarginMarkupBatchRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'products.required' => 'Adicione pelo menos um produto.',
-            'products.max' => 'Calcule no máximo 100 produtos por vez.',
-            'products.*.name.required' => 'Informe o nome de todos os produtos.',
-            'products.*.base_cost.required' => 'Informe o custo base de todos os produtos.',
-            'products.*.base_cost.regex' => 'Use o formato 1.234,56 nos custos base.',
-            'products.*.*.regex' => 'Use o formato 1.234,56 nos valores monetários.',
+            'products.required' => 'Add at least one product.',
+            'products.max' => 'Calculate no more than 100 products at a time.',
+            'products.*.name.required' => 'Enter a name for every product.',
+            'products.*.base_cost.required' => 'Enter a base cost for every product.',
+            'products.*.base_cost.us_money' => 'Use U.S. money format for base costs, for example 1,234.56.',
+            'products.*.*.us_money' => 'Use U.S. money format for monetary values, for example 1,234.56.',
         ];
     }
 }

@@ -36,8 +36,8 @@ final readonly class ProjectScenarios
         }
 
         return [
-            ['name' => 'Posição atual', 'result' => $this->calculate->execute($base), 'input' => $base],
-            ['name' => 'Cenário projetado', 'result' => $this->calculate->execute($projected), 'input' => $projected],
+            ['name' => 'Current position', 'result' => $this->calculate->execute($base), 'input' => $base],
+            ['name' => 'Projected scenario', 'result' => $this->calculate->execute($projected), 'input' => $projected],
         ];
     }
 

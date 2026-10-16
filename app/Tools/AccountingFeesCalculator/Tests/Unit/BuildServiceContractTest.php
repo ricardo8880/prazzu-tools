@@ -11,33 +11,16 @@ use PHPUnit\Framework\TestCase;
 final class BuildServiceContractTest extends TestCase
 {
     #[CoversPlusFeature('accounting-fee-calculator', 'service_contract')]
-    public function test_it_builds_a_service_contract(): void
+    public function test_it_builds_a_us_service_agreement(): void
     {
         $contract = (new BuildServiceContract)->execute([
-            'client_company' => 'Cliente Exemplo Ltda.',
-            'client_document' => '12.345.678/0001-90',
-            'client_representative' => 'Maria Cliente',
-            'accounting_firm' => 'Contabilidade Exemplo',
-            'accounting_firm_document' => '98.765.432/0001-10',
-            'accounting_representative' => 'João Contador',
-            'monthly_fee' => '1.500,00',
-            'due_day' => 10,
-            'start_date' => '2026-08-01',
-            'duration_months' => 12,
-            'adjustment_index' => 'IPCA',
-            'late_fee_percent' => 2,
-            'termination_notice_days' => 30,
-            'services' => ['accounting', 'tax'],
-            'includes_lgpd' => true,
-            'includes_confidentiality' => true,
-            'additional_terms' => 'Reunião mensal.',
+            'client_company'=>'Example Client LLC','client_document'=>'12-3456789','client_representative'=>'Maria Client','accounting_firm'=>'Example Accounting LLC','accounting_firm_document'=>'98-7654321','accounting_representative'=>'John Accountant',
+            'monthly_fee'=>'1500.00','due_day'=>10,'start_date'=>'2026-08-01','duration_months'=>12,'adjustment_index'=>'CPI-U','late_fee_percent'=>2,'termination_notice_days'=>30,'services'=>['accounting','tax'],'includes_data_privacy'=>true,'includes_confidentiality'=>true,'additional_terms'=>'Monthly review meeting.',
         ]);
-
-        self::assertSame('Cliente Exemplo Ltda.', $contract->clientCompany);
-        self::assertSame('R$ 1.500,00', $contract->monthlyFee->formatEnUs());
-        self::assertSame('01/08/2026', $contract->startsAt->format('d/m/Y'));
-        self::assertSame('31/07/2027', $contract->endsAt->format('d/m/Y'));
-        self::assertCount(2, $contract->services);
-        self::assertTrue($contract->includesLgpd);
+        self::assertSame('Example Client LLC',$contract->clientCompany);
+        self::assertSame('$1,500.00',$contract->monthlyFee->formatEnUs());
+        self::assertSame('Aug 1, 2026',$contract->startsAt->format('M j, Y'));
+        self::assertSame('Jul 31, 2027',$contract->endsAt->format('M j, Y'));
+        self::assertTrue($contract->includesDataPrivacy);
     }
 }

@@ -20,7 +20,7 @@ return [
     'hsts' => env('SECURITY_HSTS', 'max-age=31536000; includeSubDomains'),
     'sensitive_log_keys' => [
         'password', 'password_confirmation', 'token', 'access_token', 'refresh_token',
-        'authorization', 'cookie', 'cpf', 'cnpj', 'inscricao_estadual', 'salary',
+        'authorization', 'cookie', 'ssn', 'ein', 'tin', 'state_tax_id', 'salary',
         'salario', 'remuneracao', 'secret', 'api_key',
     ],
     'retention' => [

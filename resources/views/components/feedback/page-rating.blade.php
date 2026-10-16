@@ -8,10 +8,10 @@
     >
         <div class="prazzu-page-feedback__header">
             <div>
-                <strong id="prazzu-page-feedback-title">Como foi sua experiência?</strong>
-                <p>Avalie esta página. Leva poucos segundos.</p>
+                <strong id="prazzu-page-feedback-title">How was your experience?</strong>
+                <p>Rate this page. It only takes a few seconds.</p>
             </div>
-            <button type="button" class="prazzu-page-feedback__close" data-feedback-close aria-label="Fechar avaliação">
+            <button type="button" class="prazzu-page-feedback__close" data-feedback-close aria-label="Close rating">
                 <span aria-hidden="true">×</span>
             </button>
         </div>
@@ -64,14 +64,14 @@
             <div class="prazzu-page-feedback__actions">
                 <span class="prazzu-page-feedback__error" data-feedback-error role="alert"></span>
                 <button class="prazzu-page-feedback__submit" type="submit" disabled data-feedback-submit>
-                    Enviar avaliação
+                    Send rating
                 </button>
             </div>
         </form>
 
         <div class="prazzu-page-feedback__success" data-feedback-success hidden role="status">
             <span class="prazzu-page-feedback__success-icon" aria-hidden="true">✓</span>
-            <span>Obrigado! Sua avaliação foi enviada.</span>
+            <span>Thank you! Your rating was sent.</span>
         </div>
     </section>
 
@@ -85,7 +85,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M12 2.75l2.86 5.8 6.4.93-4.63 4.51 1.09 6.37L12 17.35l-5.72 3.01 1.09-6.37-4.63-4.51 6.4-.93L12 2.75z" />
         </svg>
-        <span>Avaliar página</span>
+        <span>Rate page</span>
     </button>
 </div>
 
@@ -193,20 +193,20 @@
                         const validationMessage = payload?.errors
                             ? Object.values(payload.errors).flat()[0]
                             : null;
-                        throw new Error(validationMessage || payload?.message || 'Não foi possível enviar sua avaliação. Tente novamente.');
+                        throw new Error(validationMessage || payload?.message || 'Unable to send your rating. Please try again.');
                     }
 
                     form.hidden = true;
                     success.hidden = false;
                     try { localStorage.setItem(storageKey, new Date().toISOString()); } catch (_) {}
-                    trigger.querySelector('span').textContent = 'Página avaliada';
+                    trigger.querySelector('span').textContent = 'Page rated';
                     window.setTimeout(() => setOpen(false), 2200);
                 } catch (exception) {
-                    error.textContent = exception instanceof Error ? exception.message : 'Não foi possível enviar sua avaliação.';
+                    error.textContent = exception instanceof Error ? exception.message : 'Unable to send your rating.';
                     submit.disabled = false;
                 } finally {
                     submit.removeAttribute('aria-busy');
-                    submit.textContent = 'Enviar avaliação';
+                    submit.textContent = 'Send rating';
                 }
             });
 
@@ -214,7 +214,7 @@
                 if (localStorage.getItem(storageKey)) {
                     form.hidden = true;
                     success.hidden = false;
-                    trigger.querySelector('span').textContent = 'Página avaliada';
+                    trigger.querySelector('span').textContent = 'Page rated';
                 }
             } catch (_) {}
         })();

@@ -19,7 +19,7 @@ final readonly class AssignOrganizationSeat
         }
 
         if ($member->organization_id !== $subscription->organization_id || ! $member->isActive()) {
-            throw ValidationException::withMessages(['member' => 'A vaga só pode ser atribuída a um membro ativo desta empresa.']);
+            throw ValidationException::withMessages(['member' => 'A seat can only be assigned to an active member of this business.']);
         }
 
         return DB::transaction(function () use ($subscription, $member): OrganizationSeat {
@@ -42,7 +42,7 @@ final readonly class AssignOrganizationSeat
 
             $occupied = $locked->seats()->whereNull('released_at')->count();
             if ($occupied >= $locked->seat_limit) {
-                throw ValidationException::withMessages(['seat' => 'Todas as vagas contratadas já estão ocupadas.']);
+                throw ValidationException::withMessages(['seat' => 'All purchased seats are already assigned.']);
             }
 
             return $locked->seats()->create([

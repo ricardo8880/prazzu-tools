@@ -24,7 +24,7 @@ final readonly class ServiceContract
         public int $lateFeePercent,
         public int $terminationNoticeDays,
         public array $services,
-        public bool $includesLgpd,
+        public bool $includesDataPrivacy,
         public bool $includesConfidentiality,
         public ?string $additionalTerms,
         public DateTimeImmutable $issuedAt,

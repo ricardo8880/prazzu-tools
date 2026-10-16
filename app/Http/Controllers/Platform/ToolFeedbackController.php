@@ -54,7 +54,7 @@ final class ToolFeedbackController extends Controller
         ));
 
         return response()->json([
-            'message' => 'Obrigado! Seu feedback foi enviado para análise.',
+            'message' => 'Thank you! Your feedback was sent for review.',
         ], 201);
     }
 

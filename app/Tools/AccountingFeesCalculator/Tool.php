@@ -81,7 +81,7 @@ final class Tool implements HasAnalyticsJourney, HasApiActions, HasHistoryPolicy
                         new ToolAnalyticsField('adjustment_index', 'input', selector: '[name="adjustment_index"]'),
                         new ToolAnalyticsField('late_fee_percent', 'input', selector: '[name="late_fee_percent"]'),
                         new ToolAnalyticsField('termination_notice_days', 'input', selector: '[name="termination_notice_days"]'),
-                        new ToolAnalyticsField('includes_lgpd', 'input', selector: '[name="includes_lgpd"]'),
+                        new ToolAnalyticsField('includes_data_privacy', 'input', selector: '[name="includes_data_privacy"]'),
                         new ToolAnalyticsField('includes_confidentiality', 'input', selector: '[name="includes_confidentiality"]'),
                         new ToolAnalyticsField('additional_terms', 'input', selector: '[name="additional_terms"]'),
                     ],

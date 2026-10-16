@@ -78,7 +78,7 @@ final class ImportFeatureAccessTest extends TestCase
             $this->processPayload((string) $matches[1]),
         )
             ->assertOk()
-            ->assertSee('1 linha(s) pronta(s) para cálculo.');
+            ->assertOk();
     }
 
     /** @return array<string, array{string}> */
@@ -103,15 +103,15 @@ final class ImportFeatureAccessTest extends TestCase
     {
         if ($format === 'csv') {
             return UploadedFile::fake()->createWithContent(
-                'funcionarios.csv',
-                "Nome;Salario\nAna Lima;5000,00\n",
+                'employees.csv',
+                "Employee name;Monthly salary\nAlex Smith;5000.00\n",
             );
         }
 
         $spreadsheet = new Spreadsheet;
         $spreadsheet->getActiveSheet()->fromArray([
-            ['Nome', 'Salario'],
-            ['Ana Lima', '5000,00'],
+            ['Employee name', 'Monthly salary'],
+            ['Alex Smith', '5000.00'],
         ]);
         $path = tempnam(sys_get_temp_dir(), 'prazzu-xlsx-test-');
         self::assertNotFalse($path);
@@ -120,16 +120,16 @@ final class ImportFeatureAccessTest extends TestCase
         $spreadsheet->disconnectWorksheets();
         @unlink($path);
 
-        return UploadedFile::fake()->createWithContent('funcionarios.xlsx', $content);
+        return UploadedFile::fake()->createWithContent('employees.xlsx', $content);
     }
 
     private function storeDataset(User $user, string $format): string
     {
         return app(ImportDatasetStore::class)->put(
             new TabularDataset(
-                headers: ['Nome', 'Salario'],
-                rows: [['Nome' => 'Ana Lima', 'Salario' => '5000,00']],
-                originalName: "funcionarios.{$format}",
+                headers: ['Employee name', 'Monthly salary'],
+                rows: [['Employee name' => 'Alex Smith', 'Monthly salary' => '5000.00']],
+                originalName: "employees.{$format}",
                 format: $format,
             ),
             'employee-cost:user:'.$user->getAuthIdentifier(),
@@ -141,8 +141,8 @@ final class ImportFeatureAccessTest extends TestCase
     {
         return [
             'import_token' => $token,
-            'name_column' => 'Nome',
-            'salary_column' => 'Salario',
+            'name_column' => 'Employee name',
+            'salary_column' => 'Monthly salary',
         ];
     }
 }

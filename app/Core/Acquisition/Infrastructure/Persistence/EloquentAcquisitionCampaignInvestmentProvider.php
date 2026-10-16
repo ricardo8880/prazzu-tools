@@ -18,7 +18,7 @@ final class EloquentAcquisitionCampaignInvestmentProvider implements Acquisition
             ->mapWithKeys(static fn (AcquisitionContextRecord $context): array => [
                 (int) $context->getKey() => [
                     'monthly_investment_cents' => max(0, (int) $context->monthly_investment_cents),
-                    'currency' => (string) ($context->investment_currency ?: 'BRL'),
+                    'currency' => (string) ($context->investment_currency ?: 'USD'),
                 ],
             ])->all();
     }

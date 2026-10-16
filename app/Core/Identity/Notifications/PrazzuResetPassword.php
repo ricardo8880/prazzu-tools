@@ -15,11 +15,11 @@ final class PrazzuResetPassword extends ResetPassword
         ], false));
 
         return (new MailMessage)
-            ->subject('Redefina sua senha do Prazzu Tools')
-            ->greeting('Olá, '.$notifiable->name.'!')
-            ->line('Recebemos uma solicitação para redefinir a senha da sua conta.')
-            ->action('Criar nova senha', $url)
+            ->subject('Reset your Prazzu Tools password')
+            ->greeting('Hello, '.$notifiable->name.'!')
+            ->line('We received a request to reset your account password.')
+            ->action('Create new password', $url)
             ->line('Este link expira em '.config('auth.passwords.'.config('auth.defaults.passwords').'.expire').' minutos.')
-            ->line('Se você não solicitou a redefinição, ignore esta mensagem. Sua senha permanecerá inalterada.');
+            ->line('If you did not request a password reset, ignore this message. Your password will remain unchanged.');
     }
 }

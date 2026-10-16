@@ -43,13 +43,12 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             keywords: ['backup withholding', '24 percent withholding', 'TIN withholding', 'IRS withholding'],
             capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export],
             features: [
-                new ToolFeature('calculate', 'Estimativa de retenções de uma nota/serviço', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Calculation details e premissas', ToolFeatureTier::Essential),
-                new ToolFeature('custom_rules', 'Bases e alíquotas configuráveis por tributo', ToolFeatureTier::Plus),
-                new ToolFeature('multiple_notes', 'Múltiplas notas ou serviços no mesmo cálculo', ToolFeatureTier::Plus),
-                new ToolFeature('report', 'Conferência por tributo e nota', ToolFeatureTier::Essential),
-                new ToolFeature('export', 'Exportação PDF e XLSX', ToolFeatureTier::Plus),
-                new ToolFeature('history', 'Histórico autenticado', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Federal backup withholding estimate', ToolFeatureTier::Essential),
+                new ToolFeature('memory', 'Calculation details and assumptions', ToolFeatureTier::Essential),
+                new ToolFeature('state_other_withholding', 'User-entered state and other withholding amounts', ToolFeatureTier::Essential),
+                new ToolFeature('report', 'Withholding breakdown', ToolFeatureTier::Essential),
+                new ToolFeature('export', 'PDF and XLSX export', ToolFeatureTier::Plus),
+                new ToolFeature('history', 'Saved calculation history', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(true, 1, 365, 1), export: new ToolExportPolicy(true, ['pdf', 'xlsx', 'json']), sharing: ToolSharingPolicy::disabled(), sensitiveData: ToolSensitiveDataPolicy::none(),
         );
@@ -57,7 +56,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(true, 365, ['competence', 'invoice_number', 'service_description', 'gross_value', 'apply_irrf', 'irrf_rate', 'irrf_base_percent', 'apply_inss', 'inss_rate', 'inss_base_percent', 'apply_iss', 'iss_rate', 'iss_base_percent', 'apply_pis', 'pis_rate', 'pis_base_percent', 'apply_cofins', 'cofins_rate', 'cofins_base_percent', 'apply_csll', 'csll_rate', 'csll_base_percent', 'notes'], ['gross_minor', 'total_withheld_minor', 'net_minor', 'taxes', 'notes', 'summary', 'details', 'warnings', 'calculation_memory'], []);
+        return new ToolHistoryPolicy(true, 365, ['competence', 'payment_reference', 'payment_description', 'gross_value', 'apply_backup_withholding', 'backup_withholding_rate', 'state_withholding', 'other_withholding'], ['gross_minor', 'backup_withholding_minor', 'state_withholding_minor', 'other_withholding_minor', 'total_withheld_minor', 'net_minor', 'summary', 'details', 'warnings', 'calculation_memory'], []);
     }
 
     public function webRoutesPath(): string
@@ -78,7 +77,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
     public function analyticsJourney(): ToolAnalyticsJourney
     {
         return new ToolAnalyticsJourney(toolSlug: self::SLUG, forms: [new ToolAnalyticsForm(key: 'main', steps: ['input', 'rules', 'plus'], fields: [
-            new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'), new ToolAnalyticsField('gross_value', 'input', selector: '[name="gross_value"]'), new ToolAnalyticsField('apply_irrf', 'rules', selector: '[name="apply_irrf"]'), new ToolAnalyticsField('apply_inss', 'rules', selector: '[name="apply_inss"]'), new ToolAnalyticsField('apply_iss', 'rules', selector: '[name="apply_iss"]'), new ToolAnalyticsField('apply_pis', 'rules', selector: '[name="apply_pis"]'), new ToolAnalyticsField('apply_cofins', 'rules', selector: '[name="apply_cofins"]'), new ToolAnalyticsField('apply_csll','rules',selector: '[name="apply_csll"]'),
+            new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'), new ToolAnalyticsField('gross_value', 'input', selector: '[name="gross_value"]'), new ToolAnalyticsField('apply_backup_withholding', 'rules', selector: '[name="apply_backup_withholding"]'), new ToolAnalyticsField('backup_withholding_rate', 'rules', selector: '[name="backup_withholding_rate"]'), new ToolAnalyticsField('state_withholding', 'rules', selector: '[name="state_withholding"]'), new ToolAnalyticsField('other_withholding', 'rules', selector: '[name="other_withholding"]'),
         ], actions: ['calculate', 'export'], selector: 'form[action*="backup-withholding-calculator"]', resultSelector: '[data-analytics-result="main"]')]);
     }
 }

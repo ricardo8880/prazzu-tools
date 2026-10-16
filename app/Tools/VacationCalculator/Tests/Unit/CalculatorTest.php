@@ -10,19 +10,23 @@ use PHPUnit\Framework\TestCase;
 
 final class CalculatorTest extends TestCase
 {
-    public function test_it_returns_the_standardized_result_contract(): void
+    public function test_it_returns_the_standardized_pto_result_contract(): void
     {
         $result = (new Calculator)->calculate(new CalculationInput(
-            monthlySalary: '3.000,00',
-            acquisitionStartDate: '2025-01-01',
-            vacationStartDate: '2026-07-01',
-            convertOneThirdToCash: true,
+            hourlyRate: '25.00',
+            accruedPtoHours: '40',
+            plannedPtoHours: '24',
+            accrualHoursPerPayPeriod: '4',
+            payPeriodsBeforeLeave: 2,
+            payoutPercent: '100',
         ));
 
         self::assertSame('pto-calculator', $result->toolSlug);
-        self::assertSame('1.0.0', $result->schemaVersion);
-        self::assertSame('entitled_days', $result->summary[0]->key);
-        self::assertSame(400000, $result->details['remuneration']['gross_total_minor']);
-        self::assertSame('2026-06-29', $result->details['periods']['payment_deadline']);
+        self::assertSame('2.0.0', $result->schemaVersion);
+        self::assertSame('projected_hours', $result->summary[0]->key);
+        self::assertSame('48 hours', $result->summary[0]->value);
+        self::assertSame('$600.00', $result->summary[3]->value);
+        self::assertSame(48_000, $result->details['projected_hours_thousandths']);
+        self::assertSame(24_000, $result->details['remaining_hours_thousandths']);
     }
 }

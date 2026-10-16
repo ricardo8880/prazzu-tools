@@ -21,7 +21,7 @@ final readonly class CalculateEmployeeBatch
         foreach ($data['employees'] as $employee) {
             $result = $this->calculator->execute($employee);
             $amounts = $result->details['amounts'];
-            $department = trim((string) ($employee['department'] ?? '')) ?: 'Sem departamento';
+            $department = trim((string) ($employee['department'] ?? '')) ?: 'Unassigned';
             $monthly = (int) $amounts['monthly_cost_minor'];
             $annual = (int) $amounts['annual_cost_minor'];
             $monthlyMoney = Money::fromMinor($monthly);
@@ -31,7 +31,7 @@ final readonly class CalculateEmployeeBatch
             $departmentTotals[$department] = ($departmentTotals[$department] ?? Money::zero())->add($monthlyMoney);
 
             $rows[] = [
-                'name' => trim((string) ($employee['employee_name'] ?? '')) ?: 'Funcionário sem nome',
+                'name' => trim((string) ($employee['employee_name'] ?? '')) ?: 'Unnamed employee',
                 'department' => $department,
                 'role' => trim((string) ($employee['role'] ?? '')),
                 'input' => $employee,
@@ -58,7 +58,7 @@ final readonly class CalculateEmployeeBatch
         $projectionStart = new \DateTimeImmutable('first day of this month');
 
         return [
-            'scenario_name' => trim((string) ($data['scenario_name'] ?? '')) ?: 'Cenário em lote',
+            'scenario_name' => trim((string) ($data['scenario_name'] ?? '')) ?: 'Batch scenario',
             'employees' => $rows,
             'departments' => $departments,
             'employee_count' => count($rows),
@@ -66,10 +66,10 @@ final readonly class CalculateEmployeeBatch
             'monthly_total' => $monthlyTotal->formatEnUs(),
             'annual_total_minor' => $annualTotal->minorAmount(),
             'annual_total' => $annualTotal->formatEnUs(),
-            'projection_assumption' => 'Projeção-base sem reajustes, admissões, desligamentos ou alteração de benefícios.',
+            'projection_assumption' => 'Baseline projection with no wage increases, hires, terminations, or benefit changes.',
             'projection' => array_map(
                 static fn (int $offset): array => [
-                    'competence' => $projectionStart->modify("+{$offset} months")->format('m/Y'),
+                    'competence' => $projectionStart->modify("+{$offset} months")->format('M Y'),
                     'cost_minor' => $monthlyTotal->minorAmount(),
                     'cost' => $monthlyTotal->formatEnUs(),
                 ],

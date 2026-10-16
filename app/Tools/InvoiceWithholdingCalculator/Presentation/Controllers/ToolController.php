@@ -88,10 +88,6 @@ final class ToolController extends Controller
 
     private function input(array $d): CalculationInput
     {
-        $additional = [];
-        foreach (($d['additional_payments'] ?? []) as $payment) {
-            $additional[] = ['description' => (string) ($payment['description'] ?? ''), 'value' => (string) ($payment['value'] ?? '0')];
-        }
         return new CalculationInput(
             competence: (string) $d['competence'],
             paymentReference: (string) ($d['payment_reference'] ?? ''),
@@ -101,7 +97,6 @@ final class ToolController extends Controller
             backupWithholdingRate: (string) ($d['backup_withholding_rate'] ?? '24'),
             stateWithholding: (string) ($d['state_withholding'] ?? '0'),
             otherWithholding: (string) ($d['other_withholding'] ?? '0'),
-            additionalPayments: $additional,
         );
     }
 

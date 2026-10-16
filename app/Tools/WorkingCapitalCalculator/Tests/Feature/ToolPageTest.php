@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.working-capital-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Capital de Giro');
+            ->assertSee('Working Capital Calculator');
     }
 }

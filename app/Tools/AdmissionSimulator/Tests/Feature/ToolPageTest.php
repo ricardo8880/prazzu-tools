@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.new-hire-cost-calculator.index'))
             ->assertOk()
-            ->assertSee('Simulador de Admissão');
+            ->assertSee('New Hire Cost Calculator');
     }
 }

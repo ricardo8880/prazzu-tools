@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.employment-income-letter-generator.index'))
             ->assertOk()
-            ->assertSee('Gerador de Declaração de Trabalho/Renda');
+            ->assertSee('Employment Income Letter Generator');
     }
 }

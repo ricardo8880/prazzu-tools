@@ -14,7 +14,7 @@ final class AcceptOrganizationInvitation
     public function execute(OrganizationInvitation $invitation, User $user): void
     {
         if (! $invitation->canBeAccepted()) {
-            throw ValidationException::withMessages(['invitation' => 'Este convite não está mais disponível.']);
+            throw ValidationException::withMessages(['invitation' => 'This invitation is no longer available.']);
         }
 
         $isActiveMember = $invitation->organization->members()
@@ -23,7 +23,7 @@ final class AcceptOrganizationInvitation
             ->exists();
 
         if ($isActiveMember) {
-            throw ValidationException::withMessages(['invitation' => 'Sua conta já faz parte desta empresa.']);
+            throw ValidationException::withMessages(['invitation' => 'Your account is already part of this business.']);
         }
 
         DB::transaction(function () use ($invitation, $user): void {
@@ -33,7 +33,7 @@ final class AcceptOrganizationInvitation
                 ->firstOrFail();
 
             if (! $lockedInvitation->canBeAccepted()) {
-                throw ValidationException::withMessages(['invitation' => 'Este convite já foi utilizado ou não está mais disponível.']);
+                throw ValidationException::withMessages(['invitation' => 'This invitation has already been used or is no longer available.']);
             }
 
             $lockedInvitation->organization->members()->updateOrCreate(

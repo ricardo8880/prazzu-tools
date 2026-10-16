@@ -12,12 +12,12 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.employee-turnover-calculator.index', ['vertical' => 'rh']))
             ->assertOk()
-            ->assertSee('Calculadora de Turnover');
+            ->assertSee('Employee Turnover Calculator');
 
         $this->post(route('tools.employee-turnover-calculator.calculate', ['vertical' => 'rh']), [
             'admissions' => 10,
             'terminations' => 6,
             'average_headcount' => 80,
-        ])->assertOk()->assertSee('10,00%');
+        ])->assertOk()->assertSee('10.00%');
     }
 }

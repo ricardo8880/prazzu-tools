@@ -22,7 +22,7 @@ final class PageFeedbackController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Obrigado! Sua avaliação foi enviada.',
+            'message' => 'Thank you! Your rating was sent.',
         ], 201);
     }
 }

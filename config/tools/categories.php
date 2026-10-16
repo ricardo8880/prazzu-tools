@@ -1,40 +1,12 @@
 <?php
-
 return [
-    'geradores' => [
-        'name' => 'Geradores',
-        'icon' => 'bi-magic',
-    ],
-    'calculadoras' => [
-        'name' => 'Calculadoras',
-        'icon' => 'bi-calculator',
-    ],
-    'conversores' => [
-        'name' => 'Conversores',
-        'icon' => 'bi-arrow-left-right',
-    ],
-    'validadores' => [
-        'name' => 'Validadores',
-        'icon' => 'bi-shield-check',
-    ],
-    'documentos' => [
-        'name' => 'Documentos',
-        'icon' => 'bi-file-earmark-text',
-    ],
-    'fiscal' => [
-        'name' => 'Fiscal e tributário',
-        'icon' => 'bi-receipt',
-    ],
-    'trabalhista' => [
-        'name' => 'Trabalhista',
-        'icon' => 'bi-people',
-    ],
-    'societario' => [
-        'name' => 'Societário',
-        'icon' => 'bi-buildings',
-    ],
-    'outros' => [
-        'name' => 'Outros',
-        'icon' => 'bi-three-dots',
-    ],
+    'geradores'=>['name'=>'Generators','icon'=>'bi-magic'],
+    'calculadoras'=>['name'=>'Calculators','icon'=>'bi-calculator'],
+    'conversores'=>['name'=>'Converters','icon'=>'bi-arrow-left-right'],
+    'validadores'=>['name'=>'Validators','icon'=>'bi-shield-check'],
+    'documentos'=>['name'=>'Documents','icon'=>'bi-file-earmark-text'],
+    'fiscal'=>['name'=>'Tax & Compliance','icon'=>'bi-receipt'],
+    'trabalhista'=>['name'=>'Payroll & Employment','icon'=>'bi-people'],
+    'societario'=>['name'=>'Business & Ownership','icon'=>'bi-building'],
+    'outros'=>['name'=>'Other','icon'=>'bi-grid'],
 ];

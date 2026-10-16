@@ -34,9 +34,9 @@ final class ExecutiveDashboardTest extends TestCase
         $sessionB = $this->analyticsSession($visitorB, '2026-07-15 09:00:00', '2026-07-15 09:01:00', 'direct');
 
         $this->event($visitorA, $sessionA, 'page.viewed', '2026-07-15 08:00:00', '/', 'google');
-        $this->event($visitorA, $sessionA, 'page.viewed', '2026-07-15 08:02:00', '/sobre', 'google');
-        $this->event($visitorA, $sessionA, 'account.created', '2026-07-15 08:04:00', '/criar-conta', 'google');
-        $this->event($visitorA, $sessionA, 'subscription.created', '2026-07-15 08:05:00', '/planos', 'google', ['revenue_cents' => 4990]);
+        $this->event($visitorA, $sessionA, 'page.viewed', '2026-07-15 08:02:00', '/about', 'google');
+        $this->event($visitorA, $sessionA, 'account.created', '2026-07-15 08:04:00', '/register', 'google');
+        $this->event($visitorA, $sessionA, 'subscription.created', '2026-07-15 08:05:00', '/plans', 'google', ['revenue_cents' => 4990]);
         $this->event($visitorB, $sessionB, 'page.viewed', '2026-07-15 09:00:00', '/', 'direct');
 
         $response = $this->get(route('admin.analytics.index', ['period' => 'today']));

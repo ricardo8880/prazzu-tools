@@ -22,11 +22,11 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('20000'),
         ));
 
-        self::assertSame('R$ 4.000,00', $result->summary[0]->value);
-        self::assertSame('R$ 100.000,00', $result->summary[1]->value);
-        self::assertSame('R$ 3.000,00', $result->summary[2]->value);
-        self::assertSame('R$ 1.000,00', $result->summary[3]->value);
-        self::assertSame('100,00 %', $result->summary[4]->value);
+        self::assertSame('$4,000.00', $result->summary[0]->value);
+        self::assertSame('$100,000.00', $result->summary[1]->value);
+        self::assertSame('$3,000.00', $result->summary[2]->value);
+        self::assertSame('$1,000.00', $result->summary[3]->value);
+        self::assertSame('100.00 %', $result->summary[4]->value);
         self::assertSame('1.2.0', $result->schemaVersion);
         self::assertTrue($result->calculationMemory?->isEstimate);
         self::assertSame(4, count($result->calculationMemory?->steps ?? []));
@@ -41,7 +41,7 @@ final class CalculatorTest extends TestCase
             Percentage::fromString('0'),
         ));
 
-        self::assertSame('R$ 500,00', $result->summary[0]->value);
-        self::assertSame('Meta não definida', $result->summary[4]->value);
+        self::assertSame('$500.00', $result->summary[0]->value);
+        self::assertSame('Target not defined', $result->summary[4]->value);
     }
 }

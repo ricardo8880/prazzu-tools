@@ -35,7 +35,7 @@ final class MarginMarkupCalculator
 
         foreach ($costs as $cost) {
             if ($cost->minorAmount() < 0) {
-                throw new InvalidValue('Os custos e as despesas não podem ser negativos.');
+                throw new InvalidValue('Costs and expenses cannot be negative.');
             }
         }
 
@@ -46,7 +46,7 @@ final class MarginMarkupCalculator
         );
 
         if ($totalCost->minorAmount() === 0) {
-            throw new InvalidValue('O custo total deve ser maior que zero.');
+            throw new InvalidValue('Total cost must be greater than zero.');
         }
 
         $percentageUnits = array_map(
@@ -67,7 +67,7 @@ final class MarginMarkupCalculator
         }
 
         if ($totalCost->minorAmount() > intdiv(PHP_INT_MAX, self::PERCENT_FACTOR)) {
-            throw new InvalidValue('O custo total informado é muito alto para o cálculo.');
+            throw new InvalidValue('The total cost is too large for this calculation.');
         }
 
         $saleMinor = IntegerRounding::divide(
@@ -117,8 +117,8 @@ final class MarginMarkupCalculator
                 steps: [
                     new CalculationMemoryStep(
                         key: 'total_cost',
-                        label: 'Custo total do produto',
-                        formula: 'custo base + custos adicionais + frete + embalagem + despesas fixas rateadas',
+                        label: 'Total product cost',
+                        formula: 'base cost + additional costs + shipping + packaging + allocated fixed expenses',
                         inputs: [
                             'base_cost_minor' => $baseCost->minorAmount(),
                             'additional_costs_minor' => $additionalCosts->minorAmount(),
@@ -130,7 +130,7 @@ final class MarginMarkupCalculator
                     ),
                     new CalculationMemoryStep(
                         key: 'sale_price',
-                        label: 'Preço de venda sugerido',
+                        label: 'Suggested selling price',
                         formula: 'total cost / (1 - desired net margin - taxes - commission - fees)',
                         inputs: [
                             'total_cost_minor' => $totalCost->minorAmount(),
@@ -141,11 +141,11 @@ final class MarginMarkupCalculator
                             'marketplace_fees' => $marketplaceFees->toDecimalString(),
                         ],
                         result: $salePrice->minorAmount(),
-                        roundingPolicy: 'Divisão inteira com arredondamento HalfUp para centavos.',
+                        roundingPolicy: 'Integer division with HalfUp rounding to cents.',
                     ),
                     new CalculationMemoryStep(
                         key: 'net_profit',
-                        label: 'Lucro líquido estimado',
+                        label: 'Estimated net profit',
                         formula: 'selling price - total cost - taxes - commission - card fees - marketplace fees',
                         inputs: [
                             'sale_price_minor' => $salePrice->minorAmount(),
@@ -159,21 +159,21 @@ final class MarginMarkupCalculator
                     ),
                     new CalculationMemoryStep(
                         key: 'markup',
-                        label: 'Markup sobre o custo',
-                        formula: '(preço de venda - custo total) / custo total',
+                        label: 'Markup on cost',
+                        formula: '(selling price - total cost) / total cost',
                         inputs: [
                             'gross_profit_minor' => $grossProfit->minorAmount(),
                             'total_cost_minor' => $totalCost->minorAmount(),
                         ],
                         result: $this->formatPercentageUnits($markupUnits),
-                        roundingPolicy: 'Percentual arredondado HalfUp a seis casas decimais.',
+                        roundingPolicy: 'Percentage rounded HalfUp to six decimal places.',
                     ),
                 ],
                 assumptions: [
                     'Desired margin is net of the percentage deductions entered and is measured against selling price.',
-                    'O markup exibido mede o acréscimo bruto sobre o custo; não é sinônimo de margem líquida.',
-                    'Custos fixos devem ser previamente rateados por unidade ou venda pelo usuário.',
-                    'Percentuais e custos são tratados como constantes no cenário calculado.',
+                    'Displayed markup measures the gross increase over cost; it is not the same as net margin.',
+                    'Fixed costs must be allocated per unit or sale by the user.',
+                    'Percentages and costs are treated as constants in the calculated scenario.',
                 ],
                 isEstimate: true,
             ),
@@ -193,6 +193,6 @@ final class MarginMarkupCalculator
         $whole = intdiv($scaled, 10_000);
         $fraction = rtrim(str_pad((string) ($scaled % 10_000), 4, '0', STR_PAD_LEFT), '0');
 
-        return $fraction === '' ? (string) $whole : $whole.','.$fraction;
+        return $fraction === '' ? (string) $whole : $whole.'.'.$fraction;
     }
 }

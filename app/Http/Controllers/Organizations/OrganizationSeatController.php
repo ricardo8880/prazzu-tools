@@ -28,13 +28,13 @@ final class OrganizationSeatController extends Controller
 
         if ($subscription === null) {
             throw ValidationException::withMessages([
-                'seat' => 'A empresa ainda não possui uma assinatura empresarial configurada.',
+                'seat' => 'The business does not have a business subscription configured yet.',
             ]);
         }
 
         $action->execute($subscription, $member);
 
-        return back()->with('status', 'Acesso Plus atribuído ao membro.');
+        return back()->with('status', 'Plus access assigned to the member.');
     }
 
     public function destroy(

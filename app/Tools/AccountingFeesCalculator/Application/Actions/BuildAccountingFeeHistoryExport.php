@@ -14,7 +14,7 @@ final readonly class BuildAccountingFeeHistoryExport
         return collect($this->history->allCalculations($userId))
             ->filter(static fn ($run): bool => data_get($run->input, 'run_type') === ManageAccountingFeesHistory::TYPE_CALCULATION)
             ->map(static fn ($run): array => [
-                $run->finishedAt->format('d/m/Y H:i'),
+                $run->finishedAt->format('M j, Y g:i A'),
                 data_get($run->input, 'monthly_revenue'),
                 data_get($run->input, 'tax_regime'),
                 data_get($run->input, 'employees'),

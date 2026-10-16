@@ -12,23 +12,23 @@
         <details class="prazzu-tool-tiers__details">
             <summary class="prazzu-tool-tiers__summary">
                 <span>
-                    <span class="prazzu-eyebrow">Essencial × Prazzu Plus</span>
-                    <strong id="{{ $slug }}-tiers-title">Conheça os recursos desta ferramenta</strong>
+                    <span class="prazzu-eyebrow">Essential × Prazzu Plus</span>
+                    <strong id="{{ $slug }}-tiers-title">Explore this tool’s features</strong>
                 </span>
                 <span class="d-inline-flex align-items-center gap-2 flex-shrink-0">
                     @if ($launchFree)
-                        <span class="badge text-bg-success">Plus liberado</span>
+                        <span class="badge text-bg-success">Plus unlocked</span>
                     @endif
                     <i class="bi bi-chevron-down" aria-hidden="true"></i>
                 </span>
             </summary>
 
             <div class="prazzu-tool-tiers__content">
-                <p class="text-body-secondary mb-3">O Essencial resolve o problema principal por completo. O Plus acrescenta produtividade e conveniência, sem alterar a correção do resultado.</p>
+                <p class="text-body-secondary mb-3">Essential fully solves the core problem. Plus adds productivity and convenience without changing the accuracy of the result.</p>
                 <div class="row g-3">
                     <div class="col-12 col-lg-6">
                         <div class="border rounded-3 p-3 h-100">
-                            <div class="fw-semibold text-success mb-2"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Essencial — gratuito e completo</div>
+                            <div class="fw-semibold text-success mb-2"><i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i>Essential — free and complete</div>
                             <ul class="mb-0 ps-3">
                                 @foreach ($essential as $feature)
                                     <li>{{ $feature->name }}</li>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="col-12 col-lg-6">
                         <div class="border border-primary-subtle rounded-3 p-3 h-100 bg-primary-subtle bg-opacity-10">
-                            <div class="fw-semibold text-primary mb-2"><i class="bi bi-gem me-1" aria-hidden="true"></i>Prazzu Plus — recursos avançados</div>
+                            <div class="fw-semibold text-primary mb-2"><i class="bi bi-gem me-1" aria-hidden="true"></i>Prazzu Plus — advanced features</div>
                             <ul class="mb-0 ps-3">
                                 @foreach ($plus as $feature)
                                     <li>{{ $feature->name }}</li>

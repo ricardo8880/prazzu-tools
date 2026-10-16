@@ -20,20 +20,20 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
-        $run = $this->createRun($user, salePrice: 'R$ 160,00');
-        $otherRun = $this->createRun($otherUser, salePrice: 'R$ 999,00');
+        $run = $this->createRun($user, salePrice: '$160.00');
+        $otherRun = $this->createRun($otherUser, salePrice: '$999.00');
 
         $this->actingAs($user)
             ->get(route('tools.margin-markup-calculator.history.index'))
             ->assertOk()
-            ->assertSee('R$ 160,00')
-            ->assertDontSee('R$ 999,00');
+            ->assertSee('$160.00')
+            ->assertDontSee('$999.00');
 
         $this->actingAs($user)
             ->get(route('tools.margin-markup-calculator.history.show', $run))
             ->assertOk()
-            ->assertSee('Detalhes do cálculo')
-            ->assertSee('R$ 160,00');
+            ->assertSee('Calculation details')
+            ->assertSee('$160.00');
 
         $this->actingAs($user)
             ->get(route('tools.margin-markup-calculator.history.show', $otherRun))
@@ -42,13 +42,13 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
         $this->actingAs($user)
             ->post(route('tools.margin-markup-calculator.history.repeat', $run))
             ->assertRedirect(route('tools.margin-markup-calculator.index'))
-            ->assertSessionHasInput('base_cost', '100,00');
+            ->assertSessionHasInput('base_cost', '100.00');
 
         $this->actingAs($user)
             ->get(route('tools.margin-markup-calculator.history.pdf', $run))
             ->assertOk()
-            ->assertSee('Relatório de Margem, Markup e Formação de Preço')
-            ->assertSee('R$ 160,00');
+            ->assertSee('Margin, Markup & Pricing Report')
+            ->assertSee('$160.00');
 
         $this->actingAs($user)
             ->delete(route('tools.margin-markup-calculator.history.destroy', $run))
@@ -73,22 +73,22 @@ final class MarginMarkupPersistenceFlowTest extends TestCase
             'status' => ToolRunStatus::Succeeded,
             'input_payload' => [
                 'reference_date' => '2026-07-15',
-                'base_cost' => '100,00',
+                'base_cost' => '100.00',
                 'desired_margin' => '20',
             ],
             'result_payload' => [
                 'calculation_type' => 'single',
-                'total_cost' => 'R$ 100,00',
+                'total_cost' => '$100.00',
                 'sale_price' => $salePrice,
-                'gross_profit' => 'R$ 60,00',
-                'net_profit' => 'R$ 60,00',
-                'taxes_amount' => 'R$ 0,00',
-                'commission_amount' => 'R$ 0,00',
-                'card_fees_amount' => 'R$ 0,00',
-                'marketplace_fees_amount' => 'R$ 0,00',
+                'gross_profit' => '$60.00',
+                'net_profit' => '$60.00',
+                'taxes_amount' => '$0.00',
+                'commission_amount' => '$0.00',
+                'card_fees_amount' => '$0.00',
+                'marketplace_fees_amount' => '$0.00',
                 'margin' => '20%',
                 'markup' => '60%',
-                'markup_multiplier' => '1,60',
+                'markup_multiplier' => '1.60',
                 'rule_version' => '2.0.0',
             ],
             'started_at' => now()->subSecond(),

@@ -497,7 +497,7 @@ body.prazzu-app .text-body-secondary {
 }
 
 /* Tool-specific rules must always be scoped, for example:
-[data-tool="cnpj-validator"] .cnpj-validator__result { ... }
+[data-tool="us-tax-id-validator"] .us-tax-id-validator__result { ... }
 */
 
 /* 10. Responsive behavior */

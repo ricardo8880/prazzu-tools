@@ -27,12 +27,12 @@ final class Calculator implements ToolCalculator
             throw new InvalidArgumentException('Hires and separations cannot be negative, and average headcount must be greater than zero.');
         }
 
-        // Mantém precisão determinística com aritmética inteira: a média pode terminar em ,5 e a taxa usa basis points.
+        // Keeps deterministic precision with integer arithmetic: the average may end in .5 and the rate uses basis points.
         $movementTotal = $input->admissions + $input->terminations;
-        $averageMovement = intdiv($movementTotal, 2).($movementTotal % 2 === 0 ? '' : ',5');
+        $averageMovement = intdiv($movementTotal, 2).($movementTotal % 2 === 0 ? '' : '.5');
         $movementTimes100 = $movementTotal * 50;
         $rateBasisPoints = intdiv(($movementTimes100 * 100) + intdiv($input->averageHeadcount, 2), $input->averageHeadcount);
-        $rate = number_format(intdiv($rateBasisPoints, 100), 0, ',', '.').','.str_pad((string) ($rateBasisPoints % 100), 2, '0', STR_PAD_LEFT).'%';
+        $rate = number_format(intdiv($rateBasisPoints, 100), 0, '.', ',').'.'.str_pad((string) ($rateBasisPoints % 100), 2, '0', STR_PAD_LEFT).'%';
 
         $memory = new CalculationMemory(
             schemaVersion: self::SCHEMA_VERSION,
@@ -47,11 +47,11 @@ final class Calculator implements ToolCalculator
                 ),
                 new CalculationMemoryStep(
                     'turnover_rate',
-                    'Taxa de turnover',
+                    'Turnover rate',
                     'average workforce movement ÷ average headcount × 100',
                     ['average_headcount' => $input->averageHeadcount],
                     $rate,
-                    'Resultado arredondado para duas casas decimais.',
+                    'Result rounded to two decimal places.',
                 ),
             ],
             assumptions: [
@@ -65,7 +65,7 @@ final class Calculator implements ToolCalculator
             toolSlug: 'employee-turnover-calculator',
             schemaVersion: self::SCHEMA_VERSION,
             summary: [
-                new ToolCalculationSummaryItem('turnover_rate', 'Taxa de turnover', $rate),
+                new ToolCalculationSummaryItem('turnover_rate', 'Turnover rate', $rate),
                 new ToolCalculationSummaryItem('movements', 'Employee movements', $input->admissions + $input->terminations, 'Sum of entered hires and separations.'),
             ],
             details: ['input' => $input->toArray(), 'rate_basis_points' => $rateBasisPoints],

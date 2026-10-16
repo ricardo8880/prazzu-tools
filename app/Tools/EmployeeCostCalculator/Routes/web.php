@@ -43,7 +43,7 @@ Route::prefix('tools/employee-cost-calculator')
 
         Route::post('/scenarios/compare', [ToolController::class, 'compareScenarios'])
             ->middleware('tool.feature:employee-cost-calculator,scenarios')->name('scenarios.compare');
-        Route::post('/models/comparar', [ToolController::class, 'compareEmploymentModels'])
+        Route::post('/models/compare', [ToolController::class, 'compareEmploymentModels'])
             ->middleware('tool.feature:employee-cost-calculator,employment_model_comparison')->name('models.compare');
 
         Route::get('/import/template.csv', [ToolController::class, 'importTemplate'])

@@ -2,49 +2,49 @@
 
 return [
     'global' => [
-        'title' => 'Prazzu Tools | Ferramentas profissionais',
-        'description' => 'Ferramentas profissionais práticas, confiáveis e acessíveis para diferentes áreas de negócio.',
-        'keywords' => ['ferramentas profissionais', 'calculadoras', 'simuladores', 'utilitários'],
+        'title' => 'Prazzu Tools | Professional tools',
+        'description' => 'Practical, reliable, and accessible professional tools for different business needs.',
+        'keywords' => ['professional tools', 'calculators', 'simulators', 'utilities'],
         'pages' => [
             'tools' => [
-                'title' => 'Ferramentas | Prazzu Tools',
-                'description' => 'Encontre ferramentas profissionais por categoria ou busca.',
+                'title' => 'Tools | Prazzu Tools',
+                'description' => 'Find professional tools by category or search.',
             ],
             'blog' => [
                 'title' => 'Blog | Prazzu Tools',
-                'description' => 'Conteúdos práticos para profissionais de diferentes áreas de negócio.',
+                'description' => 'Practical content for professionals across different business areas.',
             ],
         ],
     ],
 
     'verticals' => [
         'contabilidade' => [
-            'title' => 'Prazzu Tools | Ferramentas contábeis',
-            'description' => 'Ferramentas contábeis práticas, confiáveis e acessíveis.',
-            'keywords' => ['contabilidade', 'fiscal', 'tributário', 'departamento pessoal'],
+            'title' => 'Prazzu Tools | Accounting tools',
+            'description' => 'Practical, reliable, and accessible accounting tools.',
+            'keywords' => ['accounting', 'tax', 'payroll', 'business'],
             'pages' => [
                 'tools' => [
-                    'title' => 'Ferramentas contábeis | Prazzu Tools',
-                    'description' => 'Encontre ferramentas contábeis gratuitas por categoria ou busca.',
+                    'title' => 'Accounting tools | Prazzu Tools',
+                    'description' => 'Find free accounting tools by category or search.',
                 ],
                 'blog' => [
-                    'title' => 'Blog de Contabilidade | Prazzu Tools',
-                    'description' => 'Conteúdos práticos sobre contabilidade, fiscal, tributário, departamento pessoal e gestão para profissionais e escritórios contábeis.',
+                    'title' => 'Accounting Blog | Prazzu Tools',
+                    'description' => 'Practical content about accounting, taxes, payroll, and business management for professionals and firms.',
                 ],
             ],
         ],
         'rh' => [
-            'title' => 'Prazzu Tools | Ferramentas para Recursos Humanos',
-            'description' => 'Ferramentas práticas para indicadores, rotinas e decisões de Recursos Humanos.',
-            'keywords' => ['recursos humanos', 'RH', 'gestão de pessoas', 'indicadores de RH'],
+            'title' => 'Prazzu Tools | Human Resources tools',
+            'description' => 'Practical tools for Human Resources metrics, workflows, and decisions.',
+            'keywords' => ['human resources', 'HR', 'people management', 'HR metrics'],
             'pages' => [
                 'tools' => [
-                    'title' => 'Ferramentas de RH | Prazzu Tools',
-                    'description' => 'Encontre ferramentas práticas para Recursos Humanos em uma única plataforma.',
+                    'title' => 'HR tools | Prazzu Tools',
+                    'description' => 'Find practical Human Resources tools in one platform.',
                 ],
                 'blog' => [
-                    'title' => 'Blog de Recursos Humanos | Prazzu Tools',
-                    'description' => 'Conteúdos práticos sobre gestão de pessoas e indicadores de Recursos Humanos.',
+                    'title' => 'Human Resources Blog | Prazzu Tools',
+                    'description' => 'Practical content about people management and Human Resources metrics.',
                 ],
             ],
         ],

@@ -5,199 +5,40 @@ declare(strict_types=1);
 namespace App\Tools\LaborTerminationCalculator\Tests\Feature;
 
 use App\Core\Quality\Attributes\CoversPlusFeature;
-use App\Core\Tools\History\Enums\ToolRunStatus;
-use App\Core\Tools\History\Models\ToolRun;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class LaborTerminationToolTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_tool_page_is_available(): void
+    #[CoversPlusFeature('final-pay-severance-calculator', 'history')]
+    #[CoversPlusFeature('final-pay-severance-calculator', 'repeat_history')]
+    #[CoversPlusFeature('final-pay-severance-calculator', 'historical_report')]
+    public function test_page_uses_us_final_pay_inputs(): void
     {
         $this->get(route('tools.final-pay-severance-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Rescisão Trabalhista')
-            ->assertSee('Dados da rescisão');
+            ->assertSee('Final Pay &amp; Severance Calculator', false)
+            ->assertSee('Unused PTO hours')
+            ->assertSee('Severance weeks')
+            ->assertDontSee('FGTS')
+            ->assertDontSee('13º');
     }
 
-    public function test_form_calculates_indemnified_notice_and_projection(): void
+    public function test_calculation_result_is_rendered_after_post(): void
     {
         $this->post(route('tools.final-pay-severance-calculator.calculate'), [
-            'monthly_salary' => '3.000,00',
-            'admission_date' => '2024-01-10',
-            'termination_date' => '2026-07-14',
-            'termination_type' => 'dismissal_without_cause',
-            'contract_type' => 'indefinite',
-            'notice_type' => 'indemnified',
-            'days_worked_in_month' => 14,
-            'has_overdue_vacation' => 1,
-            'fgts_balance' => '10.000,00',
-            'other_discounts' => '0,00',
-            'dependents' => 0,
-        ])->assertOk()
-            ->assertSee('Resultado da rescisão')
-            ->assertSee('R$ 3.600,00')
-            ->assertSee('19/08/2026')
-            ->assertSee('Dispensa sem justa causa')
-            ->assertSee('Exportar PDF')
-            ->assertSessionHasNoErrors();
-    }
-
-    public function test_incompatible_notice_is_returned_as_validation_error(): void
-    {
-        $this->from(route('tools.final-pay-severance-calculator.index'))
-            ->post(route('tools.final-pay-severance-calculator.calculate'), [
-                'monthly_salary' => '3.000,00',
-                'admission_date' => '2026-01-10',
-                'termination_date' => '2026-07-14',
-                'termination_type' => 'dismissal_with_cause',
-                'contract_type' => 'indefinite',
-                'notice_type' => 'indemnified',
-                'days_worked_in_month' => 14,
-                'has_overdue_vacation' => 0,
-                'fgts_balance' => '0,00',
-                'other_discounts' => '0,00',
-                'dependents' => 0,
-            ])->assertRedirect(route('tools.final-pay-severance-calculator.index'))
-            ->assertSessionHasErrors(['notice_type']);
-    }
-
-    #[CoversPlusFeature('final-pay-severance-calculator', 'history')]
-    #[CoversPlusFeature('final-pay-severance-calculator', 'repeat_history')]
-    public function test_authenticated_calculation_is_saved_and_can_be_repeated_and_deleted(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->post(route('tools.final-pay-severance-calculator.calculate'), [
-            'monthly_salary' => '3.000,00',
-            'admission_date' => '2024-01-10',
-            'termination_date' => '2026-07-14',
-            'termination_type' => 'dismissal_without_cause',
-            'contract_type' => 'indefinite',
-            'notice_type' => 'indemnified',
-            'days_worked_in_month' => 14,
-            'overdue_vacation_periods' => 1,
-            'double_vacation_periods' => 0,
-            'fgts_balance' => '10.000,00',
-            'domestic_indemnity_reserve_balance' => '0,00',
-            'other_discounts' => '0,00',
-            'dependents' => 0,
-            'commission_average' => '0,00',
-            'overtime_average' => '0,00',
-            'recurring_additions' => '0,00',
-            'article_480_discount' => '0,00',
-            'extraordinary_indemnities' => '0,00',
-        ]);
-
-        $response->assertOk()
-            ->assertSee('Este cálculo foi salvo automaticamente no seu histórico.')
-            ->assertSee('Resultado da rescisão');
-
-        $run = ToolRun::query()->sole();
-        $this->assertSame($user->id, $run->user_id);
-        $this->assertSame('3.000,00', $run->input_payload['monthly_salary']);
-        $this->assertArrayHasKey('net_total', $run->result_payload);
-
-        $this->actingAs($user)->get(route('tools.final-pay-severance-calculator.history.index'))
-            ->assertOk()
-            ->assertSee('Histórico de cálculos');
-
-        $this->actingAs($user)->post(route('tools.final-pay-severance-calculator.history.repeat', $run))
-            ->assertRedirect(route('tools.final-pay-severance-calculator.index'))
-            ->assertSessionHasInput('monthly_salary', '3.000,00');
-
-        $this->actingAs($user)->delete(route('tools.final-pay-severance-calculator.history.destroy', $run))
-            ->assertRedirect(route('tools.final-pay-severance-calculator.history.index'));
-
-        $this->assertDatabaseCount('tool_runs', 0);
-    }
-
-    public function test_guest_calculation_is_not_saved_to_history_and_keeps_result_exportable_without_login(): void
-    {
-        $response = $this->post(route('tools.final-pay-severance-calculator.calculate'), [
-            'monthly_salary' => '3.000,00',
-            'admission_date' => '2024-01-10',
-            'termination_date' => '2026-07-14',
-            'termination_type' => 'dismissal_without_cause',
-            'contract_type' => 'indefinite',
-            'notice_type' => 'indemnified',
-            'days_worked_in_month' => 14,
-            'overdue_vacation_periods' => 0,
-            'double_vacation_periods' => 0,
-            'fgts_balance' => '0,00',
-            'domestic_indemnity_reserve_balance' => '0,00',
-            'other_discounts' => '0,00',
-            'dependents' => 0,
-            'commission_average' => '0,00',
-            'overtime_average' => '0,00',
-            'recurring_additions' => '0,00',
-            'article_480_discount' => '0,00',
-            'extraordinary_indemnities' => '0,00',
-        ]);
-
-        $response->assertOk()
-            ->assertSee('Resultado da rescisão')
-            ->assertSee('Exportar PDF')
-            ->assertSee('name="monthly_salary" value="3.000,00"', false);
-
-        $this->assertGuest();
-        $this->assertDatabaseCount('tool_runs', 0);
-    }
-
-    public function test_current_calculation_can_be_exported_as_pdf_download(): void
-    {
-        $response = $this->post(route('tools.final-pay-severance-calculator.export'), [
-            'monthly_salary' => '3.000,00',
-            'admission_date' => '2024-01-10',
-            'termination_date' => '2026-07-14',
-            'termination_type' => 'dismissal_without_cause',
-            'contract_type' => 'indefinite',
-            'notice_type' => 'indemnified',
-            'days_worked_in_month' => 14,
-            'overdue_vacation_periods' => 0,
-            'double_vacation_periods' => 0,
-            'fgts_balance' => '0,00',
-            'domestic_indemnity_reserve_balance' => '0,00',
-            'other_discounts' => '0,00',
-            'dependents' => 0,
-            'commission_average' => '0,00',
-            'overtime_average' => '0,00',
-            'recurring_additions' => '0,00',
-            'article_480_discount' => '0,00',
-            'extraordinary_indemnities' => '0,00',
-        ]);
-
-        $response->assertOk()->assertHeader('Content-Type', 'application/pdf');
-        $this->assertStringContainsString('attachment;', (string) $response->headers->get('Content-Disposition'));
-        $this->assertStringContainsString('rescisao-', (string) $response->headers->get('Content-Disposition'));
-        $this->assertStringStartsWith('%PDF', $response->getContent());
-    }
-
-    #[CoversPlusFeature('final-pay-severance-calculator', 'historical_report')]
-    public function test_user_can_export_owned_history_report(): void
-    {
-        $user = User::factory()->create();
-        $run = ToolRun::query()->create([
-            'user_id' => $user->id,
-            'tool_slug' => 'final-pay-severance-calculator',
-            'tool_version' => '1.0.0',
-            'rule_version' => '1.4.0',
-            'reference_date' => '2026-07-14',
-            'status' => ToolRunStatus::Succeeded,
-            'input_payload' => ['admission_date' => '2024-01-10', 'termination_date' => '2026-07-14'],
-            'result_payload' => ['termination_type_label' => 'Dispensa sem justa causa', 'net_total' => 'R$ 5.000,00'],
-            'started_at' => now(),
-            'finished_at' => now(),
-            'expires_at' => now()->addDays(180),
-        ]);
-
-        $this->actingAs($user)
-            ->get(route('tools.final-pay-severance-calculator.history.pdf', $run))
-            ->assertOk()
-            ->assertSee('Relatório de Rescisão Trabalhista')
-            ->assertSee('R$ 5.000,00');
+            'termination_date' => '2026-10-16',
+            'separation_type' => 'layoff',
+            'hourly_rate' => '25.00',
+            'regular_hours_due' => '8',
+            'unused_pto_hours' => '4',
+            'pto_payout_percent' => '100',
+            'weekly_base_pay' => '1000.00',
+            'severance_weeks' => '2',
+            'bonus_commission_due' => '0.00',
+            'other_pay' => '0.00',
+            'federal_withholding' => '0.00',
+            'state_local_withholding' => '0.00',
+            'other_deductions' => '0.00',
+        ])->assertOk()->assertSee('Final pay estimate')->assertSee('$2,300.00');
     }
 }

@@ -21,7 +21,7 @@ final class ToolIntegrationContractTest extends TestCase
         foreach ($contracts as $contractKey) {
             self::assertNotNull(
                 $catalog->find(...$this->contractIdentity($contractKey)),
-                "O contrato [{$contractKey}] deve estar registrado no Core.",
+                "Contract [{$contractKey}] must be registered in Core.",
             );
         }
     }

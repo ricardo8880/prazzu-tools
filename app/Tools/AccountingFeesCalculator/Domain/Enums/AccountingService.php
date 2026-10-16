@@ -18,9 +18,9 @@ enum AccountingService: string
         return match ($this) {
             self::Accounting => 'Bookkeeping and financial statements',
             self::Tax => 'Tax preparation and compliance',
-            self::Payroll => 'Folha de pagamento e rotinas trabalhistas',
+            self::Payroll => 'Payroll processing and payroll compliance',
             self::Corporate => 'Recurring entity compliance',
-            self::Advisory => 'Consultoria e acompanhamento gerencial',
+            self::Advisory => 'Advisory and management reporting',
             self::Financial => 'Bookkeeping operations and reconciliations',
         };
     }

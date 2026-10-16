@@ -48,7 +48,7 @@ final class AudienceAnalyticsQuery
             'countries' => $countries,
             'regions' => $regions,
             'cities' => $cities,
-            'brazil_regions' => $this->brazilRegions($regions),
+            'us_regions' => $this->usRegions($regions),
             'daily' => $this->daily($period),
         ];
     }
@@ -100,14 +100,13 @@ final class AudienceAnalyticsQuery
         });
     }
 
-    private function brazilRegions(Collection $states): Collection
+    private function usRegions(Collection $states): Collection
     {
         $groups = [
-            'Norte' => ['AC', 'AP', 'AM', 'PA', 'RO', 'RR', 'TO'],
-            'Nordeste' => ['AL', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'SE'],
-            'Centro-Oeste' => ['DF', 'GO', 'MT', 'MS'],
-            'Sudeste' => ['ES', 'MG', 'RJ', 'SP'],
-            'Sul' => ['PR', 'RS', 'SC'],
+            'Northeast' => ['CT', 'ME', 'MA', 'NH', 'RI', 'VT', 'NJ', 'NY', 'PA'],
+            'Midwest' => ['IL', 'IN', 'MI', 'OH', 'WI', 'IA', 'KS', 'MN', 'MO', 'NE', 'ND', 'SD'],
+            'South' => ['DE', 'FL', 'GA', 'MD', 'NC', 'SC', 'VA', 'DC', 'WV', 'AL', 'KY', 'MS', 'TN', 'AR', 'LA', 'OK', 'TX'],
+            'West' => ['AZ', 'CO', 'ID', 'MT', 'NV', 'NM', 'UT', 'WY', 'AK', 'CA', 'HI', 'OR', 'WA'],
         ];
 
         return collect($groups)->map(function (array $codes, string $name) use ($states): object {

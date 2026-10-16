@@ -93,7 +93,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['name', 'document', 'employer', 'competence', 'salary', 'other_earnings', 'inss', 'irrf', 'other_deductions'], resultFields: ['earnings', 'deductions', 'net'], sensitiveFields: ['name', 'document']);
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['employee_name', 'employee_id', 'employer', 'pay_period', 'regular_pay', 'overtime_pay', 'other_earnings', 'federal_income_tax', 'social_security', 'medicare', 'state_local_tax', 'other_deductions'], resultFields: ['earnings', 'deductions', 'net', 'summary', 'details', 'warnings', 'calculation_memory'], sensitiveFields: ['employee_name', 'employee_id']);
     }
 
     public function webRoutesPath(): string

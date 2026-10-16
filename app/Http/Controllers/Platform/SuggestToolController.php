@@ -28,6 +28,6 @@ final class SuggestToolController extends Controller
             'session_id' => $request->hasSession() ? $request->session()->getId() : null,
         ]);
 
-        return back()->with('status', 'Sugestão enviada. Obrigado por ajudar a construir o Prazzu Tools.');
+        return back()->with('status', 'Suggestion sent. Thank you for helping improve Prazzu Tools.');
     }
 }

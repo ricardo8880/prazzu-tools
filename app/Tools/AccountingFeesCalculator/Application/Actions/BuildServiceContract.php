@@ -34,7 +34,7 @@ final class BuildServiceContract
                 static fn (string $service): string => AccountingService::from($service)->label(),
                 array_values($input['services']),
             ),
-            includesLgpd: (bool) ($input['includes_lgpd'] ?? false),
+            includesDataPrivacy: (bool) ($input['includes_data_privacy'] ?? false),
             includesConfidentiality: (bool) ($input['includes_confidentiality'] ?? false),
             additionalTerms: $this->nullableString($input['additional_terms'] ?? null),
             issuedAt: new DateTimeImmutable('today'),

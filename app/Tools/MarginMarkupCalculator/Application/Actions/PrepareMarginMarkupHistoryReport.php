@@ -16,9 +16,9 @@ final readonly class PrepareMarginMarkupHistoryReport
         $run = $this->ownedRun->execute($runId, $userId);
         $result = $run->result;
         if (($result['calculation_type'] ?? 'single') !== 'single') {
-            throw new HttpException(422, 'O PDF está disponível para cálculos individuais.');
+            throw new HttpException(422, 'PDF export is available for single-item calculations.');
         }
 
-        return ['result' => $result, 'input' => $run->input, 'generatedAt' => $run->finishedAt->format('d/m/Y H:i')];
+        return ['result' => $result, 'input' => $run->input, 'generatedAt' => $run->finishedAt->format('M j, Y g:i A')];
     }
 }

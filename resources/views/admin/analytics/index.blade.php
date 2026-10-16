@@ -20,7 +20,7 @@
     $formatMetric = static function (int|float $value, string $format): string {
         return match ($format) {
             'percent' => number_format($value, 1, ',', '.').'%',
-            'money' => 'R$ '.number_format($value / 100, 2, ',', '.'),
+            'money' => '$'.number_format($value / 100, 2, '.', ','),
             'duration' => $value >= 3600
                 ? sprintf('%dh %02dmin', intdiv((int) $value, 3600), intdiv(((int) $value) % 3600, 60))
                 : sprintf('%dmin %02ds', intdiv((int) $value, 60), ((int) $value) % 60),

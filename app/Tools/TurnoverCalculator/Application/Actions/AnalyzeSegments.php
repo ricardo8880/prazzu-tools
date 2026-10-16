@@ -40,7 +40,7 @@ final readonly class AnalyzeSegments
             ];
 
             if ($data['admissions'] > 10_000_000 || $data['terminations'] > 10_000_000 || $data['average_headcount'] > 10_000_000) {
-                throw ValidationException::withMessages(['segments' => 'Os valores de cada linha devem respeitar o limite de 10.000.000.']);
+                throw ValidationException::withMessages(['segments' => 'Values on each line must not exceed 10,000,000.']);
             }
 
             $analysis[] = [

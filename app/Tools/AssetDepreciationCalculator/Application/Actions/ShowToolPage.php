@@ -18,8 +18,8 @@ final readonly class ShowToolPage
             'tool' => $this->tool->manifest(),
             'methods' => [
                 'linear' => 'Straight-line',
-                'declining_balance' => 'Saldos decrescentes (duplo)',
-                'sum_of_years_digits' => 'Soma dos dígitos dos years',
+                'declining_balance' => 'Double declining balance',
+                'sum_of_years_digits' => 'Sum-of-the-years-digits',
             ],
         ];
     }

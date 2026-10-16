@@ -28,7 +28,7 @@ final class ContentPageController extends Controller
         $section = config("resources.sections.{$resource}");
 
         if (! is_array($section)) {
-            throw new NotFoundHttpException('Página não encontrada.');
+            throw new NotFoundHttpException('Page not found.');
         }
 
         $items = $this->resourceItems()
@@ -45,7 +45,7 @@ final class ContentPageController extends Controller
             ->first(fn (array $candidate): bool => $candidate['type'] === $resource && $candidate['slug'] === $slug);
 
         if (! is_array($section) || ! is_array($item) || $item['status'] !== 'published' || empty($item['view'])) {
-            throw new NotFoundHttpException('Recurso não encontrado.');
+            throw new NotFoundHttpException('Resource not found.');
         }
 
         $relatedSlugs = $item['related_slugs'] ?? [];
@@ -98,7 +98,7 @@ final class ContentPageController extends Controller
         $content = $pages[$key] ?? data_get($pages, $key);
 
         if (! is_array($content) || ! isset($content['title'], $content['description'], $content['icon'], $content['eyebrow'])) {
-            throw new NotFoundHttpException('Página não encontrada.');
+            throw new NotFoundHttpException('Page not found.');
         }
 
         return view('pages.content', ['page' => $content]);

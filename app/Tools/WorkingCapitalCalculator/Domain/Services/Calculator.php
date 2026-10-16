@@ -21,7 +21,7 @@ final class Calculator implements ToolCalculator
     public function calculate(ToolCalculationInput $input): ToolCalculationResult
     {
         if (! $input instanceof CalculationInput) {
-            throw new InvalidArgumentException('Entrada incompatível com a calculadora de capital de giro.');
+            throw new InvalidArgumentException('Incompatible input for the working capital calculator.');
         }
 
         $operatingAssets = $input->receivables->add($input->inventory)->add($input->otherCurrentAssets);
@@ -38,16 +38,16 @@ final class Calculator implements ToolCalculator
         if ($fundingGap->minorAmount() > 0) {
             $warnings[] = new ToolCalculationWarning(
                 code: 'funding_gap',
-                message: 'O capital circulante líquido informado não cobre integralmente a necessidade operacional estimada. A diferença exibida representa o déficit de financiamento nesta fotografia.',
+                message: 'Entered net working capital does not fully cover the estimated operating need. The displayed difference represents the funding gap at this point in time.',
                 level: ToolCalculationWarningLevel::Warning,
-                title: 'Há necessidade adicional de recursos',
+                title: 'Additional funding is required',
             );
         } elseif ($fundingSurplus->minorAmount() > 0) {
             $warnings[] = new ToolCalculationWarning(
                 code: 'funding_surplus',
-                message: 'O capital circulante líquido supera a necessidade operacional estimada. A folga não substitui análise de liquidez, sazonalidade ou prazos médios.',
+                message: 'Net working capital exceeds the estimated operating need. The surplus does not replace liquidity, seasonality, or average-term analysis.',
                 level: ToolCalculationWarningLevel::Info,
-                title: 'Há folga de capital circulante',
+                title: 'There is a working capital surplus',
             );
         }
 
@@ -55,31 +55,31 @@ final class Calculator implements ToolCalculator
             toolSlug: 'working-capital-calculator',
             schemaVersion: '1.2.0',
             summary: [
-                new ToolCalculationSummaryItem('required_capital', 'Capital de giro necessário', $requiredCapital->formatEnUs(), 'Necessidade operacional positiva que precisa ser financiada.'),
-                new ToolCalculationSummaryItem('operating_need', 'Necessidade de capital de giro (NCG)', $need->formatEnUs(), 'Ativos operacionais menos passivos operacionais.'),
-                new ToolCalculationSummaryItem('net_working_capital', 'Capital circulante líquido (CCL)', $netWorkingCapital->formatEnUs(), 'Ativo circulante menos passivo circulante.'),
-                new ToolCalculationSummaryItem('funding_gap', 'Necessidade adicional de recursos', $fundingGap->formatEnUs(), 'Necessidade operacional ainda não coberta pelo CCL.'),
-                new ToolCalculationSummaryItem('funding_surplus', 'Folga de capital circulante', $fundingSurplus->formatEnUs(), 'Excesso de CCL sobre a necessidade operacional estimada.'),
+                new ToolCalculationSummaryItem('required_capital', 'Required working capital', $requiredCapital->formatEnUs(), 'Positive operating need that must be funded.'),
+                new ToolCalculationSummaryItem('operating_need', 'Operating working capital need', $need->formatEnUs(), 'Operating assets minus operating liabilities.'),
+                new ToolCalculationSummaryItem('net_working_capital', 'Net working capital (NWC)', $netWorkingCapital->formatEnUs(), 'Current assets minus current liabilities.'),
+                new ToolCalculationSummaryItem('funding_gap', 'Additional funding required', $fundingGap->formatEnUs(), 'Operating need not yet covered by net working capital.'),
+                new ToolCalculationSummaryItem('funding_surplus', 'Working capital surplus', $fundingSurplus->formatEnUs(), 'Net working capital above the estimated operating need.'),
             ],
             details: ['input' => $input->toArray()],
             warnings: $warnings,
             calculationMemory: new CalculationMemory(
                 schemaVersion: '1.2.0',
                 steps: [
-                    new CalculationMemoryStep('operating_assets', 'Ativos operacionais', 'contas a receber + estoques + outros ativos circulantes operacionais', ['receivables' => $input->receivables->minorAmount(), 'inventory' => $input->inventory->minorAmount(), 'other_current_assets' => $input->otherCurrentAssets->minorAmount()], $operatingAssets->minorAmount(), 'Soma em centavos, sem ponto flutuante.'),
-                    new CalculationMemoryStep('operating_liabilities', 'Operating liabilities', 'fornecedores + outras obrigações operacionais', ['suppliers' => $input->suppliers->minorAmount(), 'other_operating_liabilities' => $input->otherOperatingLiabilities->minorAmount()], $operatingLiabilities->minorAmount(), 'Soma em centavos, sem ponto flutuante.'),
-                    new CalculationMemoryStep('operating_need', 'Necessidade de capital de giro (NCG)', 'ativos operacionais − passivos operacionais', ['operating_assets' => $operatingAssets->minorAmount(), 'operating_liabilities' => $operatingLiabilities->minorAmount()], $need->minorAmount()),
-                    new CalculationMemoryStep('current_assets', 'Ativo circulante', 'caixa + ativos operacionais', ['cash' => $input->cash->minorAmount(), 'operating_assets' => $operatingAssets->minorAmount()], $currentAssets->minorAmount()),
-                    new CalculationMemoryStep('current_liabilities', 'Passivo circulante', 'passivos operacionais + empréstimos + outras obrigações circulantes', ['operating_liabilities' => $operatingLiabilities->minorAmount(), 'loans' => $input->loans->minorAmount(), 'other_current_liabilities' => $input->otherCurrentLiabilities->minorAmount()], $currentLiabilities->minorAmount()),
-                    new CalculationMemoryStep('net_working_capital', 'Capital circulante líquido (CCL)', 'ativo circulante − passivo circulante', ['current_assets' => $currentAssets->minorAmount(), 'current_liabilities' => $currentLiabilities->minorAmount()], $netWorkingCapital->minorAmount()),
-                    new CalculationMemoryStep('required_capital', 'Capital de giro necessário', 'máximo(0, NCG)', ['operating_need' => $need->minorAmount()], $requiredCapital->minorAmount()),
-                    new CalculationMemoryStep('funding_gap', 'Necessidade adicional de recursos', 'máximo(0, capital necessário − CCL)', ['required_capital' => $requiredCapital->minorAmount(), 'net_working_capital' => $netWorkingCapital->minorAmount()], $fundingGap->minorAmount()),
-                    new CalculationMemoryStep('funding_surplus', 'Folga de capital circulante', 'máximo(0, CCL − capital necessário)', ['required_capital' => $requiredCapital->minorAmount(), 'net_working_capital' => $netWorkingCapital->minorAmount()], $fundingSurplus->minorAmount()),
+                    new CalculationMemoryStep('operating_assets', 'Operating assets', 'accounts receivable + inventory + other operating current assets', ['receivables' => $input->receivables->minorAmount(), 'inventory' => $input->inventory->minorAmount(), 'other_current_assets' => $input->otherCurrentAssets->minorAmount()], $operatingAssets->minorAmount(), 'Sum in cents, without floating point.'),
+                    new CalculationMemoryStep('operating_liabilities', 'Operating liabilities', 'accounts payable + other operating liabilities', ['suppliers' => $input->suppliers->minorAmount(), 'other_operating_liabilities' => $input->otherOperatingLiabilities->minorAmount()], $operatingLiabilities->minorAmount(), 'Sum in cents, without floating point.'),
+                    new CalculationMemoryStep('operating_need', 'Operating working capital need', 'operating assets − operating liabilities', ['operating_assets' => $operatingAssets->minorAmount(), 'operating_liabilities' => $operatingLiabilities->minorAmount()], $need->minorAmount()),
+                    new CalculationMemoryStep('current_assets', 'Current assets', 'cash + operating assets', ['cash' => $input->cash->minorAmount(), 'operating_assets' => $operatingAssets->minorAmount()], $currentAssets->minorAmount()),
+                    new CalculationMemoryStep('current_liabilities', 'Current liabilities', 'operating liabilities + short-term debt + other current liabilities', ['operating_liabilities' => $operatingLiabilities->minorAmount(), 'loans' => $input->loans->minorAmount(), 'other_current_liabilities' => $input->otherCurrentLiabilities->minorAmount()], $currentLiabilities->minorAmount()),
+                    new CalculationMemoryStep('net_working_capital', 'Net working capital (NWC)', 'current assets − current liabilities', ['current_assets' => $currentAssets->minorAmount(), 'current_liabilities' => $currentLiabilities->minorAmount()], $netWorkingCapital->minorAmount()),
+                    new CalculationMemoryStep('required_capital', 'Required working capital', 'max(0, operating working capital need)', ['operating_need' => $need->minorAmount()], $requiredCapital->minorAmount()),
+                    new CalculationMemoryStep('funding_gap', 'Additional funding required', 'max(0, required working capital − NWC)', ['required_capital' => $requiredCapital->minorAmount(), 'net_working_capital' => $netWorkingCapital->minorAmount()], $fundingGap->minorAmount()),
+                    new CalculationMemoryStep('funding_surplus', 'Working capital surplus', 'max(0, NWC − required working capital)', ['required_capital' => $requiredCapital->minorAmount(), 'net_working_capital' => $netWorkingCapital->minorAmount()], $fundingSurplus->minorAmount()),
                 ],
                 assumptions: [
-                    'Todos os saldos devem representar a mesma data-base e o mesmo perímetro contabilístico.',
-                    'A classificação entre itens operacionais e financeiros foi definida pelo utilizador e não é reclassificada automaticamente.',
-                    'O resultado é uma fotografia financeira; sazonalidade, prazos médios e eventos posteriores exigem cenários adicionais.',
+                    'All balances must represent the same reporting date and accounting scope.',
+                    'The classification between operating and financing items is supplied by the user and is not automatically reclassified.',
+                    'The result is a point-in-time financial snapshot; seasonality, average terms, and subsequent events require additional scenarios.',
                 ],
                 isEstimate: true,
             ),

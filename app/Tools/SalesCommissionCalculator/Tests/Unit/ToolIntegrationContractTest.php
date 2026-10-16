@@ -22,7 +22,7 @@ final class ToolIntegrationContractTest extends TestCase
         foreach ([...$manifest->publishes, ...$manifest->accepts] as $contractKey) {
             self::assertNotNull(
                 $catalog->find(...$this->contractIdentity($contractKey)),
-                "O contrato [{$contractKey}] deve estar registrado no Core.",
+                "Contract [{$contractKey}] must be registered in Core.",
             );
         }
     }

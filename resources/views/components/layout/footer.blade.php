@@ -4,25 +4,25 @@
             <div class="col-12 col-sm-6 col-md-3 col-xl mt-0">
                 <div class="prazzu-stat">
                     <i class="bi bi-lightning-charge" aria-hidden="true"></i>
-                    <span><strong>Uso imediato</strong><small>Sem cadastro obrigatório</small></span>
+                    <span><strong>Instant access</strong><small>No registration required</small></span>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3 col-xl mt-0">
                 <div class="prazzu-stat">
                     <i class="bi bi-check2-circle" aria-hidden="true"></i>
-                    <span><strong>Essencial completo</strong><small>O problema principal é gratuito</small></span>
+                    <span><strong>Complete Essential tier</strong><small>The core solution is free</small></span>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3 col-xl mt-0">
                 <div class="prazzu-stat">
                     <i class="bi bi-journal-check" aria-hidden="true"></i>
-                    <span><strong>Transparência</strong><small>Premissas e memória quando aplicáveis</small></span>
+                    <span><strong>Transparency</strong><small>Assumptions and calculation details when applicable</small></span>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3 col-xl mt-0">
                 <div class="prazzu-stat">
                     <i class="bi bi-grid" aria-hidden="true"></i>
-                    <span><strong>Catálogo em evolução</strong><small>Novas soluções por vertical</small></span>
+                    <span><strong>Growing catalog</strong><small>New solutions by category</small></span>
                 </div>
             </div>
         </div>

@@ -15,9 +15,9 @@ final class CalculatorTest extends TestCase
         $result = (new Calculator)->calculate(new CalculationInput('2026-01', '5000.00'));
 
         self::assertSame('take-home-pay-calculator', $result->toolSlug);
-        self::assertSame('R$ 501,51', $result->summary[1]->value);
-        self::assertSame('R$ 0,00', $result->summary[2]->value);
-        self::assertSame('R$ 4.498,49', $result->summary[4]->value);
+        self::assertSame('$501.51', $result->summary[1]->value);
+        self::assertSame('$0.00', $result->summary[2]->value);
+        self::assertSame('$4,498.49', $result->summary[4]->value);
         self::assertSame('simplified', $result->details['irrf_deduction_method']);
         self::assertNotNull($result->calculationMemory);
         self::assertCount(2, $result->calculationMemory->normativeRules);
@@ -28,9 +28,9 @@ final class CalculatorTest extends TestCase
         $result = (new Calculator)->calculate(new CalculationInput('2026-01', '10000.00'));
 
         self::assertSame(847555, $result->details['social_security_base_minor']);
-        self::assertSame('R$ 988,09', $result->summary[1]->value);
-        self::assertSame('R$ 1.569,55', $result->summary[2]->value);
-        self::assertSame('R$ 7.442,36', $result->summary[4]->value);
+        self::assertSame('$988.09', $result->summary[1]->value);
+        self::assertSame('$1,569.55', $result->summary[2]->value);
+        self::assertSame('$7,442.36', $result->summary[4]->value);
         self::assertSame(0, $result->details['irrf_reduction_minor']);
     }
 

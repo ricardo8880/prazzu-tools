@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $home['page_title'] ?? 'Prazzu Tools')
-@section('meta_description', $home['meta_description'] ?? 'Ferramentas práticas para o seu dia a dia.')
+@section('meta_description', $home['meta_description'] ?? 'Practical online tools for business and everyday work.')
 
 @section('content')
     <div class="prazzu-home" @if($acquisitionContext) data-acquisition-endpoint="{{ route('analytics.acquisition.track') }}" @endif>
@@ -18,12 +18,12 @@
                     <div class="prazzu-hero__resolver">
                         <p class="prazzu-hero__search-label mb-2">
                             <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
-                            {{ $home['hero']['search_label'] ?? 'Descreva o que você precisa resolver' }}
+                            {{ $home['hero']['search_label'] ?? 'Describe what you need to solve' }}
                         </p>
 
                         <div class="prazzu-smart-search" data-home-smart-search>
                         <form class="prazzu-search" action="{{ route('tools.index') }}" method="get" role="search">
-                            <label class="visually-hidden" for="home-tool-search">Buscar ferramentas</label>
+                            <label class="visually-hidden" for="home-tool-search">Search tools</label>
                             <i class="bi bi-search" aria-hidden="true"></i>
                             <input type="hidden" name="source" value="home_search">
                             <input
@@ -39,7 +39,7 @@
                                 aria-expanded="false"
                                 data-home-smart-search-input
                             >
-                            <button class="btn" type="submit" aria-label="Buscar ferramentas">
+                            <button class="btn" type="submit" aria-label="Search tools">
                                 <i class="bi bi-search" aria-hidden="true"></i>
                             </button>
                         </form>
@@ -48,15 +48,15 @@
                             id="home-smart-search-panel"
                             class="prazzu-smart-search__panel"
                             data-home-smart-search-panel
-                            aria-label="Sugestões de ferramentas"
+                            aria-label="Tool suggestions"
                             hidden
                         >
                             <div class="prazzu-smart-search__content" data-home-smart-search-content role="listbox"></div>
                             <div class="prazzu-smart-search__footer" aria-hidden="true">
-                                <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
-                                <span><kbd>Enter</kbd> abrir</span>
-                                <span><kbd>Esc</kbd> fechar</span>
-                                <span class="prazzu-smart-search__shortcut"><kbd>Ctrl</kbd><kbd>K</kbd> buscar</span>
+                                <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+                                <span><kbd>Enter</kbd> open</span>
+                                <span><kbd>Esc</kbd> close</span>
+                                <span class="prazzu-smart-search__shortcut"><kbd>Ctrl</kbd><kbd>K</kbd> search</span>
                             </div>
                         </div>
 
@@ -77,8 +77,8 @@
                         </div>
 
                         @if(! $acquisitionContext && ! empty($home['hero']['problem_shortcuts']))
-                            <div class="prazzu-problem-shortcuts" aria-label="Exemplos do que você pode resolver">
-                                <span class="prazzu-problem-shortcuts__label">Exemplos:</span>
+                            <div class="prazzu-problem-shortcuts" aria-label="Examples of tasks you can solve">
+                                <span class="prazzu-problem-shortcuts__label">Examples:</span>
                                 @foreach($home['hero']['problem_shortcuts'] as $shortcut)
                                     <a
                                         class="prazzu-problem-shortcut text-decoration-none"
@@ -91,7 +91,7 @@
                         @endif
                     </div>
 
-                    <ul class="prazzu-benefits list-unstyled mb-0 mt-4" aria-label="Vantagens da plataforma">
+                    <ul class="prazzu-benefits list-unstyled mb-0 mt-4" aria-label="Platform benefits">
                         @foreach ($home['hero']['benefits'] as $benefit)
                             <li>
                                 <i class="bi {{ $benefit['icon'] }}" aria-hidden="true"></i>
@@ -158,10 +158,10 @@
         </section>
 
         <div class="prazzu-category-discovery">
-            <span class="prazzu-eyebrow">Outra forma de encontrar</span>
-            <p class="prazzu-category-discovery__title mb-2">Explore pelo tipo de tarefa</p>
+            <span class="prazzu-eyebrow">Another way to browse</span>
+            <p class="prazzu-category-discovery__title mb-2">Explore by task type</p>
         </div>
-        <nav class="prazzu-category-strip" aria-label="Explorar ferramentas pelo tipo de tarefa">
+        <nav class="prazzu-category-strip" aria-label="Explore tools by task type">
             @foreach ($categories as $category)
                 <a class="prazzu-category-item text-decoration-none" href="{{ url($category['url']) }}">
                     <span class="prazzu-category-item__icon">
@@ -183,12 +183,12 @@
             <section class="prazzu-continuity-tools" aria-labelledby="continue-tools-title">
                 <div class="d-flex flex-column flex-sm-row align-items-sm-end justify-content-between gap-3 mb-3">
                     <div>
-                        <span class="prazzu-eyebrow">Seu Prazzu</span>
-                        <h2 id="continue-tools-title" class="prazzu-section-title mb-1">Continue de onde parou</h2>
-                        <p class="prazzu-section-caption mb-0">Retome seus últimos trabalhos e resultados salvos nesta vertical.</p>
+                        <span class="prazzu-eyebrow">Your Prazzu</span>
+                        <h2 id="continue-tools-title" class="prazzu-section-title mb-1">Continue where you left off</h2>
+                        <p class="prazzu-section-caption mb-0">Resume your recent saved work and results.</p>
                     </div>
                     <a class="prazzu-section-link text-decoration-none" href="{{ route('account.show') }}">
-                        Meu Prazzu <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        My account <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>
                 </div>
 
@@ -201,16 +201,16 @@
                                     <span class="prazzu-icon-tile prazzu-icon-tile--purple">
                                         <i class="bi {{ $tool['tool_icon'] }}" aria-hidden="true"></i>
                                     </span>
-                                    <span class="prazzu-badge prazzu-badge--green">Último trabalho</span>
+                                    <span class="prazzu-badge prazzu-badge--green">Recent work</span>
                                 </div>
                                 <h3 class="prazzu-tool-card__title">{{ $tool['tool_name'] }}</h3>
                                 <p class="prazzu-continuity-card__meta mb-1">
-                                    Resultado salvo em {{ $tool['finished_at']->format('d/m/Y \à\s H:i') }}
+                                    Saved {{ $tool['finished_at']->format('M j, Y g:i A') }}
                                 </p>
                                 @if($tool['context_label'])
-                                    <p class="prazzu-continuity-card__reference mb-0">Contexto: {{ $tool['context_label'] }}</p>
+                                    <p class="prazzu-continuity-card__reference mb-0">Context: {{ $tool['context_label'] }}</p>
                                 @elseif($tool['reference_date'])
-                                    <p class="prazzu-continuity-card__reference mb-0">Referência: {{ $tool['reference_date']->format('d/m/Y') }}</p>
+                                    <p class="prazzu-continuity-card__reference mb-0">Reference: {{ $tool['reference_date']->format('M j, Y') }}</p>
                                 @endif
                                 <span class="prazzu-continuity-card__action mt-auto pt-3">
                                     {{ $tool['open_label'] }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
@@ -224,9 +224,9 @@
             <section class="prazzu-continuity-tools" aria-labelledby="recent-tools-title" data-home-recent-tools hidden>
                 <div class="d-flex align-items-end justify-content-between gap-3 mb-3">
                     <div>
-                        <span class="prazzu-eyebrow">Continue sua rotina</span>
+                        <span class="prazzu-eyebrow">Continue your work</span>
                         <h2 id="recent-tools-title" class="prazzu-section-title mb-1">Usadas recentemente</h2>
-                        <p class="prazzu-section-caption mb-0">Ficam somente nesta sessão. Nenhum valor de cálculo é armazenado aqui.</p>
+                        <p class="prazzu-section-caption mb-0">These stay only in this session. No calculation values are stored here.</p>
                     </div>
                 </div>
                 <div class="row g-3" data-home-recent-tools-list></div>
@@ -254,7 +254,7 @@
                                 data-tool-position="{{ $loop->iteration }}"
                             @endif
                         >
-                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ route($tool['route_name']) }}" aria-label="Abrir {{ $tool['name'] }}" @if($acquisitionContext) data-acquisition-click="tool" @endif></a>
+                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ route($tool['route_name']) }}" aria-label="Open {{ $tool['name'] }}" @if($acquisitionContext) data-acquisition-click="tool" @endif></a>
                             <span class="prazzu-icon-tile prazzu-icon-tile--{{ $tool['tone'] }} mb-3">
                                 <i class="bi {{ $tool['icon'] }}" aria-hidden="true"></i>
                             </span>
@@ -267,7 +267,7 @@
             </div>
         </section>
 
-        <aside class="prazzu-home-cta" aria-label="Conheça todas as ferramentas" @if($acquisitionContext) data-acquisition-impression="cta" @endif>
+        <aside class="prazzu-home-cta" aria-label="Explore all tools" @if($acquisitionContext) data-acquisition-impression="cta" @endif>
             <div class="d-flex align-items-center gap-3 min-w-0">
                 <span class="prazzu-home-cta__icon"><i class="bi bi-rocket-takeoff" aria-hidden="true"></i></span>
                 <span class="min-w-0">
@@ -275,7 +275,7 @@
                     <small>{{ $home['cta']['description'] }}</small>
                 </span>
             </div>
-            <a class="btn btn-primary prazzu-btn-primary" href="{{ ($home['cta']['url'] === '/ferramentas' ? route('tools.index') : url($home['cta']['url'])) }}" @if($acquisitionContext) data-acquisition-click="cta" @endif>{{ $home['cta']['label'] }}</a>
+            <a class="btn btn-primary prazzu-btn-primary" href="{{ ($home['cta']['url'] === '/tools' ? route('tools.index') : url($home['cta']['url'])) }}" @if($acquisitionContext) data-acquisition-click="cta" @endif>{{ $home['cta']['label'] }}</a>
         </aside>
     </div>
 @endsection

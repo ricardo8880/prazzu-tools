@@ -16,7 +16,7 @@ final readonly class ProcessProductImport
         $token = (string) ($data['import_token'] ?? '');
         $dataset = $this->store->get($token, $ownerKey);
         if ($dataset === null) {
-            throw new RuntimeException('A pré-visualização expirou. Importe o arquivo novamente.');
+            throw new RuntimeException('The preview expired. Import the file again.');
         }
 
         $products = [];
@@ -27,10 +27,10 @@ final readonly class ProcessProductImport
                 'code' => $this->cell($row, $data['code_column'] ?? null),
                 'category' => $this->cell($row, $data['category_column'] ?? null),
                 'base_cost' => $this->cell($row, $data['base_cost_column'] ?? null),
-                'additional_costs' => $this->cell($row, $data['additional_costs_column'] ?? null, '0,00'),
-                'freight_cost' => $this->cell($row, $data['freight_cost_column'] ?? null, '0,00'),
-                'packaging_cost' => $this->cell($row, $data['packaging_cost_column'] ?? null, '0,00'),
-                'fixed_expenses' => $this->cell($row, $data['fixed_expenses_column'] ?? null, '0,00'),
+                'additional_costs' => $this->cell($row, $data['additional_costs_column'] ?? null, '0.00'),
+                'freight_cost' => $this->cell($row, $data['freight_cost_column'] ?? null, '0.00'),
+                'packaging_cost' => $this->cell($row, $data['packaging_cost_column'] ?? null, '0.00'),
+                'fixed_expenses' => $this->cell($row, $data['fixed_expenses_column'] ?? null, '0.00'),
                 'desired_margin' => $this->cell($row, $data['desired_margin_column'] ?? null, '30'),
                 'taxes_percentage' => $this->cell($row, $data['taxes_percentage_column'] ?? null, '0'),
                 'commission_percentage' => $this->cell($row, $data['commission_percentage_column'] ?? null, '0'),
@@ -40,10 +40,10 @@ final readonly class ProcessProductImport
 
             $errors = [];
             if ($product['name'] === '') {
-                $errors[] = 'nome do produto vazio';
+                $errors[] = 'product name is empty';
             }
             if ($product['base_cost'] === '') {
-                $errors[] = 'custo base vazio';
+                $errors[] = 'base cost is empty';
             }
 
             if ($errors !== []) {
@@ -56,7 +56,7 @@ final readonly class ProcessProductImport
         }
 
         if ($products === []) {
-            throw new RuntimeException('Nenhuma linha válida foi encontrada para importação.');
+            throw new RuntimeException('No valid rows were found for import.');
         }
 
         $this->store->forget($token, $ownerKey);

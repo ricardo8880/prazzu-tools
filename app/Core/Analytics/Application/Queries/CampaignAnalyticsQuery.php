@@ -208,7 +208,7 @@ final class CampaignAnalyticsQuery
 
                 return (object) [
                     'campaign' => $campaign,
-                    'currency' => 'BRL',
+                    'currency' => 'USD',
                     'cost_cents' => $cost,
                     'revenue_cents' => $revenue,
                     'accounts' => $accounts,

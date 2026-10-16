@@ -64,7 +64,7 @@ final class NewsletterController extends Controller
 
         return back()->with(
             'status',
-            'Inscrição confirmada. Você receberá avisos sobre novas ferramentas e atualizações relevantes da plataforma.',
+            'Subscription confirmed. You will receive updates about new tools and relevant platform changes.',
         );
     }
 }

@@ -1,4 +1,4 @@
-@props(['name', 'label', 'value' => null, 'help' => null, 'id' => null, 'required' => false, 'placeholder' => 'Ex.: 5.000,00'])
+@props(['name', 'label', 'value' => null, 'help' => null, 'id' => null, 'required' => false, 'placeholder' => 'e.g. 5,000.00'])
 
 <x-tools.form.input
     :name="$name"
@@ -8,7 +8,7 @@
     :id="$id"
     :required="$required"
     :placeholder="$placeholder"
-    prefix="R$"
+    prefix="$"
     inputmode="decimal"
     {{ $attributes }}
 />

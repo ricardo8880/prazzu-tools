@@ -17,7 +17,7 @@ final class MarginMarkupToolTest extends TestCase
     {
         $this->get(route('tools.margin-markup-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Margem, Markup e Formação de Preço');
+            ->assertSee('Calculadora de Margin, Markup & Pricing');
     }
 
     public function test_calculation_returns_expected_result(): void
@@ -25,15 +25,15 @@ final class MarginMarkupToolTest extends TestCase
         $response = $this->from(route('tools.margin-markup-calculator.index'))
             ->post(route('tools.margin-markup-calculator.calculate'), [
                 'reference_date' => '2026-07-13',
-                'base_cost' => '100,00',
-                'additional_costs' => '20,00',
+                'base_cost' => '100.00',
+                'additional_costs' => '20.00',
                 'desired_margin' => '25',
             ]);
 
         $response
             ->assertOk()
-            ->assertSee('R$ 160,00')
-            ->assertSee('R$ 40,00')
+            ->assertSee('$160.00')
+            ->assertSee('$40.00')
             ->assertSee('2.1.0');
 
         $this->assertDatabaseCount('tool_runs', 0);
@@ -48,8 +48,8 @@ final class MarginMarkupToolTest extends TestCase
         $this->from(route('tools.margin-markup-calculator.index'))
             ->post(route('tools.margin-markup-calculator.export'), [
                 'reference_date' => '2026-07-13',
-                'base_cost' => 'valor-invalido',
-                'additional_costs' => '0,00',
+                'base_cost' => 'invalid-value',
+                'additional_costs' => '0.00',
                 'desired_margin' => '25',
             ])
             ->assertRedirect(route('tools.margin-markup-calculator.index'))
@@ -61,15 +61,15 @@ final class MarginMarkupToolTest extends TestCase
     {
         $response = $this->post(route('tools.margin-markup-calculator.export'), [
             'reference_date' => '2026-07-13',
-            'base_cost' => '100,00',
-            'additional_costs' => '20,00',
+            'base_cost' => '100.00',
+            'additional_costs' => '20.00',
             'desired_margin' => '25',
         ]);
 
         $response
             ->assertOk()
             ->assertHeader('content-type', 'text/csv; charset=UTF-8')
-            ->assertDownload('margem-markup.csv');
+            ->assertDownload('margin-markup.csv');
 
         $this->assertDatabaseHas('tool_usage_events', [
             'tool_slug' => 'margin-markup-calculator',
@@ -82,8 +82,8 @@ final class MarginMarkupToolTest extends TestCase
         $this->from(route('tools.margin-markup-calculator.index'))
             ->post(route('tools.margin-markup-calculator.calculate'), [
                 'reference_date' => '2026-07-13',
-                'base_cost' => '0,00',
-                'additional_costs' => '0,00',
+                'base_cost' => '0.00',
+                'additional_costs' => '0.00',
                 'desired_margin' => '25',
             ])
             ->assertRedirect(route('tools.margin-markup-calculator.index'))
@@ -98,17 +98,17 @@ final class MarginMarkupToolTest extends TestCase
                 'reference_date' => '2026-07-15',
                 'products' => [
                     [
-                        'name' => 'Produto A',
+                        'name' => 'Product A',
                         'code' => 'A-01',
-                        'category' => 'Varejo',
-                        'base_cost' => '100,00',
+                        'category' => 'Retail',
+                        'base_cost' => '100.00',
                         'desired_margin' => '20',
                     ],
                     [
-                        'name' => 'Produto B',
+                        'name' => 'Product B',
                         'code' => 'B-01',
-                        'category' => 'Atacado',
-                        'base_cost' => '200,00',
+                        'category' => 'Wholesale',
+                        'base_cost' => '200.00',
                         'desired_margin' => '25',
                     ],
                 ],
@@ -116,10 +116,10 @@ final class MarginMarkupToolTest extends TestCase
 
         $response
             ->assertOk()
-            ->assertSee('Produto A')
-            ->assertSee('R$ 125,00')
-            ->assertSee('Produto B')
-            ->assertSee('R$ 266,67');
+            ->assertSee('Product A')
+            ->assertSee('$125.00')
+            ->assertSee('Product B')
+            ->assertSee('$266.67');
 
         $this->assertDatabaseHas('tool_usage_events', [
             'tool_slug' => 'margin-markup-calculator',
@@ -131,12 +131,12 @@ final class MarginMarkupToolTest extends TestCase
     public function test_scenarios_compare_two_pricing_strategies(): void
     {
         $this->post(route('tools.margin-markup-calculator.scenarios.simulate'), [
-            'reference_date' => '2026-07-15', 'product_name' => 'Produto A', 'base_cost' => '100,00',
+            'reference_date' => '2026-07-15', 'product_name' => 'Product A', 'base_cost' => '100.00',
             'scenarios' => [
-                ['name' => 'Conservador', 'desired_margin' => '20'],
-                ['name' => 'Meta', 'desired_margin' => '25'],
+                ['name' => 'Conservative', 'desired_margin' => '20'],
+                ['name' => 'Target', 'desired_margin' => '25'],
             ],
-        ])->assertOk()->assertSee('Conservador')->assertSee('Meta')->assertSee('R$ 125,00')->assertSee('R$ 133,33');
+        ])->assertOk()->assertSee('Conservative')->assertSee('Target')->assertSee('$125.00')->assertSee('$133.33');
     }
 
     public function test_batch_calculation_requires_at_least_one_product(): void
@@ -152,16 +152,16 @@ final class MarginMarkupToolTest extends TestCase
 
     public function test_csv_import_can_be_previewed_and_loaded_into_batch_products(): void
     {
-        $csv = "Produto;Código;Categoria;Custo base;Margem %\nProduto A;A-01;Varejo;100,00;25\nProduto B;B-01;Atacado;200,00;30\n";
-        $file = UploadedFile::fake()->createWithContent('produtos.csv', $csv);
+        $csv = "Product;Code;Category;Base cost;Margin %\nProduct A;A-01;Retail;100.00;25\nProduct B;B-01;Wholesale;200.00;30\n";
+        $file = UploadedFile::fake()->createWithContent('products.csv', $csv);
 
         $previewResponse = $this->followingRedirects()
             ->from(route('tools.margin-markup-calculator.index'))
             ->post(route('tools.margin-markup-calculator.import.preview'), ['import_file' => $file]);
 
         $previewResponse->assertOk()
-            ->assertSee('produtos.csv')
-            ->assertSee('2 linha(s)');
+            ->assertSee('products.csv')
+            ->assertSee('2 row(s)');
 
         preg_match('/name="import_token" value="([^"]+)"/', $previewResponse->getContent(), $matches);
         $this->assertNotEmpty($matches[1] ?? null);
@@ -171,23 +171,23 @@ final class MarginMarkupToolTest extends TestCase
             ->from(route('tools.margin-markup-calculator.index'))
             ->post(route('tools.margin-markup-calculator.import.process'), [
                 'import_token' => $token,
-                'available_headers' => ['Produto', 'Código', 'Categoria', 'Custo base', 'Margem %'],
-                'name_column' => 'Produto',
-                'code_column' => 'Código',
-                'category_column' => 'Categoria',
-                'base_cost_column' => 'Custo base',
-                'desired_margin_column' => 'Margem %',
+                'available_headers' => ['Product', 'Code', 'Category', 'Base cost', 'Margin %'],
+                'name_column' => 'Product',
+                'code_column' => 'Code',
+                'category_column' => 'Category',
+                'base_cost_column' => 'Base cost',
+                'desired_margin_column' => 'Margin %',
             ])
             ->assertOk()
-            ->assertSee('2 produto(s) importado(s)')
-            ->assertSee('Produto A');
+            ->assertSee('2 product(s) imported')
+            ->assertSee('Product A');
     }
 
     public function test_import_template_is_downloadable(): void
     {
         $this->get(route('tools.margin-markup-calculator.import.template'))
             ->assertOk()
-            ->assertDownload('modelo-importacao-margem-markup.csv');
+            ->assertDownload('margin-markup-import-template.csv');
     }
 
     public function test_alternative_exports_cannot_bypass_the_central_access_gate(): void
@@ -196,26 +196,26 @@ final class MarginMarkupToolTest extends TestCase
 
         $this->post(route('tools.margin-markup-calculator.export.pdf'), [
             'reference_date' => '2026-07-15',
-            'base_cost' => '100,00',
+            'base_cost' => '100.00',
             'desired_margin' => '25',
         ])->assertServiceUnavailable();
 
         $this->post(route('tools.margin-markup-calculator.batch.export'), [
             'reference_date' => '2026-07-15',
             'products' => [[
-                'name' => 'Produto A',
-                'base_cost' => '100,00',
+                'name' => 'Product A',
+                'base_cost' => '100.00',
                 'desired_margin' => '25',
             ]],
         ])->assertServiceUnavailable();
 
         $this->post(route('tools.margin-markup-calculator.scenarios.export'), [
             'reference_date' => '2026-07-15',
-            'product_name' => 'Produto A',
-            'base_cost' => '100,00',
+            'product_name' => 'Product A',
+            'base_cost' => '100.00',
             'scenarios' => [
                 ['name' => 'Base', 'desired_margin' => '20'],
-                ['name' => 'Meta', 'desired_margin' => '25'],
+                ['name' => 'Target', 'desired_margin' => '25'],
             ],
         ])->assertServiceUnavailable();
     }

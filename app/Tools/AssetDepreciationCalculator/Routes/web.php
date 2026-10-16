@@ -15,7 +15,7 @@ Route::get('/tools/asset-depreciation-calculator/export/{format}', [ToolControll
     ->name('tools.asset-depreciation-calculator.export');
 
 Route::middleware(['persistence.auth', 'tool.feature:asset-depreciation-calculator,multiple_assets'])
-    ->prefix('/tools/asset-depreciation-calculator/cadastro')
+    ->prefix('/tools/asset-depreciation-calculator/assets')
     ->name('tools.asset-depreciation-calculator.registry.')
     ->group(function (): void {
         Route::post('/', [ToolController::class, 'storeAsset'])->name('store');

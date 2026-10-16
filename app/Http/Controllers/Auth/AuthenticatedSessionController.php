@@ -25,7 +25,7 @@ final class AuthenticatedSessionController extends Controller
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'Não foi possível entrar com os dados informados.',
+                'email' => 'Unable to sign in with the provided credentials.',
             ]);
         }
 
@@ -44,7 +44,7 @@ final class AuthenticatedSessionController extends Controller
         }
 
         return redirect()->intended(route('account.show'))
-            ->with('status', $favoriteAdded ? 'Você entrou na sua conta e a ferramenta foi adicionada aos favoritos.' : 'Você entrou na sua conta.');
+            ->with('status', $favoriteAdded ? 'You signed in and the tool was added to your favorites.' : 'You signed in to your account.');
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -54,6 +54,6 @@ final class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home')
-            ->with('status', 'Você saiu da sua conta com segurança.');
+            ->with('status', 'You signed out securely.');
     }
 }

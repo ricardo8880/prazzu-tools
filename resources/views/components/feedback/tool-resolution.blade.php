@@ -8,9 +8,9 @@
     aria-labelledby="tool-resolution-title"
 >
     <div data-tool-resolution-question>
-        <span class="prazzu-eyebrow">Sua experiência</span>
-        <h2 id="tool-resolution-title" class="h5 mt-1 mb-1">Esta ferramenta resolveu o que você precisava?</h2>
-        <p class="small text-body-secondary mb-3">Leva poucos segundos e ajuda a priorizar melhorias que realmente fazem diferença.</p>
+        <span class="prazzu-eyebrow">Your experience</span>
+        <h2 id="tool-resolution-title" class="h5 mt-1 mb-1">Did this tool solve what you needed?</h2>
+        <p class="small text-body-secondary mb-3">It only takes a few seconds and helps prioritize improvements that make a real difference.</p>
 
         <form action="{{ route('feedback.tool.store') }}" method="post" data-tool-resolution-form novalidate>
             @csrf
@@ -20,7 +20,7 @@
             <input type="hidden" name="url" value="{{ request()->fullUrl() }}">
 
             <fieldset>
-                <legend class="visually-hidden">A ferramenta resolveu o que você precisava?</legend>
+                <legend class="visually-hidden">Did the tool solve what you needed?</legend>
                 <div class="d-flex flex-wrap gap-2" data-tool-resolution-options>
                     @foreach (\App\Core\Feedback\Enums\ToolResolution::cases() as $resolution)
                         <label class="btn btn-sm btn-outline-secondary">
@@ -34,7 +34,7 @@
             <div class="mt-3" data-tool-resolution-reasons hidden>
                 <label class="form-label fw-semibold mb-2" for="tool-resolution-reason">O que faltou?</label>
                 <select class="form-select form-select-sm" id="tool-resolution-reason" name="reason">
-                    <option value="">Selecione o principal motivo</option>
+                    <option value="">Select the main reason</option>
                     @foreach (\App\Core\Feedback\Enums\ToolResolutionReason::cases() as $reason)
                         <option value="{{ $reason->value }}">{{ $reason->label() }}</option>
                     @endforeach
@@ -45,7 +45,7 @@
             </div>
 
             <div class="alert alert-danger py-2 px-3 mt-3 mb-0" data-tool-resolution-error role="alert" hidden></div>
-            <button class="btn btn-primary btn-sm mt-3" type="submit" data-tool-resolution-submit hidden>Enviar resposta</button>
+            <button class="btn btn-primary btn-sm mt-3" type="submit" data-tool-resolution-submit hidden>Send resposta</button>
         </form>
     </div>
 
@@ -121,7 +121,7 @@
 
                         if (!response.ok) {
                             const validationMessage = payload?.errors ? Object.values(payload.errors).flat()[0] : null;
-                            throw new Error(validationMessage || payload?.message || 'Não foi possível registrar sua resposta.');
+                            throw new Error(validationMessage || payload?.message || 'Unable to record your response.');
                         }
 
                         successMessage.textContent = payload?.message || 'Obrigado por ajudar a melhorar o Prazzu Tools.';
@@ -129,7 +129,7 @@
                         success.hidden = false;
                         success.focus();
                     } catch (exception) {
-                        error.textContent = exception instanceof Error ? exception.message : 'Não foi possível registrar sua resposta.';
+                        error.textContent = exception instanceof Error ? exception.message : 'Unable to record your response.';
                         error.hidden = false;
                     } finally {
                         submit.disabled = false;

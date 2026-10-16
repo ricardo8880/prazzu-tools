@@ -31,17 +31,14 @@ final class Calculator implements ToolCalculator
             throw new InvalidArgumentException('Monthly hours must be between 1 and 744.');
         }
 
-        // Legacy field names rat/thirdParties are retained in persistence for backward
-        // compatibility; in the U.S. version they represent effective SUTA and other
-        // employer payroll-cost rates supplied by the user.
-        $rates = $this->chargeRule->ratesFor($input->regime, $input->rat, $input->thirdParties);
+$rates = $this->chargeRule->ratesFor($input->futaProfile, $input->sutaRate, $input->otherEmployerCostRate);
         $monthlyWages = $input->salary->add($input->variablePay);
         $annualWages = $monthlyWages->multiply(12);
         $annualBenefits = $input->benefits->multiply(12);
 
         $socialSecurity = FederalPayroll2026::employerSocialSecurity($annualWages);
         $medicare = FederalPayroll2026::employerMedicare($annualWages);
-        $futa = $input->regime === 'futa_exempt' ? Money::zero() : FederalPayroll2026::employerFuta($annualWages);
+        $futa = $input->futaProfile === 'futa_exempt' ? Money::zero() : FederalPayroll2026::employerFuta($annualWages);
         $suta = $annualWages->percentage($rates->suta);
         $otherEmployer = $annualWages->percentage($rates->otherEmployerCosts);
         $annualPayrollTaxes = $socialSecurity->add($medicare)->add($futa)->add($suta)->add($otherEmployer);

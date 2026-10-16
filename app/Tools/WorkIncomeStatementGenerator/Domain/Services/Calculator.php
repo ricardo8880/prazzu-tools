@@ -65,7 +65,7 @@ final class Calculator implements ToolCalculator
                 schemaVersion: '1.0.0',
                 steps: [
                     new CalculationMemoryStep('period', 'Employment period', 'start date ≤ issue date', ['start_date' => $input->startDate, 'issue_date' => $input->issueDate], 'valid'),
-                    new CalculationMemoryStep('income', 'Reported monthly income', 'monthly income supplied by the employer', ['monthly_income_minor' => $input->monthlyIncome->minorAmount()], $input->monthlyIncome->minorAmount(), 'Money em centavos, com aritmética inteira'),
+                    new CalculationMemoryStep('income', 'Reported monthly income', 'monthly income supplied by the employer', ['monthly_income_minor' => $input->monthlyIncome->minorAmount()], $input->monthlyIncome->minorAmount(), 'Money in cents using integer arithmetic'),
                     new CalculationMemoryStep('document', 'Generated letter', 'formatted employer-supplied data', ['worker' => $input->name, 'declarant' => $input->employer, 'occupation' => $input->occupation], 'generated'),
                 ],
                 assumptions: [

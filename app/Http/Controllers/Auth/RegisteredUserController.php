@@ -79,8 +79,8 @@ final class RegisteredUserController extends Controller
         }
 
         $status = $favoriteAdded
-            ? 'Sua conta gratuita foi criada e a ferramenta foi adicionada aos favoritos. Confirme seu e-mail para proteger os dados salvos.'
-            : 'Sua conta gratuita foi criada. Confirme seu e-mail para proteger os dados salvos.';
+            ? 'Your free account was created and the tool was added to your favorites. Verify your email to protect saved data.'
+            : 'Your free account was created. Verify your email to protect saved data.';
 
         return redirect()->intended(route('account.show'))->with('status', $status);
     }

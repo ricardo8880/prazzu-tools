@@ -11,7 +11,7 @@
     <div style="display:flex;justify-content:space-between;gap:24px;align-items:flex-start;border-bottom:1px solid #adb5bd;padding-bottom:14px;margin-bottom:34px;">
         <div>
             <p class="print-muted" style="text-transform:uppercase;letter-spacing:.08em;">Receipt</p>
-            <h2 id="receipt-document-title" style="border:0;margin:0;padding:0;font-size:22px;">Nº {{ $receipt['number'] }}</h2>
+            <h2 id="receipt-document-title" style="border:0;margin:0;padding:0;font-size:22px;">No. {{ $receipt['number'] }}</h2>
         </div>
         <div class="print-right">
             <span class="print-muted">Amount</span>
@@ -42,7 +42,7 @@
     </div>
 
     <div class="print-footer" style="margin-top:72px;">
-        Identifier do recibo: {{ $receipt['identifier'] }}
+        Receipt identifier: {{ $receipt['identifier'] }}
         @if(!empty($receipt['branding']['footer']))<br><span data-plus-feature="custom_branding">{{ $receipt['branding']['footer'] }}</span>@endif
     </div>
 </section>

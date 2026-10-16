@@ -8,10 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class StoreEmployeeProfileRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return $this->user() !== null;
-    }
+    public function authorize(): bool { return $this->user() !== null; }
 
     public function rules(): array
     {
@@ -24,9 +21,9 @@ final class StoreEmployeeProfileRequest extends FormRequest
             'salary' => ['required', 'us_money', 'money_min:0.01'],
             'variable_pay' => ['required', 'us_money', 'money_min:0'],
             'benefits' => ['required', 'us_money', 'money_min:0'],
-            'regime' => ['required', 'in:general,simples_annex_iv,simples_other'],
-            'rat' => ['required', 'numeric', 'min:0', 'max:15'],
-            'third_parties' => ['required', 'numeric', 'min:0', 'max:15'],
+            'futa_profile' => ['required', 'in:standard,futa_exempt'],
+            'suta_rate' => ['required', 'numeric', 'min:0', 'max:15'],
+            'other_employer_cost_rate' => ['required', 'numeric', 'min:0', 'max:25'],
             'monthly_hours' => ['required', 'integer', 'min:1', 'max:744'],
         ];
     }

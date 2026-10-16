@@ -11,50 +11,20 @@ final class HumanReadableExportPresenter
 {
     /** @var array<string, string> */
     private const LABELS = [
-        'name' => 'Nome',
-        'beneficiary' => 'Beneficiário',
-        'document' => 'Documento',
-        'payer' => 'Fonte pagadora',
-        'year' => 'Ano-calendário',
-        'competence' => 'Competência',
-        'base_salary' => 'Salário-base',
-        'taxable_additional_earnings' => 'Proventos tributáveis adicionais',
-        'non_taxable_earnings' => 'Proventos não tributáveis',
-        'dependents' => 'Dependentes para IRRF',
-        'judicial_pension' => 'Pensão alimentícia dedutível',
-        'transport_discount' => 'Desconto de vale-transporte',
-        'meal_discount' => 'Desconto de alimentação/refeição',
-        'health_plan_discount' => 'Desconto de plano de saúde',
-        'other_discounts' => 'Outros descontos',
-        'gross' => 'Rendimentos brutos',
-        'inss' => 'INSS',
-        'irrf' => 'IRRF',
-        'other_deductions' => 'Outras deduções',
-        'title' => 'Título',
-        'declaration' => 'Declaração',
-        'purpose' => 'Finalidade',
-        'limitations' => 'Limitações importantes',
-        'requires_review' => 'Revisão necessária',
-        'requires_signature' => 'Assinatura necessária',
-        'authenticity_validated' => 'Autenticidade validada pela plataforma',
-        'taxable_gross_minor' => 'Remuneração tributável',
-        'total_earnings_minor' => 'Proventos totais',
-        'social_security_base_minor' => 'Base de cálculo do INSS',
-        'inss_minor' => 'INSS',
-        'legal_irrf_deductions_minor' => 'Deduções legais do IRRF',
-        'simplified_irrf_deduction_minor' => 'Desconto simplificado mensal do IRRF',
-        'irrf_deduction_method' => 'Método de dedução do IRRF',
-        'irrf_base_minor' => 'Base de cálculo do IRRF',
-        'irrf_before_reduction_minor' => 'IRRF antes da redução',
-        'irrf_reduction_minor' => 'Redução mensal do IRRF',
-        'user_discounts_minor' => 'Descontos informados pelo usuário',
-        'total_discounts_minor' => 'Descontos totais',
-        'net_minor' => 'Valor líquido',
-        'gross_minor' => 'Valor bruto',
-        'deductions_minor' => 'Deduções totais',
-        'other_minor' => 'Outras deduções',
-        'input' => 'Dados utilizados no cálculo',
-        'notice' => 'Avisos e condições de uso',
+        'name' => 'Name', 'beneficiary' => 'Beneficiary', 'document' => 'Document',
+        'payer' => 'Payer', 'year' => 'Year', 'competence' => 'Period',
+        'base_salary' => 'Base pay', 'gross' => 'Gross amount', 'net' => 'Net amount',
+        'federal_income_tax' => 'Federal income tax', 'social_security' => 'Social Security',
+        'medicare' => 'Medicare', 'state_local_tax' => 'State/local tax',
+        'other_deductions' => 'Other deductions', 'title' => 'Title',
+        'declaration' => 'Statement', 'purpose' => 'Purpose', 'limitations' => 'Important limitations',
+        'requires_review' => 'Review required', 'requires_signature' => 'Signature required',
+        'taxable_gross_minor' => 'Taxable gross', 'total_earnings_minor' => 'Total earnings',
+        'social_security_minor' => 'Social Security', 'medicare_minor' => 'Medicare',
+        'federal_income_tax_minor' => 'Federal income tax', 'state_local_tax_minor' => 'State/local tax',
+        'user_discounts_minor' => 'User-entered deductions', 'total_discounts_minor' => 'Total deductions',
+        'net_minor' => 'Net amount', 'gross_minor' => 'Gross amount', 'deductions_minor' => 'Total deductions',
+        'other_minor' => 'Other deductions', 'input' => 'Calculation inputs', 'notice' => 'Notices and conditions',
     ];
 
     /** @param array<string, mixed> $data @return list<array{label:string,value:string,level:int}> */
@@ -105,64 +75,30 @@ final class HumanReadableExportPresenter
         $clean = str_replace(['_', '.'], ' ', $clean);
         $clean = preg_replace('/(?<!^)([A-Z])/', ' $1', $clean) ?? $clean;
 
-        $translations = [
-            'base' => 'base', 'salary' => 'salário', 'taxable' => 'tributável',
-            'additional' => 'adicional', 'earnings' => 'proventos', 'non' => 'não',
-            'dependents' => 'dependentes', 'judicial' => 'judicial', 'pension' => 'pensão',
-            'transport' => 'transporte', 'meal' => 'alimentação', 'health' => 'saúde',
-            'plan' => 'plano', 'discount' => 'desconto', 'discounts' => 'descontos',
-            'gross' => 'bruto', 'net' => 'líquido', 'total' => 'total',
-            'social' => 'previdenciária', 'security' => 'social', 'deduction' => 'dedução',
-            'deductions' => 'deduções', 'reduction' => 'redução', 'before' => 'antes',
-            'method' => 'método', 'legal' => 'legal', 'simplified' => 'simplificado',
-            'monthly' => 'mensal', 'value' => 'valor', 'amount' => 'valor',
-            'rate' => 'alíquota', 'percentage' => 'percentual', 'date' => 'data',
-            'description' => 'descrição', 'status' => 'situação', 'company' => 'empresa',
-            'employee' => 'empregado', 'employer' => 'empregador', 'revenue' => 'receita',
-            'cost' => 'custo', 'costs' => 'custos', 'tax' => 'tributo', 'taxes' => 'tributos',
-        ];
-
-        $words = array_map(
-            static fn (string $word): string => $translations[strtolower($word)] ?? $word,
-            preg_split('/\s+/', trim($clean)) ?: [],
-        );
-
-        return ucfirst(implode(' ', $words));
+        return ucfirst(trim($clean));
     }
 
     public function formatValue(string $key, mixed $value): string
     {
         if ($value === null || $value === '') {
-            return 'Não informado';
+            return 'Not provided';
         }
 
         if (is_bool($value)) {
-            return $value ? 'Sim' : 'Não';
+            return $value ? 'Yes' : 'No';
         }
 
-        if ($key === 'competence' && is_string($value) && preg_match('/^(\d{4})-(\d{2})$/', $value, $matches)) {
-            $months = [1 => 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-
-            return ucfirst($months[(int) $matches[2]] ?? $matches[2]).' de '.$matches[1];
-        }
 
         if (str_ends_with($key, '_minor') && is_numeric($value)) {
             return $this->formatMinor((int) $value);
         }
 
-        if ($key === 'irrf_deduction_method') {
-            return match ((string) $value) {
-                'legal' => 'Deduções legais',
-                'simplified' => 'Desconto simplificado mensal',
-                default => (string) $value,
-            };
-        }
 
         if ($this->looksMonetary($key) && (is_numeric($value) || (is_string($value) && preg_match('/^-?[\d.]+(?:,\d{1,2})?$/', $value)))) {
             try {
                 return Money::fromDecimal((string) $value)->formatEnUs();
             } catch (Throwable) {
-                // Mantém o valor original se não representar um decimal monetário válido.
+                // Keep the original value if it is not a valid monetary decimal.
             }
         }
 
@@ -260,7 +196,7 @@ final class HumanReadableExportPresenter
     private function looksMonetary(string $key): bool
     {
         return (bool) preg_match(
-            '/(?:salary|earning|discount|pension|gross|net|inss|irrf|deduction|amount|revenue|cost|tax|price|fee|payment|profit|expense|income|value)/',
+            '/(?:salary|earning|discount|pension|gross|net|fica|federal_tax|state_tax|deduction|amount|revenue|cost|tax|price|fee|payment|profit|expense|income|value)/',
             $key,
         );
     }

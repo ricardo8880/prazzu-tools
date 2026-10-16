@@ -1,13 +1,13 @@
-<aside class="prazzu-right-sidebar d-none d-xxl-flex flex-column" aria-label="Conteúdo complementar">
+<aside class="prazzu-right-sidebar d-none d-xxl-flex flex-column" aria-label="Additional content">
     <div class="prazzu-sidebar-scroll p-3">
         <section class="prazzu-panel p-3 mb-3" aria-labelledby="featured-articles-title">
             <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
-                <h2 id="featured-articles-title" class="h6 mb-0">Artigos recentes</h2>
-                <a class="prazzu-text-link flex-shrink-0" href="{{ route('blog.index') }}">Ver todos <i class="bi bi-arrow-right"></i></a>
+                <h2 id="featured-articles-title" class="h6 mb-0">Recent articles</h2>
+                <a class="prazzu-text-link flex-shrink-0" href="{{ route('blog.index') }}">View all <i class="bi bi-arrow-right"></i></a>
             </div>
 
             @if ($recentBlogPosts->isEmpty())
-                <p class="small text-body-secondary mb-0">Os próximos conteúdos aparecerão aqui assim que forem publicados.</p>
+                <p class="small text-body-secondary mb-0">New content will appear here as soon as it is published.</p>
             @else
                 <div class="d-grid gap-3">
                     @foreach ($recentBlogPosts as $article)
@@ -43,10 +43,10 @@
         type="button"
         data-bs-toggle="modal"
         data-bs-target="#tool-feedback-modal"
-        aria-label="Enviar feedback sobre esta ferramenta"
-        title="Enviar feedback"
+        aria-label="Send feedback about this tool"
+        title="Send feedback"
     >
         <i class="bi bi-chat-square-heart" aria-hidden="true"></i>
-        <span class="visually-hidden">Enviar feedback</span>
+        <span class="visually-hidden">Send feedback</span>
     </button>
 @endif

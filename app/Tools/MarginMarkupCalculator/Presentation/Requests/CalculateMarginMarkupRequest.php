@@ -16,12 +16,12 @@ final class CalculateMarginMarkupRequest extends FormRequest
     /** @return array<string, array<int, string>> */
     public function rules(): array
     {
-        $money = ['nullable', 'regex:/^\s*(?:R\$\s*)?\d{1,8}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'];
+        $money = ['nullable', 'us_money', 'money_min:0'];
         $percentage = ['nullable', 'numeric', 'min:0', 'lt:100'];
 
         return [
             'reference_date' => ['required', 'date_format:Y-m-d'],
-            'base_cost' => ['required', 'regex:/^\s*(?:R\$\s*)?\d{1,8}(?:\.\d{3})*(?:,\d{1,2})?\s*$/'],
+            'base_cost' => ['required', 'us_money', 'money_min:0.01'],
             'additional_costs' => $money,
             'freight_cost' => $money,
             'packaging_cost' => $money,
@@ -38,10 +38,10 @@ final class CalculateMarginMarkupRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'base_cost.regex' => 'Informe o custo base no formato 1.234,56.',
-            '*.regex' => 'Informe os valores monetários no formato 1.234,56.',
-            '*.min' => 'Os valores percentuais não podem ser negativos.',
-            '*.lt' => 'Cada percentual precisa ser menor que 100%.',
+            'base_cost.us_money' => 'Enter the base cost in U.S. format, for example 1,234.56.',
+            '*.us_money' => 'Enter monetary values in U.S. format, for example 1,234.56.',
+            '*.min' => 'Percentage values cannot be negative.',
+            '*.lt' => 'Each percentage must be below 100%.',
         ];
     }
 }

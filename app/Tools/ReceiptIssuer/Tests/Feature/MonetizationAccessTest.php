@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 final class MonetizationAccessTest extends TestCase
 {
     #[CoversPlusFeature('receipt-generator', 'custom_branding')]
+    #[CoversPlusFeature('receipt-generator', 'saved_profiles')]
     public function test_lot_six_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();

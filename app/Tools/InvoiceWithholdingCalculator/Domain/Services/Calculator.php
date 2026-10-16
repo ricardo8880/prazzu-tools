@@ -20,7 +20,6 @@ final class Calculator implements ToolCalculator
     {
         if(!$input instanceof CalculationInput) throw new InvalidArgumentException('Incompatible backup-withholding input.');
         $gross=Money::fromDecimal($input->grossValue);
-        foreach($input->additionalPayments as $p){$gross=$gross->add(Money::fromDecimal((string)($p['value']??'0')));}
         $rate=Percentage::fromString($input->backupWithholdingRate);
         if($rate->millionthsOfPercent()<0 || $rate->millionthsOfPercent()>100_000_000) throw new InvalidArgumentException('Backup withholding rate must be between 0% and 100%.');
         $backup=$input->applyBackupWithholding ? $gross->percentage($rate) : Money::zero();
@@ -29,7 +28,7 @@ final class Calculator implements ToolCalculator
         if($withheld->minorAmount()>$gross->minorAmount()) throw new InvalidArgumentException('Total withholding cannot exceed gross payments.');
         $net=$gross->subtract($withheld);
         $memory=new CalculationMemory('2.0.0',[
-            new CalculationMemoryStep('gross','Gross reportable payments','primary payment + additional payments',[], $gross->minorAmount()),
+            new CalculationMemoryStep('gross','Gross reportable payments','primary reportable payment',[], $gross->minorAmount()),
             new CalculationMemoryStep('backup','Federal backup withholding','gross reportable payments × backup withholding rate',['rate'=>$rate->toDecimalString()],$backup->minorAmount()),
             new CalculationMemoryStep('net','Net payment','gross payments − federal backup withholding − entered state/other withholding',[],$net->minorAmount()),
         ],assumptions:[

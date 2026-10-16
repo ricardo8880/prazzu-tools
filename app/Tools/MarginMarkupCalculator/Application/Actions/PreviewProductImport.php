@@ -37,19 +37,19 @@ final readonly class PreviewProductImport
     private function suggestMapping(array $headers): array
     {
         $patterns = [
-            'name_column' => ['produto', 'nome', 'nome do produto', 'descricao', 'descrição'],
-            'code_column' => ['codigo', 'código', 'sku', 'referencia', 'referência'],
-            'category_column' => ['categoria', 'grupo'],
-            'base_cost_column' => ['custo base', 'custo', 'preco de custo', 'preço de custo'],
-            'additional_costs_column' => ['outros custos', 'custos adicionais'],
-            'freight_cost_column' => ['frete'],
-            'packaging_cost_column' => ['embalagem'],
-            'fixed_expenses_column' => ['despesas', 'despesas rateadas', 'custos fixos'],
-            'desired_margin_column' => ['margem', 'margem desejada', 'margem %'],
-            'taxes_percentage_column' => ['impostos', 'imposto', 'impostos %'],
-            'commission_percentage_column' => ['comissao', 'comissão', 'comissao %', 'comissão %'],
-            'card_fees_percentage_column' => ['cartao', 'cartão', 'taxa cartao', 'taxa cartão'],
-            'marketplace_fees_percentage_column' => ['marketplace', 'taxa marketplace'],
+            'name_column' => ['product', 'name', 'product name', 'description'],
+            'code_column' => ['code', 'sku', 'reference'],
+            'category_column' => ['category', 'group'],
+            'base_cost_column' => ['base cost', 'cost', 'unit cost', 'cost price'],
+            'additional_costs_column' => ['additional costs', 'other costs'],
+            'freight_cost_column' => ['shipping', 'freight'],
+            'packaging_cost_column' => ['packaging'],
+            'fixed_expenses_column' => ['expenses', 'allocated expenses', 'fixed costs'],
+            'desired_margin_column' => ['margin', 'desired margin', 'margin %'],
+            'taxes_percentage_column' => ['taxes', 'tax', 'taxes %'],
+            'commission_percentage_column' => ['commission', 'commission %'],
+            'card_fees_percentage_column' => ['card fees', 'card fee', 'card fees %'],
+            'marketplace_fees_percentage_column' => ['marketplace', 'marketplace fee', 'marketplace fees %'],
         ];
 
         $suggestions = [];

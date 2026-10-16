@@ -79,7 +79,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             ],
             features: [
                 new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
-                new ToolFeature('cash_flow_scenarios', 'Comparação de cenários de entradas e saídas', ToolFeatureTier::Plus),
+                new ToolFeature('cash_flow_scenarios', 'Cash inflow and outflow scenario comparison', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),

@@ -3,21 +3,21 @@
 @php
     $message = filled($context->contextualMessage)
         ? $context->contextualMessage
-        : 'Experiência personalizada para: '.$context->name;
+        : 'Personalized experience for: '.$context->name;
     $continueLabel = filled($context->contextualContinueLabel)
         ? $context->contextualContinueLabel
-        : 'Ver soluções recomendadas';
+        : 'View recommended solutions';
     $isFreeMode = $mode === \App\Core\Acquisition\Application\Session\AcquisitionContextSession::MODE_FREE;
 @endphp
 
-<section class="prazzu-context-bar" aria-label="Experiência personalizada">
+<section class="prazzu-context-bar" aria-label="Personalized experience">
     <div class="prazzu-context-bar__content">
         <div class="prazzu-context-bar__message">
-            <span class="prazzu-context-bar__eyebrow">Experiência personalizada</span>
+            <span class="prazzu-context-bar__eyebrow">Personalized experience</span>
             <strong>{{ $message }}</strong>
         </div>
 
-        <div class="prazzu-context-bar__actions" aria-label="Modo de exploração">
+        <div class="prazzu-context-bar__actions" aria-label="Browsing mode">
             <form method="post" action="{{ route('acquisition.context.clear') }}">
                 @csrf
                 <button
@@ -26,7 +26,7 @@
                     @if ($isFreeMode) aria-current="true" @endif
                 >
                     <i class="bi bi-compass" aria-hidden="true"></i>
-                    <span>Explorar livremente</span>
+                    <span>Browse freely</span>
                 </button>
             </form>
 

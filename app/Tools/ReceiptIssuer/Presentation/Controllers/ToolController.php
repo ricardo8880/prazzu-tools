@@ -94,7 +94,7 @@ final class ToolController extends Controller
             'title' => 'Receipt nº '.$receipt['number'],
             'contentView' => 'tools-receipt-generator::pdf.receipt',
             'contentData' => ['receipt' => $receipt],
-            'generatedAt' => now()->format('d/m/Y H:i'),
+            'generatedAt' => now()->format('M j, Y g:i A'),
             'summaryLabel' => 'Amount',
             'summaryValue' => $receipt['amount'],
         ]);
@@ -162,7 +162,7 @@ final class ToolController extends Controller
         return redirect()->route('tools.receipt-generator.index')
             ->withInput($entry->input)
             ->with('receipt_result', $entry->result)
-            ->with('history_message', 'Receipt recuperado. Revise os dados antes de emitir novamente.');
+            ->with('history_message', 'Receipt loaded. Review the data before issuing it again.');
     }
 
     public function destroyHistory(Request $request, string $run, ManageReceiptHistory $history): RedirectResponse
@@ -190,10 +190,10 @@ final class ToolController extends Controller
         $result = $batch->execute($request->file('file'));
 
         return view('exports.printable-document', [
-            'title' => 'Receipts em lote',
+            'title' => 'Batch receipts',
             'contentView' => 'tools-receipt-generator::pdf.batch',
             'contentData' => $result,
-            'generatedAt' => now()->format('d/m/Y H:i'),
+            'generatedAt' => now()->format('M j, Y g:i A'),
         ]);
     }
 
@@ -208,7 +208,7 @@ final class ToolController extends Controller
     {
         $profiles->save((int) $request->user()->getAuthIdentifier(), $request->validated());
 
-        return back()->with('profile_message', 'Perfil salvo e disponível para reutilização.');
+        return back()->with('profile_message', 'Profile saved and available for reuse.');
     }
 
     public function useProfile(Request $request, int $profile, ManageReceiptPartyProfiles $profiles): RedirectResponse
@@ -227,7 +227,7 @@ final class ToolController extends Controller
     {
         $profiles->delete($profile, (int) $request->user()->getAuthIdentifier());
 
-        return back()->with('profile_message', 'Perfil removido.');
+        return back()->with('profile_message', 'Profile deleted.');
     }
 
     /** @param array<string,mixed> $input */

@@ -22,7 +22,7 @@
         <div>
             <span class="badge text-bg-primary mb-2">Prazzu Plus</span>
             <h1 class="h2 mb-1">{{ $contextLabel ? $tool->name.' — '.$contextLabel : 'Cálculo salvo' }}</h1>
-            <p class="text-body-secondary mb-0">Referência {{ $entry->referenceDate->format('d/m/Y') }} · regra {{ $entry->ruleVersion }}</p>
+            <p class="text-body-secondary mb-0">Reference {{ $entry->referenceDate->format('M j, Y') }} · rule {{ $entry->ruleVersion }}</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
             <form method="post" action="{{ route($routePrefix.'.history.repeat', ['run' => $entry->id]) }}">

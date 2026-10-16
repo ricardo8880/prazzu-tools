@@ -11,29 +11,23 @@ use PHPUnit\Framework\TestCase;
 
 final class EmployerChargeRuleTest extends TestCase
 {
-    public function test_general_regime_keeps_cpp_rat_and_third_parties(): void
+    public function test_standard_profile_keeps_federal_and_user_entered_employer_rates(): void
     {
-        $rates = (new EmployerChargeRule)->ratesFor(
-            'general', Percentage::fromString('2'), Percentage::fromString('5.8'),
-        );
-
-        self::assertSame(['fgts' => '8', 'cpp' => '20', 'rat' => '2', 'third_parties' => '5.8'], $rates->toArray());
+        $rates = (new EmployerChargeRule)->ratesFor('standard', Percentage::fromString('2'), Percentage::fromString('1.5'));
+        self::assertSame(['social_security'=>'6.2','medicare'=>'1.45','futa'=>'0.6','suta'=>'2','other_employer_costs'=>'1.5'], $rates->toArray());
     }
 
-    public function test_simples_other_embeds_patronal_charges_and_keeps_fgts(): void
+    public function test_futa_exempt_profile_zeroes_futa_only(): void
     {
-        $rates = (new EmployerChargeRule)->ratesFor(
-            'simples_other', Percentage::fromString('3'), Percentage::fromString('5.8'),
-        );
-
-        self::assertSame(['fgts' => '8', 'cpp' => '0', 'rat' => '0', 'third_parties' => '0'], $rates->toArray());
+        $rates = (new EmployerChargeRule)->ratesFor('futa_exempt', Percentage::fromString('3'), Percentage::fromString('1'));
+        self::assertSame('0', $rates->futa->toDecimalString());
+        self::assertSame('3', $rates->suta->toDecimalString());
     }
 
-    public function test_snapshot_preserves_official_sources(): void
+    public function test_snapshot_preserves_us_sources(): void
     {
         $snapshot = (new EmployerChargeRule)->snapshot(ReferenceDate::fromString('2026-07-25'));
-
-        self::assertSame('labor.employer-charges', $snapshot->identifier);
-        self::assertCount(3, $snapshot->references);
+        self::assertSame('us.employer-payroll-2026', $snapshot->identifier);
+        self::assertCount(2, $snapshot->references);
     }
 }

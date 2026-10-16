@@ -16,11 +16,11 @@ final class CalculatorTest extends TestCase
             ['name' => 'Notebook', 'value' => '12.000,00', 'useful_life_years' => 5, 'method' => 'linear'],
         ]));
 
-        self::assertSame('R$ 0,00', $result->summary[1]->value);
-        self::assertSame('R$ 12.000,00', $result->summary[2]->value);
-        self::assertSame('R$ 200,00', $result->summary[3]->value);
-        self::assertSame('R$ 2.400,00', $result->summary[4]->value);
-        self::assertSame('R$ 9.600,00', $result->summary[5]->value);
+        self::assertSame('$0.00', $result->summary[1]->value);
+        self::assertSame('$12,000.00', $result->summary[2]->value);
+        self::assertSame('$200.00', $result->summary[3]->value);
+        self::assertSame('$2,400.00', $result->summary[4]->value);
+        self::assertSame('$9,600.00', $result->summary[5]->value);
         self::assertSame(0, $result->details['assets'][0]['schedule'][4]['book_value_minor']);
     }
 
@@ -54,9 +54,9 @@ final class CalculatorTest extends TestCase
             ['name' => 'Notebook', 'value' => '12.000,00', 'residual_value' => '2.000,00', 'useful_life_years' => 5, 'method' => 'linear'],
         ]));
 
-        self::assertSame('R$ 2.000,00', $result->summary[1]->value);
-        self::assertSame('R$ 10.000,00', $result->summary[2]->value);
-        self::assertSame('R$ 166,67', $result->summary[3]->value);
+        self::assertSame('$2,000.00', $result->summary[1]->value);
+        self::assertSame('$10,000.00', $result->summary[2]->value);
+        self::assertSame('$166.67', $result->summary[3]->value);
         self::assertSame(200000, $result->details['assets'][0]['schedule'][4]['book_value_minor']);
     }
 

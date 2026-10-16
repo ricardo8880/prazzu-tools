@@ -50,14 +50,14 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHisto
                     fields: [
                         new ToolAnalyticsField('competence', 'input', selector: '[name="competence"]'),
                         new ToolAnalyticsField('base_salary', 'input', selector: '[name="base_salary"]'),
-                        new ToolAnalyticsField('dependents', 'input', selector: '[name="dependents"]'),
                         new ToolAnalyticsField('taxable_additional_earnings', 'input', selector: '[name="taxable_additional_earnings"]'),
                         new ToolAnalyticsField('non_taxable_earnings', 'input', selector: '[name="non_taxable_earnings"]'),
-                        new ToolAnalyticsField('judicial_pension', 'input', selector: '[name="judicial_pension"]'),
-                        new ToolAnalyticsField('transport_discount', 'input', selector: '[name="transport_discount"]'),
-                        new ToolAnalyticsField('meal_discount', 'input', selector: '[name="meal_discount"]'),
-                        new ToolAnalyticsField('health_plan_discount', 'input', selector: '[name="health_plan_discount"]'),
-                        new ToolAnalyticsField('other_discounts', 'input', selector: '[name="other_discounts"]'),
+                        new ToolAnalyticsField('filing_status', 'input', selector: '[name="filing_status"]'),
+                        new ToolAnalyticsField('pretax_deductions', 'input', selector: '[name="pretax_deductions"]'),
+                        new ToolAnalyticsField('state_local_withholding', 'input', selector: '[name="state_local_withholding"]'),
+                        new ToolAnalyticsField('additional_federal_withholding', 'input', selector: '[name="additional_federal_withholding"]'),
+                        new ToolAnalyticsField('benefit_deductions', 'input', selector: '[name="benefit_deductions"]'),
+                        new ToolAnalyticsField('other_deductions', 'input', selector: '[name="other_deductions"]'),
                         new ToolAnalyticsField('confirm_assumptions', 'input', selector: '[name="confirm_assumptions"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
@@ -92,7 +92,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHisto
             ],
             features: [
                 new ToolFeature('calculate', 'Take-home pay with 2026 federal income-tax estimate and FICA', ToolFeatureTier::Essential),
-                new ToolFeature('memory', 'Calculation details and sources normativas', ToolFeatureTier::Essential),
+                new ToolFeature('memory', 'Calculation details and source assumptions', ToolFeatureTier::Essential),
                 new ToolFeature('variable_earnings', 'Custom taxable and non-taxable earnings', ToolFeatureTier::Plus),
                 new ToolFeature('custom_discounts', 'Custom benefit and other deductions', ToolFeatureTier::Plus),
                 new ToolFeature('history', 'Authenticated calculation history', ToolFeatureTier::Plus),
@@ -110,8 +110,8 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, ProvidesHisto
         return new ToolHistoryPolicy(
             enabled: true,
             retentionDays: 365,
-            inputFields: ['competence', 'base_salary', 'taxable_additional_earnings', 'non_taxable_earnings', 'dependents', 'judicial_pension', 'transport_discount', 'meal_discount', 'health_plan_discount', 'other_discounts'],
-            resultFields: ['gross', 'inss', 'irrf', 'discounts', 'net', 'summary', 'details', 'warnings', 'calculation_memory'],
+            inputFields: ['competence', 'base_salary', 'taxable_additional_earnings', 'non_taxable_earnings', 'filing_status', 'pretax_deductions', 'state_local_withholding', 'additional_federal_withholding', 'benefit_deductions', 'other_deductions'],
+            resultFields: ['gross_minor', 'federal_income_tax_minor', 'social_security_minor', 'medicare_minor', 'additional_medicare_minor', 'deductions_minor', 'net_minor', 'summary', 'details', 'warnings', 'calculation_memory'],
             sensitiveFields: [],
         );
     }

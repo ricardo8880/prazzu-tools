@@ -40,7 +40,7 @@ final class ContractGeneratorController
         ToolProfileManager $profiles,
         ManageContractHistory $history,
     ): View {
-        $template = ContractTemplate::tryFrom((string) $request->query('modelo'));
+        $template = ContractTemplate::tryFrom((string) $request->query('template', $request->query('modelo')));
         $selectedType = $template?->contractType() ?? ContractType::tryFrom((string) $request->query('tipo'));
 
         if ($template?->isPlus()) {
@@ -204,7 +204,7 @@ final class ContractGeneratorController
                     'title' => $type->documentTitle(),
                     'contentView' => 'tools-contract-generator::pdf.contract',
                     'contentData' => ['content' => (string) $validated['contract_text']],
-                    'generatedAt' => now()->format('d/m/Y H:i'),
+                    'generatedAt' => now()->format('M j, Y g:i A'),
                 ],
             ));
         } catch (\Throwable $exception) {
@@ -261,7 +261,7 @@ final class ContractGeneratorController
         $companyAutofill = null;
         if ($user !== null && $featureAccess['company_autofill']) {
             $companyProfiles = $profiles->companies((int) $user->getAuthIdentifier());
-            $companyId = $request->integer('empresa');
+            $companyId = $request->integer('company', $request->integer('empresa'));
             if ($companyId > 0) {
                 $profile = $profiles->findCompanyOwned($companyId, (int) $user->getAuthIdentifier());
                 $companyAutofill = [

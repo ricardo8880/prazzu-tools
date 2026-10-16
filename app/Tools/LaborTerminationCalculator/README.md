@@ -1,87 +1,22 @@
-# Calculadora de Rescisão Trabalhista
+# Final Pay & Severance Calculator
 
 ## Descrição
-
-Ferramenta para estimar verbas de rescisão trabalhista, integrada ao catálogo,
-ao histórico criptografado e aos contratos compartilhados do Prazzu Tools.
+Estimates final wages, PTO payout, severance, bonuses, withholding, and deductions.
 
 ## Funcionalidades
-
-- saldo de salário;
-- férias vencidas, proporcionais, em dobro e adicional de 1/3;
-- 13º proporcional;
-- aviso-prévio trabalhado, indenizado ou descontado, incluindo
-  proporcionalidade;
-- modalidades de desligamento e contratos por prazo indeterminado, determinado
-  e de experiência;
-- indenizações dos artigos 479 e 480;
-- remuneração variável, comissões, horas extras e adicionais recorrentes;
-- INSS, IRRF, descontos e valor líquido estimado;
-- FGTS, multa rescisória, saque estimado e regime do empregado doméstico;
-- histórico criptografado por 180 dias para usuários autenticados;
-- repetição, visualização e exclusão dos cálculos salvos;
-- relatório completo otimizado para impressão e salvamento como PDF pelo
-  navegador.
+Final-pay estimate with user-entered policy/state assumptions. Plus adds saved history, reuse, and historical reports.
 
 ## Experiência Essencial
-
-A experiência gratuita calcula integralmente todas as verbas, descontos,
-tributos, FGTS e alertas aplicáveis e entrega o relatório completo do cálculo
-atual. O Plus não altera fórmulas nem libera parcelas ocultas do resultado.
+Final-pay estimate with user-entered policy/state assumptions.
 
 ## Prazzu Plus
-
-O Plus oferece continuidade: histórico individual, recuperação, repetição e
-relatório de cálculos salvos. Durante o lançamento, esses recursos ficam
-liberados pela política comercial central, mantendo login apenas para salvar.
+Plus adds saved history, reuse, and historical reports.
 
 ## Regras
-
-- Os resultados são estimativas informativas e não substituem TRCT, documentos
-  oficiais ou conferência profissional.
-- Casos com estabilidade, normas coletivas, afastamentos, médias complexas ou
-  decisões judiciais podem exigir cálculo especializado.
-- Regras de cálculo e tabelas tributárias possuem versões independentes.
-- A data de referência é recebida pelo caso de uso; o Domain não consulta o
-  relógio global.
-- A tabela progressiva do INSS usa os limites vigentes desde janeiro de 2026,
-  publicados na Portaria Interministerial MPS/MF nº 13/2026, e trunca o
-  resultado de cada faixa em centavos conforme a orientação do eSocial.
-- Valores monetários utilizam `Money`, sem `float`.
-- Visitantes calculam e exportam o resultado atual sem autenticação durante a
-  fase gratuita.
-- Login é exigido somente para salvar, consultar, repetir ou excluir histórico.
-- Histórico, auditoria e impressão são responsabilidades do Core e devem ser
-  acessados por seus contratos.
+Severance and PTO payout vary by agreement, policy, and state; this tool does not infer state law.
 
 ## Dependências
-
-- `Money`, datas de referência e exceções de domínio do Core;
-- contratos centrais de histórico e auditoria;
-- `PdfExporter`/Dompdf e `SpreadsheetExporter`/PhpSpreadsheet para exportações oficiais;
-- Laravel apenas nas camadas Presentation e Infrastructure;
-- recurso nativo de impressão do navegador, sem biblioteca externa de PDF no
-  servidor.
-
-O relatório inclui dados do contrato, verbas, descontos, FGTS, alertas, versões
-das regras e referências gerais.
+Core Money/Percentage, history, persistence, and export services.
 
 ## Histórico de versões
-
-- `1.0.0`: cálculo completo de rescisão, regras trabalhistas e tributárias,
-  histórico autenticado, repetição, exclusão e relatório para impressão.
-- Regra de cálculo: versionada em `LaborTerminationCalculator::RULE_VERSION`.
-- Tabelas tributárias: versionadas no calculador de folha.
-
-## Conformidade arquitetural — Lote 9
-
-Esta ferramenta foi migrada para o padrão definitivo da plataforma: manifesto final,
-capacidades Essencial/Plus, contratos de cálculo e integração, componentes visuais
-compartilhados e políticas transversais de histórico, persistência versionada,
-exportação, compartilhamento e dados sensíveis. Implementações particulares dessas
-responsabilidades não devem ser introduzidas no módulo.
-
-
-## Lote 5 — memória e transparência
-
-O módulo foi revisado no Lote 5 para expor memória de cálculo estruturada, premissas e arredondamento sem depender do domínio de outras ferramentas. A responsabilidade permanece limitada ao escopo descrito neste documento.
+- 1.1.0: U.S. final-pay model and decimal-hour arithmetic without float.

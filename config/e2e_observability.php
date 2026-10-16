@@ -13,6 +13,6 @@ return [
     ],
     'sensitive_fields' => [
         'password', 'password_confirmation', 'token', 'authorization', 'cookie',
-        'cpf', 'cnpj', 'document', 'email', 'phone', 'address',
+        'ssn', 'ein', 'tin', 'document', 'email', 'phone', 'address',
     ],
 ];

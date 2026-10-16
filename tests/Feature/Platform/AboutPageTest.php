@@ -8,7 +8,7 @@ final class AboutPageTest extends TestCase
 {
     public function test_about_page_presents_the_platform_vision(): void
     {
-        $this->get('/sobre')
+        $this->get('/about')
             ->assertOk()
             ->assertSee('Ferramentas profissionais que resolvem de verdade')
             ->assertSee('Uma plataforma, não apenas calculadoras')
@@ -18,7 +18,7 @@ final class AboutPageTest extends TestCase
 
     public function test_about_page_explains_the_free_and_plus_philosophy(): void
     {
-        $this->get('/sobre')
+        $this->get('/about')
             ->assertOk()
             ->assertSee('Boa · Gratuita')
             ->assertSee('Excelente · Prazzu Plus')
@@ -28,7 +28,7 @@ final class AboutPageTest extends TestCase
 
     public function test_about_page_links_to_tools_and_plans(): void
     {
-        $this->get('/sobre')
+        $this->get('/about')
             ->assertOk()
             ->assertSee(route('tools.index'), false)
             ->assertSee(route('plans'), false);

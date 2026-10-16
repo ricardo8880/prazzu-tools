@@ -73,7 +73,7 @@ final readonly class SimulatePricingScenarios
         $adjusted = $money->add($money->percentage($adjustment));
 
         if ($adjusted->minorAmount() < 0) {
-            throw new InvalidValue('O ajuste de custo não pode gerar valor negativo.');
+            throw new InvalidValue('The cost adjustment cannot produce a negative amount.');
         }
 
         return $this->decimalFromMinor($adjusted->minorAmount());
@@ -101,7 +101,7 @@ final readonly class SimulatePricingScenarios
     {
         $absolute = abs($minor);
 
-        return ($minor < 0 ? '-' : '').intdiv($absolute, 100).','.str_pad((string) ($absolute % 100), 2, '0', STR_PAD_LEFT);
+        return ($minor < 0 ? '-' : '').intdiv($absolute, 100).'.'.str_pad((string) ($absolute % 100), 2, '0', STR_PAD_LEFT);
     }
 
     private function percentageStringFromMillionths(int $value): string

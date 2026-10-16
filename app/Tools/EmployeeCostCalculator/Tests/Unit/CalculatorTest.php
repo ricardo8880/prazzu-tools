@@ -14,8 +14,8 @@ final class CalculatorTest extends TestCase
 {
     public function test_it_calculates_monthly_and_annual_cost(): void
     {
-        $r = (new Calculator)->calculate(new CalculationInput(Money::fromDecimal('3000'), Money::zero(), Money::fromDecimal('500'), 'general', Percentage::fromString('2'), Percentage::fromString('5.8')));
-        self::assertSame('R$ 5.366,17', $r->summary[0]->value);
-        self::assertSame('R$ 64.394,04', $r->summary[1]->value);
+        $r = (new Calculator)->calculate(new CalculationInput(Money::fromDecimal('3000'), Money::zero(), Money::fromDecimal('500'), 'standard', Percentage::fromString('2'), Percentage::fromString('5.8')));
+        self::assertSame('$3,967.00', $r->summary[0]->value);
+        self::assertSame('$47,604.00', $r->summary[1]->value);
     }
 }

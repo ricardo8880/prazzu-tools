@@ -75,7 +75,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="amount" class="form-label">Amount received</label>
-                                <input id="amount" name="amount" value="{{ old('amount') }}" class="form-control" placeholder="1.000,00" inputmode="decimal" required>
+                                <input id="amount" name="amount" value="{{ old('amount') }}" class="form-control" placeholder="1,000.00" inputmode="decimal" required>
                             </div>
                             <div class="col-md-4">
                                 <label for="issued_at" class="form-label">Issue date</label>
@@ -141,9 +141,9 @@
                 </div>
 
                 @if (is_array($receipt))
-                    <section aria-labelledby="recibo-gerado" class="mb-4 prazzu-tool-result-surface" data-testid="tool-result" data-tool-result-panel>
+                    <section aria-labelledby="receipt-generated" class="mb-4 prazzu-tool-result-surface" data-testid="tool-result" data-tool-result-panel>
                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                            <h2 id="recibo-gerado" class="h3 mb-0">Receipt review</h2>
+                            <h2 id="receipt-generated" class="h3 mb-0">Receipt review</h2>
                             <div class="d-flex flex-wrap gap-2">
                                 <form method="POST" action="{{ route('tools.receipt-generator.export', 'pdf') }}">
                                     @csrf
@@ -172,7 +172,7 @@
                                 <div class="d-flex justify-content-between gap-3 border-bottom pb-3 mb-4">
                                     <div>
                                         <div class="text-uppercase text-muted small">Receipt</div>
-                                        <h3 class="h4 mb-0">Nº {{ $receipt['number'] }}</h3>
+                                        <h3 class="h4 mb-0">No. {{ $receipt['number'] }}</h3>
                                     </div>
                                     <div class="text-end">
                                         <div class="text-muted small">Amount</div>
@@ -210,10 +210,10 @@
                 @endif
 
                 @auth
-                    <section class="mt-5" aria-labelledby="historico-recente">
+                    <section class="mt-5" aria-labelledby="recent-history">
                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                             <div>
-                                <h2 id="historico-recente" class="h4 mb-1">Receipts recentes</h2>
+                                <h2 id="recent-history" class="h4 mb-1">Recent receipts</h2>
                                 <p class="text-body-secondary mb-0">Quickly access receipts saved to your account.</p>
                             </div>
                             <a class="btn btn-outline-primary" href="{{ route('tools.receipt-generator.batch.index') }}"><i class="bi bi-files me-1"></i> Generate batch</a>
@@ -226,7 +226,7 @@
                                     <div class="card h-100">
                                         <div class="card-body">
                                             <strong>Receipt nº {{ $historyReceipt['number'] ?? ($run->input['number'] ?? '—') }}</strong>
-                                            <div class="small text-body-secondary mt-1">{{ $historyReceipt['amount'] ?? 'Amount não disponível' }}</div>
+                                            <div class="small text-body-secondary mt-1">{{ $historyReceipt['amount'] ?? 'Amount unavailable' }}</div>
                                             <div class="small mt-2">{{ $historyReceipt['payer']['name'] ?? ($run->input['payer_name'] ?? 'Payer') }}</div>
                                             <form method="POST" action="{{ route('tools.receipt-generator.history.repeat', $run->id) }}" class="mt-3">
                                                 @csrf

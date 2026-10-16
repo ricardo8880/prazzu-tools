@@ -16,16 +16,16 @@ final class AccountingFeesAdjustmentTest extends TestCase
 
     public function test_adjustment_page_is_available(): void
     {
-        $this->get(route('tools.accounting-fee-calculator.adjustments.index'))->assertOk()->assertSee('Reajuste de honorários');
+        $this->get(route('tools.accounting-fee-calculator.adjustments.index'))->assertOk()->assertSee('Accounting fee adjustment');
     }
 
     public function test_it_calculates_and_stores_adjustment(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user)->post(route('tools.accounting-fee-calculator.adjustments.calculate'), [
-            'scenario_label' => 'Renovação anual — cenário A', 'index_type' => 'ipca', 'reference_period' => '2026-07',
-            'current_value' => '1.500,00', 'percentage' => '4.62', 'notes' => 'Índice acumulado do contrato.',
-        ])->assertOk()->assertSee('R$ 69,30')->assertSee('R$ 1.569,30');
+            'scenario_label' => 'Annual renewal — scenario A', 'index_type' => 'cpi_u', 'reference_period' => '2026-07',
+            'current_value' => '1500.00', 'percentage' => '4.62', 'notes' => 'Annual CPI-U assumption from the agreement.',
+        ])->assertOk()->assertSee('$69.30')->assertSee('$1,569.30');
 
         $run = ToolRun::query()->where('tool_slug', 'accounting-fee-calculator')->firstOrFail();
         self::assertSame('fee_adjustment', data_get($run->input_payload, 'run_type'));

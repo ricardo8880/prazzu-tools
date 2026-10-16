@@ -11,14 +11,14 @@
         <form method="POST" action="{{ route('tools.working-capital-calculator.calculate') }}" class="row g-3" data-analytics-form="main">
             @csrf
             @foreach ([
-                'cash' => ['Caixa e bancos', 'Disponibilidades imediatas.'],
-                'receivables' => ['Contas a receber', 'Amounts operacionais a receber.'],
-                'inventory' => ['Estoques', 'Saldo dos estoques.'],
-                'other_current_assets' => ['Outros ativos circulantes', 'Outros recursos de curto prazo ligados à operação.'],
-                'suppliers' => ['Fornecedores', 'Obrigações operacionais com fornecedores.'],
-                'other_operating_liabilities' => ['Outras obrigações operacionais', 'Wages, tributos e outras contas do ciclo.'],
-                'loans' => ['Empréstimos de curto prazo', 'Dívidas financeiras no passivo circulante.'],
-                'other_current_liabilities' => ['Outras obrigações circulantes', 'Demais passivos de curto prazo.'],
+                'cash' => ['Cash and bank balances', 'Immediately available cash.'],
+                'receivables' => ['Accounts receivable', 'Operating amounts receivable.'],
+                'inventory' => ['Inventory', 'Inventory balance.'],
+                'other_current_assets' => ['Other current assets', 'Other short-term resources related to operations.'],
+                'suppliers' => ['Accounts payable', 'Operating obligations to suppliers.'],
+                'other_operating_liabilities' => ['Other operating liabilities', 'Wages, taxes, and other operating-cycle obligations.'],
+                'loans' => ['Short-term debt', 'Loans and other financial obligations due within one year.'],
+                'other_current_liabilities' => ['Other current liabilities', 'Other short-term liabilities.'],
             ] as $name => [$label, $help])
                 <div class="col-12 col-md-6">
                     <x-tools.form.money :name="$name" :label="$label" :help="$help" :value="old($name)" required />
@@ -53,9 +53,9 @@
         <x-tools.form-panel class="mt-4" title="Prazzu Plus — scenario projection" description="Project the position by applying changes to the financial groups.">
             <form method="POST" action="{{ route('tools.working-capital-calculator.projections') }}" class="row g-3">@csrf
                 @foreach (($calculationInput ?? []) as $name => $value)<input type="hidden" name="{{ $name }}" value="{{ $value }}">@endforeach
-                <div class="col-md-4"><x-tools.form.input name="asset_growth_rate" label="Asset change" type="number" step="0.01" placeholder="Ex.: 12" suffix="%" required /></div>
-                <div class="col-md-4"><x-tools.form.input name="operating_liability_growth_rate" label="Operating liabilities" type="number" step="0.01" placeholder="Ex.: 6" suffix="%" required /></div>
-                <div class="col-md-4"><x-tools.form.input name="financial_liability_growth_rate" label="Financial liabilities" type="number" step="0.01" placeholder="Ex.: 2" suffix="%" required /></div>
+                <div class="col-md-4"><x-tools.form.input name="asset_growth_rate" label="Asset change" type="number" step="0.01" placeholder="Example: 12" suffix="%" required /></div>
+                <div class="col-md-4"><x-tools.form.input name="operating_liability_growth_rate" label="Operating liabilities" type="number" step="0.01" placeholder="Example: 6" suffix="%" required /></div>
+                <div class="col-md-4"><x-tools.form.input name="financial_liability_growth_rate" label="Financial liabilities" type="number" step="0.01" placeholder="Example: 2" suffix="%" required /></div>
                 <div class="col-12"><button class="btn btn-outline-primary">Project scenario</button></div>
             </form>
         </x-tools.form-panel>

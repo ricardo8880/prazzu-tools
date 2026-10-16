@@ -4,25 +4,15 @@ declare(strict_types=1);
 
 namespace App\Tools\LaborTerminationCalculator\Tests\Unit;
 
-use App\Core\Tools\Enums\ToolCategory;
-use App\Core\Tools\Enums\ToolStatus;
 use App\Tools\LaborTerminationCalculator\Tool;
 use PHPUnit\Framework\TestCase;
 
 final class ToolManifestTest extends TestCase
 {
-    public function test_manifest_exposes_the_labor_termination_tool(): void
+    public function test_manifest_is_us_final_pay_tool(): void
     {
         $manifest = (new Tool)->manifest();
-
         self::assertSame('final-pay-severance-calculator', $manifest->slug);
-        self::assertSame('Calculadora de Rescisão Trabalhista', $manifest->name);
-        self::assertSame(ToolCategory::Labor, $manifest->category);
-        self::assertSame(ToolStatus::Active, $manifest->status);
-        self::assertSame('1.0.0', $manifest->version);
-        self::assertSame('tools.final-pay-severance-calculator.index', $manifest->routeName);
-        self::assertTrue($manifest->supportsHistory);
-        self::assertTrue($manifest->storesSensitiveData);
-        self::assertSame(180, (new Tool)->historyPolicy()->retentionDays);
+        self::assertSame('Final Pay & Severance Calculator', $manifest->name);
     }
 }

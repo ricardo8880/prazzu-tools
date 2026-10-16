@@ -21,11 +21,11 @@ final class CalculatorTest extends TestCase
             3,
         ));
 
-        self::assertSame('R$ 3.200,00', $result->summary[0]->value);
-        self::assertSame('R$ 200,00', $result->summary[1]->value);
-        self::assertSame('6,66 %', $result->summary[2]->value);
-        self::assertSame('R$ 600,00', $result->summary[3]->value);
-        self::assertSame('R$ 2.666,67', $result->summary[4]->value);
+        self::assertSame('$3,200.00', $result->summary[0]->value);
+        self::assertSame('$200.00', $result->summary[1]->value);
+        self::assertSame('6.66 %', $result->summary[2]->value);
+        self::assertSame('$600.00', $result->summary[3]->value);
+        self::assertSame('$2,666.67', $result->summary[4]->value);
         self::assertNotNull($result->calculationMemory);
         self::assertNotEmpty($result->calculationMemory->steps);
     }
@@ -39,6 +39,6 @@ final class CalculatorTest extends TestCase
             0,
         ));
 
-        self::assertSame('6,66 %', $result->summary[2]->value);
+        self::assertSame('6.66 %', $result->summary[2]->value);
     }
 }

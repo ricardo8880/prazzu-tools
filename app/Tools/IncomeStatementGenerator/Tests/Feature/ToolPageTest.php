@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.earnings-statement-generator.index'))
             ->assertOk()
-            ->assertSee('Gerador de Declaração de Rendimentos');
+            ->assertSee('Earnings Statement Generator');
     }
 }

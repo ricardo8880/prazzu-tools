@@ -62,7 +62,7 @@ final class AccountingFeesController extends Controller
             'taxSnapshotIntegration' => $this->resolver->latest('company-tax-snapshot', 1),
             'calculationResult' => $outcome['result'],
             'calculationInput' => $validated,
-            'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Cálculo'),
+            'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Calculation'),
         ]);
     }
 
@@ -71,10 +71,10 @@ final class AccountingFeesController extends Controller
         abort_unless(in_array($format, ['pdf', 'xlsx'], true), 404);
         $input = $request->validated();
         $result = $action->execute($input, null, false)['result'];
-        $filename = 'honorarios-contabeis-'.now()->format('Y-m-d');
+        $filename = 'accounting-fee-'.now()->format('Y-m-d');
 
         return $format === 'pdf'
-            ? $pdf->download($documents->pdf('Cálculo de honorários contábeis', $filename, $result, $input))
+            ? $pdf->download($documents->pdf('Accounting Fee Estimate', $filename, $result, $input))
             : $spreadsheet->download($documents->spreadsheet($filename, $result, $input));
     }
 
@@ -102,26 +102,27 @@ final class AccountingFeesController extends Controller
         $input = $entry->input;
         unset($input['run_type']);
 
-        return redirect()->route('tools.accounting-fee-calculator.index')->withInput($input)->with('calculation_result', $entry->result)->with('success', 'Cálculo duplicado. Ajuste os dados e gere uma nova versão.');
+        return redirect()->route('tools.accounting-fee-calculator.index')->withInput($input)->with('calculation_result', $entry->result)->with('success', 'Calculation duplicated. Review the inputs and generate a new version.');
     }
 
     public function toggleFavorite(Request $request, string $run, ManageAccountingFeesHistory $history): RedirectResponse
     {
         $favorite = $history->toggleFavorite($run, $this->requiredUserId($request));
 
-        return back()->with('success', $favorite ? 'Cálculo adicionado aos favoritos.' : 'Cálculo removido dos favoritos.');
+        return back()->with('success', $favorite ? 'Calculation added to favorites.' : 'Calculation removed from favorites.');
     }
 
+    // Plus feature: history_export.
     public function exportHistory(Request $request, BuildAccountingFeeHistoryExport $action, TabularExportService $exporter): StreamedResponse
     {
-        return $exporter->csv('historico-honorarios-contabeis.csv', ['Data', 'Faturamento mensal', 'Regime', 'Funcionários', 'Notas', 'Complexidade', 'Honorário mínimo', 'Honorário recomendado', 'Referência superior'], $action->execute($this->requiredUserId($request)));
+        return $exporter->csv('accounting-fee-history.csv', ['Date', 'Monthly revenue', 'Entity profile', 'Employees', 'Notes', 'Complexity', 'Minimum fee', 'Recommended fee', 'Upper reference'], $action->execute($this->requiredUserId($request)));
     }
 
     public function deleteCalculation(Request $request, string $run, ManageAccountingFeesHistory $history): RedirectResponse
     {
         $history->delete($run, $this->requiredUserId($request), ManageAccountingFeesHistory::TYPE_CALCULATION);
 
-        return back()->with('success', 'Cálculo removido do histórico.');
+        return back()->with('success', 'Calculation removed from history.');
     }
 
     public function adjustments(Request $request, ManageAccountingFeesHistory $history): View
@@ -146,7 +147,7 @@ final class AccountingFeesController extends Controller
         return view('tools-accounting-fee-calculator::adjustments.index', [
             'adjustments' => $adjustments,
             'adjustmentResult' => $outcome['result'],
-            'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Reajuste'),
+            'successMessage' => $this->persistenceMessage($outcome['saved'], $request->user() !== null, 'Adjustment'),
         ]);
     }
 
@@ -154,7 +155,7 @@ final class AccountingFeesController extends Controller
     {
         $history->delete($run, $this->requiredUserId($request), ManageAccountingFeesHistory::TYPE_ADJUSTMENT);
 
-        return back()->with('success', 'Reajuste removido do histórico.');
+        return back()->with('success', 'Adjustment removed from history.');
     }
 
     private function userId(Request $request): ?int
@@ -174,6 +175,6 @@ final class AccountingFeesController extends Controller
 
     private function persistenceMessage(bool $saved, bool $authenticated, string $resource): string
     {
-        return $saved ? "{$resource} concluído e salvo no seu histórico." : (! $authenticated ? "{$resource} concluído. Entre em uma conta para salvar quando o histórico estiver disponível." : "{$resource} concluído. O histórico é um recurso de continuidade do Prazzu Plus.");
+        return $saved ? "{$resource} completed and saved to your history." : (! $authenticated ? "{$resource} completed. Sign in to save it when history is available." : "{$resource} completed. History is a Prazzu Plus continuity feature.");
     }
 }

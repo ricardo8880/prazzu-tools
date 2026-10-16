@@ -12,7 +12,7 @@ final class NavigationTest extends TestCase
 
     public function test_public_navigation_pages_are_available(): void
     {
-        foreach (['/', '/ferramentas', '/blog', '/planos', '/recursos', '/sobre', '/entrar', '/criar-conta', '/sugerir-ferramenta'] as $uri) {
+        foreach (['/', '/ferramentas', '/blog', '/plans', '/recursos', '/about', '/login', '/register', '/suggest-tool'] as $uri) {
             $this->get($uri)->assertOk();
         }
     }

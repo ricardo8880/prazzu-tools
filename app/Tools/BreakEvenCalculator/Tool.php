@@ -82,7 +82,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             ],
             features: [
                 new ToolFeature('calculate', 'Full calculation', ToolFeatureTier::Essential),
-                new ToolFeature('scenario_comparison', 'Comparação de cenários de preço, custo e margem', ToolFeatureTier::Plus),
+                new ToolFeature('scenario_comparison', 'Price, cost, and margin scenario comparison', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),

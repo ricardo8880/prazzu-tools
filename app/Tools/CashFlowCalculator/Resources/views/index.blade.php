@@ -11,14 +11,14 @@
         <form method="POST" action="{{ route('tools.cash-flow-calculator.calculate') }}" class="row g-3">
             @csrf
             @foreach ([
-                'opening_balance' => 'Saldo inicial',
-                'sales_receipts' => 'Recebimentos de vendas',
-                'other_inflows' => 'Outras entradas',
-                'operating_payments' => 'Pagamentos operacionais',
-                'tax_payments' => 'Tributos pagos',
-                'investments' => 'Investimentos',
-                'financing_payments' => 'Parcelas de financiamentos',
-                'other_outflows' => 'Outras saídas',
+                'opening_balance' => 'Opening cash',
+                'sales_receipts' => 'Sales receipts',
+                'other_inflows' => 'Other inflows',
+                'operating_payments' => 'Operating payments',
+                'tax_payments' => 'Tax payments',
+                'investments' => 'Investments',
+                'financing_payments' => 'Loan payments',
+                'other_outflows' => 'Other outflows',
             ] as $name => $label)
                 <div class="col-12 col-md-6"><x-tools.form.money :name="$name" :label="$label" :value="old($name)" required /></div>
             @endforeach

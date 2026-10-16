@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Contract Generator — Prazzu Tools')
-@section('meta_description', 'Prepare contratos completos com perguntas guiadas, revise o texto e exporte em PDF ou Word.')
+@section('meta_description', 'Prepare a general U.S. business contract with guided inputs, review the text, and export it.')
 
 @section('content')
     <div class="container py-5">
@@ -14,7 +14,7 @@
             tone="green"
         >
             <div class="alert alert-warning mb-4" role="note" aria-label="Contract template notice">
-                <strong>General template:</strong> revise integralmente o conteúdo antes de utilizar. Situações específicas, relações de consumo, trabalho, imóveis, garantias ou outras regras especiais podem exigir cláusulas e análise próprias.
+                <strong>General template:</strong> review all content before use. Specific situations involving consumer, employment, real estate, guarantees, or other special rules may require additional clauses and professional review.
             </div>
 
 
@@ -32,7 +32,7 @@
             <x-tools.form-panel
                 data-testid="contract-type-panel"
                 title="1. Choose a contract template"
-                description="Os modelos essenciais continuam gratuitos. A biblioteca ampliada adiciona variações profissionais no Prazzu Plus."
+                description="Essential templates remain free. The expanded library adds professional variations with Prazzu Plus."
                 class="mb-4"
             >
                 <div class="row g-3">
@@ -53,8 +53,8 @@
                                 </div>
                             @else
                                 <a
-                                    href="{{ route('tools.contract-generator.index', ['modelo' => $template->value]) }}"
-                                    @if($template->value === 'servicos-padrao') data-testid="contract-type-service" @elseif($template->value === 'venda-padrao') data-testid="contract-type-sale" @endif
+                                    href="{{ route('tools.contract-generator.index', ['template' => $template->value]) }}"
+                                    @if($template->value === 'service-standard') data-testid="contract-type-service" @elseif($template->value === 'sale-standard') data-testid="contract-type-sale" @endif
                                     class="card h-100 text-decoration-none {{ $selectedTemplate === $template ? 'border-primary' : '' }}"
                                     @if($selectedTemplate === $template) aria-current="true" @endif
                                 >
@@ -86,7 +86,7 @@
                     <x-tools.form-panel
                         data-testid="contract-parties-panel"
                         title="2. Identify the parties"
-                        description="Informe os dados que identificam quem participa do contrato."
+                        description="Enter the information identifying the parties to the agreement."
                         class="mb-4"
                     >
                         <div class="row g-3">
@@ -96,7 +96,7 @@
                                         <label class="form-label" for="company-autofill">Business profile autofill <span class="badge text-bg-primary">Plus</span></label>
                                         <div id="company-autofill" class="d-flex flex-wrap gap-2">
                                             @foreach($companyProfiles as $profile)
-                                                <a class="btn btn-sm {{ request('empresa') == $profile->id ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tools.contract-generator.index', ['modelo' => $selectedTemplate?->value, 'empresa' => $profile->id]) }}">
+                                                <a class="btn btn-sm {{ request('company') == $profile->id ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('tools.contract-generator.index', ['template' => $selectedTemplate?->value, 'company' => $profile->id]) }}">
                                                     {{ $profile->legal_name ?: $profile->name }}
                                                 </a>
                                             @endforeach
@@ -116,7 +116,7 @@
                                     <x-tools.form.input
                                         :name="$party['prefix'].'_name'"
                                         :value="$party['prefix'] === 'first_party' ? ($companyAutofill['name'] ?? null) : null"
-                                        label="Nome completo ou razão social"
+                                        label="Full name or legal business name"
                                         maxlength="180"
                                         required
                                     />
@@ -124,10 +124,10 @@
                                 <div class="col-12 col-md-4 col-lg-2">
                                     <x-tools.form.select
                                         :name="$party['prefix'].'_document_type'"
-                                        label="Documento"
+                                        label="ID / Tax ID"
                                         :options="$documentTypes"
                                         :value="$party['prefix'] === 'first_party' ? ($companyAutofill['document_type'] ?? null) : null"
-                                        placeholder="Selecione"
+                                        placeholder="Select"
                                         required
                                     />
                                 </div>
@@ -135,7 +135,7 @@
                                     <x-tools.form.input
                                         :name="$party['prefix'].'_document'"
                                         :value="$party['prefix'] === 'first_party' ? ($companyAutofill['document'] ?? null) : null"
-                                        label="Número do documento"
+                                        label="ID / Tax ID number"
                                         maxlength="18"
                                         required
                                     />
@@ -143,7 +143,7 @@
                                 <div class="col-12 col-lg-6">
                                     <x-tools.form.input
                                         :name="$party['prefix'].'_address'"
-                                        label="Endereço completo"
+                                        label="Full address"
                                         maxlength="240"
                                         required
                                     />
@@ -159,7 +159,7 @@
                                 <div class="col-4 col-lg-2">
                                     <x-tools.form.input
                                         :name="$party['prefix'].'_state'"
-                                        label="UF"
+                                        label="State"
                                         maxlength="2"
                                         required
                                     />
@@ -173,14 +173,14 @@
 
                     <x-tools.form-panel
                         data-testid="contract-terms-panel"
-                        title="3. Defina o objeto e as condições"
-                        description="As respostas abaixo serão usadas para redigir as cláusulas do contrato."
+                        title="3. Define scope and terms"
+                        description="The answers below are used to draft the contract clauses."
                         class="mb-4"
                     >
                         <div class="row g-3">
-                            @if ($selectedType->value === 'prestacao-servicos')
+                            @if ($selectedType->value === 'service-agreement')
                                 <div class="col-12">
-                                    <label for="service_description" class="form-label">Quais serviços serão prestados?</label>
+                                    <label for="service_description" class="form-label">What services will be provided?</label>
                                     <textarea
                                         id="service_description"
                                         name="service_description"
@@ -192,17 +192,17 @@
                                     @error('service_description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <x-tools.form.input name="start_date" label="Início dos serviços" type="date" required />
+                                    <x-tools.form.input name="start_date" label="Service start date" type="date" required />
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <x-tools.form.input name="end_date" label="Término previsto" type="date" help="Opcional para contrato por prazo indeterminado." />
+                                    <x-tools.form.input name="end_date" label="Expected end date" type="date" help="Optional for an open-ended agreement." />
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <x-tools.form.input name="termination_notice_days" label="Aviso prévio para encerramento" type="number" min="0" max="365" suffix="dias" :value="old('termination_notice_days')" required />
+                                    <x-tools.form.input name="termination_notice_days" label="Termination notice" type="number" min="0" max="365" suffix="days" :value="old('termination_notice_days')" required />
                                 </div>
                             @else
                                 <div class="col-12">
-                                    <label for="asset_description" class="form-label">Qual bem será vendido?</label>
+                                    <label for="asset_description" class="form-label">What property or item will be sold?</label>
                                     <textarea
                                         id="asset_description"
                                         name="asset_description"
@@ -211,22 +211,22 @@
                                         class="form-control @error('asset_description') is-invalid @enderror"
                                         required
                                     >{{ old('asset_description') }}</textarea>
-                                    <div class="form-text">Inclua características que permitam identificar o bem com clareza.</div>
+                                    <div class="form-text">Include enough details to clearly identify the property or item.</div>
                                     @error('asset_description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <x-tools.form.input name="delivery_date" label="Data da entrega" type="date" required />
+                                    <x-tools.form.input name="delivery_date" label="Delivery date" type="date" required />
                                 </div>
                                 <div class="col-12 col-md-8">
-                                    <x-tools.form.input name="delivery_location" label="Local da entrega" maxlength="240" required />
+                                    <x-tools.form.input name="delivery_location" label="Delivery location" maxlength="240" required />
                                 </div>
                             @endif
 
                             <div class="col-12 col-md-4">
-                                <x-tools.form.money name="amount" label="Amount do contrato" placeholder="1.000,00" required />
+                                <x-tools.form.money name="amount" label="Contract amount" placeholder="1,000.00" required />
                             </div>
                             <div class="col-12 col-md-8">
-                                <label for="payment_terms" class="form-label">Como será feito o pagamento?</label>
+                                <label for="payment_terms" class="form-label">How will payment be made?</label>
                                 <textarea
                                     id="payment_terms"
                                     name="payment_terms"
@@ -242,7 +242,7 @@
 
                     <x-tools.form-panel
                         title="Optional clause library"
-                        description="Adicione cláusulas opcionais identificáveis ao contrato. Modelos profissionais podem pré-selecionar cláusulas compatíveis."
+                        description="Add optional clauses to the agreement. Professional templates may preselect compatible clauses."
                         class="mb-4"
                     >
                         @if ($featureAccess['smart_clauses'])
@@ -258,13 +258,13 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="alert alert-secondary mb-0">Optional clause library fazem parte do Prazzu Plus no modo monetizado.</div>
+                            <div class="alert alert-secondary mb-0">The optional clause library is part of Prazzu Plus when monetization is enabled.</div>
                         @endif
                     </x-tools.form-panel>
 
                     <x-tools.form-panel
                         data-testid="contract-closing-panel"
-                        title="4. Fechamento do contrato"
+                        title="4. Finalize the agreement"
                         description="Choose the governing state, dispute venue, signing location/date, and any additional terms."
                         class="mb-4"
                     >
@@ -276,13 +276,13 @@
                                 <x-tools.form.input name="jurisdiction_state" label="Governing state" maxlength="2" required />
                             </div>
                             <div class="col-12 col-md-5">
-                                <x-tools.form.input name="signing_city" label="City da assinatura" maxlength="120" required />
+                                <x-tools.form.input name="signing_city" label="Signing city" maxlength="120" required />
                             </div>
                             <div class="col-12 col-md-4">
-                                <x-tools.form.input name="signing_date" label="Data da assinatura" type="date" required />
+                                <x-tools.form.input name="signing_date" label="Signing date" type="date" required />
                             </div>
                             <div class="col-12">
-                                <label for="additional_terms" class="form-label">Condições adicionais</label>
+                                <label for="additional_terms" class="form-label">Additional terms</label>
                                 <textarea
                                     id="additional_terms"
                                     name="additional_terms"
@@ -290,7 +290,7 @@
                                     maxlength="4000"
                                     class="form-control @error('additional_terms') is-invalid @enderror"
                                 >{{ old('additional_terms') }}</textarea>
-                                <div class="form-text">Opcional. Use apenas para condições específicas que não foram cobertas pelas perguntas anteriores.</div>
+                                <div class="form-text">Optional. Use only for specific terms not covered by the previous questions.</div>
                                 @error('additional_terms')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                         </div>
@@ -298,7 +298,7 @@
                         <div class="d-flex flex-wrap gap-2 mt-4">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>
-                                Gerar contrato completo
+                                Generate full agreement
                             </button>
                             <a href="{{ route('tools.contract-generator.index') }}" class="btn btn-outline-secondary">Trocar modalidade</a>
                         </div>
@@ -306,15 +306,15 @@
                 </form>
             @elseif ($selectedType === null)
                 <div class="alert alert-info mb-4" role="status">
-                    Escolha uma modalidade acima para iniciar o questionário.
+                    Choose a template above to start the questionnaire.
                 </div>
             @endif
 
             @if ($draft !== null)
                 <x-tools.result-panel
-                    title="Dados conferidos e contrato gerado"
+                    title="Information reviewed and agreement generated"
                     data-analytics-result="draft"
-                    description="As respostas foram normalizadas e usadas para montar o texto contratual abaixo."
+                    description="Your answers were normalized and used to assemble the contract text below."
                     class="mb-4"
                 >
                     <div class="row g-4">
@@ -346,28 +346,28 @@
                     </div>
                 </x-tools.result-panel>
                 @if($currentRunId)
-                    <div class="alert alert-success mb-4">Contrato salvo no histórico Plus. Você poderá favoritar e comparar esta versão com outras.</div>
+                    <div class="alert alert-success mb-4">Agreement saved to Plus history. You can favorite it and compare this version with others.</div>
                 @endif
             @endif
 
             @if ($contractText !== null)
                 <x-tools.form-panel
                     data-testid="contract-editor-panel"
-                    title="5. Revise e edite o contrato"
-                    description="O texto abaixo é totalmente editável. Ajuste qualquer cláusula antes da exportação."
+                    title="5. Review and edit the agreement"
+                    description="The text below is fully editable. Adjust any clause before exporting."
                     class="mb-4"
                 >
                     @if ($edited)
                         <div class="alert alert-success" role="status" aria-live="polite">
-                            Visualização atualizada com o texto editado. Nenhum dado foi salvo.
+                            Preview updated with the edited text. No data was saved.
                         </div>
                     @endif
 
-                    <form data-testid="contract-editor" method="POST" action="{{ route('tools.contract-generator.preview') }}" aria-label="Editor e exportação do contrato" data-analytics-form="editor">
+                    <form data-testid="contract-editor" method="POST" action="{{ route('tools.contract-generator.preview') }}" aria-label="Agreement editor and export" data-analytics-form="editor">
                         @csrf
                         <input type="hidden" name="contract_type" value="{{ $selectedType?->value }}">
                         <input type="hidden" name="source_run_id" value="{{ $currentRunId }}">
-                        <label for="contract_text" class="form-label">Texto completo do contrato</label>
+                        <label for="contract_text" class="form-label">Full agreement text</label>
                         <textarea
                             id="contract_text"
                             name="contract_text"
@@ -376,18 +376,18 @@
                             class="form-control font-monospace @error('contract_text') is-invalid @enderror"
                             required
                         >{{ old('contract_text', $contractText['content']) }}</textarea>
-                        <div class="form-text">A edição é temporária e permanece somente nesta resposta. PDF e Word usam exatamente o texto atual do editor.</div>
+                        <div class="form-text">Edits are temporary and apply only to this response. PDF and Word exports use the current editor text exactly.</div>
                         @error('contract_text')<div class="invalid-feedback">{{ $message }}</div>@enderror
 
                         <div class="d-flex flex-wrap gap-2 mt-3">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-eye me-1" aria-hidden="true"></i>
-                                Atualizar visualização
+                                Update preview
                             </button>
                             @if($featureAccess['history'] && auth()->check())
                                 <button type="submit" class="btn btn-outline-dark" formaction="{{ route('tools.contract-generator.versions.store') }}">
                                     <i class="bi bi-clock-history me-1" aria-hidden="true"></i>
-                                    Salvar nova versão
+                                    Save new version
                                 </button>
                             @endif
                             <button
@@ -406,7 +406,7 @@
                                 formaction="{{ route('tools.contract-generator.export.xlsx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="xlsx"
                             >
                                 <i class="bi bi-file-earmark-excel me-1" aria-hidden="true"></i>
-                                Baixar Excel
+                                Download Excel
                             </button>
                             <button
                                 type="submit"
@@ -415,7 +415,7 @@
                                 formaction="{{ route('tools.contract-generator.export.docx') }}" data-analytics-action="export" data-analytics-form="editor" data-analytics-format="docx"
                             >
                                 <i class="bi bi-file-earmark-word me-1" aria-hidden="true"></i>
-                                Baixar Word
+                                Download Word
                             </button>
                             <a href="{{ route('tools.contract-generator.index', ['tipo' => $selectedType?->value]) }}" class="btn btn-outline-secondary">Refazer perguntas</a>
                         </div>
@@ -423,27 +423,27 @@
                 </x-tools.form-panel>
 
                 <x-tools.result-panel
-                    title="Visualização do contrato"
+                    title="Agreement preview"
                     data-analytics-result="editor"
-                    description="Esta prévia usa exatamente o conteúdo atual do editor."
+                    description="This preview uses the current editor content exactly."
                 >
-                    <pre data-testid="contract-preview" class="border rounded bg-body-tertiary p-3 p-md-4 mb-0 text-wrap overflow-auto" tabindex="0" aria-label="Prévia textual do contrato">{{ $contractText['content'] }}</pre>
+                    <pre data-testid="contract-preview" class="border rounded bg-body-tertiary p-3 p-md-4 mb-0 text-wrap overflow-auto" tabindex="0" aria-label="Text preview of the agreement">{{ $contractText['content'] }}</pre>
                 </x-tools.result-panel>
             @endif
 
             @if($featureAccess['history'] && auth()->check())
-                <x-tools.form-panel title="Contract history" description="Versões persistidas na sua conta e disponíveis para favoritos e comparação." class="mt-4">
+                <x-tools.form-panel title="Contract history" description="Versions saved to your account and available for comparison." class="mt-4">
                     <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-                        <span class="text-body-secondary">{{ count($recentHistory) }} versão(ões) recente(s)</span>
-                        <a class="btn btn-outline-primary btn-sm" href="{{ route('tools.contract-generator.history.index') }}">Abrir histórico completo</a>
+                        <span class="text-body-secondary">{{ count($recentHistory) }} recent version(s)</span>
+                        <a class="btn btn-outline-primary btn-sm" href="{{ route('tools.contract-generator.history.index') }}">Open full history</a>
                     </div>
                     @forelse($recentHistory as $run)
                         <div class="border rounded p-3 mb-2 d-flex justify-content-between gap-3 align-items-center">
-                            <div><strong>{{ $run->result['contract_title'] ?? 'Contrato' }}</strong><div class="small text-body-secondary">{{ $run->createdAt->format('d/m/Y H:i') }}</div></div>
-                            @if($run->favorite)<span class="badge text-bg-warning">Favorito</span>@endif
+                            <div><strong>{{ $run->result['contract_title'] ?? 'Agreement' }}</strong><div class="small text-body-secondary">{{ $run->createdAt->format('M j, Y g:i A') }}</div></div>
+                            @if($run->favorite)<span class="badge text-bg-warning">Favorite</span>@endif
                         </div>
                     @empty
-                        <p class="text-body-secondary mb-0">Nenhuma versão salva ainda.</p>
+                        <p class="text-body-secondary mb-0">No saved versions yet.</p>
                     @endforelse
                 </x-tools.form-panel>
             @endif

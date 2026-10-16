@@ -1,59 +1,22 @@
-# Calculadora de Custo de Funcionário CLT
+# Employee Cost Calculator
 
 ## Descrição
-
-Calcula remuneração, benefícios, encargos, provisões e custo mensal e anual.
+Estimates employer cost using 2026 federal FICA/FUTA assumptions plus user-entered SUTA and other employer-cost rates.
 
 ## Funcionalidades
-
-- entrada validada por `FormRequest`;
-- domínio independente e valores financeiros sem `float`;
-- resultado completo com memória reproduzível;
-- página responsiva com componentes compartilhados;
-- impressão/PDF quando o resultado for documental.
+Single-employee cost estimate with calculation memory. Plus adds history, profiles, batch workflows, imports, scenario comparison, exports, and professional reports.
 
 ## Experiência Essencial
-
-O visitante resolve integralmente um caso individual sem autenticação. Fórmulas,
-premissas, valores intermediários e limitações permanecem visíveis.
+Single-employee cost estimate with calculation memory.
 
 ## Prazzu Plus
-
-Cadastro em lote, comparações de contratação, histórico e relatórios. Esses recursos representam produtividade e continuidade; não alteram a
-correção do resultado Essencial.
-
-Na importação unificada, CSV e XLSX mantêm o mesmo fluxo de prévia e
-processamento, mas cada formato é autorizado de forma independente pelos
-recursos `csv_import` e `xlsx_import`.
+Plus adds history, profiles, batch workflows, imports, scenario comparison, exports, and professional reports.
 
 ## Regras
-
-Entradas principais: Salário, média variável, benefícios, regime, RAT ajustado e terceiros. O resultado é orientativo e casos normativos,
-contratuais ou cadastrais fora das premissas exibidas exigem revisão
-profissional.
-
-## Integração entre ferramentas
-
-Não publica nem aceita contratos. O módulo funciona isoladamente e não importa
-classes internas de outras ferramentas.
+Federal 2026 payroll rates are centralized; state unemployment and other employer costs are user inputs.
 
 ## Dependências
-
-Objetos financeiros, contratos de cálculo, histórico, exportação e componentes
-visuais compartilhados do Core técnico.
+Core Money/Percentage, federal payroll rules, imports, profiles, history, and export services.
 
 ## Histórico de versões
-
-- `1.0.0`: motor ou gerador funcional, validação, interface, memória,
-  documentação e testes.
-
-## Qualidade
-
-O módulo é publicado como `beta`: permanece visível e executável no catálogo,
-na busca e nas superfícies da plataforma, com cenários de regressão registrados.
-Regras normativas continuam sujeitas à revisão profissional e atualização periódica.
-
-
-## Conformidade do Lote 3
-
-A ferramenta **Custo de Funcionário CLT** usa `App\Core\Labor\Normative\EmployerChargeRule` para resolver as alíquotas patronais por regime. O resultado inclui memória de cálculo versionada, snapshot das fontes oficiais e premissas explícitas para RAT/FAP e terceiros. Nenhum cálculo essencial depende de conta ou do Prazzu Plus.
+- 2.1.0: U.S. payroll terminology and import/profile fields.

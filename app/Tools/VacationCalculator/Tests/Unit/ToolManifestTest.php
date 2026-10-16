@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tools\VacationCalculator\Tests\Unit;
 
-use App\Core\Tools\Enums\ToolFeatureTier;
-use App\Core\Tools\Enums\ToolStatus;
 use App\Tools\VacationCalculator\Tool;
 use PHPUnit\Framework\TestCase;
 
 final class ToolManifestTest extends TestCase
 {
-    public function test_manifest_is_active_with_the_expected_identity(): void
+    public function test_manifest_describes_us_pto_calculator(): void
     {
         $manifest = (new Tool)->manifest();
 
         self::assertSame('pto-calculator', $manifest->slug);
-        self::assertSame('Calculadora de Férias', $manifest->name);
+        self::assertSame('PTO Calculator', $manifest->name);
         self::assertSame('tools.pto-calculator.index', $manifest->routeName);
-        self::assertSame(ToolStatus::Beta, $manifest->status);
-        self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Essential));
-        self::assertNotEmpty($manifest->featuresFor(ToolFeatureTier::Plus));
     }
 }

@@ -20,11 +20,11 @@ final class CalculatorTest extends TestCase
         ));
 
         self::assertSame('1.2.0', $result->schemaVersion);
-        self::assertSame('R$ 29.000,00', $result->summary[0]->value);
-        self::assertSame('R$ 19.000,00', $result->summary[1]->value);
-        self::assertSame('R$ 55.000,00', $result->summary[2]->value);
-        self::assertSame('R$ 36.000,00', $result->summary[3]->value);
-        self::assertSame('R$ 20.000,00', $result->summary[4]->value);
+        self::assertSame('$29,000.00', $result->summary[0]->value);
+        self::assertSame('$19,000.00', $result->summary[1]->value);
+        self::assertSame('$55,000.00', $result->summary[2]->value);
+        self::assertSame('$36,000.00', $result->summary[3]->value);
+        self::assertSame('$20,000.00', $result->summary[4]->value);
         self::assertNotNull($result->calculationMemory);
         self::assertTrue($result->calculationMemory->isEstimate);
         self::assertNotEmpty($result->calculationMemory->steps);
@@ -39,7 +39,7 @@ final class CalculatorTest extends TestCase
             Money::fromDecimal('0'), Money::fromDecimal('0'),
         ));
 
-        self::assertSame('-R$ 500,00', $result->summary[0]->value);
+        self::assertSame('-$500.00', $result->summary[0]->value);
         self::assertSame(['negative_closing_balance', 'negative_operating_generation'], array_map(static fn ($warning) => $warning->code, $result->warnings));
     }
 }

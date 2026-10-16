@@ -1,27 +1,27 @@
 @if($company)
-    <h2>Identificação</h2>
+    <h2>Identification</h2>
     <p>
         <strong>{{ $company['legal_name'] ?: $company['name'] }}</strong>
         @if($company['document']) — {{ $company['document'] }} @endif
     </p>
 @endif
 
-<h2>Consolidado</h2>
+<h2>Summary</h2>
 <div class="print-grid">
-    <div class="print-card"><span>Funcionários</span><strong>{{ $batch['employee_count'] }}</strong></div>
-    <div class="print-card"><span>Custo mensal</span><strong>{{ $batch['monthly_total'] }}</strong></div>
-    <div class="print-card"><span>Custo anual</span><strong>{{ $batch['annual_total'] }}</strong></div>
+    <div class="print-card"><span>Employees</span><strong>{{ $batch['employee_count'] }}</strong></div>
+    <div class="print-card"><span>Monthly cost</span><strong>{{ $batch['monthly_total'] }}</strong></div>
+    <div class="print-card"><span>Annual cost</span><strong>{{ $batch['annual_total'] }}</strong></div>
 </div>
 
-<h2>Funcionários</h2>
+<h2>Employees</h2>
 <table>
     <thead>
     <tr>
-        <th>Funcionário</th>
-        <th>Departamento</th>
-        <th>Cargo</th>
-        <th class="print-right">Mensal</th>
-        <th class="print-right">Anual</th>
+        <th>Employee</th>
+        <th>Department</th>
+        <th>Role</th>
+        <th class="print-right">Monthly</th>
+        <th class="print-right">Annual</th>
     </tr>
     </thead>
     <tbody>
@@ -37,13 +37,13 @@
     </tbody>
 </table>
 
-<h2>Consolidado por departamento</h2>
+<h2>Summary by department</h2>
 <table>
     <thead>
     <tr>
-        <th>Departamento</th>
-        <th class="print-right">Mensal</th>
-        <th class="print-right">Anual</th>
+        <th>Department</th>
+        <th class="print-right">Monthly</th>
+        <th class="print-right">Annual</th>
     </tr>
     </thead>
     <tbody>
@@ -57,7 +57,7 @@
     </tbody>
 </table>
 
-<h2>Projeção-base de 12 meses</h2>
+<h2>12-month baseline projection</h2>
 <p>{{ $batch['projection_assumption'] }}</p>
 <table>
     <thead>
@@ -77,6 +77,6 @@
 </table>
 
 <p class="print-warning">
-    Estimativa gerencial. Confirme incidências e particularidades de cada
-    vínculo antes de utilizar o consolidado em decisões trabalhistas.
+    Management estimate. Confirm applicable taxes, benefits, and worker-specific requirements
+    before using this summary for employment decisions.
 </p>

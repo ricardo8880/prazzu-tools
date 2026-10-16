@@ -67,12 +67,12 @@
                 </div>
                 <div class="col-md-8">
                     <label class="form-label" for="monthly_investment">Investimento mensal da campanha</label>
-                    <div class="input-group"><span class="input-group-text">R$</span><input class="form-control" id="monthly_investment" name="monthly_investment" inputmode="decimal" value="{{ $value('monthly_investment') }}" placeholder="1500,00"></div>
+                    <div class="input-group"><span class="input-group-text">$</span><input class="form-control" id="monthly_investment" name="monthly_investment" inputmode="decimal" value="{{ $value('monthly_investment') }}" placeholder="1500.00"></div>
                     <div class="form-text">Usado para estimar custo, CPA, ROAS e ROI no período selecionado.</div>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label" for="investment_currency">Moeda</label>
-                    <select class="form-select" id="investment_currency" name="investment_currency"><option value="BRL" @selected($value('investment_currency', 'BRL') === 'BRL')>BRL</option></select>
+                    <select class="form-select" id="investment_currency" name="investment_currency"><option value="USD" @selected($value('investment_currency', 'USD') === 'USD')>USD</option></select>
                 </div>
             </div>
         </div>

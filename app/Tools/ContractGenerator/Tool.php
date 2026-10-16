@@ -99,7 +99,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasViews, Has
                 new ToolFeature('contract_editor', 'Edit draft before export', ToolFeatureTier::Essential),
                 new ToolFeature('pdf_export', 'Contract PDF export', ToolFeatureTier::Essential),
                 new ToolFeature('word_export', 'Contract Word export', ToolFeatureTier::Essential),
-                new ToolFeature('contract_library', 'Biblioteca ampliada de contratos', ToolFeatureTier::Plus),
+                new ToolFeature('contract_library', 'Expanded contract library', ToolFeatureTier::Plus),
                 new ToolFeature('smart_clauses', 'Optional clause library', ToolFeatureTier::Plus),
                 new ToolFeature('favorites', 'Favorite contracts', ToolFeatureTier::Plus),
                 new ToolFeature('company_autofill', 'Business profile autofill', ToolFeatureTier::Plus),

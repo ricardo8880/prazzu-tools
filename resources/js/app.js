@@ -961,7 +961,7 @@ function initializeToolInputPlaceholders() {
         if (['date', 'month', 'file', 'hidden', 'checkbox', 'radio'].includes(type)) return null;
         if (/(rate|percent|percentage|aliquota|alíquota|mva|selic|markup|margin|margem)/.test(name)) return 'Ex.: 5';
         if (/(hours|hour|horas|days|day|dias|months|month|meses|dependents|employees|partners|installments|years|anos|headcount|admissions|terminations)/.test(name)) return 'Ex.: 10';
-        if (/(document|cnpj|cpf)/.test(name)) return 'Ex.: 00.000.000/0000-00';
+        if (/(document|ein|ssn|tin)/.test(name)) return name.includes('ein') ? 'Ex.: 12-3456789' : 'Ex.: 123-45-6789';
         if (/(municipality|city|cidade)/.test(name)) return 'Ex.: Campinas/SP';
         if (/(company|empresa|firm)/.test(name)) return 'Ex.: Empresa Exemplo Ltda.';
         if (/(employee_name|partner_label|contact_name|representative|payer_name|payee_name)/.test(name)) return 'Ex.: Maria Silva';

@@ -14,10 +14,10 @@ final class MoneyTest extends TestCase
 {
     public function test_it_parses_and_formats_us_money_without_float(): void
     {
-        $money = Money::fromDecimal('R$ 1.234,56');
+        $money = Money::fromDecimal('$1,234.56');
 
         self::assertSame(123456, $money->minorAmount());
-        self::assertSame('R$ 1.234,56', $money->formatEnUs());
+        self::assertSame('$1,234.56', $money->formatEnUs());
         self::assertTrue($money->equals(Money::fromDecimal('1234.56')));
     }
 
@@ -25,7 +25,6 @@ final class MoneyTest extends TestCase
     {
         $base = Money::fromDecimal('100.05');
         $percentage = Percentage::fromString('10');
-
         self::assertSame(1001, $base->percentage($percentage)->minorAmount());
         self::assertSame(1000, $base->percentage($percentage, RoundingMode::Down)->minorAmount());
     }
@@ -38,10 +37,6 @@ final class MoneyTest extends TestCase
 
     public static function percentageProvider(): array
     {
-        return [
-            ['10', '10'],
-            ['12,345600', '12.3456'],
-            ['-0.125', '-0.125'],
-        ];
+        return [['10', '10'], ['12.345600', '12.3456'], ['-0.125', '-0.125']];
     }
 }

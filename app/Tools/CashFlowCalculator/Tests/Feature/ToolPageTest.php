@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.cash-flow-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Fluxo de Caixa');
+            ->assertSee('Cash Flow Calculator');
     }
 }

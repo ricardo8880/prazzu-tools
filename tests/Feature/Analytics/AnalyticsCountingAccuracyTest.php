@@ -16,8 +16,8 @@ final class AnalyticsCountingAccuracyTest extends TestCase
     public function test_one_browser_visiting_three_pages_is_one_visitor_and_three_pageviews(): void
     {
         $this->get('/')->assertOk();
-        $this->get('/planos')->assertOk();
-        $this->get('/sobre')->assertOk();
+        $this->get('/plans')->assertOk();
+        $this->get('/about')->assertOk();
 
         self::assertSame(1, AnalyticsVisitor::query()->count());
         self::assertSame(1, AnalyticsSession::query()->count());
@@ -28,20 +28,20 @@ final class AnalyticsCountingAccuracyTest extends TestCase
 
     public function test_revisiting_the_same_page_counts_as_another_real_pageview(): void
     {
-        $this->get('/sobre')->assertOk();
-        $this->get('/sobre')->assertOk();
+        $this->get('/about')->assertOk();
+        $this->get('/about')->assertOk();
 
         self::assertSame(1, AnalyticsVisitor::query()->count());
         self::assertSame(2, PlatformAnalyticsEvent::query()
             ->where('event_name', AnalyticsEventName::PageViewed->value)
-            ->where('path', '/sobre')
+            ->where('path', '/about')
             ->count());
     }
 
     public function test_known_crawler_is_excluded_before_visitor_session_and_events_are_created(): void
     {
         $this->withHeader('User-Agent', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)')
-            ->get('/sobre')
+            ->get('/about')
             ->assertOk();
 
         self::assertSame(0, AnalyticsVisitor::query()->count());

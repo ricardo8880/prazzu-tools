@@ -1,28 +1,28 @@
 <section class="prazzu-tool-workspace text-start mt-4" aria-labelledby="batch-title">
     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-3">
         <div>
-            <span class="badge text-bg-primary mb-2">Lote de produtos</span>
-            <h2 id="batch-title" class="mb-1">Calcular vários produtos</h2>
-            <p class="text-body-secondary mb-0">Adicione, duplique, filtre e compare até 100 produtos em um único cálculo.</p>
+            <span class="badge text-bg-primary mb-2">Product batch</span>
+            <h2 id="batch-title" class="mb-1">Calculate multiple products</h2>
+            <p class="text-body-secondary mb-0">Add, duplicate, filter, and compare up to 100 products in one calculation.</p>
         </div>
         <div class="d-flex flex-wrap gap-2 align-self-lg-end">
-            <button class="btn btn-outline-primary" type="button" id="batch-add"><i class="bi bi-plus-lg me-1"></i>Adicionar produto</button>
-            <button class="btn btn-outline-secondary" type="button" id="batch-duplicate"><i class="bi bi-copy me-1"></i>Duplicar selecionados</button>
-            <button class="btn btn-outline-danger" type="button" id="batch-remove"><i class="bi bi-trash me-1"></i>Remove selecionados</button>
+            <button class="btn btn-outline-primary" type="button" id="batch-add"><i class="bi bi-plus-lg me-1"></i>Add product</button>
+            <button class="btn btn-outline-secondary" type="button" id="batch-duplicate"><i class="bi bi-copy me-1"></i>Duplicate selected</button>
+            <button class="btn btn-outline-danger" type="button" id="batch-remove"><i class="bi bi-trash me-1"></i>Remove selected</button>
         </div>
     </div>
 
     <div class="row g-2 mb-3">
         <div class="col-12 col-md-5">
-            <label class="form-label" for="batch-search">Buscar produto</label>
-            <div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input class="form-control" id="batch-search" placeholder="Nome, código ou categoria"></div>
+            <label class="form-label" for="batch-search">Search products</label>
+            <div class="input-group"><span class="input-group-text"><i class="bi bi-search"></i></span><input class="form-control" id="batch-search" placeholder="Name, code, or category"></div>
         </div>
         <div class="col-12 col-md-4">
-            <label class="form-label" for="batch-category">Filtrar categoria</label>
-            <select class="form-select" id="batch-category"><option value="">Todas as categorias</option></select>
+            <label class="form-label" for="batch-category">Filter category</label>
+            <select class="form-select" id="batch-category"><option value="">All categories</option></select>
         </div>
         <div class="col-12 col-md-3">
-            <label class="form-label" for="batch_reference_date">Data de referência</label>
+            <label class="form-label" for="batch_reference_date">Reference date</label>
             <input class="form-control" id="batch_reference_date" form="batch-form" type="date" name="reference_date" value="{{ old('reference_date', date('Y-m-d')) }}" required>
         </div>
     </div>
@@ -33,13 +33,13 @@
             <table class="table table-hover table-sm align-middle mb-0" id="batch-table">
                 <thead class="table-light text-nowrap">
                     <tr>
-                        <th><input class="form-check-input" type="checkbox" id="batch-select-all" aria-label="Selecionar todos"></th>
-                        <th>Produto</th><th>Código</th><th>Categoria</th><th>Custo base</th><th>Outros custos</th><th>Frete</th><th>Embalagem</th><th>Despesas</th><th>Margem %</th><th>Impostos %</th><th>Comissão %</th><th>Cartão %</th><th>Marketplace %</th>
+                        <th><input class="form-check-input" type="checkbox" id="batch-select-all" aria-label="Select all"></th>
+                        <th>Product</th><th>Code</th><th>Category</th><th>Base cost</th><th>Additional costs</th><th>Shipping</th><th>Packaging</th><th>Expenses</th><th>Margin %</th><th>Taxes %</th><th>Commission %</th><th>Card fees %</th><th>Marketplace %</th>
                     </tr>
                 </thead>
                 <tbody id="batch-products">
                     @php
-                        $products = old('products', [['name'=>'','code'=>'','category'=>'','base_cost'=>'','additional_costs'=>'0,00','freight_cost'=>'0,00','packaging_cost'=>'0,00','fixed_expenses'=>'0,00','desired_margin'=>'30','taxes_percentage'=>'0','commission_percentage'=>'0','card_fees_percentage'=>'0','marketplace_fees_percentage'=>'0']]);
+                        $products = old('products', [['name'=>'','code'=>'','category'=>'','base_cost'=>'','additional_costs'=>'0.00','freight_cost'=>'0.00','packaging_cost'=>'0.00','fixed_expenses'=>'0.00','desired_margin'=>'30','taxes_percentage'=>'0','commission_percentage'=>'0','card_fees_percentage'=>'0','marketplace_fees_percentage'=>'0']]);
                     @endphp
                     @foreach($products as $index => $product)
                         @include('tools-margin-markup-calculator::partials.batch-row', ['index' => $index, 'product' => $product])
@@ -50,8 +50,8 @@
 
         @error('products')<div class="alert alert-danger mt-3 mb-0">{{ $message }}</div>@enderror
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
-            <small class="text-body-secondary"><span id="batch-visible-count">1</span> produto(s) visível(is)</small>
-            <button class="btn btn-primary prazzu-btn-primary" type="submit"><i class="bi bi-calculator me-1"></i>Calcular produtos</button>
+            <small class="text-body-secondary"><span id="batch-visible-count">1</span> visible product(s)</small>
+            <button class="btn btn-primary prazzu-btn-primary" type="submit"><i class="bi bi-calculator me-1"></i>Calculate products</button>
         </div>
     </form>
 </section>
@@ -62,12 +62,12 @@
 @if($batchResults)
     <section class="mt-4" aria-labelledby="batch-results-title">
         <div class="d-flex justify-content-between align-items-end gap-3 mb-3">
-            <div><h2 id="batch-results-title" class="prazzu-section-title mb-1">Comparação dos produtos</h2><p class="text-body-secondary mb-0">Ordene a tabela para identificar preços, lucros e margens.</p></div>
-            <span class="badge text-bg-success">{{ count($batchResults) }} calculado(s)</span>
+            <div><h2 id="batch-results-title" class="prazzu-section-title mb-1">Product comparison</h2><p class="text-body-secondary mb-0">Sort the table to compare prices, profits, and margins.</p></div>
+            <span class="badge text-bg-success">{{ count($batchResults) }} calculated</span>
         </div>
         <div class="table-responsive border rounded">
             <table class="table table-striped table-hover align-middle mb-0">
-                <thead class="table-light text-nowrap"><tr><th>Produto</th><th>Código</th><th>Categoria</th><th class="text-end">Custo total</th><th class="text-end">Preço sugerido</th><th class="text-end">Lucro líquido</th><th class="text-end">Margem</th><th class="text-end">Markup</th><th class="text-end">Índice</th></tr></thead>
+                <thead class="table-light text-nowrap"><tr><th>Product</th><th>Code</th><th>Category</th><th class="text-end">Total cost</th><th class="text-end">Suggested price</th><th class="text-end">Net profit</th><th class="text-end">Margin</th><th class="text-end">Markup</th><th class="text-end">Multiplier</th></tr></thead>
                 <tbody>
                     @foreach($batchResults as $result)
                         <tr><th scope="row">{{ $result['name'] }}</th><td>{{ $result['code'] ?: '—' }}</td><td>{{ $result['category'] ?: '—' }}</td><td class="text-end text-nowrap">{{ $result['total_cost'] }}</td><td class="text-end text-nowrap fw-semibold">{{ $result['sale_price'] }}</td><td class="text-end text-nowrap">{{ $result['net_profit'] }}</td><td class="text-end">{{ $result['margin'] }}</td><td class="text-end">{{ $result['markup'] }}</td><td class="text-end">{{ $result['markup_multiplier'] }}</td></tr>
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const refreshCategories = () => {
         const selected = category.value;
         const values = [...new Set(rows().map(row => row.querySelector('[data-field="category"]').value.trim()).filter(Boolean))].sort();
-        category.innerHTML = '<option value="">Todas as categorias</option>' + values.map(value => `<option value="${value.replaceAll('"', '&quot;')}">${value}</option>`).join('');
+        category.innerHTML = '<option value="">All categories</option>' + values.map(value => `<option value="${value.replaceAll('"', '&quot;')}">${value}</option>`).join('');
         category.value = values.includes(selected) ? selected : '';
     };
     const filter = () => {

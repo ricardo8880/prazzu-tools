@@ -22,6 +22,6 @@ final class PasswordController extends Controller
         $user->forceFill(['password' => Hash::make($validated['password'])])->save();
         $user->notify(new PasswordChanged);
 
-        return back()->with('status', 'Sua senha foi alterada com segurança.');
+        return back()->with('status', 'Your password was changed securely.');
     }
 }

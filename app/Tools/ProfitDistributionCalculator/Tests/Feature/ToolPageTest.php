@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.owner-distribution-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Distribuição de Lucros');
+            ->assertSee('Owner Distribution Calculator');
     }
 }

@@ -57,7 +57,7 @@ final class ExecuteToolRequest extends FormRequest
                     }
                 }
             } catch (Throwable) {
-                // Regras básicas já reportam formato inválido.
+                // Basic rules already report invalid formatting.
             }
         });
     }

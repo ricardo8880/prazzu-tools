@@ -8,10 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class CalculateBatchRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
+    public function authorize(): bool { return true; }
 
     public function rules(): array
     {
@@ -25,9 +22,9 @@ final class CalculateBatchRequest extends FormRequest
             'employees.*.salary' => ['required', 'us_money', 'money_min:0.01'],
             'employees.*.variable_pay' => ['required', 'us_money', 'money_min:0'],
             'employees.*.benefits' => ['required', 'us_money', 'money_min:0'],
-            'employees.*.regime' => ['required', 'in:general,simples_annex_iv,simples_other'],
-            'employees.*.rat' => ['required', 'numeric', 'min:0', 'max:15'],
-            'employees.*.third_parties' => ['required', 'numeric', 'min:0', 'max:15'],
+            'employees.*.futa_profile' => ['required', 'in:standard,futa_exempt'],
+            'employees.*.suta_rate' => ['required', 'numeric', 'min:0', 'max:15'],
+            'employees.*.other_employer_cost_rate' => ['required', 'numeric', 'min:0', 'max:25'],
             'employees.*.monthly_hours' => ['required', 'integer', 'min:1', 'max:744'],
         ];
     }

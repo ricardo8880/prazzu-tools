@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('acquisition_contexts', function (Blueprint $table): void {
             $table->unsignedBigInteger('monthly_investment_cents')->nullable()->after('cta_identifier');
-            $table->char('investment_currency', 3)->default('BRL')->after('monthly_investment_cents');
+            $table->char('investment_currency', 3)->default('USD')->after('monthly_investment_cents');
         });
     }
 

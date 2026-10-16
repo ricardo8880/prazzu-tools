@@ -6,8 +6,8 @@
             <i class="bi bi-chat-square-heart"></i>
         </span>
         <div>
-            <h2 id="tool-feedback-sidebar-title" class="h6 mb-1">Ajude a melhorar esta ferramenta</h2>
-            <p class="small text-body-secondary mb-0">Encontrou um problema ou sentiu falta de algo? Conte para a gente.</p>
+            <h2 id="tool-feedback-sidebar-title" class="h6 mb-1">Help improve this tool</h2>
+            <p class="small text-body-secondary mb-0">Found a problem or missing something? Tell us about it.</p>
         </div>
     </div>
 
@@ -18,7 +18,7 @@
         data-bs-target="#tool-feedback-modal"
     >
         <i class="bi bi-chat-left-text me-1" aria-hidden="true"></i>
-        Enviar feedback
+        Send feedback
     </button>
 </section>
 
@@ -34,10 +34,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title fs-5" id="tool-feedback-modal-title">Ajude a melhorar esta ferramenta</h2>
-                    <p class="small text-body-secondary mb-0 mt-1">Seu feedback sobre {{ $tool->name }} será analisado pela equipe.</p>
+                    <h2 class="modal-title fs-5" id="tool-feedback-modal-title">Help improve this tool</h2>
+                    <p class="small text-body-secondary mb-0 mt-1">Your feedback about {{ $tool->name }} will be reviewed by the team.</p>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <form action="{{ route('feedback.tool.store') }}" method="post" data-tool-feedback-form novalidate>
@@ -50,7 +50,7 @@
                     <input type="hidden" name="page_title" value="{{ trim($__env->yieldContent('title', $tool->name)) }}">
 
                     <fieldset>
-                        <legend class="form-label fw-semibold mb-2">O que você gostaria de nos contar?</legend>
+                        <legend class="form-label fw-semibold mb-2">What would you like to tell us?</legend>
                         <div class="d-grid gap-2" data-tool-feedback-types>
                             @foreach (\App\Core\Feedback\Enums\ToolFeedbackType::cases() as $type)
                                 <label class="border rounded-3 p-2 d-flex gap-2 align-items-start">
@@ -69,14 +69,14 @@
                     </fieldset>
 
                     <div class="mt-3" data-tool-feedback-attempted hidden>
-                        <label class="form-label fw-semibold" for="tool-feedback-attempted-action">O que você estava tentando fazer?</label>
+                        <label class="form-label fw-semibold" for="tool-feedback-attempted-action">What were you trying to do?</label>
                         <textarea
                             class="form-control"
                             id="tool-feedback-attempted-action"
                             name="attempted_action"
                             rows="2"
                             maxlength="2000"
-                            placeholder="Descreva brevemente a ação que estava realizando."
+                            placeholder="Briefly describe what you were trying to do."
                         ></textarea>
                     </div>
 
@@ -88,21 +88,21 @@
                             name="message"
                             rows="5"
                             maxlength="5000"
-                            placeholder="Explique o problema, o que está faltando ou sua sugestão."
+                            placeholder="Explain the problem, what is missing, or your suggestion."
                             required
                         ></textarea>
-                        <div class="form-text">Não inclua senhas, dados bancários ou outras informações sigilosas.</div>
+                        <div class="form-text">Do not include passwords, banking information, or other sensitive data.</div>
                     </div>
 
                     <div class="alert alert-danger py-2 px-3 mt-3 mb-0" data-tool-feedback-error role="alert" hidden></div>
                     <div class="alert alert-success py-2 px-3 mt-3 mb-0" data-tool-feedback-success role="status" hidden>
-                        Obrigado! Seu feedback foi enviado para análise.
+                        Thank you! Your feedback was sent for review.
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" data-tool-feedback-submit>Enviar feedback</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-tool-feedback-submit>Send feedback</button>
                 </div>
             </form>
         </div>
@@ -117,8 +117,8 @@
             if (!root || root.dataset.initialized === 'true') return;
             root.dataset.initialized = 'true';
 
-            // O modal nasce junto ao CTA da sidebar, mas é movido para o body para
-            // não ser recortado pelo container sticky com overflow da coluna lateral.
+            // The modal is rendered next to the sidebar CTA, then moved to the body so it
+            // is not clipped by the sticky sidebar container with overflow.
             document.body.appendChild(root);
 
             const form = root.querySelector('[data-tool-feedback-form]');
@@ -167,20 +167,20 @@
                         const validationMessage = payload?.errors
                             ? Object.values(payload.errors).flat()[0]
                             : null;
-                        throw new Error(validationMessage || payload?.message || 'Não foi possível enviar seu feedback. Tente novamente.');
+                        throw new Error(validationMessage || payload?.message || 'Unable to send your feedback. Please try again.');
                     }
 
                     form.reset();
                     updateAttemptedAction();
-                    success.textContent = payload?.message || 'Obrigado! Seu feedback foi enviado para análise.';
+                    success.textContent = payload?.message || 'Thank you! Your feedback was sent for review.';
                     success.hidden = false;
                 } catch (exception) {
-                    error.textContent = exception instanceof Error ? exception.message : 'Não foi possível enviar seu feedback.';
+                    error.textContent = exception instanceof Error ? exception.message : 'Unable to send your feedback.';
                     error.hidden = false;
                 } finally {
                     submit.disabled = false;
                     submit.removeAttribute('aria-busy');
-                    submit.textContent = 'Enviar feedback';
+                    submit.textContent = 'Send feedback';
                 }
             });
 

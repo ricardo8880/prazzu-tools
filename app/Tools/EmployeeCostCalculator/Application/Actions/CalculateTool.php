@@ -14,16 +14,17 @@ final readonly class CalculateTool
 {
     public function __construct(private Calculator $calculator) {}
 
-    public function execute(array $d): ToolCalculationResult
+    /** @param array<string,mixed> $data */
+    public function execute(array $data): ToolCalculationResult
     {
         return $this->calculator->calculate(new CalculationInput(
-            Money::fromDecimal($d['salary']),
-            Money::fromDecimal($d['variable_pay']),
-            Money::fromDecimal($d['benefits']),
-            $d['regime'],
-            Percentage::fromString($d['rat']),
-            Percentage::fromString($d['third_parties']),
-            (int) ($d['monthly_hours'] ?? 220),
+            Money::fromDecimal((string) $data['salary']),
+            Money::fromDecimal((string) $data['variable_pay']),
+            Money::fromDecimal((string) $data['benefits']),
+            (string) $data['futa_profile'],
+            Percentage::fromString((string) $data['suta_rate']),
+            Percentage::fromString((string) $data['other_employer_cost_rate']),
+            (int) ($data['monthly_hours'] ?? 173),
         ));
     }
 }

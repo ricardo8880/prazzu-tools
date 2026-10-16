@@ -14,10 +14,10 @@ final class CalculatorTest extends TestCase
 {
     public function test_it_generates_personalized_text(): void
     {
-        $result = (new Calculator)->calculate(new CalculationInput('Ana', '000', 'Empresa', 'Analista', '2020-01-01', Money::fromDecimal('5000'), 'São Paulo', '2026-07-25'));
+        $result = (new Calculator)->calculate(new CalculationInput('Alex', '000', 'Company', 'Analyst', '2020-01-01', Money::fromDecimal('5000'), 'New York', '2026-07-25'));
 
-        self::assertStringContainsString('Ana', $result->details['document']['text']);
-        self::assertSame('R$ 5.000,00', $result->summary[0]->value);
+        self::assertStringContainsString('Alex', $result->details['document']['text']);
+        self::assertSame('$5,000.00', $result->summary[0]->value);
         self::assertStringContainsString('declara, sob sua responsabilidade', $result->details['document']['text']);
         self::assertFalse($result->details['document']['notice']['authenticity_validated']);
         self::assertNotNull($result->calculationMemory);
@@ -29,6 +29,6 @@ final class CalculatorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new Calculator)->calculate(new CalculationInput('Ana', '000', 'Empresa', 'Analista', '2026-08-01', Money::fromDecimal('5000'), 'São Paulo', '2026-07-25'));
+        (new Calculator)->calculate(new CalculationInput('Alex', '000', 'Company', 'Analyst', '2026-08-01', Money::fromDecimal('5000'), 'New York', '2026-07-25'));
     }
 }

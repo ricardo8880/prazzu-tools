@@ -66,8 +66,8 @@ Route::prefix('tools/{vertical}')
     ->whereIn('vertical', $verticalPublicSlugs)
     ->group(function (): void {
         Route::get('/', HomeController::class)->name('home');
-        Route::get('/ferramentas', [ToolCatalogController::class, 'index'])->name('tools.index');
-        Route::get('/ferramentas/{category}', [ToolCatalogController::class, 'index'])
+        Route::get('/tools', [ToolCatalogController::class, 'index'])->name('tools.index');
+        Route::get('/tools/{category}', [ToolCatalogController::class, 'index'])
             ->whereIn('category', array_keys(config('tools.categories', [])))
             ->name('tools.category');
 
@@ -81,11 +81,11 @@ Route::prefix('tools/{vertical}')
             ->middleware('throttle:120,1')
             ->name('blog.analytics');
 
-        Route::get('/recursos', [ContentPageController::class, 'resources'])->name('resources.index');
-        Route::get('/recursos/{resource}/{slug}', [ContentPageController::class, 'resourceItem'])
+        Route::get('/resources', [ContentPageController::class, 'resources'])->name('resources.index');
+        Route::get('/resources/{resource}/{slug}', [ContentPageController::class, 'resourceItem'])
             ->whereIn('resource', ['guias', 'modelos'])
             ->name('resources.item');
-        Route::get('/recursos/{resource}', [ContentPageController::class, 'resource'])
+        Route::get('/resources/{resource}', [ContentPageController::class, 'resource'])
             ->whereIn('resource', ['guias', 'modelos', 'novidades'])
             ->name('resources.show');
 
@@ -105,6 +105,7 @@ Route::post('/acquisition/context/continue', ContinueAcquisitionContextControlle
 // As rotas nomeadas pÃºblicas permanecem canÃ´nicas em /tools/{vertical}/... .
 Route::get('/', HomeController::class)->name('legacy.home');
 
+Route::get('/tools', [ToolCatalogController::class, 'index']);
 Route::get('/ferramentas', [ToolCatalogController::class, 'index'])->name('legacy.tools.index');
 Route::get('/ferramentas/{category}', [ToolCatalogController::class, 'index'])
     ->whereIn('category', array_keys(config('tools.categories', [])))
@@ -238,89 +239,89 @@ Route::post('/analytics/tools/presence', TrackToolPresenceController::class)
     ->middleware('throttle:240,1')
     ->name('analytics.tools.presence');
 
-Route::get('/planos', [ContentPageController::class, 'plans'])
+Route::get('/plans', [ContentPageController::class, 'plans'])
     ->name('plans');
 
-Route::get('/sobre', [ContentPageController::class, 'about'])
+Route::get('/about', [ContentPageController::class, 'about'])
     ->name('about');
 
 Route::middleware('guest')->group(function (): void {
-    Route::get('/entrar', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/entrar', [AuthenticatedSessionController::class, 'store'])
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('login.store');
 
-    Route::get('/criar-conta', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/criar-conta', [RegisteredUserController::class, 'store'])
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('register.store');
 
-    Route::get('/esqueci-minha-senha', [PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('/esqueci-minha-senha', [PasswordResetLinkController::class, 'store'])
+    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('password.email');
-    Route::get('/redefinir-senha/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/redefinir-senha', [NewPasswordController::class, 'store'])->name('password.store');
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
 
-Route::get('/convites/empresa/{token}', [InvitationAcceptanceController::class, 'show'])
+Route::get('/business-invitations/{token}', [InvitationAcceptanceController::class, 'show'])
     ->name('organizations.invitations.show');
 
 Route::middleware('auth')->group(function (): void {
-    Route::get('/empresas/criar', [OrganizationController::class, 'create'])->name('organizations.create');
-    Route::post('/empresas', [OrganizationController::class, 'store'])->name('organizations.store');
-    Route::get('/empresas/{organization}', [OrganizationController::class, 'show'])->name('organizations.show');
-    Route::patch('/empresas/{organization}', [OrganizationController::class, 'update'])->name('organizations.update');
-    Route::patch('/empresas/{organization}/membros/{member}', [OrganizationMemberController::class, 'update'])
+    Route::get('/businesses/create', [OrganizationController::class, 'create'])->name('organizations.create');
+    Route::post('/businesses', [OrganizationController::class, 'store'])->name('organizations.store');
+    Route::get('/businesses/{organization}', [OrganizationController::class, 'show'])->name('organizations.show');
+    Route::patch('/businesses/{organization}', [OrganizationController::class, 'update'])->name('organizations.update');
+    Route::patch('/businesses/{organization}/members/{member}', [OrganizationMemberController::class, 'update'])
         ->name('organizations.members.update');
-    Route::post('/empresas/{organization}/membros/{member}/vaga', [OrganizationSeatController::class, 'store'])
+    Route::post('/businesses/{organization}/members/{member}/seat', [OrganizationSeatController::class, 'store'])
         ->name('organizations.seats.store');
-    Route::delete('/empresas/{organization}/vagas/{seat}', [OrganizationSeatController::class, 'destroy'])
+    Route::delete('/businesses/{organization}/seats/{seat}', [OrganizationSeatController::class, 'destroy'])
         ->name('organizations.seats.destroy');
-    Route::post('/empresas/{organization}/convites', [OrganizationInvitationController::class, 'store'])
+    Route::post('/businesses/{organization}/invitations', [OrganizationInvitationController::class, 'store'])
         ->name('organizations.invitations.store');
-    Route::delete('/empresas/{organization}/convites/{invitation}', [OrganizationInvitationController::class, 'destroy'])
+    Route::delete('/businesses/{organization}/invitations/{invitation}', [OrganizationInvitationController::class, 'destroy'])
         ->name('organizations.invitations.destroy');
-    Route::patch('/empresas/{organization}/convites/{invitation}/restaurar', [OrganizationInvitationController::class, 'restore'])
+    Route::patch('/businesses/{organization}/invitations/{invitation}/restore', [OrganizationInvitationController::class, 'restore'])
         ->name('organizations.invitations.restore');
-    Route::delete('/empresas/{organization}/convites/{invitation}/apagar', [OrganizationInvitationController::class, 'purge'])
+    Route::delete('/businesses/{organization}/invitations/{invitation}/delete', [OrganizationInvitationController::class, 'purge'])
         ->name('organizations.invitations.purge');
-    Route::post('/convites/empresa/{token}/aceitar', [InvitationAcceptanceController::class, 'accept'])
+    Route::post('/business-invitations/{token}/accept', [InvitationAcceptanceController::class, 'accept'])
         ->name('organizations.invitations.accept');
-    Route::get('/minha-conta', AccountController::class)->name('account.show');
-    Route::post('/minha-conta/ferramentas/{tool}/favorito', ToolFavoriteController::class)
+    Route::get('/my-account', AccountController::class)->name('account.show');
+    Route::post('/my-account/tools/{tool}/favorite', ToolFavoriteController::class)
         ->middleware('throttle:30,1')
         ->name('account.tools.favorite');
-    Route::get('/confirmar-email', EmailVerificationPromptController::class)->name('verification.notice');
-    Route::get('/confirmar-email/{id}/{hash}', VerifyEmailController::class)
+    Route::get('/verify-email', EmailVerificationPromptController::class)->name('verification.notice');
+    Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
-    Route::post('/confirmar-email/reenviar', EmailVerificationNotificationController::class)
+    Route::post('/verify-email/resend', EmailVerificationNotificationController::class)
         ->middleware('throttle:6,1')
         ->name('verification.send');
-    Route::put('/minha-conta/senha', [PasswordController::class, 'update'])
+    Route::put('/my-account/password', [PasswordController::class, 'update'])
         ->middleware('throttle:6,1')
         ->name('password.update');
-    Route::post('/sair', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
 Route::get('/prazzu', [ContentPageController::class, 'prazzu'])
     ->name('prazzu');
 
-Route::get('/sugerir-ferramenta', [SuggestToolController::class, 'create'])
+Route::get('/suggest-tool', [SuggestToolController::class, 'create'])
     ->name('tools.suggest');
 
-Route::post('/sugerir-ferramenta', [SuggestToolController::class, 'store'])
+Route::post('/suggest-tool', [SuggestToolController::class, 'store'])
     ->name('tools.suggest.store');
 
 Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->middleware('throttle:6,1')
     ->name('newsletter.store');
 
-Route::post('/feedback/pagina', [PageFeedbackController::class, 'store'])
+Route::post('/feedback/page', [PageFeedbackController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('feedback.page.store');
 
-Route::post('/feedback/ferramenta', [ToolFeedbackController::class, 'store'])
+Route::post('/feedback/tool', [ToolFeedbackController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('feedback.tool.store');

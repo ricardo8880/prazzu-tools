@@ -10,28 +10,17 @@ use App\Core\Quality\Enums\GoldenCaseKind;
 
 final class GoldenCases
 {
-    public const PLACEHOLDER_REFERENCE = 'TODO: substitua por fonte oficial, cálculo revisado ou caso aprovado.';
-
     public static function suite(): GoldenCaseSuite
     {
-        $reference = 'CalculatorTest e memória da versão 1.1.0; impacto anual limitado às parcelas descritas no README.';
-
-        return new GoldenCaseSuite('salary-increase-calculator', [
-            new GoldenCase('typical', 'Reajuste percentual mais aumento fixo', GoldenCaseKind::Typical,
-                ['current_salary_minor' => 300000, 'adjustment_rate' => '5', 'fixed_addition_minor' => 5000, 'retroactive_months' => 3],
-                ['new_salary_minor' => 320000, 'monthly_increase_minor' => 20000, 'effective_adjustment' => '6,66 %', 'retroactive_minor' => 60000, 'annual_impact_minor' => 266667], $reference, '1.1.0', 'Money::percentage e divisão inteira do Core.'),
-            new GoldenCase('boundary-no-adjustment', 'Percentual e aumento fixo iguais a zero', GoldenCaseKind::Boundary,
-                ['current_salary_minor' => 300000, 'adjustment_rate' => '0', 'fixed_addition_minor' => 0, 'retroactive_months' => 0], ['new_salary_minor' => 300000, 'monthly_increase_minor' => 0, 'effective_adjustment' => '0,00 %'], $reference, '1.1.0'),
-            new GoldenCase('invalid-zero-salary', 'Salário zero é rejeitado', GoldenCaseKind::InvalidInput,
-                ['current_salary' => '0,00'], ['outcome' => 'validation-error'], 'ExecuteToolRequest exige salário maior que zero.', '1.1.0'),
-            new GoldenCase('rounding-third', 'Impacto anual absorve o terço de férias em centavos', GoldenCaseKind::Rounding,
-                ['monthly_increase_minor' => 100], ['annual_impact_minor' => 1333], $reference, '1.1.0', 'diferença mensal × 40 ÷ 3 usando Money.'),
-            new GoldenCase('non-applicable-collective-rule', 'Piso ou cláusula coletiva não informados não são inferidos', GoldenCaseKind::NonApplicable,
-                ['scenario' => 'convencao-coletiva-com-regra-especifica'], ['outcome' => 'professional-review-required'], 'README exclui pisos, tetos, compensações e cláusulas específicas.', '1.1.0'),
-            new GoldenCase('normative-transition', 'Mudança na composição anual exige revisão da regra', GoldenCaseKind::NormativeTransition,
-                ['scenario' => 'alteracao-normativa-de-decimo-terceiro-ou-terco-de-ferias'], ['outcome' => 'rule-review-required'], 'Constituição Federal art. 7º, XVII e Lei 4.090/1962 fundamentam as parcelas hoje consideradas.', '1.1.0'),
-            new GoldenCase('regression-effective-rate', 'Aumento fixo participa do reajuste efetivo', GoldenCaseKind::Regression,
-                ['current_salary_minor' => 300000, 'adjustment_rate' => '5', 'fixed_addition_minor' => 5000], ['monthly_increase_minor' => 20000, 'effective_adjustment' => '6,66 %'], $reference, '1.1.0'),
+        $reference = 'CalculatorTest and the versioned calculation memory for the U.S. salary-increase calculator.';
+        return new GoldenCaseSuite(toolSlug:'salary-increase-calculator', cases:[
+            new GoldenCase('typical','Five percent salary increase',GoldenCaseKind::Typical,['current_salary'=>'3500.00','rate'=>'5'],['outcome'=>'calculated'],$reference,'1.1.0','Money in integer cents.'),
+            new GoldenCase('boundary','Zero percent increase',GoldenCaseKind::Boundary,['current_salary'=>'3500.00','rate'=>'0'],['outcome'=>'calculated'],$reference,'1.1.0'),
+            new GoldenCase('invalid-input','Invalid salary rejected',GoldenCaseKind::InvalidInput,['current_salary'=>'invalid'],['outcome'=>'validation-error'],$reference,'1.1.0'),
+            new GoldenCase('rounding','Fractional percentage rounds to cents',GoldenCaseKind::Rounding,['current_salary'=>'3333.33','rate'=>'2.75'],['outcome'=>'integer-cents'],$reference,'1.1.0','Money in integer cents; percentage in basis points.'),
+            new GoldenCase('non-applicable','No statutory increase is inferred',GoldenCaseKind::NonApplicable,['rate'=>null],['outcome'=>'user-parameter'],$reference,'1.1.0'),
+            new GoldenCase('normative-transition','Future policy change requires user input',GoldenCaseKind::NormativeTransition,['year'=>2027],['outcome'=>'verify-input'],$reference,'1.1.0'),
+            new GoldenCase('regression','Known salary projection remains stable',GoldenCaseKind::Regression,['current_salary'=>'5000.00','rate'=>'4'],['outcome'=>'calculated'],$reference,'1.1.0','Money in integer cents.'),
         ]);
     }
 }

@@ -230,20 +230,20 @@ final class MarginMarkupController extends Controller
             durationMs: (int) ((hrtime(true) - $startedAt) / 1_000_000),
         );
 
-        return $exporter->csv('margem-markup.csv', ['Campo', 'Amount'], collect([
-            'Data de referência' => $validated['reference_date'],
-            'Custo total' => $result['total_cost'],
-            'Preço de venda' => $result['sale_price'],
-            'Lucro bruto' => $result['gross_profit'],
-            'Lucro líquido estimado' => $result['net_profit'],
-            'Impostos' => $result['taxes_amount'],
-            'Comissão' => $result['commission_amount'],
-            'Taxas de cartão' => $result['card_fees_amount'],
-            'Taxas de marketplace' => $result['marketplace_fees_amount'],
-            'Margem' => $result['margin'],
+        return $exporter->csv('margin-markup.csv', ['Field', 'Amount'], collect([
+            'Reference date' => $validated['reference_date'],
+            'Total cost' => $result['total_cost'],
+            'Selling price' => $result['sale_price'],
+            'Gross profit' => $result['gross_profit'],
+            'Estimated net profit' => $result['net_profit'],
+            'Taxes' => $result['taxes_amount'],
+            'Commission' => $result['commission_amount'],
+            'Card fees' => $result['card_fees_amount'],
+            'Marketplace fees' => $result['marketplace_fees_amount'],
+            'Margin' => $result['margin'],
             'Markup' => $result['markup'],
-            'Índice de markup' => $result['markup_multiplier'],
-            'Versão da regra' => $result['rule_version'],
+            'Markup multiplier' => $result['markup_multiplier'],
+            'Rule version' => $result['rule_version'],
         ])->map(static fn (string $value, string $label): array => [$label, $value]));
     }
 
@@ -264,8 +264,8 @@ final class MarginMarkupController extends Controller
         try {
             $result = $action->execute($input)->toArray();
             $document = $documents->pdf(
-                'Calculadora de Precificação de Produtos',
-                'margem-markup-'.now()->format('Y-m-d'),
+                'Product Pricing Calculator',
+                'margin-markup-'.now()->format('Y-m-d'),
                 $result,
                 $input,
             );
@@ -296,8 +296,8 @@ final class MarginMarkupController extends Controller
         $results = $action->execute($input['products']);
 
         return $exporter->csv(
-            'produtos-margem-markup.csv',
-            ['Produto', 'Código', 'Categoria', 'Custo total', 'Preço sugerido', 'Lucro líquido', 'Margem', 'Markup', 'Índice'],
+            'margin-markup-products.csv',
+            ['Product', 'Code', 'Category', 'Total cost', 'Suggested price', 'Net profit', 'Margin', 'Markup', 'Multiplier'],
             array_map(static fn (array $row): array => [
                 $row['name'], $row['code'], $row['category'], $row['total_cost'], $row['sale_price'],
                 $row['net_profit'], $row['margin'], $row['markup'], $row['markup_multiplier'],
@@ -313,8 +313,8 @@ final class MarginMarkupController extends Controller
         $results = $action->execute($request->validated());
 
         return $exporter->csv(
-            'cenarios-margem-markup.csv',
-            ['Cenário', 'Ajuste de custo', 'Margem alvo', 'Desconto', 'Custo total', 'Preço de tabela', 'Preço final', 'Lucro líquido', 'Margem efetiva', 'Índice'],
+            'margin-markup-scenarios.csv',
+            ['Scenario', 'Cost adjustment', 'Target margin', 'Discount', 'Total cost', 'List price', 'Final price', 'Net profit', 'Effective margin', 'Multiplier'],
             array_map(static fn (array $row): array => array_values($row), $results),
         );
     }
@@ -349,7 +349,7 @@ final class MarginMarkupController extends Controller
     ): RedirectResponse {
         return redirect()->route('tools.margin-markup-calculator.index')
             ->withInput($action->execute($run, (int) $request->user()->getAuthIdentifier()))
-            ->with('history_message', 'Os dados foram carregados. Revise-os antes de calcular novamente.');
+            ->with('history_message', 'The saved data was loaded. Review it before calculating again.');
     }
 
     public function exportHistory(
@@ -367,8 +367,8 @@ final class MarginMarkupController extends Controller
         try {
             $report = $action->execute($run, (int) $request->user()->getAuthIdentifier());
             $document = $documents->pdf(
-                'Relatório de Margem, Markup e Formação de Preço',
-                'margem-markup-historico-'.$run,
+                'Margin, Markup & Pricing Report',
+                'margin-markup-history-'.$run,
                 $report['result'],
                 $report['input'],
             );
@@ -393,7 +393,7 @@ final class MarginMarkupController extends Controller
         $action->execute($run, (int) $request->user()->getAuthIdentifier());
 
         return redirect()->route('tools.margin-markup-calculator.history.index')
-            ->with('history_message', 'Registro removido do histórico.');
+            ->with('history_message', 'History entry deleted.');
     }
 
     public function previewImport(PreviewProductImportRequest $request, PreviewProductImport $action): RedirectResponse
@@ -426,9 +426,9 @@ final class MarginMarkupController extends Controller
     public function importTemplate(TabularExportService $exporter): StreamedResponse
     {
         return $exporter->csv(
-            'modelo-importacao-margem-markup.csv',
-            ['Produto', 'Código', 'Categoria', 'Custo base', 'Outros custos', 'Frete', 'Embalagem', 'Despesas rateadas', 'Margem %', 'Impostos %', 'Comissão %', 'Cartão %', 'Marketplace %'],
-            [['Produto exemplo', 'SKU-001', 'Geral', '100,00', '0,00', '10,00', '2,00', '5,00', '30', '6', '2', '3', '0']],
+            'margin-markup-import-template.csv',
+            ['Product', 'Code', 'Category', 'Base cost', 'Additional costs', 'Shipping', 'Packaging', 'Allocated expenses', 'Margin %', 'Taxes %', 'Commission %', 'Card fees %', 'Marketplace %'],
+            [['Example product', 'SKU-001', 'General', '100.00', '0.00', '10.00', '2.00', '5.00', '30', '6', '2', '3', '0']],
         );
     }
 

@@ -15,11 +15,11 @@ final class MarginMarkupCalculatorTest extends TestCase
     public function test_calculates_complete_sale_price_and_cost_composition(): void
     {
         $result = $this->calculator()->calculate(
-            baseCost: Money::fromDecimal('100,00'),
-            additionalCosts: Money::fromDecimal('10,00'),
-            freightCost: Money::fromDecimal('5,00'),
-            packagingCost: Money::fromDecimal('3,00'),
-            fixedExpenses: Money::fromDecimal('2,00'),
+            baseCost: Money::fromDecimal('100.00'),
+            additionalCosts: Money::fromDecimal('10.00'),
+            freightCost: Money::fromDecimal('5.00'),
+            packagingCost: Money::fromDecimal('3.00'),
+            fixedExpenses: Money::fromDecimal('2.00'),
             desiredMargin: Percentage::fromString('20'),
             taxes: Percentage::fromString('10'),
             commission: Percentage::fromString('5'),
@@ -27,12 +27,12 @@ final class MarginMarkupCalculatorTest extends TestCase
             marketplaceFees: Percentage::fromString('3'),
         );
 
-        self::assertSame('R$ 200,00', $result->salePrice->formatEnUs());
-        self::assertSame('R$ 120,00', $result->totalCost->formatEnUs());
-        self::assertSame('R$ 80,00', $result->grossProfit->formatEnUs());
-        self::assertSame('R$ 40,00', $result->netProfit->formatEnUs());
+        self::assertSame('$200.00', $result->salePrice->formatEnUs());
+        self::assertSame('$120.00', $result->totalCost->formatEnUs());
+        self::assertSame('$80.00', $result->grossProfit->formatEnUs());
+        self::assertSame('$40.00', $result->netProfit->formatEnUs());
         self::assertSame('66.666667', $result->markup->toDecimalString());
-        self::assertSame('1,6667', $result->markupMultiplier);
+        self::assertSame('1.6667', $result->markupMultiplier);
         self::assertSame('2.1.0', $result->ruleVersion);
         self::assertTrue($result->calculationMemory->isEstimate);
         self::assertSame(4, count($result->calculationMemory->steps));
@@ -42,10 +42,10 @@ final class MarginMarkupCalculatorTest extends TestCase
     public function test_rejects_zero_total_cost(): void
     {
         $this->expectException(InvalidValue::class);
-        $this->expectExceptionMessage('O custo total deve ser maior que zero.');
+        $this->expectExceptionMessage('Total cost must be greater than zero.');
 
         $this->calculator()->calculate(
-            Money::fromDecimal('0,00'), Money::zero(), Money::zero(), Money::zero(), Money::zero(),
+            Money::fromDecimal('0.00'), Money::zero(), Money::zero(), Money::zero(), Money::zero(),
             Percentage::fromString('25'), Percentage::zero(), Percentage::zero(), Percentage::zero(), Percentage::zero(),
         );
     }
@@ -53,10 +53,10 @@ final class MarginMarkupCalculatorTest extends TestCase
     public function test_rejects_percentage_sum_equal_to_one_hundred_percent(): void
     {
         $this->expectException(InvalidValue::class);
-        $this->expectExceptionMessage('A soma da margem, impostos, comissão e taxas deve ser menor que 100%.');
+        $this->expectExceptionMessage('The combined margin, taxes, commission, and fees must be below 100%.');
 
         $this->calculator()->calculate(
-            Money::fromDecimal('100,00'), Money::zero(), Money::zero(), Money::zero(), Money::zero(),
+            Money::fromDecimal('100.00'), Money::zero(), Money::zero(), Money::zero(), Money::zero(),
             Percentage::fromString('50'), Percentage::fromString('30'), Percentage::fromString('20'), Percentage::zero(), Percentage::zero(),
         );
     }

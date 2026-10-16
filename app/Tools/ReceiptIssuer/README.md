@@ -46,7 +46,7 @@ O Plus adiciona produtividade e continuidade; não corrige nem completa o recibo
 - nomes têm de 2 a 160 caracteres;
 - a descrição tem de 3 a 1.000 caracteres;
 - a cidade é opcional e limitada a 120 caracteres;
-- valores por extenso aceitam BRL positivo até R$ 999.999.999,99.
+- valores por extenso aceitam USD positivo até $999,999,999.99.
 
 ## Integrações
 

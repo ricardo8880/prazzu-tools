@@ -24,7 +24,7 @@ final class ToolQualityContractTest extends TestCase
         $tool = new Tool;
 
         if ($tool->manifest()->status === ToolStatus::Draft) {
-            self::assertTrue(true, 'Rascunhos podem manter casos provisórios até a implementação do domínio.');
+            self::assertTrue(true, 'Drafts may keep provisional cases until the domain implementation is complete.');
 
             return;
         }

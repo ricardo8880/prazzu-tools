@@ -12,6 +12,6 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.sales-commission-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Comissão de Vendedores');
+            ->assertSee('Sales Commission Calculator');
     }
 }

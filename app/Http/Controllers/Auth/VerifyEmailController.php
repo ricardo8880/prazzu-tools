@@ -14,6 +14,6 @@ final class VerifyEmailController extends Controller
             $request->fulfill();
         }
 
-        return redirect()->route('account.show')->with('status', 'Seu e-mail foi confirmado com sucesso.');
+        return redirect()->route('account.show')->with('status', 'Your email was verified successfully.');
     }
 }

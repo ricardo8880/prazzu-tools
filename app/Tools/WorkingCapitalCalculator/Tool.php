@@ -79,8 +79,8 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
             keywords: ['working capital', 'net working capital', 'current assets', 'current liabilities'],
             capabilities: [ToolCapability::History, ToolCapability::VersionedPersistence, ToolCapability::Export],
             features: [
-                new ToolFeature('calculate', 'Cálculo completo com memória', ToolFeatureTier::Essential),
-                new ToolFeature('projections', 'Projeção de cenário para ativos e passivos circulantes', ToolFeatureTier::Plus),
+                new ToolFeature('calculate', 'Full calculation with calculation details', ToolFeatureTier::Essential),
+                new ToolFeature('projections', 'Scenario projection for current assets and liabilities', ToolFeatureTier::Plus),
             ],
             persistence: new ToolPersistencePolicy(enabled: true, schemaVersion: 1, retentionDays: 365, minimumReadableSchemaVersion: 1),
             export: new ToolExportPolicy(enabled: true, formats: ['csv', 'json', 'pdf']),

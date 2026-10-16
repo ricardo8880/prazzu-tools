@@ -13,7 +13,7 @@ final class ToolPageTest extends TestCase
     {
         $this->get(route('tools.asset-depreciation-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Depreciação de Ativos')
+            ->assertSee('Asset Depreciation Calculator')
             ->assertSee('Prazzu Plus');
     }
 
@@ -24,7 +24,7 @@ final class ToolPageTest extends TestCase
             'asset_value' => '12.000,00',
             'useful_life_years' => 5,
             'method' => 'linear',
-        ])->assertOk()->assertSee('R$ 200,00')->assertSee('R$ 2.400,00')->assertSee('R$ 9.600,00')->assertSee('Memória de cálculo');
+        ])->assertOk()->assertSee('$200.00')->assertSee('$2,400.00')->assertSee('$9,600.00')->assertSee('Calculation details');
     }
 
     #[CoversPlusFeature('asset-depreciation-calculator', 'multiple_assets')]
@@ -41,9 +41,9 @@ final class ToolPageTest extends TestCase
                 'name' => 'Notebook', 'value' => '6.000,00', 'useful_life_years' => 3, 'method' => 'linear',
             ]],
         ])->assertOk()
-            ->assertSee('Projeção patrimonial consolidada')
-            ->assertSee('R$ 16.000,00')
-            ->assertSee('Exportar PDF')
-            ->assertSee('Baixar XLSX');
+            ->assertSee('Consolidated asset projection')
+            ->assertSee('$16,000.00')
+            ->assertSee('Export PDF')
+            ->assertSee('Download XLSX');
     }
 }

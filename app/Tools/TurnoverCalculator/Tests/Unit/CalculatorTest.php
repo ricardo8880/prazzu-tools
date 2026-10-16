@@ -14,7 +14,7 @@ final class CalculatorTest extends TestCase
     {
         $result = (new Calculator)->calculate(new CalculationInput(10, 6, 80));
 
-        self::assertSame('10,00%', $result->summary[0]->value);
+        self::assertSame('10.00%', $result->summary[0]->value);
         self::assertSame(16, $result->summary[1]->value);
     }
 }

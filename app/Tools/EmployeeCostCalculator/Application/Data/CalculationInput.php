@@ -14,10 +14,10 @@ final readonly class CalculationInput implements ToolCalculationInput
         public Money $salary,
         public Money $variablePay,
         public Money $benefits,
-        public string $regime,
-        public Percentage $rat,
-        public Percentage $thirdParties,
-        public int $monthlyHours = 220,
+        public string $futaProfile,
+        public Percentage $sutaRate,
+        public Percentage $otherEmployerCostRate,
+        public int $monthlyHours = 173,
     ) {}
 
     public function toArray(): array
@@ -26,9 +26,9 @@ final readonly class CalculationInput implements ToolCalculationInput
             'salary' => $this->salary->minorAmount(),
             'variable_pay' => $this->variablePay->minorAmount(),
             'benefits' => $this->benefits->minorAmount(),
-            'regime' => $this->regime,
-            'rat' => $this->rat->toDecimalString(),
-            'third_parties' => $this->thirdParties->toDecimalString(),
+            'futa_profile' => $this->futaProfile,
+            'suta_rate' => $this->sutaRate->toDecimalString(),
+            'other_employer_cost_rate' => $this->otherEmployerCostRate->toDecimalString(),
             'monthly_hours' => $this->monthlyHours,
         ];
     }

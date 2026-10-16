@@ -13,19 +13,18 @@ use PHPUnit\Framework\TestCase;
 final class AmericanMoneyInWordsTest extends TestCase
 {
     #[DataProvider('amounts')]
-    public function test_it_writes_positive_brl_amounts_in_portuguese(string $amount, string $expected): void
+    public function test_it_writes_positive_usd_amounts_in_english(string $amount, string $expected): void
     {
         self::assertSame($expected, (new AmericanMoneyInWords)->convert(Money::fromDecimal($amount)));
     }
 
-    /** @return iterable<string, array{string, string}> */
     public static function amounts(): iterable
     {
-        yield 'one real' => ['1,00', 'um real'];
-        yield 'cents only' => ['0,01', 'um centavo'];
-        yield 'hundred' => ['100,00', 'cem reais'];
-        yield 'thousand and cents' => ['1.250,45', 'mil duzentos e cinquenta reais e quarenta e cinco centavos'];
-        yield 'million' => ['1.000.000,00', 'um milhão de reais'];
+        yield 'one dollar' => ['1.00', 'one dollar'];
+        yield 'one cent' => ['0.01', 'one cent'];
+        yield 'hundred' => ['100.00', 'one hundred dollars'];
+        yield 'thousand and cents' => ['1250.45', 'one thousand two hundred fifty dollars and forty-five cents'];
+        yield 'million' => ['1000000.00', 'one million dollars'];
     }
 
     public function test_it_rejects_zero(): void

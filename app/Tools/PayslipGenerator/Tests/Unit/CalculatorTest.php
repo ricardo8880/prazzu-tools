@@ -13,9 +13,9 @@ final class CalculatorTest extends TestCase
 {
     public function test_it_generates_totals(): void
     {
-        $r = (new Calculator)->calculate(new CalculationInput('Ana', '000', 'Empresa', '2026-07', Money::fromDecimal('3000'), Money::fromDecimal('200'), Money::fromDecimal('300'), Money::fromDecimal('100'), Money::fromDecimal('50')));
-        self::assertSame('R$ 3.200,00', $r->summary[0]->value);
-        self::assertSame('R$ 2.750,00', $r->summary[2]->value);
+        $r = (new Calculator)->calculate(new CalculationInput('Alex', '000', 'Company', '2026-07', Money::fromDecimal('3000'), Money::fromDecimal('200'), Money::fromDecimal('300'), Money::fromDecimal('100'), Money::fromDecimal('50')));
+        self::assertSame('$3,200.00', $r->summary[0]->value);
+        self::assertSame('$2,750.00', $r->summary[2]->value);
         self::assertNotNull($r->calculationMemory);
         self::assertNotEmpty($r->calculationMemory->steps);
     }

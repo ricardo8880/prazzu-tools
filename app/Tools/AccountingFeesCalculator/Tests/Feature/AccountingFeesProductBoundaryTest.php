@@ -33,8 +33,8 @@ final class AccountingFeesProductBoundaryTest extends TestCase
     public function test_removal_migration_is_reversible_and_preserves_adjustment_labels(): void
     {
         DB::table('accounting_fee_adjustments')->insert([
-            'scenario_label' => 'Renovação anual — cenário A',
-            'index_type' => 'ipca',
+            'scenario_label' => 'Annual renewal — scenario A',
+            'index_type' => 'cpi_u',
             'reference_period' => '2026-07',
             'percentage' => '4.6200',
             'current_value_cents' => 150000,
@@ -49,7 +49,7 @@ final class AccountingFeesProductBoundaryTest extends TestCase
         self::assertTrue(Schema::hasTable('accounting_fee_clients'));
         self::assertTrue(Schema::hasColumn('accounting_fee_calculations', 'share_token'));
         self::assertSame(
-            'Renovação anual — cenário A',
+            'Annual renewal — scenario A',
             DB::table('accounting_fee_adjustments')->value('client_name'),
         );
 
@@ -58,7 +58,7 @@ final class AccountingFeesProductBoundaryTest extends TestCase
         self::assertFalse(Schema::hasTable('accounting_fee_clients'));
         self::assertFalse(Schema::hasColumn('accounting_fee_calculations', 'share_token'));
         self::assertSame(
-            'Renovação anual — cenário A',
+            'Annual renewal — scenario A',
             DB::table('accounting_fee_adjustments')->value('scenario_label'),
         );
     }

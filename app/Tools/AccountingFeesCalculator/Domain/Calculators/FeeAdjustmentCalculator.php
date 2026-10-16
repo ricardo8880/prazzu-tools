@@ -15,7 +15,7 @@ final class FeeAdjustmentCalculator
     public function calculate(Money $currentValue, Percentage $percentage): FeeAdjustmentResult
     {
         if ($currentValue->minorAmount() <= 0) {
-            throw new InvalidValue('O valor atual deve ser maior que zero.');
+            throw new InvalidValue('The current amount must be greater than zero.');
         }
 
         $percentageUnits = $percentage->millionthsOfPercent();
@@ -24,7 +24,7 @@ final class FeeAdjustmentCalculator
             $percentageUnits < Percentage::fromString('-100')->millionthsOfPercent()
             || $percentageUnits > Percentage::fromString('1000')->millionthsOfPercent()
         ) {
-            throw new InvalidValue('O percentual deve estar entre -100% e 1.000%.');
+            throw new InvalidValue('The percentage must be between -100% and 1,000%.');
         }
 
         $difference = $currentValue->percentage($percentage, RoundingMode::HalfUp);

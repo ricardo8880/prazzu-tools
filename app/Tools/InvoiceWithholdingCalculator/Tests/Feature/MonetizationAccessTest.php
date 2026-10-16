@@ -20,10 +20,11 @@ use PHPUnit\Framework\TestCase;
 final class MonetizationAccessTest extends TestCase
 {
     #[CoversPlusFeature('backup-withholding-calculator', 'history')]
+    #[CoversPlusFeature('backup-withholding-calculator', 'export')]
     public function test_plus_features_block_free_and_allow_plus_in_monetized_mode(): void
     {
         $manifest = (new Tool)->manifest();
-        foreach (['custom_rules', 'multiple_notes', 'export', 'history'] as $feature) {
+        foreach (['export', 'history'] as $feature) {
             $this->assertFeatureAccess($manifest, $feature);
         }
     }

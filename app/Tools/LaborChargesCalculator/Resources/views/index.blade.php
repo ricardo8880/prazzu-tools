@@ -8,9 +8,9 @@
     <x-tools.form-panel title="Employer payroll assumptions"><form method="POST" action="{{ route('tools.employer-payroll-tax-calculator.calculate') }}" class="row g-3">@csrf
         <div class="col-md-4"><x-tools.form.money name="salary" label="Monthly wages" :value="old('salary')" required /></div>
         <div class="col-md-4"><x-tools.form.money name="benefits" label="Monthly employer-paid benefits" :value="old('benefits','0.00')" required /></div>
-        <div class="col-md-4"><x-tools.form.select name="regime" label="FUTA profile" :options="['standard'=>'Standard FUTA estimate','futa_exempt'=>'FUTA-exempt employer']" :value="old('regime','standard')" required /></div>
-        <div class="col-md-4"><x-tools.form.input name="rat" label="Effective SUTA rate" type="number" step="0.0001" suffix="%" :value="old('rat','0')" required /></div>
-        <div class="col-md-4"><x-tools.form.input name="third_parties" label="Other employer payroll-cost rate" type="number" step="0.0001" suffix="%" :value="old('third_parties','0')" required /></div>
+        <div class="col-md-4"><x-tools.form.select name="futa_profile" label="FUTA profile" :options="['standard'=>'Standard FUTA estimate','futa_exempt'=>'FUTA-exempt employer']" :value="old('futa_profile','standard')" required /></div>
+        <div class="col-md-4"><x-tools.form.input name="suta_rate" label="Effective SUTA rate" type="number" step="0.0001" suffix="%" :value="old('suta_rate','0')" required /></div>
+        <div class="col-md-4"><x-tools.form.input name="other_employer_cost_rate" label="Other employer payroll-cost rate" type="number" step="0.0001" suffix="%" :value="old('other_employer_cost_rate','0')" required /></div>
         <div class="col-12"><button class="btn btn-primary">Calculate employer payroll taxes</button></div>
     </form></x-tools.form-panel>
     @isset($result)

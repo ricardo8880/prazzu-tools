@@ -48,9 +48,9 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
                     fields: [
                         new ToolAnalyticsField('salary', 'input', selector: '[name="salary"]'),
                         new ToolAnalyticsField('benefits', 'input', selector: '[name="benefits"]'),
-                        new ToolAnalyticsField('regime', 'input', selector: '[name="regime"]'),
-                        new ToolAnalyticsField('rat', 'input', selector: '[name="rat"]'),
-                        new ToolAnalyticsField('third_parties', 'input', selector: '[name="third_parties"]'),
+                        new ToolAnalyticsField('futa_profile', 'input', selector: '[name="futa_profile"]'),
+                        new ToolAnalyticsField('suta_rate', 'input', selector: '[name="suta_rate"]'),
+                        new ToolAnalyticsField('other_employer_cost_rate', 'input', selector: '[name="other_employer_cost_rate"]'),
                     ],
                     actions: ['calculate', 'export', 'share'],
                     selector: 'form[action*="calculate"]',
@@ -95,7 +95,7 @@ final class Tool implements HasAnalyticsJourney, HasHistoryPolicy, HasToolIntegr
 
     public function historyPolicy(): ToolHistoryPolicy
     {
-        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['salary', 'benefits', 'regime', 'rat', 'third_parties'], resultFields: ['monthly_payroll_taxes', 'annual_payroll_taxes', 'social_security', 'medicare', 'futa', 'suta', 'other_employer_costs'], sensitiveFields: []);
+        return new ToolHistoryPolicy(enabled: true, retentionDays: 365, inputFields: ['salary', 'benefits', 'futa_profile', 'suta_rate', 'other_employer_cost_rate'], resultFields: ['monthly_payroll_taxes', 'annual_payroll_taxes', 'social_security', 'medicare', 'futa', 'suta', 'other_employer_costs'], sensitiveFields: []);
     }
 
     public function webRoutesPath(): string

@@ -24,7 +24,7 @@ final class OrganizationController extends Controller
         $organization = $action->execute($request->user(), $request->string('name')->toString());
 
         return redirect()->route('organizations.show', $organization)
-            ->with('status', 'Empresa criada. Sua conta foi definida como responsável.');
+            ->with('status', 'Business created. Your account was set as the owner.');
     }
 
     public function show(Request $request, Organization $organization): View

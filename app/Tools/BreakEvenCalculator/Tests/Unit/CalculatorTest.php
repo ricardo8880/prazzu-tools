@@ -21,9 +21,9 @@ final class CalculatorTest extends TestCase
         ));
 
         self::assertSame('1.2.0', $result->schemaVersion);
-        self::assertSame('R$ 25.000,00', $result->summary[0]->value);
+        self::assertSame('$25,000.00', $result->summary[0]->value);
         self::assertSame('250 unidades', $result->summary[1]->value);
-        self::assertSame('R$ 40,00', $result->summary[2]->value);
+        self::assertSame('$40.00', $result->summary[2]->value);
         self::assertSame('40,00 %', $result->summary[3]->value);
         self::assertNotNull($result->calculationMemory);
         self::assertTrue($result->calculationMemory->isEstimate);
@@ -48,7 +48,7 @@ final class CalculatorTest extends TestCase
         ));
 
         self::assertSame('34 unidades', $result->summary[1]->value);
-        self::assertSame('R$ 2,00', $result->summary[4]->value);
+        self::assertSame('$2.00', $result->summary[4]->value);
     }
 
     public function test_zero_fixed_costs_returns_zero_units_with_explanatory_warning(): void

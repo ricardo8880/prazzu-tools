@@ -43,7 +43,7 @@ final class NewPasswordController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', 'Senha redefinida. Você já pode entrar na sua conta.')
-            : back()->withInput($request->only('email'))->withErrors(['email' => 'Não foi possível redefinir a senha com este link.']);
+            ? redirect()->route('login')->with('status', 'Password reset. You can now sign in to your account.')
+            : back()->withInput($request->only('email'))->withErrors(['email' => 'Unable to reset the password with this link.']);
     }
 }

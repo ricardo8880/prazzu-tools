@@ -20,6 +20,6 @@ final class PasswordResetLinkController extends Controller
         $request->validate(['email' => ['required', 'email:rfc']]);
         Password::sendResetLink($request->only('email'));
 
-        return back()->with('status', 'Se existir uma conta com esse e-mail, enviaremos as instruções de redefinição.');
+        return back()->with('status', 'If an account exists for this email, we will send password reset instructions.');
     }
 }

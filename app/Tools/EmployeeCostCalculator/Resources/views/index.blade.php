@@ -15,9 +15,9 @@
             <div class="col-md-4"><x-tools.form.money name="salary" label="Monthly base wages" :value="old('salary')" required /></div>
             <div class="col-md-4"><x-tools.form.money name="variable_pay" label="Monthly variable pay" :value="old('variable_pay','0.00')" required /></div>
             <div class="col-md-4"><x-tools.form.money name="benefits" label="Monthly employer-paid benefits" :value="old('benefits','0.00')" required /></div>
-            <div class="col-md-4"><x-tools.form.select name="regime" label="FUTA profile" :options="['standard'=>'Standard FUTA estimate','futa_exempt'=>'FUTA-exempt employer']" :value="old('regime','standard')" required /></div>
-            <div class="col-md-4"><x-tools.form.input name="rat" label="Effective SUTA rate" type="number" step="0.0001" suffix="%" :value="old('rat','0')" required /></div>
-            <div class="col-md-4"><x-tools.form.input name="third_parties" label="Other employer-cost rate" type="number" step="0.0001" suffix="%" :value="old('third_parties','0')" required /></div>
+            <div class="col-md-4"><x-tools.form.select name="futa_profile" label="FUTA profile" :options="['standard'=>'Standard FUTA estimate','futa_exempt'=>'FUTA-exempt employer']" :value="old('futa_profile','standard')" required /></div>
+            <div class="col-md-4"><x-tools.form.input name="suta_rate" label="Effective SUTA rate" type="number" step="0.0001" suffix="%" :value="old('suta_rate','0')" required /></div>
+            <div class="col-md-4"><x-tools.form.input name="other_employer_cost_rate" label="Other employer-cost rate" type="number" step="0.0001" suffix="%" :value="old('other_employer_cost_rate','0')" required /></div>
             <div class="col-md-4"><x-tools.form.input name="monthly_hours" label="Monthly paid hours" type="number" min="1" max="744" :value="old('monthly_hours','173')" required /></div>
             <div class="col-12"><button class="btn btn-primary" type="submit">Calculate employee cost</button></div>
         </form>

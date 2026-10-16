@@ -12,11 +12,11 @@ final class PrazzuVerifyEmail extends VerifyEmail
         $verificationUrl = $this->verificationUrl($notifiable);
 
         return (new MailMessage)
-            ->subject('Confirme seu e-mail no Prazzu Tools')
-            ->greeting('Olá, '.$notifiable->name.'!')
-            ->line('Confirme seu endereço de e-mail para proteger sua conta e garantir a recuperação dos resultados salvos.')
-            ->action('Confirmar meu e-mail', $verificationUrl)
-            ->line('As ferramentas continuam completas e gratuitas mesmo sem confirmação. A verificação protege apenas os dados vinculados à sua conta.')
-            ->line('Se você não criou esta conta, nenhuma ação é necessária.');
+            ->subject('Verify your email on Prazzu Tools')
+            ->greeting('Hello, '.$notifiable->name.'!')
+            ->line('Verify your email address to protect your account and ensure access to your saved results.')
+            ->action('Verify my email', $verificationUrl)
+            ->line('The tools remain complete and free even without verification. Verification only protects the data linked to your account.')
+            ->line('If you did not create this account, no action is required.');
     }
 }

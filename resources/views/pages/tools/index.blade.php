@@ -11,16 +11,16 @@
         <header class="prazzu-page-hero">
             <span class="prazzu-page-hero__icon"><i class="bi bi-grid" aria-hidden="true"></i></span>
             <div>
-                <span class="prazzu-eyebrow">Catálogo Prazzu</span>
-                <h1>{{ $activeCategory['name'] ?? 'Todas as ferramentas' }}</h1>
-                <p>{{ $activeVerticalName ? 'Busque e acesse soluções para '. $activeVerticalName .'.' : 'Busque e acesse soluções profissionais de diferentes áreas de negócio.' }}</p>
+                <span class="prazzu-eyebrow">Prazzu Catalog</span>
+                <h1>{{ $activeCategory['name'] ?? 'All tools' }}</h1>
+                <p>{{ $activeVerticalName ? 'Search and access solutions for '. $activeVerticalName .'.' : 'Search and access professional solutions for different business needs.' }}</p>
             </div>
         </header>
 
         <form class="prazzu-catalog-toolbar" action="{{ $activeCategory ? route('tools.category', $activeCategory['slug']) : route('tools.index') }}" method="get" role="search">
             <div class="prazzu-smart-search flex-grow-1" data-smart-search data-smart-search-source="catalog_smart_search">
                 <div class="prazzu-search">
-                    <label class="visually-hidden" for="catalog-search">Buscar no catálogo</label>
+                    <label class="visually-hidden" for="catalog-search">Search the catalog</label>
                     <i class="bi bi-search" aria-hidden="true"></i>
                     <input
                         id="catalog-search"
@@ -28,7 +28,7 @@
                         type="search"
                         name="q"
                         value="{{ $query }}"
-                        placeholder="Buscar por nome, categoria ou problema..."
+                        placeholder="Search by name, category, or problem..."
                         autocomplete="off"
                         spellcheck="false"
                         aria-autocomplete="list"
@@ -36,22 +36,22 @@
                         aria-expanded="false"
                         data-smart-search-input
                     >
-                    <button class="btn" type="submit" aria-label="Buscar"><i class="bi bi-search" aria-hidden="true"></i></button>
+                    <button class="btn" type="submit" aria-label="Search"><i class="bi bi-search" aria-hidden="true"></i></button>
                 </div>
 
                 <div
                     id="catalog-smart-search-panel"
                     class="prazzu-smart-search__panel"
                     data-smart-search-panel
-                    aria-label="Sugestões de ferramentas"
+                    aria-label="Tool suggestions"
                     hidden
                 >
                     <div class="prazzu-smart-search__content" data-smart-search-content role="listbox"></div>
                     <div class="prazzu-smart-search__footer" aria-hidden="true">
                         <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
-                        <span><kbd>Enter</kbd> abrir</span>
-                        <span><kbd>Esc</kbd> fechar</span>
-                        <span class="prazzu-smart-search__shortcut"><kbd>Ctrl</kbd><kbd>K</kbd> buscar</span>
+                        <span><kbd>Enter</kbd> open</span>
+                        <span><kbd>Esc</kbd> close</span>
+                        <span class="prazzu-smart-search__shortcut"><kbd>Ctrl</kbd><kbd>K</kbd> search</span>
                     </div>
                 </div>
 
@@ -88,7 +88,7 @@
             :journeys="$problemJourneys"
             placement="catalog"
             title="Encontre pela rotina"
-            description="Se você ainda não sabe qual ferramenta procurar, escolha uma rotina e comece pelo primeiro passo sugerido."
+            description="If you are not sure which tool to use, choose a workflow and start with the suggested first step."
             class="mb-4"
         />
 
@@ -96,9 +96,9 @@
             <section class="mb-4" aria-labelledby="catalog-personalized-title">
                 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end gap-2 mb-3">
                     <div>
-                        <span class="prazzu-eyebrow">Continuar de onde parou</span>
+                        <span class="prazzu-eyebrow">Continue where you left off</span>
                         <h2 class="h4 mb-1" id="catalog-personalized-title">Seus atalhos</h2>
-                        <p class="small text-body-secondary mb-0">Favoritas primeiro, seguidas pelas ferramentas usadas recentemente nesta vertical.</p>
+                        <p class="small text-body-secondary mb-0">Favorites first, followed by tools recently used in this category.</p>
                     </div>
                 </div>
                 <div class="row g-3">
@@ -109,7 +109,7 @@
                                 <div class="card-body d-flex align-items-start gap-3">
                                     <span class="prazzu-tool-icon prazzu-tool-icon-sm" aria-hidden="true"><i class="bi {{ $tool['icon'] }}"></i></span>
                                     <div class="flex-grow-1">
-                                        <span class="prazzu-eyebrow d-block mb-1">{{ $isFavoriteShortcut ? 'Favorita' : 'Usada recentemente' }}</span>
+                                        <span class="prazzu-eyebrow d-block mb-1">{{ $isFavoriteShortcut ? 'Favorite' : 'Recently used' }}</span>
                                         <h3 class="h6 mb-1">{{ $tool['name'] }}</h3>
                                         <p class="small text-body-secondary mb-0">{{ \Illuminate\Support\Str::limit($tool['description'], 95) }}</p>
                                     </div>
@@ -122,22 +122,22 @@
         @endif
 
         <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
-            <p class="mb-0 text-body-secondary"><strong class="text-body">{{ $tools->count() }}</strong> de {{ $totalTools }} ferramentas encontradas</p>
+            <p class="mb-0 text-body-secondary"><strong class="text-body">{{ $tools->count() }}</strong> de {{ $totalTools }} tools found</p>
         </div>
 
         @if ($tools->isEmpty())
             <section class="prazzu-empty-state">
                 <i class="bi bi-search" aria-hidden="true"></i>
-                <h2>Nenhuma ferramenta encontrada</h2>
-                <p>Tente outra palavra ou envie uma sugestão para a equipe.</p>
-                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('tools.suggest') }}">Sugerir ferramenta</a>
+                <h2>No tools found</h2>
+                <p>Try another search term or send a suggestion to the team.</p>
+                <a class="btn btn-primary prazzu-btn-primary" href="{{ route('tools.suggest') }}">Suggest a tool</a>
             </section>
         @else
             <div class="row g-3">
                 @foreach ($tools as $tool)
                     <div class="col-12 col-sm-6 col-xl-4">
                         <article class="prazzu-tool-card h-100">
-                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ route($tool['route_name']) }}" aria-label="Abrir {{ $tool['name'] }}"></a>
+                            <a class="prazzu-tool-card__link text-decoration-none" href="{{ route($tool['route_name']) }}" aria-label="Open {{ $tool['name'] }}"></a>
                             <span class="prazzu-icon-tile prazzu-icon-tile--{{ $tool['tone'] }} mb-3"><i class="bi {{ $tool['icon'] }}" aria-hidden="true"></i></span>
                             <span class="prazzu-tool-card__category">{{ $tool['category_name'] }}</span>
                             <h2 class="prazzu-tool-card__title">{{ $tool['name'] }}</h2>

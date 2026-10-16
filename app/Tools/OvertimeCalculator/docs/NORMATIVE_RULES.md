@@ -1,12 +1,7 @@
-# Regras normativas
+# U.S. overtime assumptions
 
-Verificadas em 27/07/2026.
+The essential calculation follows the federal Fair Labor Standards Act (FLSA) baseline for covered, nonexempt employees: overtime is generally due after 40 hours in a workweek at not less than 1.5 times the regular rate.
 
-- CLT, art. 59, §1º: hora extra com acréscimo mínimo de 50%.
-- CLT, art. 73: adicional noturno urbano mínimo de 20%, hora noturna de 52min30s e período legal noturno.
-- Lei 605/1949, art. 7º: horas extraordinárias habituais integram a remuneração do repouso.
-- TST Tema 256 / Súmula 172: reafirma a incidência das horas extraordinárias habituais no repouso remunerado.
+State law, exemptions, collective bargaining agreements, special industries, bonuses, commissions, and other compensation can change the result. When federal and state overtime rules both apply, the employee is generally entitled to the more protective standard.
 
-Fontes oficiais são preservadas no `NormativeRuleSnapshot` do cálculo.
-
-O cálculo de DSR recebe dias úteis/trabalhados e repousos/feriados como dados do usuário. A ferramenta não infere calendário, CCT, escala ou habitualidade jurídica.
+Source: U.S. Department of Labor, Wage and Hour Division, FLSA overtime guidance.

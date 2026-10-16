@@ -28,11 +28,11 @@ return [
     */
     'registered' => [
         'contabilidade' => [
-            'name' => 'Contabilidade',
-            'public_slug' => 'contabil',
+            'name' => 'Accounting & Business',
+            'public_slug' => 'accounting',
         ],
         'rh' => [
-            'name' => 'Recursos Humanos',
+            'name' => 'Human Resources',
             'public_slug' => 'rh',
         ],
     ],

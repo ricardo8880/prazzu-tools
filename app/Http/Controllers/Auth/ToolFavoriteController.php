@@ -17,7 +17,7 @@ final class ToolFavoriteController extends Controller
 
         return back()->with(
             'tool_favorite_status',
-            $favorited ? 'Ferramenta adicionada aos seus favoritos.' : 'Ferramenta removida dos seus favoritos.',
+            $favorited ? 'Tool added to your favorites.' : 'Tool removed from your favorites.',
         );
     }
 }

@@ -4,73 +4,19 @@ declare(strict_types=1);
 
 namespace App\Tools\VacationCalculator\Tests\Feature;
 
-use App\Core\Analytics\Contracts\PlatformAnalytics;
-use App\Core\Quality\Attributes\CoversPlusFeature;
-use App\Core\Usage\Contracts\UsageMetrics;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 final class ToolPageTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_tool_page_is_available_with_essential_form(): void
+    public function test_pto_page_uses_us_policy_inputs(): void
     {
         $this->get(route('tools.pto-calculator.index'))
             ->assertOk()
-            ->assertSee('Calculadora de Férias')
-            ->assertSee('Dados das férias')
-            ->assertSee('Abono pecuniário')
-            ->assertSee('Como interpretar');
-    }
-
-    #[CoversPlusFeature('pto-calculator', 'professional_export')]
-    public function test_valid_input_calculates_and_displays_the_result(): void
-    {
-        $metrics = $this->mock(UsageMetrics::class);
-        $metrics->shouldReceive('record')->once();
-
-        $analytics = $this->mock(PlatformAnalytics::class);
-        $analytics->shouldReceive('track')->zeroOrMoreTimes();
-
-        $response = $this->post(route('tools.pto-calculator.calculate'), [
-            'monthly_salary' => '3.000,00',
-            'acquisition_start_date' => '2025-01-01',
-            'vacation_start_date' => '2026-07-01',
-            'unjustified_absences' => 0,
-            'convert_one_third_to_cash' => '1',
-            'commission_average' => '0,00',
-            'overtime_average' => '0,00',
-            'recurring_additions' => '0,00',
-            'other_deductions' => '0,00',
-        ]);
-
-        $response->assertOk()
-            ->assertSee('Resultado das férias')
-            ->assertSee('R$ 4.000,00')
-            ->assertSee('29/06/2026')
-            ->assertSee('Exportar CSV')
-            ->assertSee('Baixar PDF')
-            ->assertSee('Baixar Excel (.xlsx)');
-    }
-
-    public function test_invalid_money_and_dates_are_rejected(): void
-    {
-        $this->from(route('tools.pto-calculator.index'))
-            ->post(route('tools.pto-calculator.calculate'), [
-                'monthly_salary' => 'valor inválido',
-                'acquisition_start_date' => '2026-01-01',
-                'vacation_start_date' => '2025-12-01',
-            ])
-            ->assertRedirect(route('tools.pto-calculator.index'))
-            ->assertSessionHasErrors(['monthly_salary', 'vacation_start_date']);
-    }
-
-    public function test_page_contains_seo_metadata(): void
-    {
-        $this->get(route('tools.pto-calculator.index'))
-            ->assertOk()
-            ->assertSee('<title>Calculadora de Férias — Prazzu Tools</title>', false)
-            ->assertSee('Calcule férias, terço constitucional', false);
+            ->assertSee('PTO Calculator')
+            ->assertSee('Current accrued PTO hours')
+            ->assertSee('Planned PTO hours')
+            ->assertSee('PTO accrued per pay period')
+            ->assertDontSee('constitutional vacation bonus')
+            ->assertDontSee('vacation cash-out allowance');
     }
 }

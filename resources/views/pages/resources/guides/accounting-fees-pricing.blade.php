@@ -123,7 +123,7 @@
             <section id="exemplo">
                 <span class="prazzu-resource-step">04</span>
                 <h2>Exemplo prático de raciocínio</h2>
-                <p>Considere uma empresa prestadora de serviços no Simples Nacional, com faturamento mensal de R$ 100 mil, cinco empregados, dois sócios, cerca de 120 documentos fiscais e 250 transações bancárias por mês.</p>
+                <p>Consider a U.S. service business with $100,000 in monthly revenue, five employees, two owners, about 120 monthly invoices and 250 bank transactions.</p>
                 <div class="prazzu-resource-table-wrap">
                     <table class="table align-middle mb-0">
                         <thead><tr><th>Fator</th><th>Leitura correta</th><th>Decisão de escopo</th></tr></thead>

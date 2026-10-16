@@ -28,7 +28,7 @@ final class InvitationAcceptanceController extends Controller
         $action->execute($invitation, $request->user());
 
         return redirect()->route('organizations.show', $invitation->organization)
-            ->with('status', 'Convite aceito. Seu acesso foi vinculado sem compartilhar seus dados pessoais.');
+            ->with('status', 'Invitation accepted. Your access was linked without sharing your personal data.');
     }
 
     private function findInvitation(string $token): OrganizationInvitation
